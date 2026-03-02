@@ -1,0 +1,41 @@
+/* ===== Cloud Divider (global) ===== */
+.clouds{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 8;
+  height: clamp(120px, 12vw, 260px);
+  background-repeat: no-repeat;
+  background-size: 120% auto;
+  background-position: 50% 50%;
+  filter: drop-shadow(0 14px 35px rgba(0,0,0,0.22));
+  opacity: 0.98;
+  will-change: transform;
+}
+
+/* final da seção atual */
+.clouds--bottom{
+  bottom: -1px;
+}
+
+/* topo da próxima seção (vira a imagem) */
+.clouds--top{
+  top: -1px;
+  transform: rotate(180deg);
+}
+
+/* Desktop image */
+@media (min-width: 1025px){
+  .clouds{
+    background-image: url("./clouds/D.svg");
+  }
+}
+
+/* Mobile image */
+@media (max-width: 1024px){
+  .clouds{
+    background-image: url("./clouds/M.svg");
+    background-size: 140% auto; /* ajuda a não “sobrar” laterais no mobile */
+  }
+}

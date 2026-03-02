@@ -16,7 +16,7 @@
         <img src="/Logo/Logo.png" alt="Logo do Festival de Inverno de Pedro II" class="brand__logo" />
         <div class="brand__text" v-if="showBrandText">
           <span class="brand__name">Festival de Inverno</span>
-          <span class="brand__tag">Pedro II • Natureza e Música</span>
+          <span class="brand__tag">Pedro II • Natureza, Música e Arte</span>
         </div>
       </a>
 
@@ -34,8 +34,8 @@
         </button>
 
         <v-btn class="cta" variant="flat" size="small" @click="handleTickets()">
-          Ingressos
-          <v-icon icon="mdi-ticket-confirmation-outline" class="ml-2" />
+          Suporte Festival
+          <v-icon icon="mdi-headset" class="ml-2" />
         </v-btn>
       </nav>
 
@@ -78,7 +78,7 @@
           <img src="/Logo/Logo.png" alt="Logo do Festival" class="fs__logo" />
           <div class="fs__brandTxt">
             <strong>Festival de Inverno</strong>
-            <span>Pedro II • Natureza e música na mesma vibração</span>
+            <span>Pedro II • Natureza, Música e Artes</span>
           </div>
         </div>
 
@@ -96,10 +96,6 @@
 
       <!-- ✅ Scroll acontece aqui -->
       <div ref="fsScroll" class="fs__scroll" aria-label="Conteúdo do menu" @keydown.esc="closeMenu()">
-        <!-- fades (indicam conteúdo acima/abaixo) -->
-        <div class="fs__fadeTop" aria-hidden="true"></div>
-        <div class="fs__fadeBottom" aria-hidden="true"></div>
-
         <div class="fs__wrap">
           <!-- Left -->
           <aside class="fs__left">
@@ -280,8 +276,10 @@ onBeforeUnmount(() => {
 const items = [
   { id: "home", label: "Início", hash: "#home", icon: "mdi-home-outline", desc: "Destaques e atalhos rápidos." },
   { id: "programacao", label: "Programação", hash: "#programacao", icon: "mdi-calendar-clock-outline", desc: "Dias, palcos e horários." },
+  { id: "guia", label: "Serviços", hash: "#guia", icon: "mdi-compass-outline", desc: "Tudo pra curtir melhor o festival." },
   { id: "atracoes", label: "Atrações", hash: "#atracoes", icon: "mdi-microphone-variant", desc: "Artistas, shows e cultura." },
   { id: "mapa", label: "Mapa", hash: "#mapa", icon: "mdi-map-marker-outline", desc: "Locais, palcos e rotas." },
+  { id: "galeria", label: "Galeria do Festival", hash: "#fotos", icon: "mdi-camera-outline", desc: "Galeria oficial e fotos públicas." },
   { id: "acessibilidade", label: "Acessibilidade", hash: "#acessibilidade", icon: "mdi-wheelchair-accessibility", desc: "Rotas e suporte PCD." },
   { id: "faq", label: "FAQ", hash: "#faq", icon: "mdi-help-circle-outline", desc: "Dúvidas frequentes." }
 ];
@@ -299,7 +297,7 @@ function reduceMotion() {
 }
 
 function handleWindowSizeChange() {
-  isMobile.value = window.innerWidth <= 1030;
+  isMobile.value = window.innerWidth <= 1115;
 }
 
 function headerHeight() {
@@ -492,7 +490,7 @@ onUnmounted(() => {
 ======================= */
 .nav {
   /* base “winter” */
-  --bg: rgba(245, 247, 250, 0.78);
+  --bg: rgb(245, 247, 250);
   --bg-2: rgba(255, 255, 255, 0.92);
   --text: #0b1220;
   --muted: rgba(11, 18, 32, 0.62);
@@ -666,7 +664,7 @@ onUnmounted(() => {
   /* usa as cores do insta como “glow” */
   --txt: rgba(255,255,255,0.92);
 
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.96), rgba(2, 6, 23, 0.86));
+  background: linear-gradient(180deg, rgb(2, 6, 23), rgba(2, 6, 23, 0.981));
   color: var(--txt);
 }
 
@@ -848,7 +846,7 @@ onUnmounted(() => {
   border-radius: 18px !important;
   font-weight: 950 !important;
   text-transform: none !important;
-  background: linear-gradient(90deg, rgba(47,73,255,0.92), rgba(255,47,179,0.78), rgba(46,242,177,0.78)) !important;
+  background: linear-gradient(90deg, rgb(234, 234, 0), rgba(46,242,177,0.78)) !important;
   color: #06101f !important;
 }
 .fs__note { margin: 10px 0 0; font-size: 12px; color: rgba(255,255,255,0.70); }
