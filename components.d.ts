@@ -8,27 +8,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./src/components/AppFooter.vue')['default']
-    Areas: typeof import('./src/components/Areas.vue')['default']
-    Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
-    Contatos: typeof import('./src/components/contatos.vue')['default']
-    copy: typeof import('./src/components/LineAreas copy.vue')['default']
-    Depoimentos: typeof import('./src/components/Depoimentos.vue')['default']
-    Equipe: typeof import('./src/components/Equipe.vue')['default']
-    Footer: typeof import('./src/components/footer.vue')['default']
-    Footers: typeof import('./src/components/Footers.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    Home: typeof import('./src/components/Home.vue')['default']
-    LineAreas: typeof import('./src/components/LineAreas.vue')['default']
-    LineComentarios: typeof import('./src/components/LineComentarios.vue')['default']
-    LineEquipe: typeof import('./src/components/LineEquipe.vue')['default']
-    Local: typeof import('./src/components/local.vue')['default']
     NavHeader: typeof import('./src/components/NavHeader.vue')['default']
-    PreLoader: typeof import('./src/components/PreLoader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Sobre: typeof import('./src/components/Sobre.vue')['default']
-    SubHeader: typeof import('./src/components/SubHeader.vue')['default']
     VLibras: typeof import('./src/components/VLibras.vue')['default']
   }
 }
