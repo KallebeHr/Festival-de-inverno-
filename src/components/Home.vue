@@ -131,10 +131,6 @@
             </div>
           </div>
 
-          <div class="scroll" data-anim="scroll" aria-hidden="true">
-            <span class="scroll__line"></span>
-            <span class="scroll__text">Role</span>
-          </div>
         </div>
 
         <!-- Right -->
@@ -222,11 +218,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Clouds divider -->
-    <div class="clouds clouds--bottom" aria-hidden="true"></div>
-
-    <a class="skip" href="#programacao">Pular para programação</a>
   </section>
 </template>
 
@@ -278,7 +269,7 @@ const onReduceChange = () => (reduce.value = mmReduce?.matches ?? false);
 const reduceMotion = () => reduce.value;
 
 // ✅ título por palavras (evita quebrar palavra no meio)
-const titleText = "Festival de Inverno: seu roteiro começa aqui.";
+const titleText = "Festival de Inverno";
 const titleWords = computed(() => {
   const words = (titleText || "").trim().split(/\s+/).filter(Boolean);
   return words.map((w) => ({ raw: w, chars: w.split("") }));
