@@ -84,7 +84,7 @@
 
         <div class="fs__topActions">
           <v-btn class="fs__topBtn" variant="outlined" @click="handleTickets()">
-            Ingressos
+             Suporte Festival
             <v-icon icon="mdi-ticket-confirmation-outline" class="ml-2" />
           </v-btn>
 

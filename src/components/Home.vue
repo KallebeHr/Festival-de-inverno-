@@ -7,12 +7,15 @@
   >
     <!-- BG -->
     <div class="bg" aria-hidden="true">
-      <!-- FOTO (troca desktop/mobile via JS) -->
-      <div
-        class="bg__photo"
-        data-bg="photo"
-        :style="{ backgroundImage: `url(${isMobile ? bgMobile : bgDesktop})` }"
-      ></div>
+      <!-- ✅ troca desktop/mobile sem background-image inline (menos repaint/jank) -->
+      <img
+        class="bg__img"
+        :src="isMobile ? bgMobile : bgDesktop"
+        alt=""
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+      />
 
       <!-- overlays -->
       <div class="bg__overlay bg__overlay--vignette"></div>
@@ -23,16 +26,19 @@
       <div class="bg__glow bg__glow--b" data-bg="glowB"></div>
       <div class="bg__noise"></div>
 
-      <!-- ✅ snow (ZERO spans: 2 camadas via pseudo-elements) -->
+      <!-- ✅ snow ultra leve (mantém) -->
       <div class="snow" data-bg="snow" aria-hidden="true"></div>
 
-      <!-- shards -->
+      <!-- shards (some no mobile) -->
       <div class="shards">
         <span class="shard s1" data-bg="shard"></span>
         <span class="shard s2" data-bg="shard"></span>
         <span class="shard s3" data-bg="shard"></span>
         <span class="shard s4" data-bg="shard"></span>
       </div>
+
+      <!-- ✅ “tail” para não dar flash na borda inferior ao scroll -->
+      <div class="bg__tail" aria-hidden="true"></div>
     </div>
 
     <!-- Conteúdo -->
@@ -50,18 +56,8 @@
 
           <h1 class="title" data-anim="title" aria-label="O inverno mais vibrante do Nordeste. Edição 2026.">
             <span class="title__line" aria-hidden="true">
-              <span
-                v-for="(w, wi) in titleWords"
-                :key="`w-${wi}`"
-                class="title__word"
-                :data-word="wi"
-              >
-                <span
-                  v-for="(ch, ci) in w.chars"
-                  :key="`c-${wi}-${ci}`"
-                  class="title__char"
-                  data-anim="char"
-                >
+              <span v-for="(w, wi) in titleWords" :key="`w-${wi}`" class="title__word" :data-word="wi">
+                <span v-for="(ch, ci) in w.chars" :key="`c-${wi}-${ci}`" class="title__char" data-anim="char">
                   {{ ch }}
                 </span>
               </span>
@@ -78,7 +74,6 @@
             pra você curtir sem se perder.
           </p>
 
-          <!-- Meta cards -->
           <div class="meta" data-anim="meta" aria-label="Informações rápidas">
             <div class="metaCard" role="status" aria-live="polite">
               <span class="metaLabel">Começa em</span>
@@ -101,18 +96,15 @@
 
           <div class="actions" data-anim="actions">
             <a class="btn btn--primary" href="#programacao" @click.prevent="go('#programacao')">
-              Ver programação
-              <span class="btn__icon" aria-hidden="true">↗</span>
+              Ver programação <span class="btn__icon" aria-hidden="true">↗</span>
             </a>
 
             <a class="btn btn--ghost" href="#mapa" @click.prevent="go('#mapa')">
-              Abrir mapa
-              <span class="btn__icon" aria-hidden="true">→</span>
+              Abrir mapa <span class="btn__icon" aria-hidden="true">→</span>
             </a>
 
             <button class="btn btn--chip" type="button" @click="openQuick()">
-              Busca rápida
-              <span class="btn__icon" aria-hidden="true">⌘K</span>
+              Busca rápida <span class="btn__icon" aria-hidden="true">⌘K</span>
             </button>
           </div>
 
@@ -130,7 +122,6 @@
               <span>Momentos, cidade e atrações</span>
             </div>
           </div>
-
         </div>
 
         <!-- Right -->
@@ -160,7 +151,6 @@
                 Pesquise seções, abra fotos públicas, encontre hospedagem e veja comunicados — rápido no celular, lindo no desktop.
               </p>
 
-              <!-- Quick search (funcional) -->
               <div class="quick" data-anim="quick">
                 <label class="srOnly" for="heroSearch">Buscar seção</label>
                 <input
@@ -222,20 +212,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
 import bgDesktop from "/bg/bgD.png";
 import bgMobile from "/bg/bgM.png";
-
-/**
- * ✅ OTIMIZAÇÕES APLICADAS (resumo prático)
- * - Snow: removido v-for (0 spans). Agora é 2 camadas via pseudo-elements.
- * - Animações GSAP: carregam só quando o hero entra em viewport (IntersectionObserver).
- * - Loops/ScrollTrigger: pausam quando sai da viewport (economiza CPU).
- * - Tilt: usa requestAnimationFrame (sem recalcular a cada pointermove).
- * - Countdown: só “tique” quando hero está visível E aba visível.
- * - Seletores: cacheados em um map (menos querySelector espalhado).
- */
 
 // ✅ Ajuste para a data real do festival (Edição 2026)
 const FESTIVAL_DATE_ISO = "2026-06-20T18:00:00-03:00";
@@ -258,7 +238,6 @@ let tick: number | null = null;
 let io: IntersectionObserver | null = null;
 const heroVisible = ref(false);
 
-// ✅ matchMedia (mobile + reduce motion) sem “resize spam”
 let mmMobile: MediaQueryList | null = null;
 let mmReduce: MediaQueryList | null = null;
 const reduce = ref(false);
@@ -275,7 +254,6 @@ const titleWords = computed(() => {
   return words.map((w) => ({ raw: w, chars: w.split("") }));
 });
 
-// ✅ itens fora de computed pesado; filtro leve
 const items = [
   { id: "programacao", label: "Programação", hash: "#programacao", desc: "Dias, palcos e horários." },
   { id: "atracoes", label: "Atrações", hash: "#atracoes", desc: "Artistas, cultura e experiências." },
@@ -350,7 +328,9 @@ const countdownLabel = computed(() => {
   return `${d}d ${h}h ${m}m`;
 });
 
-const countdownHint = computed(() => (diffMs.value <= 0 ? "Acesse a programação e o mapa agora." : "Atualiza em tempo real • Prepare sua agenda"));
+const countdownHint = computed(() =>
+  diffMs.value <= 0 ? "Acesse a programação e o mapa agora." : "Atualiza em tempo real • Prepare sua agenda"
+);
 
 function startTick() {
   stopTick();
@@ -395,7 +375,7 @@ function killLoops() {
 
 type SelMap = {
   el: HTMLElement;
-  photo: Element | null;
+  img: HTMLImageElement | null;
   grid: Element | null;
   glowA: Element | null;
   glowB: Element | null;
@@ -408,7 +388,6 @@ type SelMap = {
   meta: Element | null;
   actions: Element | null;
   stats: Element | null;
-  scroll: Element | null;
   cardWrap: Element | null;
   cardTitle: Element | null;
   cardDesc: Element | null;
@@ -425,7 +404,7 @@ function selectAll(): SelMap | null {
 
   return {
     el,
-    photo: el.querySelector('[data-bg="photo"]'),
+    img: el.querySelector(".bg__img"),
     grid: el.querySelector('[data-bg="grid"]'),
     glowA: el.querySelector('[data-bg="glowA"]'),
     glowB: el.querySelector('[data-bg="glowB"]'),
@@ -439,7 +418,6 @@ function selectAll(): SelMap | null {
     meta: el.querySelector('[data-anim="meta"]'),
     actions: el.querySelector('[data-anim="actions"]'),
     stats: el.querySelector('[data-anim="stats"]'),
-    scroll: el.querySelector('[data-anim="scroll"]'),
 
     cardWrap: el.querySelector('[data-anim="card"]'),
     cardTitle: el.querySelector('[data-anim="cardTitle"]'),
@@ -462,8 +440,7 @@ function setupIntro() {
 
   const ctx = gsap.context(() => {
     const {
-      el,
-      photo,
+      img,
       grid,
       glowA,
       glowB,
@@ -476,7 +453,6 @@ function setupIntro() {
       meta,
       actions,
       stats,
-      scroll,
       cardWrap,
       cardTitle,
       cardDesc,
@@ -487,68 +463,55 @@ function setupIntro() {
       footer,
     } = sel;
 
-    // estados iniciais (menos blur = menos custo de render)
-    gsap.set(photo, { opacity: 0, scale: 1.12 });
+    // ✅ animações só com transform/opacity (evita “layout thrash”)
+    gsap.set(img, { opacity: 0, scale: 1.08 });
     gsap.set([glowA, glowB], { opacity: 0 });
-    gsap.set(grid, { opacity: 0, y: -10 });
+    gsap.set(grid, { opacity: 0, y: -8 });
     gsap.set(snow, { opacity: 0 });
     gsap.set(shards, { opacity: 0, y: 10, rotate: (i: number) => (i % 2 ? -14 : 14) });
 
-    gsap.set([kicker, subtitle, meta, actions, stats, scroll], { opacity: 0, y: 16 });
-    gsap.set(chars, { opacity: 0, y: 18, rotateX: 78, transformOrigin: "50% 80%" });
+    gsap.set([kicker, subtitle, meta, actions, stats], { opacity: 0, y: 14 });
+    gsap.set(chars, { opacity: 0, y: 16, rotateX: 70, transformOrigin: "50% 80%" });
     gsap.set(titleSub, { opacity: 0, y: 10 });
 
-    gsap.set(cardWrap, { opacity: 0, y: 18, scale: 0.985 });
-    gsap.set([cardTitle, cardDesc, quick, chips, results, cta, footer], { opacity: 0, y: 14 });
+    gsap.set(cardWrap, { opacity: 0, y: 16, scale: 0.985 });
+    gsap.set([cardTitle, cardDesc, quick, chips, results, cta, footer], { opacity: 0, y: 12 });
 
     introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    // 1) BG
-    introTl.to(photo, { opacity: 1, duration: 0.55 }, 0);
-    introTl.to(photo, { scale: 1.02, duration: 1.6 }, 0.05);
+    introTl.to(img, { opacity: 1, duration: 0.5 }, 0);
+    introTl.to(img, { scale: 1.02, duration: 1.4 }, 0.05);
 
-    // 2) layers
-    introTl.to(grid, { opacity: 0.18, y: 0, duration: 0.9 }, 0.1);
-    introTl.to(glowA, { opacity: 0.9, duration: 0.9 }, 0.18);
-    introTl.to(glowB, { opacity: 0.8, duration: 0.9 }, 0.26);
-    introTl.to(snow, { opacity: 1, duration: 0.6 }, 0.3);
+    introTl.to(grid, { opacity: 0.18, y: 0, duration: 0.8 }, 0.08);
+    introTl.to(glowA, { opacity: 0.9, duration: 0.8 }, 0.14);
+    introTl.to(glowB, { opacity: 0.8, duration: 0.8 }, 0.2);
+    introTl.to(snow, { opacity: 1, duration: 0.55 }, 0.24);
 
-    // 3) kicker + title letters
-    introTl.to(kicker, { opacity: 1, y: 0, duration: 0.7 }, 0.22);
-    introTl.to(
-      chars,
-      { opacity: 1, y: 0, rotateX: 0, duration: 0.7, stagger: 0.018 },
-      0.32
-    );
-    introTl.to(titleSub, { opacity: 1, y: 0, duration: 0.55 }, 0.62);
-    introTl.to(subtitle, { opacity: 1, y: 0, duration: 0.7 }, 0.55);
+    introTl.to(kicker, { opacity: 1, y: 0, duration: 0.65 }, 0.2);
+    introTl.to(chars, { opacity: 1, y: 0, rotateX: 0, duration: 0.65, stagger: 0.016 }, 0.28);
+    introTl.to(titleSub, { opacity: 1, y: 0, duration: 0.5 }, 0.56);
+    introTl.to(subtitle, { opacity: 1, y: 0, duration: 0.65 }, 0.5);
 
-    // 4) meta -> actions -> stats -> scroll
-    introTl.to(meta, { opacity: 1, y: 0, duration: 0.7 }, 0.66);
-    introTl.to(actions, { opacity: 1, y: 0, duration: 0.7 }, 0.74);
-    introTl.to(stats, { opacity: 1, y: 0, duration: 0.75 }, 0.82);
-    introTl.to(scroll, { opacity: 1, y: 0, duration: 0.65 }, 0.92);
+    introTl.to(meta, { opacity: 1, y: 0, duration: 0.65 }, 0.62);
+    introTl.to(actions, { opacity: 1, y: 0, duration: 0.65 }, 0.7);
+    introTl.to(stats, { opacity: 1, y: 0, duration: 0.7 }, 0.78);
 
-    // shards entram “late”
-    introTl.to(shards, { opacity: 0.22, y: 0, duration: 0.7, stagger: 0.06 }, 0.9);
+    introTl.to(shards, { opacity: 0.22, y: 0, duration: 0.65, stagger: 0.06 }, 0.86);
 
-    // 5) card sequencial
-    introTl.to(cardWrap, { opacity: 1, y: 0, scale: 1, duration: 0.8 }, 0.72);
-    introTl.to(cardTitle, { opacity: 1, y: 0, duration: 0.55 }, 0.92);
-    introTl.to(cardDesc, { opacity: 1, y: 0, duration: 0.55 }, 0.98);
-    introTl.to(quick, { opacity: 1, y: 0, duration: 0.55 }, 1.04);
-    introTl.to(chips, { opacity: 1, y: 0, duration: 0.6 }, 1.1);
-    introTl.to(results, { opacity: 1, y: 0, duration: 0.6 }, 1.16);
-    introTl.to(cta, { opacity: 1, y: 0, duration: 0.6 }, 1.22);
-    introTl.to(footer, { opacity: 1, y: 0, duration: 0.6 }, 1.28);
+    introTl.to(cardWrap, { opacity: 1, y: 0, scale: 1, duration: 0.75 }, 0.7);
+    introTl.to(cardTitle, { opacity: 1, y: 0, duration: 0.5 }, 0.9);
+    introTl.to(cardDesc, { opacity: 1, y: 0, duration: 0.5 }, 0.96);
+    introTl.to(quick, { opacity: 1, y: 0, duration: 0.5 }, 1.02);
+    introTl.to(chips, { opacity: 1, y: 0, duration: 0.55 }, 1.08);
+    introTl.to(results, { opacity: 1, y: 0, duration: 0.55 }, 1.14);
+    introTl.to(cta, { opacity: 1, y: 0, duration: 0.55 }, 1.2);
+    introTl.to(footer, { opacity: 1, y: 0, duration: 0.55 }, 1.26);
 
-    // loop do scroll (leve)
-    const scrollLine = el.querySelector(".scroll__line");
-    if (scrollLine) introTl.to(scrollLine, { scaleY: 1.18, duration: 0.95, yoyo: true, repeat: -1, ease: "sine.inOut" }, 1.1);
-
-    // “breath” no título (sutil)
-    const titleLine = el.querySelector(".title__line");
-    if (titleLine) introTl.to(titleLine, { y: -2, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.0);
+    // ✅ “breath” no título (só desktop)
+    if (!isMobile.value) {
+      const titleLine = sel.el.querySelector(".title__line");
+      if (titleLine) introTl.to(titleLine, { y: -2, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.0);
+    }
   }, root);
 
   revertCtx = () => {
@@ -559,30 +522,29 @@ function setupIntro() {
 }
 
 function setupAmbientLoops() {
-  if (!root.value || !gsap || reduceMotion()) return;
+  // ✅ loops só desktop (mobile = zero travamento)
+  if (!root.value || !gsap || reduceMotion() || isMobile.value) return;
 
   killLoops();
 
   const el = root.value;
-  const photo = el.querySelector('[data-bg="photo"]');
+  const img = el.querySelector(".bg__img");
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = Array.from(el.querySelectorAll('[data-bg="shard"]'));
-  const clouds = el.querySelector(".clouds");
   const cardGlow = el.querySelector(".card__glow");
 
-  // ✅ loops só quando hero está visível; quando sair, a gente mata (ver observer)
-  loops.push(gsap.to(photo, { backgroundPosition: "55% 45%", duration: 10, yoyo: true, repeat: -1, ease: "sine.inOut" }));
-  loops.push(gsap.to(glowA, { x: 28, y: 18, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" }));
-  loops.push(gsap.to(glowB, { x: -24, y: 22, duration: 8.3, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(img, { scale: 1.04, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(glowA, { x: 24, y: 16, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(glowB, { x: -22, y: 20, duration: 8.3, yoyo: true, repeat: -1, ease: "sine.inOut" }));
 
   shards.forEach((s, i) => {
     loops.push(
       gsap.to(s, {
-        y: i % 2 ? -14 : -10,
-        x: i % 2 ? 8 : -6,
-        rotate: i % 2 ? -10 : 10,
-        duration: 5.8 + i * 0.35,
+        y: i % 2 ? -12 : -9,
+        x: i % 2 ? 7 : -6,
+        rotate: i % 2 ? -9 : 9,
+        duration: 6 + i * 0.35,
         yoyo: true,
         repeat: -1,
         ease: "sine.inOut",
@@ -590,37 +552,38 @@ function setupAmbientLoops() {
     );
   });
 
-  if (clouds) loops.push(gsap.to(clouds, { x: 44, duration: 14, repeat: -1, yoyo: true, ease: "sine.inOut" }));
   if (cardGlow) loops.push(gsap.to(cardGlow, { opacity: 1, duration: 2.4, repeat: -1, yoyo: true, ease: "sine.inOut" }));
 }
 
 let parallaxInited = false;
 function setupScrollParallax() {
+  // ✅ parallax/ScrollTrigger só desktop (evita “flash”/repaint no mobile)
   if (parallaxInited) return;
-  if (!root.value || !gsap || !ScrollTrigger || reduceMotion()) return;
+  if (!root.value || !gsap || !ScrollTrigger || reduceMotion() || isMobile.value) return;
 
   const el = root.value;
 
-  const photo = el.querySelector('[data-bg="photo"]');
+  const img = el.querySelector(".bg__img");
   const grid = el.querySelector('[data-bg="grid"]');
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = el.querySelectorAll('[data-bg="shard"]');
   const cardWrap = el.querySelector('[data-anim="card"]');
 
-  gsap.to(photo, { y: 34, scale: 1.06, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(grid, { y: 46, opacity: 0.1, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(glowA, { y: 90, x: 38, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(glowB, { y: 120, x: -30, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(shards, { y: 60, rotate: 6, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true }, stagger: 0.05 });
-  gsap.to(cardWrap, { y: 20, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(img, { y: 28, scale: 1.06, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(grid, { y: 42, opacity: 0.1, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(glowA, { y: 80, x: 34, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(glowB, { y: 110, x: -28, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(shards, { y: 54, rotate: 6, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true }, stagger: 0.05 });
+  gsap.to(cardWrap, { y: 18, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
 
   parallaxInited = true;
 }
 
-/* ===== Tilt (rAF: ultra leve) ===== */
+/* ===== Tilt (rAF) ===== */
 function setupTilt() {
-  if (!tiltEl.value || reduceMotion()) return;
+  // ✅ tilt só desktop (mobile = mais leve)
+  if (!tiltEl.value || reduceMotion() || isMobile.value) return;
 
   const el = tiltEl.value;
   const max = 8;
@@ -641,10 +604,9 @@ function setupTilt() {
     const dx = (lastX - cx) / (r.width / 2);
     const dy = (lastY - cy) / (r.height / 2);
 
-    const rx = (-dy * max).toFixed(2);
-    const ry = (dx * max).toFixed(2);
-
-    el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+    el.style.transform = `perspective(900px) rotateX(${(-dy * max).toFixed(2)}deg) rotateY(${(dx * max).toFixed(
+      2
+    )}deg) translateY(-2px)`;
   };
 
   const onMove = (e: PointerEvent) => {
@@ -671,33 +633,46 @@ function setupTilt() {
   });
 }
 
-/* ===== IntersectionObserver (liga/desliga o pesado) ===== */
+/* ===== pesado liga/desliga ===== */
 let started = false;
+
+function killAllScrollTriggers() {
+  try {
+    ScrollTrigger?.getAll?.()?.forEach((t: any) => t.kill());
+  } catch (_) {}
+}
 
 async function startHeavy() {
   if (started) return;
   started = true;
 
+  // ✅ evita “travada” no primeiro paint do mobile:
+  // 1) espera DOM assentar
+  // 2) espera 2 RAFs (primeiro frame + layout)
+  await nextTick();
+  await new Promise<void>((r) => requestAnimationFrame(() => r()));
+  await new Promise<void>((r) => requestAnimationFrame(() => r()));
+
   if (reduceMotion()) {
-    // nada pesado: só garante tick se visível
     updateTickState();
     return;
   }
 
+  // ✅ no mobile, carrega GSAP mas sem loops/parallax (bem mais leve)
   await ensureGsap();
 
   setupIntro();
-  setupAmbientLoops();
-  setupScrollParallax();
-  setupTilt();
+  setupAmbientLoops(); // só desktop
+  setupScrollParallax(); // só desktop
+  setupTilt(); // só desktop
 
   updateTickState();
 }
 
 function stopHeavy() {
-  // quando sai da viewport: mata loops e para tick (economiza MUITO)
   stopTick();
   killLoops();
+  killAllScrollTriggers();
 
   try {
     introTl?.pause?.(0);
@@ -708,15 +683,11 @@ function cleanupGsap() {
   try {
     introTl?.kill?.();
   } catch (_) {}
-
   try {
     revertCtx?.();
   } catch (_) {}
 
-  try {
-    ScrollTrigger?.getAll?.()?.forEach((t: any) => t.kill());
-  } catch (_) {}
-
+  killAllScrollTriggers();
   killLoops();
 }
 
@@ -740,7 +711,7 @@ onMounted(() => {
 
   hydratePrefs();
 
-  // ✅ Observer: só inicia GSAP/loops quando realmente aparece na tela
+  // ✅ Observer: inicia pesado só quando entra em viewport
   if (root.value && "IntersectionObserver" in window) {
     io = new IntersectionObserver(
       (entries) => {
@@ -752,11 +723,10 @@ onMounted(() => {
 
         updateTickState();
       },
-      { root: null, threshold: 0.12 }
+      { root: null, threshold: 0.15, rootMargin: "80px 0px 80px 0px" }
     );
     io.observe(root.value);
   } else {
-    // fallback (sem IO): inicia normal
     heroVisible.value = true;
     startHeavy();
   }
@@ -794,67 +764,67 @@ onBeforeUnmount(() => {
 <style scoped>
 .hero {
   position: relative;
-  min-height: min(980px, 100vh);
+  min-height: min(980px, 100svh);
   padding-top: 96px;
   padding-bottom: 64px;
-  overflow: hidden;
+  overflow: clip; /* ✅ melhor que hidden p/ composição */
   color: rgba(255, 255, 255, 0.92);
-
-  --blue: #2f49ff;
-  --magenta: #ff2fb3;
-  --mint: #2ef2b1;
-  --ice: #bfe8ff;
 
   --bg0: rgba(2, 6, 23, 0.92);
   --bg1: rgba(2, 6, 23, 0.86);
   background: linear-gradient(180deg, var(--bg0), var(--bg1));
 
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-}
-
-.skip {
-  position: absolute;
-  left: 16px;
-  top: 12px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(0, 0, 0, 0.35);
-  color: rgba(255, 255, 255, 0.92);
-  text-decoration: none;
-  transform: translateY(-160%);
-  transition: transform 0.2s ease;
-  z-index: 90;
-}
-.skip:focus {
-  transform: translateY(0);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  isolation: isolate; /* ✅ evita z-index “vazar”/piscar no scroll */
 }
 
 .bg {
   position: absolute;
-  inset: 0;
+  inset: -2px; /* ✅ overscan evita “linha” no scroll */
   z-index: 0;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
-.bg__photo {
+
+/* ✅ img no lugar de background-image (menos repaint) */
+.bg__img {
   position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: 50% 40%;
-  background-repeat: no-repeat;
+  inset: -10vh -4vw; /* ✅ cobre overscroll / bottom flash */
+  width: calc(100% + 8vw);
+  height: calc(100% + 20vh);
+  object-fit: cover;
+  object-position: 50% 40%;
   transform-origin: center;
+  will-change: transform, opacity;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
+
 @media (max-width: 1024px) {
-  .bg__photo {
-    background-position: 50% 32%;
+  .bg__img {
+    object-position: 50% 32%;
+    inset: -10vh -6vw;
+    width: calc(100% + 12vw);
   }
+}
+
+.bg__tail {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: -160px; /* ✅ “continua” o mesmo clima ao descer */
+  height: 220px;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.75) 45%, rgba(2, 6, 23, 0.92) 100%);
+  pointer-events: none;
+  z-index: 3;
 }
 
 .bg__overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 2;
 }
 .bg__overlay--vignette {
   background: radial-gradient(900px 520px at 18% 14%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.62));
@@ -870,6 +840,7 @@ onBeforeUnmount(() => {
 .bg__grid {
   position: absolute;
   inset: -2px;
+  z-index: 2;
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
@@ -885,6 +856,7 @@ onBeforeUnmount(() => {
   border-radius: 999px;
   filter: blur(28px);
   opacity: 0.75;
+  z-index: 2;
 }
 .bg__glow--a {
   left: -260px;
@@ -896,9 +868,19 @@ onBeforeUnmount(() => {
   bottom: -380px;
   background: radial-gradient(circle at 30% 30%, rgba(46, 242, 177, 0.14), transparent 60%);
 }
+
+/* ✅ mobile: reduz blur pesado (melhora travadinha inicial) */
+@media (max-width: 1024px) {
+  .bg__glow {
+    filter: blur(18px);
+    opacity: 0.6;
+  }
+}
+
 .bg__noise {
   position: absolute;
   inset: 0;
+  z-index: 2;
   opacity: 0.06;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
@@ -909,9 +891,8 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 2;
+  z-index: 3;
   mask-image: radial-gradient(900px 520px at 20% 10%, black, transparent 70%);
-  opacity: 1;
 }
 .snow::before,
 .snow::after {
@@ -925,8 +906,6 @@ onBeforeUnmount(() => {
   transform: translate3d(0, -10%, 0);
   filter: drop-shadow(0 10px 24px rgba(255, 255, 255, 0.08));
 }
-
-/* camada 1 (grãos maiores) */
 .snow::before {
   --snowDur: 12s;
   --snowOp: 0.42;
@@ -937,8 +916,6 @@ onBeforeUnmount(() => {
     radial-gradient(circle, rgba(255, 255, 255, 0.6) 0 1.6px, transparent 3px);
   background-position: 0 0, 70px 40px, 140px 120px;
 }
-
-/* camada 2 (grãos menores e mais rápidos) */
 .snow::after {
   --snowDur: 9s;
   --snowOp: 0.28;
@@ -949,7 +926,6 @@ onBeforeUnmount(() => {
   background-position: 30px 20px, 120px 90px;
   animation-name: snowFall2;
 }
-
 @keyframes snowFall {
   0% { transform: translate3d(0, -10%, 0); }
   100% { transform: translate3d(12px, 110%, 0); }
@@ -964,7 +940,7 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 .shard {
   position: absolute;
@@ -975,7 +951,6 @@ onBeforeUnmount(() => {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
   box-shadow: 0 20px 70px rgba(0, 0, 0, 0.25);
   transform: rotate(18deg);
-  backdrop-filter: blur(10px);
   opacity: 0.22;
 }
 .s1 { left: 4%; top: 26%; width: 130px; height: 200px; opacity: 0.18; }
@@ -990,6 +965,7 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   padding: 0 18px;
 }
+
 .hero__grid {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
@@ -1015,7 +991,6 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.06);
   font-weight: 900;
   font-size: 12px;
-  letter-spacing: 0.2px;
 }
 .dot {
   width: 8px;
@@ -1024,10 +999,7 @@ onBeforeUnmount(() => {
   background: rgba(46, 242, 177, 0.95);
   box-shadow: 0 0 0 6px rgba(46, 242, 177, 0.12);
 }
-.mini {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-}
+.mini { font-size: 12px; color: rgba(255, 255, 255, 0.72); }
 .mini strong { color: rgba(255, 255, 255, 0.92); }
 
 .title {
@@ -1048,10 +1020,7 @@ onBeforeUnmount(() => {
   row-gap: 0.08em;
   max-width: 18ch;
 }
-.title__word {
-  display: inline-flex;
-  white-space: nowrap;
-}
+.title__word { display: inline-flex; white-space: nowrap; }
 .title__char {
   display: inline-block;
   background: linear-gradient(
@@ -1105,7 +1074,10 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
   padding: 12px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+}
+@media (max-width: 1024px) {
+  .metaCard { backdrop-filter: blur(8px); }
 }
 .metaCard--wide { grid-column: 1 / -1; }
 .metaLabel {
@@ -1115,18 +1087,8 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
 }
-.metaValue {
-  display: block;
-  margin-top: 6px;
-  font-size: 16px;
-  font-weight: 950;
-}
-.metaHint {
-  display: block;
-  margin-top: 3px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-}
+.metaValue { display: block; margin-top: 6px; font-size: 16px; font-weight: 950; }
+.metaHint { display: block; margin-top: 3px; font-size: 12px; color: rgba(255, 255, 255, 0.72); }
 .kbd {
   display: inline-block;
   padding: 2px 8px;
@@ -1143,6 +1105,7 @@ onBeforeUnmount(() => {
   margin-bottom: 10px;
 }
 .btn {
+  position: relative; /* ✅ corrige o “position:” quebrado */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1155,24 +1118,12 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.92);
   font-weight: 950;
-  letter-spacing: 0.2px;
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  will-change: transform;
 }
-.btn:hover {
-  color: white;
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.18);
-}
-.btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
-}
-.btn--primary {
-  border-color: rgba(46, 242, 177, 0.22);
-  background: #203c83;
-  color: rgba(255, 255, 255, 0.96);
-}
+.btn:hover { color: white; transform: translateY(-1px); background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.18); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
+.btn--primary { border-color: rgba(46, 242, 177, 0.22); background: #203c83; color: rgba(255, 255, 255, 0.96); }
 .btn--ghost { background: rgba(255, 255, 255, 0.06); }
 .btn--chip { background: rgba(0, 0, 0, 0.18); }
 .btn__icon { opacity: 0.9; }
@@ -1188,27 +1139,13 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.06);
   padding: 12px;
+  backdrop-filter: blur(10px);
+}
+@media (max-width: 1024px) {
+  .stat { backdrop-filter: blur(8px); }
 }
 .stat strong { display: block; font-weight: 950; font-size: 13px; }
 .stat span { display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.72); font-size: 12px; }
-
-.scroll {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 12px;
-  user-select: none;
-}
-.scroll__line {
-  width: 2px;
-  height: 28px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(46, 242, 177, 0.95), rgba(255, 47, 179, 0.55), rgba(47, 73, 255, 0.25));
-  transform-origin: bottom;
-}
-.scroll__text { letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* Right card */
 .right { transition: transform 0.18s ease; }
@@ -1220,6 +1157,9 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(14px);
   overflow: hidden;
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
+}
+@media (max-width: 1024px) {
+  .card { backdrop-filter: blur(10px); }
 }
 .card__glow {
   position: absolute;
@@ -1266,10 +1206,7 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
 }
-.iconBtn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
-}
+.iconBtn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
 
 .card__main { padding: 16px 16px 14px; }
 .card__title { margin: 8px 0 6px; font-weight: 980; letter-spacing: -0.2px; font-size: 20px; }
@@ -1291,10 +1228,7 @@ onBeforeUnmount(() => {
   outline: none;
 }
 .quick__input::placeholder { color: rgba(255, 255, 255, 0.62); }
-.quick__input:focus {
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
-  border-color: rgba(47, 73, 255, 0.35);
-}
+.quick__input:focus { box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); border-color: rgba(47, 73, 255, 0.35); }
 .quick__btn {
   height: 44px;
   padding: 0 14px;
@@ -1381,28 +1315,6 @@ onBeforeUnmount(() => {
   100% { box-shadow: 0 0 0 0 rgba(46, 242, 177, 0); }
 }
 
-/* clouds divider */
-:global(.clouds) {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  pointer-events: none;
-  z-index: 30;
-  height: clamp(120px, 12vw, 260px);
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  background-size: 120% auto;
-  filter: drop-shadow(0 14px 35px rgba(0, 0, 0, 0.22));
-  opacity: 0.98;
-}
-:global(.clouds--bottom) { bottom: -1px; }
-@media (min-width: 1025px) {
-  :global(.clouds) { background-image: url("/clouds/D.svg"); }
-}
-@media (max-width: 1024px) {
-  :global(.clouds) { background-image: url("/clouds/M.svg"); background-size: 140% auto; }
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
   .hero { padding-top: 90px; }
@@ -1418,7 +1330,7 @@ onBeforeUnmount(() => {
   .pulse { animation: none !important; }
   .snow::before,
   .snow::after { animation: none !important; display: none !important; }
-  .btn, .chip, .miniCta, .right, .res, .skip { transition: none !important; }
+  .btn, .chip, .miniCta, .right, .res { transition: none !important; }
 }
 
 .srOnly {
