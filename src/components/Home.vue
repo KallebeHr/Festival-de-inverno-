@@ -5,17 +5,10 @@
     class="hero"
     aria-label="Abertura do Festival de Inverno de Pedro II — Edição 2026"
   >
-    <!-- BG -->
+    <!-- BG (SEM <img>) -->
     <div class="bg" aria-hidden="true">
-      <!-- ✅ troca desktop/mobile sem background-image inline (menos repaint/jank) -->
-      <img
-        class="bg__img"
-        :src="isMobile ? bgMobile : bgDesktop"
-        alt=""
-        decoding="async"
-        fetchpriority="high"
-        draggable="false"
-      />
+      <!-- ✅ foto via CSS (desktop/mobile por media query) -->
+      <div class="bg__photo" data-bg="photo"></div>
 
       <!-- overlays -->
       <div class="bg__overlay bg__overlay--vignette"></div>
@@ -26,7 +19,7 @@
       <div class="bg__glow bg__glow--b" data-bg="glowB"></div>
       <div class="bg__noise"></div>
 
-      <!-- ✅ snow ultra leve (mantém) -->
+      <!-- ✅ snow ultra leve -->
       <div class="snow" data-bg="snow" aria-hidden="true"></div>
 
       <!-- shards (some no mobile) -->
@@ -37,7 +30,7 @@
         <span class="shard s4" data-bg="shard"></span>
       </div>
 
-      <!-- ✅ “tail” para não dar flash na borda inferior ao scroll -->
+      <!-- ✅ “tail” anti-flash na borda inferior -->
       <div class="bg__tail" aria-hidden="true"></div>
     </div>
 
@@ -70,8 +63,8 @@
           </h1>
 
           <p class="subtitle" data-anim="subtitle">
-            Programação completa, mapa dos palcos, guia de hospedagem, fotos públicas e comunicados — tudo organizado
-            pra você curtir sem se perder.
+            Programação completa, mapa dos palcos, guia de hospedagem, fotos públicas e comunicados — tudo organizado pra você curtir
+            sem se perder.
           </p>
 
           <div class="meta" data-anim="meta" aria-label="Informações rápidas">
@@ -175,13 +168,7 @@
               </div>
 
               <div class="results" data-anim="results" aria-label="Resultados da busca">
-                <button
-                  v-for="item in filtered.slice(0, 4)"
-                  :key="item.id"
-                  class="res"
-                  type="button"
-                  @click="go(item.hash)"
-                >
+                <button v-for="item in filtered.slice(0, 4)" :key="item.id" class="res" type="button" @click="go(item.hash)">
                   <span class="res__name">{{ item.label }}</span>
                   <span class="res__desc">{{ item.desc }}</span>
                   <span class="res__arrow" aria-hidden="true">↗</span>
@@ -214,8 +201,14 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
-import bgDesktop from "/bg/bgD.png";
-import bgMobile from "/bg/bgM.png";
+/**
+ * ✅ Agora o BG é 100% CSS (sem <img>).
+ * Passe as URLs/paths das imagens por props (desktop e mobile).
+ */
+const props = defineProps<{
+  bgDesktop: string;
+  bgMobile: string;
+}>();
 
 // ✅ Ajuste para a data real do festival (Edição 2026)
 const FESTIVAL_DATE_ISO = "2026-06-20T18:00:00-03:00";
@@ -244,7 +237,6 @@ const reduce = ref(false);
 
 const onMobileChange = () => (isMobile.value = mmMobile?.matches ?? false);
 const onReduceChange = () => (reduce.value = mmReduce?.matches ?? false);
-
 const reduceMotion = () => reduce.value;
 
 // ✅ título por palavras (evita quebrar palavra no meio)
@@ -375,7 +367,7 @@ function killLoops() {
 
 type SelMap = {
   el: HTMLElement;
-  img: HTMLImageElement | null;
+  photo: HTMLElement | null;
   grid: Element | null;
   glowA: Element | null;
   glowB: Element | null;
@@ -404,7 +396,7 @@ function selectAll(): SelMap | null {
 
   return {
     el,
-    img: el.querySelector(".bg__img"),
+    photo: el.querySelector('[data-bg="photo"]'),
     grid: el.querySelector('[data-bg="grid"]'),
     glowA: el.querySelector('[data-bg="glowA"]'),
     glowB: el.querySelector('[data-bg="glowB"]'),
@@ -440,7 +432,7 @@ function setupIntro() {
 
   const ctx = gsap.context(() => {
     const {
-      img,
+      photo,
       grid,
       glowA,
       glowB,
@@ -463,8 +455,8 @@ function setupIntro() {
       footer,
     } = sel;
 
-    // ✅ animações só com transform/opacity (evita “layout thrash”)
-    gsap.set(img, { opacity: 0, scale: 1.08 });
+    // ✅ animações só com transform/opacity (sem layout thrash)
+    gsap.set(photo, { opacity: 0, scale: 1.06 });
     gsap.set([glowA, glowB], { opacity: 0 });
     gsap.set(grid, { opacity: 0, y: -8 });
     gsap.set(snow, { opacity: 0 });
@@ -479,8 +471,8 @@ function setupIntro() {
 
     introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    introTl.to(img, { opacity: 1, duration: 0.5 }, 0);
-    introTl.to(img, { scale: 1.02, duration: 1.4 }, 0.05);
+    introTl.to(photo, { opacity: 1, duration: 0.45 }, 0);
+    introTl.to(photo, { scale: 1.01, duration: 1.35 }, 0.05);
 
     introTl.to(grid, { opacity: 0.18, y: 0, duration: 0.8 }, 0.08);
     introTl.to(glowA, { opacity: 0.9, duration: 0.8 }, 0.14);
@@ -528,13 +520,13 @@ function setupAmbientLoops() {
   killLoops();
 
   const el = root.value;
-  const img = el.querySelector(".bg__img");
+  const photo = el.querySelector('[data-bg="photo"]');
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = Array.from(el.querySelectorAll('[data-bg="shard"]'));
   const cardGlow = el.querySelector(".card__glow");
 
-  loops.push(gsap.to(img, { scale: 1.04, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(photo, { scale: 1.03, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" }));
   loops.push(gsap.to(glowA, { x: 24, y: 16, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" }));
   loops.push(gsap.to(glowB, { x: -22, y: 20, duration: 8.3, yoyo: true, repeat: -1, ease: "sine.inOut" }));
 
@@ -557,20 +549,20 @@ function setupAmbientLoops() {
 
 let parallaxInited = false;
 function setupScrollParallax() {
-  // ✅ parallax/ScrollTrigger só desktop (evita “flash”/repaint no mobile)
+  // ✅ parallax/ScrollTrigger só desktop
   if (parallaxInited) return;
   if (!root.value || !gsap || !ScrollTrigger || reduceMotion() || isMobile.value) return;
 
   const el = root.value;
 
-  const img = el.querySelector(".bg__img");
+  const photo = el.querySelector('[data-bg="photo"]');
   const grid = el.querySelector('[data-bg="grid"]');
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = el.querySelectorAll('[data-bg="shard"]');
   const cardWrap = el.querySelector('[data-anim="card"]');
 
-  gsap.to(img, { y: 28, scale: 1.06, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(photo, { y: 24, scale: 1.05, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
   gsap.to(grid, { y: 42, opacity: 0.1, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
   gsap.to(glowA, { y: 80, x: 34, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
   gsap.to(glowB, { y: 110, x: -28, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
@@ -582,7 +574,7 @@ function setupScrollParallax() {
 
 /* ===== Tilt (rAF) ===== */
 function setupTilt() {
-  // ✅ tilt só desktop (mobile = mais leve)
+  // ✅ tilt só desktop
   if (!tiltEl.value || reduceMotion() || isMobile.value) return;
 
   const el = tiltEl.value;
@@ -646,9 +638,7 @@ async function startHeavy() {
   if (started) return;
   started = true;
 
-  // ✅ evita “travada” no primeiro paint do mobile:
-  // 1) espera DOM assentar
-  // 2) espera 2 RAFs (primeiro frame + layout)
+  // ✅ evita “travada” no primeiro paint:
   await nextTick();
   await new Promise<void>((r) => requestAnimationFrame(() => r()));
   await new Promise<void>((r) => requestAnimationFrame(() => r()));
@@ -658,7 +648,6 @@ async function startHeavy() {
     return;
   }
 
-  // ✅ no mobile, carrega GSAP mas sem loops/parallax (bem mais leve)
   await ensureGsap();
 
   setupIntro();
@@ -767,7 +756,7 @@ onBeforeUnmount(() => {
   min-height: min(980px, 100svh);
   padding-top: 96px;
   padding-bottom: 64px;
-  overflow: clip; /* ✅ melhor que hidden p/ composição */
+  overflow: clip;
   color: rgba(255, 255, 255, 0.92);
 
   --bg0: rgba(2, 6, 23, 0.92);
@@ -775,51 +764,56 @@ onBeforeUnmount(() => {
   background: linear-gradient(180deg, var(--bg0), var(--bg1));
 
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
-  isolation: isolate; /* ✅ evita z-index “vazar”/piscar no scroll */
+  isolation: isolate;
 }
 
+/* ===== BG layer ===== */
 .bg {
   position: absolute;
-  inset: -2px; /* ✅ overscan evita “linha” no scroll */
-  z-index: 0;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* ✅ img no lugar de background-image (menos repaint) */
-.bg__img {
-  position: absolute;
-  inset: -10vh -4vw; /* ✅ cobre overscroll / bottom flash */
-  width: calc(100% + 8vw);
-  height: calc(100% + 20vh);
-  object-fit: cover;
-  object-position: 50% 40%;
-  transform-origin: center;
-  will-change: transform, opacity;
-  user-select: none;
-  -webkit-user-drag: none;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
+  transform: translateZ(0);
+  contain: paint;
 }
 
+/* ✅ foto via CSS + “overscan” para evitar flash/linha no scroll */
+.bg__photo {
+  position: absolute;
+  inset: -10% -6%;
+  z-index: 1;
+
+  background-image: url(v-bind("props.bgDesktop"));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  filter: saturate(1.05) contrast(1.05);
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+}
+
+/* ✅ mobile troca a imagem (sem JS / sem inline style) */
 @media (max-width: 1024px) {
-  .bg__img {
-    object-position: 50% 32%;
-    inset: -10vh -6vw;
-    width: calc(100% + 12vw);
+  .bg__photo {
+    inset: -12% -8%;
+    background-image: url(v-bind("props.bgMobile"));
+    filter: saturate(1.02) contrast(1.04);
   }
 }
 
+/* tail anti-flash (continua útil em alguns browsers) */
 .bg__tail {
   position: absolute;
-  left: -2px;
-  right: -2px;
-  bottom: -160px; /* ✅ “continua” o mesmo clima ao descer */
-  height: 220px;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.75) 45%, rgba(2, 6, 23, 0.92) 100%);
-  pointer-events: none;
-  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: -120px;
+  height: 160px;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0), rgba(2, 6, 23, 0.92));
 }
 
+/* overlays */
 .bg__overlay {
   position: absolute;
   inset: 0;
@@ -857,6 +851,7 @@ onBeforeUnmount(() => {
   filter: blur(28px);
   opacity: 0.75;
   z-index: 2;
+  transform: translateZ(0);
 }
 .bg__glow--a {
   left: -260px;
@@ -869,7 +864,6 @@ onBeforeUnmount(() => {
   background: radial-gradient(circle at 30% 30%, rgba(46, 242, 177, 0.14), transparent 60%);
 }
 
-/* ✅ mobile: reduz blur pesado (melhora travadinha inicial) */
 @media (max-width: 1024px) {
   .bg__glow {
     filter: blur(18px);
@@ -927,12 +921,20 @@ onBeforeUnmount(() => {
   animation-name: snowFall2;
 }
 @keyframes snowFall {
-  0% { transform: translate3d(0, -10%, 0); }
-  100% { transform: translate3d(12px, 110%, 0); }
+  0% {
+    transform: translate3d(0, -10%, 0);
+  }
+  100% {
+    transform: translate3d(12px, 110%, 0);
+  }
 }
 @keyframes snowFall2 {
-  0% { transform: translate3d(0, -10%, 0); }
-  100% { transform: translate3d(-10px, 110%, 0); }
+  0% {
+    transform: translate3d(0, -10%, 0);
+  }
+  100% {
+    transform: translate3d(-10px, 110%, 0);
+  }
 }
 
 /* shards */
@@ -953,11 +955,39 @@ onBeforeUnmount(() => {
   transform: rotate(18deg);
   opacity: 0.22;
 }
-.s1 { left: 4%; top: 26%; width: 130px; height: 200px; opacity: 0.18; }
-.s2 { right: 8%; top: 18%; width: 170px; height: 240px; opacity: 0.14; transform: rotate(-12deg); }
-.s3 { right: 18%; bottom: 8%; width: 140px; height: 210px; opacity: 0.12; transform: rotate(22deg); }
-.s4 { left: 20%; bottom: 10%; width: 160px; height: 240px; opacity: 0.1; transform: rotate(-18deg); }
+.s1 {
+  left: 4%;
+  top: 26%;
+  width: 130px;
+  height: 200px;
+  opacity: 0.18;
+}
+.s2 {
+  right: 8%;
+  top: 18%;
+  width: 170px;
+  height: 240px;
+  opacity: 0.14;
+  transform: rotate(-12deg);
+}
+.s3 {
+  right: 18%;
+  bottom: 8%;
+  width: 140px;
+  height: 210px;
+  opacity: 0.12;
+  transform: rotate(22deg);
+}
+.s4 {
+  left: 20%;
+  bottom: 10%;
+  width: 160px;
+  height: 240px;
+  opacity: 0.1;
+  transform: rotate(-18deg);
+}
 
+/* ===== Layout ===== */
 .wrap {
   position: relative;
   z-index: 5;
@@ -972,7 +1002,9 @@ onBeforeUnmount(() => {
   gap: 18px;
   align-items: center;
 }
-.left { padding: 10px 0; }
+.left {
+  padding: 10px 0;
+}
 
 .kicker {
   display: flex;
@@ -999,8 +1031,13 @@ onBeforeUnmount(() => {
   background: rgba(46, 242, 177, 0.95);
   box-shadow: 0 0 0 6px rgba(46, 242, 177, 0.12);
 }
-.mini { font-size: 12px; color: rgba(255, 255, 255, 0.72); }
-.mini strong { color: rgba(255, 255, 255, 0.92); }
+.mini {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+.mini strong {
+  color: rgba(255, 255, 255, 0.92);
+}
 
 .title {
   margin: 0;
@@ -1020,15 +1057,13 @@ onBeforeUnmount(() => {
   row-gap: 0.08em;
   max-width: 18ch;
 }
-.title__word { display: inline-flex; white-space: nowrap; }
+.title__word {
+  display: inline-flex;
+  white-space: nowrap;
+}
 .title__char {
   display: inline-block;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.96),
-    rgba(191, 232, 255, 0.88),
-    rgba(255, 255, 255, 0.96)
-  );
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(191, 232, 255, 0.88), rgba(255, 255, 255, 0.96));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -1053,7 +1088,9 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.92);
   font-weight: 950;
 }
-.sublineText { opacity: 0.9; }
+.sublineText {
+  opacity: 0.9;
+}
 
 .subtitle {
   margin: 12px 0 16px;
@@ -1077,9 +1114,13 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(12px);
 }
 @media (max-width: 1024px) {
-  .metaCard { backdrop-filter: blur(8px); }
+  .metaCard {
+    backdrop-filter: blur(8px);
+  }
 }
-.metaCard--wide { grid-column: 1 / -1; }
+.metaCard--wide {
+  grid-column: 1 / -1;
+}
 .metaLabel {
   display: block;
   font-size: 11px;
@@ -1087,8 +1128,18 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
 }
-.metaValue { display: block; margin-top: 6px; font-size: 16px; font-weight: 950; }
-.metaHint { display: block; margin-top: 3px; font-size: 12px; color: rgba(255, 255, 255, 0.72); }
+.metaValue {
+  display: block;
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 950;
+}
+.metaHint {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
 .kbd {
   display: inline-block;
   padding: 2px 8px;
@@ -1105,7 +1156,7 @@ onBeforeUnmount(() => {
   margin-bottom: 10px;
 }
 .btn {
-  position: relative; /* ✅ corrige o “position:” quebrado */
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1121,12 +1172,30 @@ onBeforeUnmount(() => {
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
   will-change: transform;
 }
-.btn:hover { color: white; transform: translateY(-1px); background: rgba(255, 255, 255, 0.09); border-color: rgba(255, 255, 255, 0.18); }
-.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
-.btn--primary { border-color: rgba(46, 242, 177, 0.22); background: #203c83; color: rgba(255, 255, 255, 0.96); }
-.btn--ghost { background: rgba(255, 255, 255, 0.06); }
-.btn--chip { background: rgba(0, 0, 0, 0.18); }
-.btn__icon { opacity: 0.9; }
+.btn:hover {
+  color: white;
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+}
+.btn--primary {
+  border-color: rgba(46, 242, 177, 0.22);
+  background: #203c83;
+  color: rgba(255, 255, 255, 0.96);
+}
+.btn--ghost {
+  background: rgba(255, 255, 255, 0.06);
+}
+.btn--chip {
+  background: rgba(0, 0, 0, 0.18);
+}
+.btn__icon {
+  opacity: 0.9;
+}
 
 .stats {
   display: grid;
@@ -1142,13 +1211,26 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(10px);
 }
 @media (max-width: 1024px) {
-  .stat { backdrop-filter: blur(8px); }
+  .stat {
+    backdrop-filter: blur(8px);
+  }
 }
-.stat strong { display: block; font-weight: 950; font-size: 13px; }
-.stat span { display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.72); font-size: 12px; }
+.stat strong {
+  display: block;
+  font-weight: 950;
+  font-size: 13px;
+}
+.stat span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+}
 
 /* Right card */
-.right { transition: transform 0.18s ease; }
+.right {
+  transition: transform 0.18s ease;
+}
 .card {
   position: relative;
   border-radius: 26px;
@@ -1159,7 +1241,9 @@ onBeforeUnmount(() => {
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
 }
 @media (max-width: 1024px) {
-  .card { backdrop-filter: blur(10px); }
+  .card {
+    backdrop-filter: blur(10px);
+  }
 }
 .card__glow {
   position: absolute;
@@ -1206,11 +1290,26 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.92);
   cursor: pointer;
 }
-.iconBtn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
+.iconBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+}
 
-.card__main { padding: 16px 16px 14px; }
-.card__title { margin: 8px 0 6px; font-weight: 980; letter-spacing: -0.2px; font-size: 20px; }
-.card__desc { margin: 0 0 12px; color: rgba(255, 255, 255, 0.78); line-height: 1.6; font-size: 13px; }
+.card__main {
+  padding: 16px 16px 14px;
+}
+.card__title {
+  margin: 8px 0 6px;
+  font-weight: 980;
+  letter-spacing: -0.2px;
+  font-size: 20px;
+}
+.card__desc {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+  font-size: 13px;
+}
 
 .quick {
   display: grid;
@@ -1227,8 +1326,13 @@ onBeforeUnmount(() => {
   padding: 0 14px;
   outline: none;
 }
-.quick__input::placeholder { color: rgba(255, 255, 255, 0.62); }
-.quick__input:focus { box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); border-color: rgba(47, 73, 255, 0.35); }
+.quick__input::placeholder {
+  color: rgba(255, 255, 255, 0.62);
+}
+.quick__input:focus {
+  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  border-color: rgba(47, 73, 255, 0.35);
+}
 .quick__btn {
   height: 44px;
   padding: 0 14px;
@@ -1239,9 +1343,17 @@ onBeforeUnmount(() => {
   font-weight: 900;
   cursor: pointer;
 }
-.quick__btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.quick__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 
-.card__chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+.card__chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 12px;
+}
 .chip {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(0, 0, 0, 0.14);
@@ -1253,10 +1365,21 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
-.chip:hover { transform: translateY(-1px); border-color: rgba(46, 242, 177, 0.25); background: rgba(0, 0, 0, 0.18); }
-.chip:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
+.chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(46, 242, 177, 0.25);
+  background: rgba(0, 0, 0, 0.18);
+}
+.chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+}
 
-.results { display: grid; gap: 8px; margin-bottom: 12px; }
+.results {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 .res {
   width: 100%;
   text-align: left;
@@ -1269,12 +1392,28 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
 }
-.res:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.16); }
-.res__name { font-weight: 950; font-size: 13px; }
-.res__desc { color: rgba(255, 255, 255, 0.72); font-size: 12px; grid-column: 1 / 2; }
-.res__arrow { opacity: 0.85; }
+.res:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+.res__name {
+  font-weight: 950;
+  font-size: 13px;
+}
+.res__desc {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  grid-column: 1 / 2;
+}
+.res__arrow {
+  opacity: 0.85;
+}
 
-.card__cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.card__cta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 .miniCta {
   display: inline-flex;
   align-items: center;
@@ -1289,8 +1428,14 @@ onBeforeUnmount(() => {
   font-size: 12px;
   transition: transform 0.18s ease, background 0.18s ease;
 }
-.miniCta:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.09); }
-.miniCta:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25); }
+.miniCta:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+}
+.miniCta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+}
 
 .card__footer {
   display: flex;
@@ -1310,27 +1455,56 @@ onBeforeUnmount(() => {
   animation: pulse 1.6s ease-in-out infinite;
 }
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(46, 242, 177, 0.22); }
-  70% { box-shadow: 0 0 0 12px rgba(46, 242, 177, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(46, 242, 177, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 242, 177, 0.22);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(46, 242, 177, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 242, 177, 0);
+  }
 }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .hero { padding-top: 90px; }
-  .hero__grid { grid-template-columns: 1fr; }
-  .meta { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: 1fr; }
-  .title__line { max-width: 22ch; }
-  .shard { display: none; }
+  .hero {
+    padding-top: 90px;
+  }
+  .hero__grid {
+    grid-template-columns: 1fr;
+  }
+  .meta {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .title__line {
+    max-width: 22ch;
+  }
+  .shard {
+    display: none;
+  }
 }
 
 /* A11y + performance */
 @media (prefers-reduced-motion: reduce) {
-  .pulse { animation: none !important; }
+  .pulse {
+    animation: none !important;
+  }
   .snow::before,
-  .snow::after { animation: none !important; display: none !important; }
-  .btn, .chip, .miniCta, .right, .res { transition: none !important; }
+  .snow::after {
+    animation: none !important;
+    display: none !important;
+  }
+  .btn,
+  .chip,
+  .miniCta,
+  .right,
+  .res {
+    transition: none !important;
+  }
 }
 
 .srOnly {
