@@ -7,12 +7,14 @@
     <div v-else>
        <NavHeader/>
        <router-view />
+       <NavFooter/>
      </div>
   </v-app>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import NavFooter from './components/NavFooter.vue';
 const isLoaded = ref(false);
 
 onMounted(() => {

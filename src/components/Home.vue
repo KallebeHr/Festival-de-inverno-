@@ -5,32 +5,23 @@
     class="hero"
     aria-label="Abertura do Festival de Inverno de Pedro II — Edição 2026"
   >
-    <!-- BG (SEM <img>) -->
+    <!-- BG -->
     <div class="bg" aria-hidden="true">
-      <!-- ✅ foto via CSS (desktop/mobile por media query) -->
-      <div class="bg__photo" data-bg="photo"></div>
+      <!-- ✅ cor sólida (sem imagem) -->
+      <div class="bg__solid"></div>
 
-      <!-- overlays -->
       <div class="bg__overlay bg__overlay--vignette"></div>
-      <div class="bg__overlay bg__overlay--tint"></div>
 
-      <div class="bg__grid" data-bg="grid"></div>
-      <div class="bg__glow bg__glow--a" data-bg="glowA"></div>
-      <div class="bg__glow bg__glow--b" data-bg="glowB"></div>
-      <div class="bg__noise"></div>
 
-      <!-- ✅ snow ultra leve -->
       <div class="snow" data-bg="snow" aria-hidden="true"></div>
 
-      <!-- shards (some no mobile) -->
-      <div class="shards">
+      <div class="shards" aria-hidden="true">
         <span class="shard s1" data-bg="shard"></span>
         <span class="shard s2" data-bg="shard"></span>
         <span class="shard s3" data-bg="shard"></span>
         <span class="shard s4" data-bg="shard"></span>
       </div>
 
-      <!-- ✅ “tail” anti-flash na borda inferior -->
       <div class="bg__tail" aria-hidden="true"></div>
     </div>
 
@@ -47,13 +38,12 @@
             <span class="mini">Edição <strong>2026</strong> • Cultura • Música • Arte • Gastronomia</span>
           </div>
 
-          <h1 class="title" data-anim="title" aria-label="O inverno mais vibrante do Nordeste. Edição 2026.">
-            <span class="title__line" aria-hidden="true">
-              <span v-for="(w, wi) in titleWords" :key="`w-${wi}`" class="title__word" :data-word="wi">
-                <span v-for="(ch, ci) in w.chars" :key="`c-${wi}-${ci}`" class="title__char" data-anim="char">
-                  {{ ch }}
-                </span>
-              </span>
+          <!-- ✅ VLibras: palavras (não letra por letra) -->
+          <h1 class="title" data-anim="title">
+            <span class="title__text">
+              <span class="w w1">Festival</span>
+              <span class="w w2">de</span>
+              <span class="w w3">Inverno</span>
             </span>
 
             <span class="title__subline" data-anim="titleSub">
@@ -63,8 +53,8 @@
           </h1>
 
           <p class="subtitle" data-anim="subtitle">
-            Programação completa, mapa dos palcos, guia de hospedagem, fotos públicas e comunicados — tudo organizado pra você curtir
-            sem se perder.
+            Programação completa, mapa dos palcos, guia de hospedagem, fotos públicas e comunicados — tudo organizado
+            pra você curtir sem se perder.
           </p>
 
           <div class="meta" data-anim="meta" aria-label="Informações rápidas">
@@ -168,7 +158,13 @@
               </div>
 
               <div class="results" data-anim="results" aria-label="Resultados da busca">
-                <button v-for="item in filtered.slice(0, 4)" :key="item.id" class="res" type="button" @click="go(item.hash)">
+                <button
+                  v-for="item in filtered.slice(0, 4)"
+                  :key="item.id"
+                  class="res"
+                  type="button"
+                  @click="go(item.hash)"
+                >
                   <span class="res__name">{{ item.label }}</span>
                   <span class="res__desc">{{ item.desc }}</span>
                   <span class="res__arrow" aria-hidden="true">↗</span>
@@ -201,15 +197,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
-/**
- * ✅ Agora o BG é 100% CSS (sem <img>).
- * Passe as URLs/paths das imagens por props (desktop e mobile).
- */
-const props = defineProps<{
-  bgDesktop: string;
-  bgMobile: string;
-}>();
-
 // ✅ Ajuste para a data real do festival (Edição 2026)
 const FESTIVAL_DATE_ISO = "2026-06-20T18:00:00-03:00";
 
@@ -237,14 +224,8 @@ const reduce = ref(false);
 
 const onMobileChange = () => (isMobile.value = mmMobile?.matches ?? false);
 const onReduceChange = () => (reduce.value = mmReduce?.matches ?? false);
-const reduceMotion = () => reduce.value;
 
-// ✅ título por palavras (evita quebrar palavra no meio)
-const titleText = "Festival de Inverno";
-const titleWords = computed(() => {
-  const words = (titleText || "").trim().split(/\s+/).filter(Boolean);
-  return words.map((w) => ({ raw: w, chars: w.split("") }));
-});
+const reduceMotion = () => reduce.value;
 
 const items = [
   { id: "programacao", label: "Programação", hash: "#programacao", desc: "Dias, palcos e horários." },
@@ -283,7 +264,7 @@ function toggleSave() {
 function openQuick() {
   searchEl.value?.focus?.();
   if (gsap && !reduceMotion()) {
-    gsap.fromTo(".quick", { y: 6, opacity: 0.85 }, { y: 0, opacity: 1, duration: 0.28, ease: "power2.out" });
+    gsap.fromTo(".quick", { y: 6, opacity: 0.85 }, { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" });
   }
 }
 
@@ -347,6 +328,9 @@ async function ensureGsap() {
   const mod = await import("gsap");
   gsap = mod.gsap || mod.default || mod;
 
+  // ✅ Importa ScrollTrigger só se não for mobile e não for reduce-motion
+  if (isMobile.value || reduceMotion()) return;
+
   try {
     const st = await import("gsap/ScrollTrigger");
     ScrollTrigger = st.ScrollTrigger || st.default;
@@ -367,14 +351,14 @@ function killLoops() {
 
 type SelMap = {
   el: HTMLElement;
-  photo: HTMLElement | null;
+  solid: HTMLElement | null;
   grid: Element | null;
   glowA: Element | null;
   glowB: Element | null;
   snow: Element | null;
   shards: NodeListOf<Element>;
   kicker: Element | null;
-  chars: NodeListOf<Element>;
+  title: Element | null;
   titleSub: Element | null;
   subtitle: Element | null;
   meta: Element | null;
@@ -396,7 +380,7 @@ function selectAll(): SelMap | null {
 
   return {
     el,
-    photo: el.querySelector('[data-bg="photo"]'),
+    solid: el.querySelector(".bg__solid"),
     grid: el.querySelector('[data-bg="grid"]'),
     glowA: el.querySelector('[data-bg="glowA"]'),
     glowB: el.querySelector('[data-bg="glowB"]'),
@@ -404,7 +388,7 @@ function selectAll(): SelMap | null {
     shards: el.querySelectorAll('[data-bg="shard"]'),
 
     kicker: el.querySelector('[data-anim="kicker"]'),
-    chars: el.querySelectorAll('[data-anim="char"]'),
+    title: el.querySelector('[data-anim="title"]'),
     titleSub: el.querySelector('[data-anim="titleSub"]'),
     subtitle: el.querySelector('[data-anim="subtitle"]'),
     meta: el.querySelector('[data-anim="meta"]'),
@@ -432,14 +416,14 @@ function setupIntro() {
 
   const ctx = gsap.context(() => {
     const {
-      photo,
+      solid,
       grid,
       glowA,
       glowB,
       snow,
       shards,
       kicker,
-      chars,
+      title,
       titleSub,
       subtitle,
       meta,
@@ -455,15 +439,14 @@ function setupIntro() {
       footer,
     } = sel;
 
-    // ✅ animações só com transform/opacity (sem layout thrash)
-    gsap.set(photo, { opacity: 0, scale: 1.06 });
+    // ✅ só transform/opacity
+    gsap.set(solid, { opacity: 0 });
     gsap.set([glowA, glowB], { opacity: 0 });
     gsap.set(grid, { opacity: 0, y: -8 });
     gsap.set(snow, { opacity: 0 });
     gsap.set(shards, { opacity: 0, y: 10, rotate: (i: number) => (i % 2 ? -14 : 14) });
 
-    gsap.set([kicker, subtitle, meta, actions, stats], { opacity: 0, y: 14 });
-    gsap.set(chars, { opacity: 0, y: 16, rotateX: 70, transformOrigin: "50% 80%" });
+    gsap.set([kicker, title, subtitle, meta, actions, stats], { opacity: 0, y: 14 });
     gsap.set(titleSub, { opacity: 0, y: 10 });
 
     gsap.set(cardWrap, { opacity: 0, y: 16, scale: 0.985 });
@@ -471,39 +454,32 @@ function setupIntro() {
 
     introTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    introTl.to(photo, { opacity: 1, duration: 0.45 }, 0);
-    introTl.to(photo, { scale: 1.01, duration: 1.35 }, 0.05);
+    introTl.to(solid, { opacity: 1, duration: 0.35 }, 0);
 
-    introTl.to(grid, { opacity: 0.18, y: 0, duration: 0.8 }, 0.08);
-    introTl.to(glowA, { opacity: 0.9, duration: 0.8 }, 0.14);
-    introTl.to(glowB, { opacity: 0.8, duration: 0.8 }, 0.2);
-    introTl.to(snow, { opacity: 1, duration: 0.55 }, 0.24);
+    introTl.to(grid, { opacity: 0.18, y: 0, duration: 0.7 }, 0.08);
+    introTl.to(glowA, { opacity: 0.9, duration: 0.7 }, 0.14);
+    introTl.to(glowB, { opacity: 0.8, duration: 0.7 }, 0.2);
+    introTl.to(snow, { opacity: 1, duration: 0.5 }, 0.22);
 
-    introTl.to(kicker, { opacity: 1, y: 0, duration: 0.65 }, 0.2);
-    introTl.to(chars, { opacity: 1, y: 0, rotateX: 0, duration: 0.65, stagger: 0.016 }, 0.28);
-    introTl.to(titleSub, { opacity: 1, y: 0, duration: 0.5 }, 0.56);
-    introTl.to(subtitle, { opacity: 1, y: 0, duration: 0.65 }, 0.5);
+    introTl.to(kicker, { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+    introTl.to(title, { opacity: 1, y: 0, duration: 0.65 }, 0.26);
+    introTl.to(titleSub, { opacity: 1, y: 0, duration: 0.5 }, 0.44);
+    introTl.to(subtitle, { opacity: 1, y: 0, duration: 0.6 }, 0.42);
 
-    introTl.to(meta, { opacity: 1, y: 0, duration: 0.65 }, 0.62);
-    introTl.to(actions, { opacity: 1, y: 0, duration: 0.65 }, 0.7);
-    introTl.to(stats, { opacity: 1, y: 0, duration: 0.7 }, 0.78);
+    introTl.to(meta, { opacity: 1, y: 0, duration: 0.6 }, 0.54);
+    introTl.to(actions, { opacity: 1, y: 0, duration: 0.6 }, 0.62);
+    introTl.to(stats, { opacity: 1, y: 0, duration: 0.65 }, 0.7);
 
-    introTl.to(shards, { opacity: 0.22, y: 0, duration: 0.65, stagger: 0.06 }, 0.86);
+    introTl.to(shards, { opacity: 0.22, y: 0, duration: 0.6, stagger: 0.06 }, 0.78);
 
-    introTl.to(cardWrap, { opacity: 1, y: 0, scale: 1, duration: 0.75 }, 0.7);
-    introTl.to(cardTitle, { opacity: 1, y: 0, duration: 0.5 }, 0.9);
-    introTl.to(cardDesc, { opacity: 1, y: 0, duration: 0.5 }, 0.96);
-    introTl.to(quick, { opacity: 1, y: 0, duration: 0.5 }, 1.02);
-    introTl.to(chips, { opacity: 1, y: 0, duration: 0.55 }, 1.08);
-    introTl.to(results, { opacity: 1, y: 0, duration: 0.55 }, 1.14);
-    introTl.to(cta, { opacity: 1, y: 0, duration: 0.55 }, 1.2);
-    introTl.to(footer, { opacity: 1, y: 0, duration: 0.55 }, 1.26);
-
-    // ✅ “breath” no título (só desktop)
-    if (!isMobile.value) {
-      const titleLine = sel.el.querySelector(".title__line");
-      if (titleLine) introTl.to(titleLine, { y: -2, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut" }, 1.0);
-    }
+    introTl.to(cardWrap, { opacity: 1, y: 0, scale: 1, duration: 0.7 }, 0.6);
+    introTl.to(cardTitle, { opacity: 1, y: 0, duration: 0.45 }, 0.8);
+    introTl.to(cardDesc, { opacity: 1, y: 0, duration: 0.45 }, 0.86);
+    introTl.to(quick, { opacity: 1, y: 0, duration: 0.45 }, 0.92);
+    introTl.to(chips, { opacity: 1, y: 0, duration: 0.5 }, 0.98);
+    introTl.to(results, { opacity: 1, y: 0, duration: 0.5 }, 1.04);
+    introTl.to(cta, { opacity: 1, y: 0, duration: 0.5 }, 1.1);
+    introTl.to(footer, { opacity: 1, y: 0, duration: 0.5 }, 1.16);
   }, root);
 
   revertCtx = () => {
@@ -514,29 +490,26 @@ function setupIntro() {
 }
 
 function setupAmbientLoops() {
-  // ✅ loops só desktop (mobile = zero travamento)
   if (!root.value || !gsap || reduceMotion() || isMobile.value) return;
 
   killLoops();
 
   const el = root.value;
-  const photo = el.querySelector('[data-bg="photo"]');
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = Array.from(el.querySelectorAll('[data-bg="shard"]'));
   const cardGlow = el.querySelector(".card__glow");
 
-  loops.push(gsap.to(photo, { scale: 1.03, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" }));
-  loops.push(gsap.to(glowA, { x: 24, y: 16, duration: 7.6, yoyo: true, repeat: -1, ease: "sine.inOut" }));
-  loops.push(gsap.to(glowB, { x: -22, y: 20, duration: 8.3, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(glowA, { x: 18, y: 12, duration: 8, yoyo: true, repeat: -1, ease: "sine.inOut" }));
+  loops.push(gsap.to(glowB, { x: -16, y: 14, duration: 8.6, yoyo: true, repeat: -1, ease: "sine.inOut" }));
 
   shards.forEach((s, i) => {
     loops.push(
       gsap.to(s, {
-        y: i % 2 ? -12 : -9,
-        x: i % 2 ? 7 : -6,
-        rotate: i % 2 ? -9 : 9,
-        duration: 6 + i * 0.35,
+        y: i % 2 ? -10 : -8,
+        x: i % 2 ? 6 : -5,
+        rotate: i % 2 ? -8 : 8,
+        duration: 6.4 + i * 0.3,
         yoyo: true,
         repeat: -1,
         ease: "sine.inOut",
@@ -544,37 +517,32 @@ function setupAmbientLoops() {
     );
   });
 
-  if (cardGlow) loops.push(gsap.to(cardGlow, { opacity: 1, duration: 2.4, repeat: -1, yoyo: true, ease: "sine.inOut" }));
+  if (cardGlow) loops.push(gsap.to(cardGlow, { opacity: 1, duration: 2.6, repeat: -1, yoyo: true, ease: "sine.inOut" }));
 }
 
 let parallaxInited = false;
 function setupScrollParallax() {
-  // ✅ parallax/ScrollTrigger só desktop
   if (parallaxInited) return;
   if (!root.value || !gsap || !ScrollTrigger || reduceMotion() || isMobile.value) return;
 
   const el = root.value;
-
-  const photo = el.querySelector('[data-bg="photo"]');
   const grid = el.querySelector('[data-bg="grid"]');
   const glowA = el.querySelector('[data-bg="glowA"]');
   const glowB = el.querySelector('[data-bg="glowB"]');
   const shards = el.querySelectorAll('[data-bg="shard"]');
   const cardWrap = el.querySelector('[data-anim="card"]');
 
-  gsap.to(photo, { y: 24, scale: 1.05, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(grid, { y: 42, opacity: 0.1, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(glowA, { y: 80, x: 34, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(glowB, { y: 110, x: -28, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
-  gsap.to(shards, { y: 54, rotate: 6, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true }, stagger: 0.05 });
-  gsap.to(cardWrap, { y: 18, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(grid, { y: 36, opacity: 0.1, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(glowA, { y: 70, x: 28, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(glowB, { y: 96, x: -24, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(shards, { y: 44, rotate: 5, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true }, stagger: 0.05 });
+  gsap.to(cardWrap, { y: 14, scrollTrigger: { trigger: el, start: "top top", end: "bottom top", scrub: true } });
 
   parallaxInited = true;
 }
 
 /* ===== Tilt (rAF) ===== */
 function setupTilt() {
-  // ✅ tilt só desktop
   if (!tiltEl.value || reduceMotion() || isMobile.value) return;
 
   const el = tiltEl.value;
@@ -638,7 +606,6 @@ async function startHeavy() {
   if (started) return;
   started = true;
 
-  // ✅ evita “travada” no primeiro paint:
   await nextTick();
   await new Promise<void>((r) => requestAnimationFrame(() => r()));
   await new Promise<void>((r) => requestAnimationFrame(() => r()));
@@ -651,9 +618,9 @@ async function startHeavy() {
   await ensureGsap();
 
   setupIntro();
-  setupAmbientLoops(); // só desktop
-  setupScrollParallax(); // só desktop
-  setupTilt(); // só desktop
+  setupAmbientLoops();
+  setupScrollParallax();
+  setupTilt();
 
   updateTickState();
 }
@@ -700,7 +667,6 @@ onMounted(() => {
 
   hydratePrefs();
 
-  // ✅ Observer: inicia pesado só quando entra em viewport
   if (root.value && "IntersectionObserver" in window) {
     io = new IntersectionObserver(
       (entries) => {
@@ -759,61 +725,50 @@ onBeforeUnmount(() => {
   overflow: clip;
   color: rgba(255, 255, 255, 0.92);
 
-  --bg0: rgba(2, 6, 23, 0.92);
-  --bg1: rgba(2, 6, 23, 0.86);
-  background: linear-gradient(180deg, var(--bg0), var(--bg1));
+  /* ✅ BG sólido pedido */
+  --cSolid: #316eb9;
 
+  /* ✅ 3 cores principais do componente */
+  --cY: #ede53a;
+  --cB: #4e4efe;
+  --cP: #ed4d93;
+
+  background: var(--cSolid);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
   isolation: isolate;
 }
 
-/* ===== BG layer ===== */
+/* ===== BG ===== */
 .bg {
   position: absolute;
   inset: 0;
   z-index: 1;
-  pointer-events: none;
-  transform: translateZ(0);
-  contain: paint;
 }
 
-/* ✅ foto via CSS + “overscan” para evitar flash/linha no scroll */
-.bg__photo {
+/* ✅ camada sólida (sem imagem) */
+.bg__solid {
   position: absolute;
-  inset: -10% -6%;
+  inset: 0;
   z-index: 1;
-
-  background-image: url(v-bind("props.bgDesktop"));
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  filter: saturate(1.05) contrast(1.05);
-  transform: translate3d(0, 0, 0);
-  will-change: transform, opacity;
+  background: var(--cSolid);
+  transform: translateZ(0);
 }
 
-/* ✅ mobile troca a imagem (sem JS / sem inline style) */
-@media (max-width: 1024px) {
-  .bg__photo {
-    inset: -12% -8%;
-    background-image: url(v-bind("props.bgMobile"));
-    filter: saturate(1.02) contrast(1.04);
-  }
+/* caso ainda exista no template por compat */
+.bg__img {
+  display: none;
 }
 
-/* tail anti-flash (continua útil em alguns browsers) */
 .bg__tail {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -120px;
-  height: 160px;
+  height: 140px;
   z-index: 2;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0), rgba(2, 6, 23, 0.92));
+  background: linear-gradient(180deg, rgba(49, 110, 185, 0), rgba(49, 110, 185, 1));
 }
 
-/* overlays */
 .bg__overlay {
   position: absolute;
   inset: 0;
@@ -821,14 +776,14 @@ onBeforeUnmount(() => {
   z-index: 2;
 }
 .bg__overlay--vignette {
-  background: radial-gradient(900px 520px at 18% 14%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.62));
+  background: radial-gradient(900px 520px at 18% 14%, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.45));
 }
 .bg__overlay--tint {
   background:
-    radial-gradient(720px 420px at 18% 8%, rgba(47, 73, 255, 0.22), transparent 60%),
-    radial-gradient(760px 480px at 78% 26%, rgba(255, 47, 179, 0.12), transparent 60%),
-    radial-gradient(700px 460px at 40% 90%, rgba(46, 242, 177, 0.08), transparent 65%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.62), rgba(2, 6, 23, 0.84));
+    radial-gradient(720px 420px at 18% 8%, color-mix(in srgb, var(--cB) 30%, transparent), transparent 60%),
+    radial-gradient(760px 480px at 78% 26%, color-mix(in srgb, var(--cP) 20%, transparent), transparent 60%),
+    radial-gradient(700px 460px at 42% 92%, color-mix(in srgb, var(--cY) 16%, transparent), transparent 65%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20));
 }
 
 .bg__grid {
@@ -848,22 +803,20 @@ onBeforeUnmount(() => {
   width: 760px;
   height: 760px;
   border-radius: 999px;
+  z-index: 2;
   filter: blur(28px);
   opacity: 0.75;
-  z-index: 2;
-  transform: translateZ(0);
 }
 .bg__glow--a {
   left: -260px;
   top: -300px;
-  background: radial-gradient(circle at 30% 30%, rgba(47, 73, 255, 0.22), transparent 60%);
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--cB) 30%, transparent), transparent 60%);
 }
 .bg__glow--b {
   right: -320px;
   bottom: -380px;
-  background: radial-gradient(circle at 30% 30%, rgba(46, 242, 177, 0.14), transparent 60%);
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--cY) 18%, transparent), transparent 60%);
 }
-
 @media (max-width: 1024px) {
   .bg__glow {
     filter: blur(18px);
@@ -880,7 +833,7 @@ onBeforeUnmount(() => {
   mix-blend-mode: overlay;
 }
 
-/* ✅ Snow ultra-otimizado (0 spans) */
+/* ===== Snow (0 spans) ===== */
 .snow {
   position: absolute;
   inset: 0;
@@ -921,23 +874,15 @@ onBeforeUnmount(() => {
   animation-name: snowFall2;
 }
 @keyframes snowFall {
-  0% {
-    transform: translate3d(0, -10%, 0);
-  }
-  100% {
-    transform: translate3d(12px, 110%, 0);
-  }
+  0% { transform: translate3d(0, -10%, 0); }
+  100% { transform: translate3d(12px, 110%, 0); }
 }
 @keyframes snowFall2 {
-  0% {
-    transform: translate3d(0, -10%, 0);
-  }
-  100% {
-    transform: translate3d(-10px, 110%, 0);
-  }
+  0% { transform: translate3d(0, -10%, 0); }
+  100% { transform: translate3d(-10px, 110%, 0); }
 }
 
-/* shards */
+/* ===== Shards ===== */
 .shards {
   position: absolute;
   inset: 0;
@@ -955,37 +900,10 @@ onBeforeUnmount(() => {
   transform: rotate(18deg);
   opacity: 0.22;
 }
-.s1 {
-  left: 4%;
-  top: 26%;
-  width: 130px;
-  height: 200px;
-  opacity: 0.18;
-}
-.s2 {
-  right: 8%;
-  top: 18%;
-  width: 170px;
-  height: 240px;
-  opacity: 0.14;
-  transform: rotate(-12deg);
-}
-.s3 {
-  right: 18%;
-  bottom: 8%;
-  width: 140px;
-  height: 210px;
-  opacity: 0.12;
-  transform: rotate(22deg);
-}
-.s4 {
-  left: 20%;
-  bottom: 10%;
-  width: 160px;
-  height: 240px;
-  opacity: 0.1;
-  transform: rotate(-18deg);
-}
+.s1 { left: 4%; top: 26%; width: 130px; height: 200px; opacity: 0.18; }
+.s2 { right: 8%; top: 18%; width: 170px; height: 240px; opacity: 0.14; transform: rotate(-12deg); }
+.s3 { right: 18%; bottom: 8%; width: 140px; height: 210px; opacity: 0.12; transform: rotate(22deg); }
+.s4 { left: 20%; bottom: 10%; width: 160px; height: 240px; opacity: 0.1; transform: rotate(-18deg); }
 
 /* ===== Layout ===== */
 .wrap {
@@ -1002,9 +920,7 @@ onBeforeUnmount(() => {
   gap: 18px;
   align-items: center;
 }
-.left {
-  padding: 10px 0;
-}
+.left { padding: 10px 0; }
 
 .kicker {
   display: flex;
@@ -1028,17 +944,13 @@ onBeforeUnmount(() => {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: rgba(46, 242, 177, 0.95);
-  box-shadow: 0 0 0 6px rgba(46, 242, 177, 0.12);
+  background: var(--cY);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--cY) 25%, transparent);
 }
-.mini {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-}
-.mini strong {
-  color: rgba(255, 255, 255, 0.92);
-}
+.mini { font-size: 12px; color: rgba(255, 255, 255, 0.72); }
+.mini strong { color: rgba(255, 255, 255, 0.92); }
 
+/* ===== Title (por palavras) ===== */
 .title {
   margin: 0;
   font-weight: 1000;
@@ -1049,26 +961,39 @@ onBeforeUnmount(() => {
   overflow-wrap: normal;
   hyphens: none;
 }
-.title__line {
+.title__text {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  column-gap: 0.18em;
-  row-gap: 0.08em;
+  gap: 0.18em;
   max-width: 18ch;
 }
-.title__word {
-  display: inline-flex;
-  white-space: nowrap;
-}
-.title__char {
-  display: inline-block;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(191, 232, 255, 0.88), rgba(255, 255, 255, 0.96));
+.w { white-space: nowrap; display: inline-block; }
+
+.w1 {
+  background: white;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
 }
+.w2 {
+    background: white;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+.w3 {
+    background: white;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
 .title__subline {
   display: flex;
   align-items: center;
@@ -1088,9 +1013,7 @@ onBeforeUnmount(() => {
   color: rgba(255, 255, 255, 0.92);
   font-weight: 950;
 }
-.sublineText {
-  opacity: 0.9;
-}
+.sublineText { opacity: 0.9; }
 
 .subtitle {
   margin: 12px 0 16px;
@@ -1100,6 +1023,7 @@ onBeforeUnmount(() => {
   max-width: 56ch;
 }
 
+/* ===== Meta ===== */
 .meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1114,13 +1038,9 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(12px);
 }
 @media (max-width: 1024px) {
-  .metaCard {
-    backdrop-filter: blur(8px);
-  }
+  .metaCard { backdrop-filter: blur(8px); }
 }
-.metaCard--wide {
-  grid-column: 1 / -1;
-}
+.metaCard--wide { grid-column: 1 / -1; }
 .metaLabel {
   display: block;
   font-size: 11px;
@@ -1128,18 +1048,8 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
 }
-.metaValue {
-  display: block;
-  margin-top: 6px;
-  font-size: 16px;
-  font-weight: 950;
-}
-.metaHint {
-  display: block;
-  margin-top: 3px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
-}
+.metaValue { display: block; margin-top: 6px; font-size: 16px; font-weight: 950; }
+.metaHint { display: block; margin-top: 3px; font-size: 12px; color: rgba(255, 255, 255, 0.72); }
 .kbd {
   display: inline-block;
   padding: 2px 8px;
@@ -1149,6 +1059,7 @@ onBeforeUnmount(() => {
   font-weight: 950;
 }
 
+/* ===== Actions ===== */
 .actions {
   display: flex;
   gap: 10px;
@@ -1180,23 +1091,18 @@ onBeforeUnmount(() => {
 }
 .btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cB) 35%, transparent);
 }
 .btn--primary {
-  border-color: rgba(46, 242, 177, 0.22);
-  background: #203c83;
+  border-color: color-mix(in srgb, var(--cY) 30%, transparent);
+  background: rgba(78, 78, 254, 0.28);
   color: rgba(255, 255, 255, 0.96);
 }
-.btn--ghost {
-  background: rgba(255, 255, 255, 0.06);
-}
-.btn--chip {
-  background: rgba(0, 0, 0, 0.18);
-}
-.btn__icon {
-  opacity: 0.9;
-}
+.btn--ghost { background: rgba(255, 255, 255, 0.06); }
+.btn--chip { background: rgba(0, 0, 0, 0.18); }
+.btn__icon { opacity: 0.9; }
 
+/* ===== Stats ===== */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1211,26 +1117,14 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(10px);
 }
 @media (max-width: 1024px) {
-  .stat {
-    backdrop-filter: blur(8px);
-  }
+  .stat { backdrop-filter: blur(8px); }
 }
-.stat strong {
-  display: block;
-  font-weight: 950;
-  font-size: 13px;
-}
-.stat span {
-  display: block;
-  margin-top: 4px;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 12px;
-}
+.stat strong { display: block; font-weight: 950; font-size: 13px; }
+.stat span { display: block; margin-top: 4px; color: rgba(255, 255, 255, 0.72); font-size: 12px; }
 
-/* Right card */
-.right {
-  transition: transform 0.18s ease;
-}
+/* ===== Right card ===== */
+.right { transition: transform 0.18s ease; }
+
 .card {
   position: relative;
   border-radius: 26px;
@@ -1241,20 +1135,18 @@ onBeforeUnmount(() => {
   box-shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
 }
 @media (max-width: 1024px) {
-  .card {
-    backdrop-filter: blur(10px);
-  }
+  .card { backdrop-filter: blur(10px); }
 }
 .card__glow {
   position: absolute;
   inset: -40px;
-  background:
-    radial-gradient(circle at 25% 20%, rgba(46, 242, 177, 0.16), transparent 55%),
-    radial-gradient(circle at 80% 40%, rgba(255, 47, 179, 0.1), transparent 55%),
-    radial-gradient(circle at 55% 70%, rgba(191, 232, 255, 0.12), transparent 60%);
+  pointer-events: none;
   filter: blur(14px);
   opacity: 0.9;
-  pointer-events: none;
+  background:
+    radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--cY) 18%, transparent), transparent 55%),
+    radial-gradient(circle at 80% 40%, color-mix(in srgb, var(--cP) 12%, transparent), transparent 55%),
+    radial-gradient(circle at 55% 70%, color-mix(in srgb, var(--cB) 14%, transparent), transparent 60%);
 }
 
 .card__top {
@@ -1278,8 +1170,8 @@ onBeforeUnmount(() => {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: rgba(244, 234, 34, 0.95);
-  box-shadow: 0 0 0 6px rgba(244, 234, 34, 0.1);
+  background: var(--cP);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--cP) 20%, transparent);
 }
 .iconBtn {
   width: 44px;
@@ -1292,24 +1184,12 @@ onBeforeUnmount(() => {
 }
 .iconBtn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cB) 35%, transparent);
 }
 
-.card__main {
-  padding: 16px 16px 14px;
-}
-.card__title {
-  margin: 8px 0 6px;
-  font-weight: 980;
-  letter-spacing: -0.2px;
-  font-size: 20px;
-}
-.card__desc {
-  margin: 0 0 12px;
-  color: rgba(255, 255, 255, 0.78);
-  line-height: 1.6;
-  font-size: 13px;
-}
+.card__main { padding: 16px 16px 14px; }
+.card__title { margin: 8px 0 6px; font-weight: 980; letter-spacing: -0.2px; font-size: 20px; }
+.card__desc { margin: 0 0 12px; color: rgba(255, 255, 255, 0.78); line-height: 1.6; font-size: 13px; }
 
 .quick {
   display: grid;
@@ -1326,12 +1206,10 @@ onBeforeUnmount(() => {
   padding: 0 14px;
   outline: none;
 }
-.quick__input::placeholder {
-  color: rgba(255, 255, 255, 0.62);
-}
+.quick__input::placeholder { color: rgba(255, 255, 255, 0.62); }
 .quick__input:focus {
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
-  border-color: rgba(47, 73, 255, 0.35);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cB) 35%, transparent);
+  border-color: color-mix(in srgb, var(--cB) 45%, transparent);
 }
 .quick__btn {
   height: 44px;
@@ -1343,17 +1221,9 @@ onBeforeUnmount(() => {
   font-weight: 900;
   cursor: pointer;
 }
-.quick__btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+.quick__btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.card__chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 8px 0 12px;
-}
+.card__chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
 .chip {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(0, 0, 0, 0.14);
@@ -1367,19 +1237,15 @@ onBeforeUnmount(() => {
 }
 .chip:hover {
   transform: translateY(-1px);
-  border-color: rgba(46, 242, 177, 0.25);
+  border-color: color-mix(in srgb, var(--cY) 35%, transparent);
   background: rgba(0, 0, 0, 0.18);
 }
 .chip:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cB) 35%, transparent);
 }
 
-.results {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 12px;
-}
+.results { display: grid; gap: 8px; margin-bottom: 12px; }
 .res {
   width: 100%;
   text-align: left;
@@ -1392,28 +1258,12 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.06);
   cursor: pointer;
 }
-.res:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-.res__name {
-  font-weight: 950;
-  font-size: 13px;
-}
-.res__desc {
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 12px;
-  grid-column: 1 / 2;
-}
-.res__arrow {
-  opacity: 0.85;
-}
+.res:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.16); }
+.res__name { font-weight: 950; font-size: 13px; }
+.res__desc { color: rgba(255, 255, 255, 0.72); font-size: 12px; grid-column: 1 / 2; }
+.res__arrow { opacity: 0.85; }
 
-.card__cta {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.card__cta { display: flex; gap: 10px; flex-wrap: wrap; }
 .miniCta {
   display: inline-flex;
   align-items: center;
@@ -1428,13 +1278,10 @@ onBeforeUnmount(() => {
   font-size: 12px;
   transition: transform 0.18s ease, background 0.18s ease;
 }
-.miniCta:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.09);
-}
+.miniCta:hover { transform: translateY(-1px); background: rgba(255, 255, 255, 0.09); }
 .miniCta:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(47, 73, 255, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cB) 35%, transparent);
 }
 
 .card__footer {
@@ -1450,61 +1297,32 @@ onBeforeUnmount(() => {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(46, 242, 177, 0.95);
-  box-shadow: 0 0 0 0 rgba(46, 242, 177, 0.25);
+  background: var(--cY);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--cY) 30%, transparent);
   animation: pulse 1.6s ease-in-out infinite;
 }
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(46, 242, 177, 0.22);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(46, 242, 177, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(46, 242, 177, 0);
-  }
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cY) 25%, transparent); }
+  70% { box-shadow: 0 0 0 12px rgba(0, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
 }
 
-/* Responsive */
+/* ===== Responsive ===== */
 @media (max-width: 1024px) {
-  .hero {
-    padding-top: 90px;
-  }
-  .hero__grid {
-    grid-template-columns: 1fr;
-  }
-  .meta {
-    grid-template-columns: 1fr;
-  }
-  .stats {
-    grid-template-columns: 1fr;
-  }
-  .title__line {
-    max-width: 22ch;
-  }
-  .shard {
-    display: none;
-  }
+  .hero { padding-top: 90px; }
+  .hero__grid { grid-template-columns: 1fr; }
+  .meta { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr; }
+  .title__text { max-width: 22ch; }
+  .shard { display: none; }
 }
 
-/* A11y + performance */
+/* ===== A11y + performance ===== */
 @media (prefers-reduced-motion: reduce) {
-  .pulse {
-    animation: none !important;
-  }
+  .pulse { animation: none !important; }
   .snow::before,
-  .snow::after {
-    animation: none !important;
-    display: none !important;
-  }
-  .btn,
-  .chip,
-  .miniCta,
-  .right,
-  .res {
-    transition: none !important;
-  }
+  .snow::after { animation: none !important; display: none !important; }
+  .btn, .chip, .miniCta, .right, .res { transition: none !important; }
 }
 
 .srOnly {
