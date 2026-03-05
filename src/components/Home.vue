@@ -281,8 +281,8 @@ onBeforeUnmount(() => {
 
 @media (max-width: 720px) {
   .hero {
-    height: 60vh;
-    min-height: 60vh;
+    height: 70vh;
+    min-height: 70vh;
     padding: 18px;
   }
 }
@@ -589,8 +589,8 @@ onBeforeUnmount(() => {
 }
 @media (max-width: 720px) {
   .hero {
-    height: 60vh;
-    min-height: 60vh;
+    height: 70vh;
+    min-height: 70vh;
 
     /* ✅ reserva espaço pro header não “comer” o começo */
     padding-top: calc(18px + var(--headerH));
