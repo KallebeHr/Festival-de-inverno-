@@ -1,6 +1,6 @@
 <template>
 <Home/>
-
+<destaques />
   
 </template>
 

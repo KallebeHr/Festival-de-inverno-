@@ -1,131 +1,187 @@
 <template>
-  <section class="ticker-section">
-    <div class="max-w-7xl mx-auto px-4">
+  <section class="sponsors">
+    <div class="container">
+
+      <header class="head">
+        <h2 class="title">Nossos patrocinadores</h2>
+        <p class="sub">
+          Marcas que fortalecem a cultura e tornam o festival possível.
+        </p>
+      </header>
 
       <!-- VIEWPORT -->
-      <div class="ticker-viewport" :style="maskStyle">
-        <!-- TRACK -->
-        <div class="ticker-track">
+      <div class="viewport" :style="maskStyle">
+
+        <div class="track">
 
           <!-- GROUP A -->
-          <div class="ticker-group">
-            <span
-              v-for="(b, i) in brands"
-              :key="'a' + i"
-              class="brand"
+          <div class="group">
+            <div
+              v-for="(s, i) in sponsors"
+              :key="'a'+i"
+              class="pill"
             >
-              <v-icon size="18" class="mr-2">
-                {{ b.icon }}
-              </v-icon>
-              {{ b.label }}
-            </span>
+              <img
+                v-if="s.logo"
+                :src="s.logo"
+                :alt="s.name"
+                class="logo"
+                loading="lazy"
+              />
+
+              <span v-else class="text">
+                {{ s.name }}
+              </span>
+            </div>
           </div>
 
           <!-- GROUP B (duplicado para loop infinito) -->
-          <div class="ticker-group">
-            <span
-              v-for="(b, i) in brands"
-              :key="'b' + i"
-              class="brand"
+          <div class="group">
+            <div
+              v-for="(s, i) in sponsors"
+              :key="'b'+i"
+              class="pill"
             >
-              <v-icon size="18" class="mr-2">
-                {{ b.icon }}
-              </v-icon>
-              {{ b.label }}
-            </span>
+              <img
+                v-if="s.logo"
+                :src="s.logo"
+                :alt="s.name"
+                class="logo"
+                loading="lazy"
+              />
+
+              <span v-else class="text">
+                {{ s.name }}
+              </span>
+            </div>
           </div>
 
         </div>
       </div>
+
     </div>
   </section>
 </template>
 
-
 <script setup>
-const brands = [
-  { label: 'Consultoria Jurídica', icon: 'mdi-account-tie' },
-  { label: 'Defesa Judicial', icon: 'mdi-gavel' },
-  { label: 'Ações Trabalhistas', icon: 'mdi-briefcase' },
-  { label: 'Revisão de Aposentadoria', icon: 'mdi-account-cash' },
-  { label: 'Processos Cíveis', icon: 'mdi-scale-balance' },
-  { label: 'Atendimento Online', icon: 'mdi-video' },
-  { label: 'Análise de Documentos', icon: 'mdi-file-search' },
+
+const sponsors = [
+  { name: "Governo do Estado do Piauí" },
+  { name: "Prefeitura de Pedro II" },
+  { name: "SEBRAE" },
+  { name: "Sesc" },
+  { name: "Banco do Nordeste" },
+  { name: "Patrocinador Master" }
 ]
 
 const maskStyle = `
   mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
 `
+
 </script>
 
-
 <style scoped>
-/* BLOQUEIA QUALQUER SCROLL */
-.ticker-section {
-  overflow-x: hidden;
+
+.sponsors{
+  padding:40px 0;
+  background:white;
 }
 
-/* TÍTULO */
-.title {
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  color: #a1a1aa;
-  margin-bottom: 3rem;
-  letter-spacing: 0.08em;
+.container{
+  width:min(1200px, calc(100% - 48px));
+  margin:auto;
 }
 
-/* VIEWPORT PRECISA DE ALTURA */
-.ticker-viewport {
-  position: relative;
-  overflow: hidden;
-  width: auto;
-  height: 48px; 
+/* título */
+
+.head{
+  text-align:center;
+  margin-bottom:22px;
 }
 
-/* TRACK CENTRALIZADO */
-.ticker-track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  display: flex;
-  white-space: nowrap;
-  transform: translateY(-50%);
-  animation: ticker 25s linear infinite;
-  will-change: transform;
+.title{
+  font-family: ui-serif, Georgia, serif;
+  font-weight:700;
+  font-size:28px;
 }
 
-/* PAUSA */
-.ticker-track:hover {
-  animation-play-state: paused;
+.sub{
+  font-size:14px;
+  color:#6b7280;
 }
 
-/* GRUPOS */
-.ticker-group {
-  display: flex;
-  gap: 4rem;
-  padding-right: 4rem;
+/* viewport */
+
+.viewport{
+  position:relative;
+  overflow:hidden;
+  height:64px;
+  border-radius:16px;
 }
 
-/* ITEM */
-.brand {
-  font-size: 1.425rem;
-  color: #9ca3af;
-  transition: color 0.3s;
+/* track */
+
+.track{
+  position:absolute;
+  top:50%;
+  left:0;
+  display:flex;
+  transform:translateY(-50%);
+  white-space:nowrap;
+  animation:ticker 22s linear infinite;
 }
 
-.brand:hover {
-  color: white;
+.viewport:hover .track{
+  animation-play-state:paused;
 }
 
-/* ANIMAÇÃO */
-@keyframes ticker {
-  from {
-    transform: translate(0, -50%);
+/* groups */
+
+.group{
+  display:flex;
+  gap:18px;
+  padding-right:18px;
+}
+
+/* item */
+
+.pill{
+  height:44px;
+  min-width:160px;
+  padding:0 14px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:999px;
+  background:#f5f5f5;
+  border:1px solid #e5e7eb;
+
+  font-size:13px;
+  font-weight:600;
+  color:#111827;
+}
+
+.logo{
+  height:24px;
+  width:auto;
+}
+
+.text{
+  white-space:nowrap;
+}
+
+/* animation */
+
+@keyframes ticker{
+  from{
+    transform:translate(0,-50%);
   }
-  to {
-    transform: translate(-50%, -50%);
+  to{
+    transform:translate(-50%,-50%);
   }
 }
+
 </style>

@@ -85,7 +85,7 @@
 .wrapper-grid {
   --animation-duration: 2.1s;
   --cube-color: #0000;
-  --highlight-color: #00cc44;
+  --highlight-color:  #4e4efe;
   --cube-width: 48px;
   --cube-height: 48px;
   --font-size: 1.8em;
