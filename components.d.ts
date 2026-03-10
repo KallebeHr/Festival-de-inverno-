@@ -9,12 +9,15 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
+    BannerFip: typeof import('./src/components/bannerFip.vue')['default']
+    ConfirmedGuests: typeof import('./src/components/ConfirmedGuests.vue')['default']
     Destaques: typeof import('./src/components/destaques.vue')['default']
     Footer: typeof import('./src/components/NavFooter.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     NavFooter: typeof import('./src/components/NavFooter.vue')['default']
     NavHeader: typeof import('./src/components/NavHeader.vue')['default']
     Preloader: typeof import('./src/components/Preloader.vue')['default']
+    Presenca: typeof import('./src/components/presenca.vue')['default']
     Programa: typeof import('./src/components/programa.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

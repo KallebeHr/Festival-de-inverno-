@@ -384,17 +384,15 @@ onBeforeUnmount(() => {
 .card__link {
   display: grid;
   grid-template-rows: 168px 1fr;
-  height: 460px; /* ✅ tamanho fixo => todos iguais */
+  height: 420px; /* ✅ tamanho fixo => todos iguais */
   border-radius: 22px;
   overflow: hidden;
   background: #fff;
   border: 1px solid var(--line);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
   text-decoration: none;
   color: inherit;
   position: relative;
   transform: translateZ(0);
-
   transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
 }
 
@@ -549,7 +547,7 @@ onBeforeUnmount(() => {
   left: 14px;
   right: 14px;
   bottom: 10px;
-  height: 4px;
+  height: 5px;
   border-radius: 99px;
   background: color-mix(in srgb, var(--accent), transparent 18%);
   opacity: 0.9;
@@ -561,7 +559,6 @@ onBeforeUnmount(() => {
 @media (hover: hover) {
   .card__link:hover {
     transform: translateY(-3px);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.10);
     border-color: rgba(12, 14, 18, 0.16);
   }
 

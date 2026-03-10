@@ -257,7 +257,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .footer{
   /* branco + profissional */
-  --bg: #F5F7FA;
+  --bg: #FFFFFF;
   --card: #fff;
   --stroke: rgba(15,23,42,.10);
   --stroke2: rgba(15,23,42,.08);
@@ -280,7 +280,6 @@ onBeforeUnmount(() => {
   position:absolute;
   left:0; right:0; top:0;
   height:2px;
-  background: linear-gradient(90deg, var(--cB), var(--cY), var(--cP));
   opacity: .9;
 }
 

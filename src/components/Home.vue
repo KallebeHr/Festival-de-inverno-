@@ -5,6 +5,7 @@
     :class="{
       'is-visible': isVisible,
       'reduce-motion': reduceMotion,
+      'has-animated': hasAnimated,
     }"
     aria-label="Abertura do Festival de Inverno — Edição 2026"
   >
@@ -27,13 +28,11 @@
 
     <div class="wrap">
       <div class="content">
-        <!-- Kicker -->
         <p class="kicker" data-anim="in">
           <span class="kicker__dot" aria-hidden="true"></span>
           <span>{{ kicker }}</span>
         </p>
 
-        <!-- Título por PALAVRAS (melhor para acessibilidade / VLibras) -->
         <h1 class="title" data-anim="in">
           <span class="title__line">
             <span
@@ -41,8 +40,9 @@
               :key="'a-' + i"
               class="word"
               :style="{ '--d': `${i * 40}ms` }"
-              >{{ w }}</span
             >
+              {{ w }}
+            </span>
           </span>
 
           <span class="title__line">
@@ -51,17 +51,16 @@
               :key="'b-' + i"
               class="word word--accent"
               :style="{ '--d': `${(i + titleWordsA.length) * 40}ms` }"
-              >{{ w }}</span
             >
+              {{ w }}
+            </span>
           </span>
         </h1>
 
-        <!-- Sub -->
         <p class="sub" data-anim="in">
           {{ subtitle }}
         </p>
 
-        <!-- Meta (minimalista, institucional) -->
         <ul class="meta" aria-label="Informações rápidas" data-anim="in">
           <li class="chip">
             <span class="chip__k">Edição</span>
@@ -77,7 +76,6 @@
           </li>
         </ul>
 
-        <!-- Ações -->
         <div class="actions" data-anim="in">
           <button class="btn btn--primary" type="button" @click="onPrimary()">
             <span class="btn__glow" aria-hidden="true"></span>
@@ -96,9 +94,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
-/**
- * ✅ Edite aqui (bem “humano” e direto)
- */
 const kicker = "Evento oficial • Cultura, música e experiências";
 const titleA = "Festival de Inverno";
 const titleB = "Pedro II";
@@ -106,14 +101,12 @@ const subtitle =
   "Uma semana de shows, arte e gastronomia — com clima, identidade e presença.";
 const edition = "2026";
 const city = "Pedro II • PI";
-const dateRange = "04 - 07 Junho"; // troque se quiser
+const dateRange = "04 - 07 Junho";
 
 const primaryLabel = "Ver programação";
 const secondaryLabel = "Como chegar";
 
-
 const onPrimary = () => {
-  // Troque pela sua navegação (router push / scroll / modal)
   const el = document.querySelector("#programacao");
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
@@ -123,73 +116,84 @@ const onSecondary = () => {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
-/**
- * ✅ Título por palavras (melhor p/ VLibras)
- */
 const titleWordsA = computed(() => titleA.split(" ").filter(Boolean));
 const titleWordsB = computed(() => titleB.split(" ").filter(Boolean));
 
-/**
- * ✅ Performance / A11y
- * - GSAP só carrega quando visível
- * - Desliga tudo em prefers-reduced-motion
- * - Pausa se aba ficar oculta
- */
 const root = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
-
+const hasAnimated = ref(false);
 const reduceMotion = ref(false);
-let io: IntersectionObserver | null = null;
 
-let cleanupGsap: null | (() => void) = null;
+let io: IntersectionObserver | null = null;
 let gsapMod: any = null;
+let cleanupGsap: null | (() => void) = null;
 
 function getReduceMotion() {
   const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
   reduceMotion.value = !!mq?.matches;
-  mq?.addEventListener?.("change", (e) => (reduceMotion.value = e.matches));
+
+  const onChange = (e: MediaQueryListEvent) => {
+    reduceMotion.value = e.matches;
+  };
+
+  mq?.addEventListener?.("change", onChange);
+
+  onBeforeUnmount(() => {
+    mq?.removeEventListener?.("change", onChange);
+  });
 }
 
-async function startGsapIfAllowed() {
-  if (reduceMotion.value) return;
+async function startGsapOnce() {
+  if (reduceMotion.value) {
+    hasAnimated.value = true;
+    return;
+  }
+
   if (!root.value) return;
+  if (cleanupGsap || hasAnimated.value) return;
 
-  // evita double-init
-  if (cleanupGsap) return;
-
-  // carrega GSAP sob demanda
   gsapMod = await import("gsap");
   const gsap = gsapMod.gsap || gsapMod.default || gsapMod;
 
   const ctx = gsap.context(() => {
-    const ins = root.value!.querySelectorAll("[data-anim='in']");
-    const floats = root.value!.querySelectorAll("[data-anim='float']");
+    const scope = root.value!;
+    const ins = scope.querySelectorAll("[data-anim='in']");
+    const words = scope.querySelectorAll(".word");
+    const floats = scope.querySelectorAll("[data-anim='float']");
+    const glowA = scope.querySelector(".bg__glow--a");
+    const glowB = scope.querySelector(".bg__glow--b");
 
-    // entrada “institucional”, suave, sem exagero
-    gsap.set(ins, { opacity: 0, y: 14, filter: "blur(6px)" });
-    gsap.to(ins, {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      duration: 0.8,
-      ease: "power2.out",
-      stagger: 0.08,
-      delay: 0.05,
+    const tl = gsap.timeline({
+      defaults: { ease: "power2.out" },
+      onComplete: () => {
+        hasAnimated.value = true;
+      },
     });
 
-    // words: micro pop (por palavra)
-    const words = root.value!.querySelectorAll(".word");
-    gsap.set(words, { opacity: 0, y: 10, rotate: -0.001 });
-    gsap.to(words, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      ease: "power2.out",
-      stagger: 0.03,
-      delay: 0.06,
-    });
+    tl.set(ins, { opacity: 0, y: 14, filter: "blur(6px)" })
+      .set(words, { opacity: 0, y: 10, rotate: -0.001 }, 0)
+      .to(
+        ins,
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.8,
+          stagger: 0.08,
+        },
+        0.02
+      )
+      .to(
+        words,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          stagger: 0.03,
+        },
+        0.06
+      );
 
-    // shards: flutuação lenta (surreal, leve)
     floats.forEach((el: Element, idx: number) => {
       gsap.to(el, {
         y: idx % 2 === 0 ? -10 : 12,
@@ -202,16 +206,32 @@ async function startGsapIfAllowed() {
       });
     });
 
-    // glows: respiração mínima
-    gsap.to(".bg__glow--a", { opacity: 0.55, duration: 3.6, yoyo: true, repeat: -1, ease: "sine.inOut" });
-    gsap.to(".bg__glow--b", { opacity: 0.40, duration: 4.2, yoyo: true, repeat: -1, ease: "sine.inOut" });
+    if (glowA) {
+      gsap.to(glowA, {
+        opacity: 0.55,
+        duration: 3.6,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    }
+
+    if (glowB) {
+      gsap.to(glowB, {
+        opacity: 0.4,
+        duration: 4.2,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut",
+      });
+    }
   }, root.value);
 
   const onVis = () => {
     const hidden = document.visibilityState === "hidden";
-    // pausa/resume global do gsap
-    (gsap.globalTimeline as any).paused(hidden);
+    gsap.globalTimeline.paused(hidden);
   };
+
   document.addEventListener("visibilitychange", onVis);
 
   cleanupGsap = () => {
@@ -221,43 +241,41 @@ async function startGsapIfAllowed() {
   };
 }
 
-function stopGsap() {
-  if (cleanupGsap) cleanupGsap();
-  gsapMod = null;
-}
-
 onMounted(() => {
   getReduceMotion();
 
   io = new IntersectionObserver(
     (entries) => {
-      const e = entries[0];
-      const visible = !!e?.isIntersecting;
+      const entry = entries[0];
+      const visible = !!entry?.isIntersecting;
+
       isVisible.value = visible;
 
-      if (visible) startGsapIfAllowed();
-      else stopGsap();
+      if (visible && !hasAnimated.value) {
+        startGsapOnce();
+      }
     },
-    { root: null, threshold: 0.35 }
+    {
+      root: null,
+      threshold: 0.35,
+    }
   );
 
   if (root.value) io.observe(root.value);
 });
 
 onBeforeUnmount(() => {
-  stopGsap();
   if (io && root.value) io.unobserve(root.value);
   io?.disconnect();
   io = null;
+
+  if (cleanupGsap) cleanupGsap();
+  gsapMod = null;
 });
 </script>
 
 <style scoped>
-/* =========
-   HERO BASE
-   ========= */
 .hero {
-  /* altura pedida */
   min-height: 60vh;
   height: 80vh;
   position: relative;
@@ -267,8 +285,7 @@ onBeforeUnmount(() => {
   display: grid;
   place-items: center;
 
-  /* ✅ cores (troque aqui sem mexer no resto) */
-  --bgSolid: #316eb9;          /* cor sólida principal do fundo */
+  --bgSolid: #316eb9;
   --ink: rgba(12, 14, 18, 0.92);
   --paper: rgba(255, 255, 255, 0.88);
 
@@ -284,12 +301,13 @@ onBeforeUnmount(() => {
     height: 70vh;
     min-height: 70vh;
     padding: 18px;
+    padding-top: calc(18px + var(--headerH));
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 18px;
   }
 }
 
-/* =========
-   BACKGROUND
-   ========= */
 .bg {
   position: absolute;
   inset: 0;
@@ -339,7 +357,6 @@ onBeforeUnmount(() => {
   background: radial-gradient(35% 35% at 70% 55%, color-mix(in srgb, var(--cP), transparent 55%) 0%, transparent 72%);
 }
 
-/* noise: leve e elegante (sem “poluição”) */
 .bg__noise {
   position: absolute;
   inset: 0;
@@ -349,9 +366,6 @@ onBeforeUnmount(() => {
   mix-blend-mode: overlay;
 }
 
-/* =========
-   SHARDS (surreal minimal)
-   ========= */
 .shards {
   position: absolute;
   inset: 0;
@@ -364,12 +378,12 @@ onBeforeUnmount(() => {
   height: clamp(88px, 12vw, 160px);
   border-radius: 28px;
   background:
-    linear-gradient(135deg,
+    linear-gradient(
+      135deg,
       color-mix(in srgb, #fff, transparent 65%),
       color-mix(in srgb, var(--cB), transparent 70%)
     );
-  box-shadow:
-    0 14px 40px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
   filter: blur(0px);
   transform: translateZ(0);
   opacity: 0.26;
@@ -377,7 +391,14 @@ onBeforeUnmount(() => {
 
 .s1 { top: 14%; left: 8%; rotate: -8deg; }
 .s2 { bottom: 16%; right: 10%; rotate: 10deg; opacity: 0.20; }
-.s3 { top: 18%; right: 22%; rotate: 4deg; width: clamp(70px, 10vw, 140px); height: clamp(70px, 10vw, 140px); opacity: 0.18; }
+.s3 {
+  top: 18%;
+  right: 22%;
+  rotate: 4deg;
+  width: clamp(70px, 10vw, 140px);
+  height: clamp(70px, 10vw, 140px);
+  opacity: 0.18;
+}
 
 @media (max-width: 720px) {
   .shard { opacity: 0.18; border-radius: 22px; }
@@ -386,9 +407,6 @@ onBeforeUnmount(() => {
   .s3 { top: 10%; right: 6%; }
 }
 
-/* =========
-   CONTENT LAYOUT
-   ========= */
 .wrap {
   position: relative;
   z-index: 1;
@@ -403,7 +421,6 @@ onBeforeUnmount(() => {
   color: var(--paper);
 }
 
-/* kicker */
 .kicker {
   display: inline-flex;
   align-items: center;
@@ -414,7 +431,6 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(255,255,255,0.14);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   font: 600 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -429,31 +445,26 @@ onBeforeUnmount(() => {
   box-shadow: 0 0 0 3px rgba(237,229,58,0.20);
 }
 
-/* title */
 .title {
   margin: 0;
   padding: 0;
   color: #fff;
-
-  /* “luxo discreto”: serif só no título */
   font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 0.98;
-
   font-size: clamp(40px, 5.2vw, 74px);
 }
 
 .title__line {
   display: inline-block;
-  white-space: nowrap; /* evita quebrar palavra */
+  white-space: nowrap;
 }
 
 @media (max-width: 720px) {
-  .title__line { white-space: normal; } /* no mobile pode quebrar linha, mas não palavra */
+  .title__line { white-space: normal; }
 }
 
-/* words */
 .word {
   display: inline-block;
   padding: 0 0.14em;
@@ -469,7 +480,6 @@ onBeforeUnmount(() => {
     0 0 22px rgba(237,229,58,0.24);
 }
 
-/* sub */
 .sub {
   margin: 14px auto 0;
   max-width: 62ch;
@@ -477,7 +487,6 @@ onBeforeUnmount(() => {
   font: 500 clamp(14px, 1.6vw, 18px)/1.55 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
-/* meta chips */
 .meta {
   list-style: none;
   padding: 0;
@@ -512,7 +521,6 @@ onBeforeUnmount(() => {
   color: rgba(255,255,255,0.94);
 }
 
-/* actions */
 .actions {
   margin-top: 18px;
   display: flex;
@@ -526,13 +534,10 @@ onBeforeUnmount(() => {
   appearance: none;
   border: 0;
   cursor: pointer;
-
   border-radius: 14px;
   padding: 12px 16px;
-
   font: 700 14px/1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   letter-spacing: 0.01em;
-
   transform: translateZ(0);
   transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
 }
@@ -545,8 +550,7 @@ onBeforeUnmount(() => {
 .btn--primary {
   color: rgba(10, 12, 16, 0.92);
   background: color-mix(in srgb, var(--cY), #fff 8%);
-  box-shadow:
-    0 12px 34px rgba(0,0,0,0.18);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.18);
 }
 
 .btn--primary .btn__glow {
@@ -569,34 +573,14 @@ onBeforeUnmount(() => {
 
 @media (hover: hover) {
   .btn:hover { transform: translateY(-2px); }
-  .btn--ghost:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.22); }
+  .btn--ghost:hover {
+    background: rgba(255,255,255,0.10);
+    border-color: rgba(255,255,255,0.22);
+  }
 }
 
-/* note */
-.note {
-  margin: 14px auto 0;
-  max-width: 70ch;
-  color: rgba(255,255,255,0.70);
-  font: 500 12.5px/1.55 ui-sans-serif, system-ui;
-}
-
-/* =========
-   REDUCE MOTION
-   ========= */
 .reduce-motion * {
   animation: none !important;
   transition: none !important;
-}
-@media (max-width: 720px) {
-  .hero {
-    height: 70vh;
-    min-height: 70vh;
-
-    /* ✅ reserva espaço pro header não “comer” o começo */
-    padding-top: calc(18px + var(--headerH));
-    padding-left: 18px;
-    padding-right: 18px;
-    padding-bottom: 18px;
-  }
 }
 </style>
