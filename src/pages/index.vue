@@ -3,6 +3,8 @@
 <destaques />
 <BannerFip />
 <ConfirmedGuests />
+<BannerFip />
+<AnteriotesV />
 </template>
 
 <script setup>

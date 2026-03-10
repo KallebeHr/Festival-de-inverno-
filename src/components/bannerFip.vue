@@ -1,54 +1,93 @@
 <template>
-  <section class="banner-wrapper">
-    <picture>
-      <!-- desktop -->
-      <source
-        :srcset="desktopBanner"
-        media="(min-width: 768px)"
-      />
+  <section
+    class="banner"
+    aria-label="Banner promocional do evento"
+  >
+    <figure class="banner__container">
 
-      <!-- mobile -->
-      <img
-        :src="mobileBanner"
-        alt="Banner cultural"
-        class="banner-img"
-      />
-    </picture>
+      <picture>
+        <!-- Desktop -->
+        <source
+          :srcset="desktopBanner"
+          media="(min-width: 768px)"
+        />
+
+        <!-- Mobile -->
+        <img
+          :src="mobileBanner"
+          :alt="alt"
+          class="banner__img"
+          decoding="async"
+          loading="lazy"
+        />
+      </picture>
+
+    </figure>
   </section>
 </template>
 
 <script setup>
-const desktopBanner = "/banner/BannerD.png"
-const mobileBanner = "/banner/BannerM.png"
+
+defineProps({
+  desktopBanner: {
+    type: String,
+    default: "/banner/BannerD.png"
+  },
+
+  mobileBanner: {
+    type: String,
+    default: "/banner/BannerM.png"
+  },
+
+  alt: {
+    type: String,
+    default: "Banner cultural do evento"
+  }
+})
+
 </script>
 
 <style scoped>
 
-.banner-wrapper {
+.banner {
   width: 100%;
-  padding: 32px; /* margem em volta */
   display: flex;
   justify-content: center;
+  background: #ffffff;
+  padding: clamp(16px, 3vw, 40px);
   box-sizing: border-box;
-  background-color: #FFFFFF;
 }
 
-.banner-img {
+/* container */
+.banner__container {
   width: 100%;
-  max-width: 1200px; /* limite para desktop */
+  max-width: 1200px;
+  margin: 0;
+  position: relative;
+}
+
+/* imagem */
+.banner__img {
+  width: 100%;
   height: auto;
   display: block;
-  border-radius: 6px; /* opcional */
+  border-radius: 8px;
+
+  object-fit: cover;
+
+  transition: transform .4s ease, box-shadow .4s ease;
 }
 
-@media (max-width: 768px) {
 
-  .banner-wrapper {
+/* mobile */
+@media (max-width:768px) {
+
+  .banner {
     padding: 16px;
   }
 
-  .banner-img {
-    max-width: 500px;
+  .banner__container {
+    max-width: 520px;
   }
 
 }

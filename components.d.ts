@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AnteriotesV: typeof import('./src/components/anteriotesV.vue')['default']
     Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
     BannerFip: typeof import('./src/components/bannerFip.vue')['default']
     ConfirmedGuests: typeof import('./src/components/ConfirmedGuests.vue')['default']
