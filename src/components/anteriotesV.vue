@@ -10,7 +10,7 @@
           <span class="past-editions__kicker">Memória do festival</span>
 
           <h2 id="past-editions-title" class="past-editions__title">
-            Edição Passada
+            Edições passadas
           </h2>
 
           <p class="past-editions__description">
@@ -19,7 +19,7 @@
           </p>
         </div>
 
-        <div class="past-editions__controls">
+        <div class="past-editions__controls" aria-label="Controles do carrossel">
           <button
             class="slider-btn past-editions__prev"
             type="button"
@@ -45,10 +45,11 @@
       <Swiper
         class="past-editions__swiper"
         :modules="modules"
-        :slides-per-view="1.4"
+        slides-per-view="auto"
         :space-between="12"
-        :speed="500"
+        :speed="450"
         :grab-cursor="true"
+        :watch-overflow="true"
         :watch-slides-progress="true"
         :keyboard="{ enabled: true, onlyInViewport: true }"
         :navigation="{
@@ -59,7 +60,6 @@
           clickable: true,
           el: '.past-editions__pagination'
         }"
-        :breakpoints="breakpoints"
         @swiper="onSwiper"
         @slideChange="handleSlideChange"
       >
@@ -77,7 +77,6 @@
                 :ref="(el) => setVideoRef(el, item.id)"
                 class="video-card__video"
                 :src="item.video"
-                :poster="item.poster"
                 muted
                 loop
                 playsinline
@@ -132,62 +131,35 @@ const videos = ref([
     description:
       "Registro da atmosfera do palco principal, com público, iluminação e energia do festival.",
     video: sharedVideo,
-    poster: "",
   },
   {
     id: "ed-2024-1",
-    year: "2025",
+    year: "2024",
     category: "Público",
     title: "Atmosfera do evento",
     description:
       "Momentos do público e da vivência do festival em um recorte visual das edições passadas.",
     video: sharedVideo,
-    poster: "",
   },
   {
-    id: "ed-2025-1",
-    year: "2025",
+    id: "ed-2023-1",
+    year: "2023",
     category: "Cultura",
     title: "Experiência cultural",
     description:
       "Cenas que reforçam a identidade cultural, o movimento da cidade e a experiência do evento.",
     video: sharedVideo,
-    poster: "",
   },
   {
-    id: "ed-2025-1",
-    year: "2025",
+    id: "ed-2022-1",
+    year: "2022",
     category: "Bastidores",
     title: "Preparação e bastidores",
     description:
       "Detalhes de organização, montagem e registros que ajudam a contar a história do festival.",
     video: sharedVideo,
-    poster: "",
   },
 ])
-
-const breakpoints = {
-  480: {
-    slidesPerView: 2.1,
-    spaceBetween: 12,
-  },
-  640: {
-    slidesPerView: 2.4,
-    spaceBetween: 14,
-  },
-  768: {
-    slidesPerView: 2.8,
-    spaceBetween: 16,
-  },
-  1024: {
-    slidesPerView: 3.4,
-    spaceBetween: 18,
-  },
-  1280: {
-    slidesPerView: 4,
-    spaceBetween: 18,
-  },
-}
 
 const sectionRef = ref(null)
 const swiperInstance = ref(null)
@@ -237,6 +209,7 @@ async function syncActiveVideo() {
   try {
     activeVideo.muted = true
     activeVideo.playsInline = true
+    activeVideo.currentTime = activeVideo.currentTime || 0.01
     await activeVideo.play()
   } catch {}
 }
@@ -252,8 +225,7 @@ function handleVisibilityChange() {
 onMounted(() => {
   observer = new IntersectionObserver(
     ([entry]) => {
-      sectionInView.value =
-        entry.isIntersecting && entry.intersectionRatio >= 0.35
+      sectionInView.value = entry.isIntersecting && entry.intersectionRatio >= 0.35
 
       if (sectionInView.value) {
         syncActiveVideo()
@@ -266,18 +238,13 @@ onMounted(() => {
     }
   )
 
-  if (sectionRef.value) {
-    observer.observe(sectionRef.value)
-  }
+  if (sectionRef.value) observer.observe(sectionRef.value)
 
   document.addEventListener("visibilitychange", handleVisibilityChange)
 })
 
 onBeforeUnmount(() => {
-  if (observer && sectionRef.value) {
-    observer.unobserve(sectionRef.value)
-  }
-
+  if (observer && sectionRef.value) observer.unobserve(sectionRef.value)
   observer?.disconnect?.()
   document.removeEventListener("visibilitychange", handleVisibilityChange)
   pauseAllVideos()
@@ -286,22 +253,26 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .past-editions {
-  --bg: #FFFFFF;
+  --bg: #f8f5ef;
   --surface: #ffffff;
   --border: #e3dacb;
-  --text: #1e1b16;
-  --muted: #645d53;
+  --text: #1f1b16;
+  --muted: #6a6257;
   --accent: #8f6a35;
-  --shadow: 0 12px 30px rgba(40, 32, 20, 0.08);
-  --radius-xl: 22px;
+  --accent-soft: rgba(255, 248, 236, 0.96);
+  --chip: rgba(255, 255, 255, 0.92);
+  --shadow: 0 10px 24px rgba(40, 32, 20, 0.08);
+  --radius-xl: 20px;
+  --radius-lg: 14px;
 
   width: 100%;
-  padding: clamp(48px, 7vw, 84px) 0;
+  overflow: hidden;
   background: var(--bg);
+  padding: clamp(44px, 6vw, 80px) 0;
 }
 
 .past-editions__container {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 24px));
   margin: 0 auto;
 }
 
@@ -309,19 +280,20 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 22px;
 }
 
 .past-editions__intro {
+  min-width: 0;
   max-width: 720px;
 }
 
 .past-editions__kicker {
   display: inline-block;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   color: var(--accent);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -330,20 +302,18 @@ onBeforeUnmount(() => {
 .past-editions__title {
   margin: 0;
   color: var(--text);
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.05;
-  font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
-
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.06;
   letter-spacing: -0.03em;
   font-weight: 800;
 }
 
 .past-editions__description {
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   color: var(--muted);
-  font-size: clamp(0.98rem, 1.6vw, 1.05rem);
-  line-height: 1.75;
-  max-width: 680px;
+  font-size: clamp(0.94rem, 1.5vw, 1.02rem);
+  line-height: 1.72;
+  max-width: 660px;
 }
 
 .past-editions__controls {
@@ -354,8 +324,8 @@ onBeforeUnmount(() => {
 }
 
 .slider-btn {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface);
@@ -363,26 +333,23 @@ onBeforeUnmount(() => {
   place-items: center;
   cursor: pointer;
   box-shadow: var(--shadow);
-  transition:
-    transform 0.25s ease,
-    border-color 0.25s ease,
-    background-color 0.25s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .slider-btn:hover {
   transform: translateY(-1px);
   background: #fcfaf6;
-  border-color: #d4c6b2;
+  border-color: #d5c7b3;
 }
 
 .slider-btn:focus-visible {
-  outline: 3px solid rgba(143, 106, 53, 0.18);
+  outline: 3px solid rgba(143, 106, 53, 0.16);
   outline-offset: 2px;
 }
 
 .slider-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: none;
   stroke: var(--text);
   stroke-width: 2;
@@ -395,32 +362,30 @@ onBeforeUnmount(() => {
 }
 
 .past-editions__slide {
+  width: clamp(150px, 22vw, 210px);
   height: auto;
-  display: flex;
-  justify-content: center;
 }
 
 .video-card {
   width: 100%;
-  max-width: 320px;
-  height: 100%;
 }
 
 .video-card__media {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-xl);
-  background: #d8d1c6;
-  box-shadow: var(--shadow);
+  width: 100%;
   aspect-ratio: 9 / 16;
+  border-radius: var(--radius-xl);
+  background: #d9d2c6;
+  box-shadow: var(--shadow);
 }
 
 .video-card__video {
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
   object-fit: cover;
-  background: #d8d1c6;
+  background: #d9d2c6;
 }
 
 .video-card__overlay {
@@ -429,55 +394,57 @@ onBeforeUnmount(() => {
   pointer-events: none;
   background: linear-gradient(
     to top,
-    rgba(24, 20, 15, 0.3) 0%,
-    rgba(24, 20, 15, 0.08) 28%,
-    rgba(24, 20, 15, 0) 55%
+    rgba(24, 20, 15, 0.28) 0%,
+    rgba(24, 20, 15, 0.08) 25%,
+    rgba(24, 20, 15, 0) 48%
   );
 }
 
 .video-card__content {
-  padding: 12px 4px 4px;
+  padding: 10px 4px 2px;
 }
 
 .video-card__meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .video-card__meta--inside {
   position: absolute;
-  left: 12px;
-  top: 12px;
+  top: 10px;
+  left: 10px;
   z-index: 2;
+  max-width: calc(100% - 20px);
 }
 
 .video-card__year,
 .video-card__category {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 5px 9px;
+  min-height: 26px;
+  padding: 4px 8px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .video-card__year {
-  background: rgba(255, 248, 236, 0.96);
+  background: var(--accent-soft);
   color: var(--accent);
 }
 
 .video-card__category {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--chip);
   color: var(--muted);
 }
 
 .video-card__title {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   color: var(--text);
-  font-size: 0.98rem;
+  font-size: 0.94rem;
   line-height: 1.3;
   font-weight: 800;
 }
@@ -485,19 +452,19 @@ onBeforeUnmount(() => {
 .video-card__description {
   margin: 0;
   color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
 .video-card.is-active .video-card__media {
-  outline: 1px solid rgba(143, 106, 53, 0.12);
+  outline: 1px solid rgba(143, 106, 53, 0.14);
 }
 
 .past-editions__pagination {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 :deep(.swiper-pagination-bullet) {
@@ -505,8 +472,8 @@ onBeforeUnmount(() => {
   height: 8px;
   margin: 0 !important;
   opacity: 1;
-  background: #cdbfa8;
-  transition: all 0.25s ease;
+  background: #ccbda7;
+  transition: width 0.2s ease, background-color 0.2s ease;
 }
 
 :deep(.swiper-pagination-bullet-active) {
@@ -517,18 +484,18 @@ onBeforeUnmount(() => {
 
 @media (max-width: 767px) {
   .past-editions {
-    padding: 44px 0 58px;
+    padding: 40px 0 56px;
   }
 
   .past-editions__container {
-    width: min(100%, calc(100% - 20px));
+    width: min(100%, calc(100% - 16px));
   }
 
   .past-editions__header {
     flex-direction: column;
     align-items: stretch;
-    gap: 18px;
-    margin-bottom: 20px;
+    gap: 16px;
+    margin-bottom: 18px;
   }
 
   .past-editions__controls {
@@ -540,16 +507,38 @@ onBeforeUnmount(() => {
     height: 40px;
   }
 
-  .video-card {
-    max-width: 380px;
+  .past-editions__slide {
+    width: clamp(132px, 42vw, 170px);
+  }
+
+  .video-card__content {
+    padding-top: 9px;
   }
 
   .video-card__title {
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 
   .video-card__description {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .video-card__year,
+  .video-card__category {
+    min-height: 24px;
+    padding: 4px 7px;
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .past-editions__slide {
+    width: 138px;
+  }
+
+  .past-editions__description {
+    font-size: 0.92rem;
   }
 }
 
