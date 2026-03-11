@@ -1,7 +1,10 @@
 <template>
   <section ref="root" class="featured" aria-label="Programação em destaque">
     <header class="head">
-      <h2 class="head__title">Destaque</h2>
+      <div class="head__title-wrap">
+        <span class="head__eyebrow">Programação</span>
+        <h2 class="head__title">Destaque</h2>
+      </div>
 
       <div class="head__actions">
         <button
@@ -28,8 +31,8 @@
         class="swiper"
         :modules="modules"
         :slides-per-view="1.08"
-        :space-between="16"
-        :speed="650"
+        :space-between="14"
+        :speed="560"
         :watch-overflow="true"
         :grab-cursor="true"
         :threshold="8"
@@ -39,7 +42,6 @@
         <SwiperSlide v-for="(item, idx) in items" :key="item.id ?? idx">
           <article class="card" :data-io="ioReady ? '1' : '0'">
             <a class="card__link" :href="item.href || '#'" @click.prevent="open(item)">
-              <!-- media (altura fixa => todos iguais) -->
               <div class="media">
                 <img
                   class="media__img"
@@ -49,6 +51,8 @@
                   decoding="async"
                   draggable="false"
                 />
+
+                <div class="media__shade"></div>
 
                 <span v-if="item.badge" class="badge">{{ item.badge }}</span>
 
@@ -71,7 +75,6 @@
                 </button>
               </div>
 
-              <!-- body (layout estável) -->
               <div class="body">
                 <div class="org">
                   <span class="org__mark" aria-hidden="true"></span>
@@ -82,7 +85,6 @@
                   {{ item.title }}
                 </h3>
 
-                <!-- meta fixada no fundo -->
                 <div class="meta">
                   <div class="row">
                     <span class="row__ic" aria-hidden="true">
@@ -141,17 +143,15 @@ import "swiper/css";
 
 type FeaturedItem = {
   id?: string | number;
-  badge?: string; // "Destaque"
+  badge?: string;
   image: string;
   imageAlt?: string;
-
   org: string;
   title: string;
   date: string;
   place: string;
-
-  href?: string;     // se quiser link real
-  shareUrl?: string; // se quiser compartilhar algo específico
+  href?: string;
+  shareUrl?: string;
 };
 
 const props = defineProps<{ items?: FeaturedItem[] }>();
@@ -167,17 +167,17 @@ const items =
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
           title: "João Gomes - Eu tenho a senha",
-          date: "04 de Junho e 07 de Junho de 2026",
+          date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
         {
           id: 2,
           badge: "Destaque",
           image:
-           "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-            org: "Festival de Inverno",
+            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+          org: "Festival de Inverno",
           title: "João Gomes - Eu tenho a senha",
-        date: "04 de Junho e 07 de Junho de 2026",
+          date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
         {
@@ -185,9 +185,9 @@ const items =
           badge: "Destaque",
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-           org: "Festival de Inverno",
-           title: "João Gomes - Eu tenho a senha",
-         date: "04 de Junho e 07 de Junho de 2026",
+          org: "Festival de Inverno",
+          title: "João Gomes - Eu tenho a senha",
+          date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
         {
@@ -195,9 +195,9 @@ const items =
           badge: "Destaque",
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-             org: "Festival de Inverno",
+          org: "Festival de Inverno",
           title: "João Gomes - Eu tenho a senha",
-          date: "04 de Junho e 07 de Junho de 2026",
+          date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
         {
@@ -205,9 +205,9 @@ const items =
           badge: "Destaque",
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-             org: "Festival de Inverno",
+          org: "Festival de Inverno",
           title: "João Gomes - Eu tenho a senha",
-          date: "04 de Junho e 07 de Junho de 2026",
+          date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
       ] as FeaturedItem[]);
@@ -215,10 +215,10 @@ const items =
 const modules = [A11y];
 
 const breakpoints = {
-  520: { slidesPerView: 1.25, spaceBetween: 16 },
-  760: { slidesPerView: 2.15, spaceBetween: 20 },
-  1040: { slidesPerView: 3.05, spaceBetween: 22 },
-  1280: { slidesPerView: 4.0, spaceBetween: 24 },
+  520: { slidesPerView: 1.2, spaceBetween: 14 },
+  760: { slidesPerView: 2.15, spaceBetween: 16 },
+  1040: { slidesPerView: 3.05, spaceBetween: 18 },
+  1280: { slidesPerView: 3.75, spaceBetween: 18 },
 };
 
 const swiperRef = ref<any>(null);
@@ -226,7 +226,6 @@ const onSwiper = (s: any) => (swiperRef.value = s);
 const slidePrev = () => swiperRef.value?.slidePrev();
 const slideNext = () => swiperRef.value?.slideNext();
 
-/** clique no card (você pode trocar por router.push / abrir modal) */
 function open(item: FeaturedItem) {
   if (item.href && item.href !== "#") window.location.href = item.href;
 }
@@ -244,18 +243,12 @@ async function share(item: FeaturedItem) {
 
   try {
     await navigator.clipboard.writeText(url);
-    // troque por seu toast
     alert("Link copiado!");
   } catch {
     alert("Não foi possível copiar o link.");
   }
 }
 
-/**
- * ✅ animação leve (sem GSAP):
- * - IntersectionObserver adiciona a classe uma vez
- * - CSS faz a entrada com opacity/transform (performático)
- */
 const root = ref<HTMLElement | null>(null);
 const ioReady = ref(false);
 let io: IntersectionObserver | null = null;
@@ -275,7 +268,7 @@ onMounted(() => {
       io?.disconnect();
       io = null;
     },
-    { threshold: 0.25 }
+    { threshold: 0.2 }
   );
 
   if (root.value) io.observe(root.value);
@@ -288,56 +281,68 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* =========================
-   TOKENS (combina com o Hero)
-   ========================= */
 .featured {
   --serif: ui-serif, "Georgia", "Times New Roman", Times, serif;
   --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
 
-  /* cores (alinha com sua paleta) */
   --ink: rgba(12, 14, 18, 0.92);
-  --muted: rgba(12, 14, 18, 0.68);
-  --line: rgba(12, 14, 18, 0.10);
+  --muted: rgba(12, 14, 18, 0.66);
+  --line: rgba(12, 14, 18, 0.08);
+  --line-strong: rgba(12, 14, 18, 0.14);
 
-  --accent: #3571BD; /* roxo discreto, como no exemplo */
+  --accent: #3571bd;
+  --accent-2: #eee74a;
   --paper: #ffffff;
+  --paper-soft: #fbfbfb;
+  --shadow: 0 14px 30px rgba(12, 14, 18, 0.05);
 
-  padding: 26px 0 10px;
+  padding: 20px 0 8px;
   background: var(--paper);
   color: var(--ink);
 }
 
 .head {
-  width: min(1180px, calc(100% - 48px));
-  margin: 0 auto 12px;
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto 10px;
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
+}
+
+.head__title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.head__eyebrow {
+  color: var(--accent);
+  font: 800 11px/1 var(--sans);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .head__title {
   margin: 0;
   font-family: var(--serif);
   font-weight: 750;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  font-size: clamp(22px, 2.2vw, 32px);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  font-size: clamp(20px, 2vw, 28px);
 }
 
-/* setas minimalistas */
 .head__actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .nav {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: transparent;
+  background: #fff;
   color: var(--ink);
   display: grid;
   place-items: center;
@@ -346,7 +351,7 @@ onBeforeUnmount(() => {
 }
 
 .nav span {
-  font-size: 26px;
+  font-size: 22px;
   line-height: 1;
   opacity: 0.9;
 }
@@ -354,57 +359,56 @@ onBeforeUnmount(() => {
 @media (hover: hover) {
   .nav:hover {
     transform: translateY(-1px);
-    border-color: rgba(12, 14, 18, 0.18);
-    background: rgba(12, 14, 18, 0.03);
+    border-color: var(--line-strong);
+    background: rgba(12, 14, 18, 0.025);
   }
 }
 
 @media (max-width: 720px) {
   .head__actions {
-    display: none; /* swipe no mobile */
+    display: none;
   }
 }
 
 .rail {
-  width: min(1180px, calc(100% - 48px));
+  width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
 }
 
 .swiper {
-  padding: 8px 2px 20px;
+  padding: 6px 2px 16px;
 }
 
-/* =========================
-   CARD (todos com mesmo tamanho)
-   ========================= */
 .card {
   height: 100%;
 }
 
 .card__link {
   display: grid;
-  grid-template-rows: 168px 1fr;
-  height: 420px; /* ✅ tamanho fixo => todos iguais */
-  border-radius: 22px;
+  grid-template-rows: 146px 1fr;
+  height: 338px;
+  border-radius: 18px;
   overflow: hidden;
-  background: #fff;
+  background: linear-gradient(180deg, #fff 0%, var(--paper-soft) 100%);
   border: 1px solid var(--line);
   text-decoration: none;
   color: inherit;
   position: relative;
   transform: translateZ(0);
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  box-shadow: var(--shadow);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
 }
 
-/* responsivo: mantém proporção/altura legal no mobile */
 @media (max-width: 520px) {
   .card__link {
-    height: 440px;
-    grid-template-rows: 160px 1fr;
+    height: 348px;
+    grid-template-rows: 140px 1fr;
   }
 }
 
-/* media */
 .media {
   position: relative;
   background: #0b0d12;
@@ -419,29 +423,39 @@ onBeforeUnmount(() => {
   filter: saturate(1.02) contrast(1.02);
 }
 
-/* badge discreto (igual ao exemplo, mas mais clean) */
+.media__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(9, 11, 16, 0.28),
+    rgba(9, 11, 16, 0.02)
+  );
+  pointer-events: none;
+}
+
 .badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 7px 12px;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
   border-radius: 999px;
   background: var(--accent);
   color: #fff;
-  font: 800 13px/1 var(--sans);
+  font: 800 11.5px/1 var(--sans);
   letter-spacing: 0.01em;
+  box-shadow: 0 10px 20px rgba(53, 113, 189, 0.18);
 }
 
-/* share minimal */
 .share {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
+  top: 9px;
+  right: 9px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
@@ -450,49 +464,51 @@ onBeforeUnmount(() => {
   cursor: pointer;
   transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
 }
+
 .share .i {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
+
 @media (hover: hover) {
   .share:hover {
     transform: translateY(-1px);
-    background: rgba(0, 0, 0, 0.28);
-    border-color: rgba(255, 255, 255, 0.34);
+    background: rgba(0, 0, 0, 0.24);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 }
 
-/* body */
 .body {
-  padding: 16px 16px 14px;
+  padding: 12px 12px 11px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
-/* org */
 .org {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--muted);
-  font: 700 13px/1.2 var(--sans);
+  font: 700 12px/1.2 var(--sans);
 }
 
 .org__mark {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  background: rgba(12, 14, 18, 0.06);
+  background: rgba(12, 14, 18, 0.05);
   position: relative;
+  flex-shrink: 0;
 }
+
 .org__mark::after {
   content: "";
   position: absolute;
-  inset: 9px;
+  inset: 7px;
   border-radius: 999px;
-  background: #EEE74A; /* pequeno ponto como “selo” */
-  opacity: 0.9;
+  background: var(--accent-2);
+  opacity: 0.95;
 }
 
 .title {
@@ -500,66 +516,65 @@ onBeforeUnmount(() => {
   font-family: var(--sans);
   font-weight: 900;
   letter-spacing: -0.01em;
-  line-height: 1.18;
+  line-height: 1.16;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--ink);
 
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* mantém todos “comportados” */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* meta fixada no rodapé do card */
 .meta {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 1px solid rgba(12, 14, 18, 0.08);
+  border-top: 1px solid rgba(12, 14, 18, 0.06);
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 18px 1fr;
-  gap: 10px;
+  grid-template-columns: 16px 1fr;
+  gap: 8px;
   align-items: start;
   color: var(--ink);
 }
+
 .row__ic {
-  width: 18px;
-  height: 18px;
-  color: rgba(12, 14, 18, 0.80);
-}
-.row__ic .i {
-  width: 18px;
-  height: 18px;
-}
-.row__tx {
-  font: 650 13.5px/1.35 var(--sans);
-  color: rgba(12, 14, 18, 0.82);
+  width: 11px;
+  height: 26px;
+  color: rgba(12, 14, 18, 0.74);
 }
 
-/* underline roxo (bem sutil, elegante) */
+.row__ic .i {
+  width: 16px;
+  height: 16px;
+}
+
+.row__tx {
+  font: 650 12.5px/1.35 var(--sans);
+  color: rgba(12, 14, 18, 0.8);
+}
+
 .underline {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 10px;
-  height: 5px;
-  border-radius: 99px;
-  background: color-mix(in srgb, var(--accent), transparent 18%);
-  opacity: 0.9;
+  left: 12px;
+  right: 12px;
+  bottom: 8px;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent), transparent 16%);
+  opacity: 0.92;
 }
 
-/* =========================
-   HOVER (surreal discreto)
-   ========================= */
 @media (hover: hover) {
   .card__link:hover {
     transform: translateY(-3px);
-    border-color: rgba(12, 14, 18, 0.16);
+    border-color: rgba(12, 14, 18, 0.14);
+    box-shadow: 0 18px 34px rgba(12, 14, 18, 0.08);
   }
 
   .card__link:hover .media__img {
@@ -568,46 +583,83 @@ onBeforeUnmount(() => {
   }
 }
 
-/* =========================
-   ANIMAÇÃO DE ENTRADA (leve)
-   ========================= */
 .card__link {
   opacity: 1;
 }
 
-/* quando ainda não liberou IO: reduz “jump” */
 .card[data-io="0"] .card__link {
   opacity: 0;
   transform: translateY(10px);
 }
 
-/* libera */
 .card[data-io="1"] .card__link {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 500ms ease, transform 500ms ease, box-shadow 220ms ease,
-    border-color 220ms ease;
+  transition:
+    opacity 480ms ease,
+    transform 480ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
 }
 
-/* stagger por slide (simples, sem JS extra) */
-.swiper :deep(.swiper-slide) {
-  opacity: 1;
-}
-.card[data-io="1"] .card__link {
-  transition-delay: 0ms;
-}
 .swiper :deep(.swiper-slide:nth-child(1)) .card__link { transition-delay: 40ms; }
-.swiper :deep(.swiper-slide:nth-child(2)) .card__link { transition-delay: 90ms; }
-.swiper :deep(.swiper-slide:nth-child(3)) .card__link { transition-delay: 140ms; }
-.swiper :deep(.swiper-slide:nth-child(4)) .card__link { transition-delay: 190ms; }
-.swiper :deep(.swiper-slide:nth-child(5)) .card__link { transition-delay: 240ms; }
-.swiper :deep(.swiper-slide:nth-child(6)) .card__link { transition-delay: 290ms; }
+.swiper :deep(.swiper-slide:nth-child(2)) .card__link { transition-delay: 80ms; }
+.swiper :deep(.swiper-slide:nth-child(3)) .card__link { transition-delay: 120ms; }
+.swiper :deep(.swiper-slide:nth-child(4)) .card__link { transition-delay: 160ms; }
+.swiper :deep(.swiper-slide:nth-child(5)) .card__link { transition-delay: 200ms; }
+.swiper :deep(.swiper-slide:nth-child(6)) .card__link { transition-delay: 240ms; }
+
+@media (max-width: 768px) {
+  .featured {
+    padding: 16px 0 6px;
+  }
+
+  .head,
+  .rail {
+    width: min(100%, calc(100% - 16px));
+  }
+
+  .head {
+    margin-bottom: 8px;
+  }
+
+  .head__eyebrow {
+    font-size: 10px;
+  }
+
+  .head__title {
+    font-size: 22px;
+  }
+
+  .body {
+    padding: 11px 11px 10px;
+    gap: 12px;
+  }
+
+  .badge {
+    padding: 5px 9px;
+    font-size: 10.8px;
+  }
+
+  .org {
+    font-size: 11.5px;
+  }
+
+  .title {
+    font-size: 13.5px;
+  }
+
+  .row__tx {
+    font-size: 12px;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .card[data-io="0"] .card__link {
     opacity: 1;
     transform: none;
   }
+
   .card__link,
   .media__img,
   .nav,
@@ -616,6 +668,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* util */
-.i { display: block; }
+.i {
+  display: block;
+}
 </style>
