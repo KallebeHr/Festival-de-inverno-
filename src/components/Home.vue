@@ -131,7 +131,7 @@ onBeforeUnmount(() => {
 }
 
 .hero__bg-image {
-  background: url("public/banner/BannerD.webp") center center / cover no-repeat;
+  background: url("/banner/BannerD.webp") center center / cover no-repeat;
   background-position: center 30%;
   transform: scale(1.08);
   filter: blur(2px);
