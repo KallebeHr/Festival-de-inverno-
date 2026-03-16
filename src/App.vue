@@ -1,14 +1,9 @@
 <template>
   <v-app>
     <VLibras position="right" />
-    <div v-if="!isLoaded">
-      <preloader />
-    </div>
-    <div v-else>
        <NavHeader/>
        <router-view />
        <NavFooter/>
-     </div>
   </v-app>
 </template>
 

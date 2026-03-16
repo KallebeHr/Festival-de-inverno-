@@ -61,7 +61,7 @@ defineProps({
 /* container */
 .banner__container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0;
   position: relative;
 }

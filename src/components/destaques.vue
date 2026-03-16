@@ -3,7 +3,7 @@
     <header class="head">
       <div class="head__title-wrap">
         <span class="head__eyebrow">Programação</span>
-        <h2 class="head__title">Destaque</h2>
+        <h2 class="head__title">Destaques do Festival</h2>
       </div>
 
       <div class="head__actions">
@@ -15,6 +15,7 @@
         >
           <span aria-hidden="true">‹</span>
         </button>
+
         <button
           class="nav nav--next"
           type="button"
@@ -32,7 +33,7 @@
         :modules="modules"
         :slides-per-view="1.08"
         :space-between="14"
-        :speed="560"
+        :speed="520"
         :watch-overflow="true"
         :grab-cursor="true"
         :threshold="8"
@@ -41,7 +42,11 @@
       >
         <SwiperSlide v-for="(item, idx) in items" :key="item.id ?? idx">
           <article class="card" :data-io="ioReady ? '1' : '0'">
-            <a class="card__link" :href="item.href || '#'" @click.prevent="open(item)">
+            <a
+              class="card__link"
+              :href="item.href || '#'"
+              @click.prevent="open(item)"
+            >
               <div class="media">
                 <img
                   class="media__img"
@@ -52,9 +57,12 @@
                   draggable="false"
                 />
 
-                <div class="media__shade"></div>
+                <div class="media__overlay"></div>
+                <div class="media__glow"></div>
 
-                <span v-if="item.badge" class="badge">{{ item.badge }}</span>
+                <span v-if="item.badge" class="badge">
+                  {{ item.badge }}
+                </span>
 
                 <button
                   class="share"
@@ -76,14 +84,16 @@
               </div>
 
               <div class="body">
-                <div class="org">
-                  <span class="org__mark" aria-hidden="true"></span>
-                  <span class="org__name">{{ item.org }}</span>
-                </div>
+                <div class="top">
+                  <div class="org">
+                    <span class="org__mark" aria-hidden="true"></span>
+                    <span class="org__name">{{ item.org }}</span>
+                  </div>
 
-                <h3 class="title" :title="item.title">
-                  {{ item.title }}
-                </h3>
+                  <h3 class="title" :title="item.title">
+                    {{ item.title }}
+                  </h3>
+                </div>
 
                 <div class="meta">
                   <div class="row">
@@ -126,7 +136,7 @@
                 </div>
               </div>
 
-              <span class="underline" aria-hidden="true"></span>
+              <span class="card__bar" aria-hidden="true"></span>
             </a>
           </article>
         </SwiperSlide>
@@ -166,7 +176,7 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "João Gomes - Eu tenho a senha",
+          title: "Nome Cantor - Nome Musica",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
@@ -176,7 +186,7 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "João Gomes - Eu tenho a senha",
+          title: "Evento - Nome Do Local",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
@@ -186,7 +196,7 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "João Gomes - Eu tenho a senha",
+          title: "Nome Cantor - Nome Musica",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
@@ -196,7 +206,7 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "João Gomes - Eu tenho a senha",
+          title: "Evento - Nome Do Local",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
@@ -206,7 +216,7 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "João Gomes - Eu tenho a senha",
+          title: "Nome Cantor - Nome Musica",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
@@ -215,19 +225,21 @@ const items =
 const modules = [A11y];
 
 const breakpoints = {
-  520: { slidesPerView: 1.2, spaceBetween: 14 },
-  760: { slidesPerView: 2.15, spaceBetween: 16 },
-  1040: { slidesPerView: 3.05, spaceBetween: 18 },
-  1280: { slidesPerView: 3.75, spaceBetween: 18 },
+  520: { slidesPerView: 1.18, spaceBetween: 14 },
+  760: { slidesPerView: 2.1, spaceBetween: 16 },
+  1040: { slidesPerView: 3.02, spaceBetween: 18 },
+  1280: { slidesPerView: 3.72, spaceBetween: 18 },
 };
 
 const swiperRef = ref<any>(null);
-const onSwiper = (s: any) => (swiperRef.value = s);
+const onSwiper = (swiper: any) => (swiperRef.value = swiper);
 const slidePrev = () => swiperRef.value?.slidePrev();
 const slideNext = () => swiperRef.value?.slideNext();
 
 function open(item: FeaturedItem) {
-  if (item.href && item.href !== "#") window.location.href = item.href;
+  if (item.href && item.href !== "#") {
+    window.location.href = item.href;
+  }
 }
 
 async function share(item: FeaturedItem) {
@@ -238,7 +250,9 @@ async function share(item: FeaturedItem) {
     try {
       await navigator.share({ title: text, text, url });
       return;
-    } catch {}
+    } catch {
+      // fallback abaixo
+    }
   }
 
   try {
@@ -254,21 +268,25 @@ const ioReady = ref(false);
 let io: IntersectionObserver | null = null;
 
 onMounted(() => {
-  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-  if (reduce) {
+  const reduceMotion = window.matchMedia?.(
+    "(prefers-reduced-motion: reduce)"
+  )?.matches;
+
+  if (reduceMotion) {
     ioReady.value = true;
     return;
   }
 
   io = new IntersectionObserver(
     (entries) => {
-      const e = entries[0];
-      if (!e?.isIntersecting) return;
+      const entry = entries[0];
+      if (!entry?.isIntersecting) return;
+
       ioReady.value = true;
       io?.disconnect();
       io = null;
     },
-    { threshold: 0.2 }
+    { threshold: 0.15 }
   );
 
   if (root.value) io.observe(root.value);
@@ -283,53 +301,79 @@ onBeforeUnmount(() => {
 <style scoped>
 .featured {
   --serif: ui-serif, "Georgia", "Times New Roman", Times, serif;
-  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Arial, sans-serif;
 
-  --ink: rgba(12, 14, 18, 0.92);
-  --muted: rgba(12, 14, 18, 0.66);
+  --ink: rgba(12, 14, 18, 0.95);
+  --muted: rgba(12, 14, 18, 0.62);
   --line: rgba(12, 14, 18, 0.08);
   --line-strong: rgba(12, 14, 18, 0.14);
 
-  --accent: #3571bd;
-  --accent-2: #eee74a;
-  --paper: #ffffff;
-  --paper-soft: #fbfbfb;
-  --shadow: 0 14px 30px rgba(12, 14, 18, 0.05);
+  --accent: #316eb9;
+  --accent-strong: #24589a;
+  --accent-soft: rgba(49, 110, 185, 0.12);
+  --gold: #ede53a;
 
-  padding: 20px 0 8px;
-  background: var(--paper);
+  --paper: #ffffff;
+  --paper-soft: #f7f9fc;
+  --paper-deep: #eef3f9;
+
+  --shadow-sm: 0 10px 24px rgba(12, 14, 18, 0.05);
+  --shadow-md: 0 20px 44px rgba(12, 14, 18, 0.08);
+
+  padding: 24px 0 10px;
+  background:
+    radial-gradient(circle at top left, rgba(49, 110, 185, 0.05), transparent 35%),
+    linear-gradient(180deg, #fff 0%, #fbfcfe 100%);
   color: var(--ink);
 }
 
-.head {
+.head,
+.rail {
   width: min(1120px, calc(100% - 32px));
-  margin: 0 auto 10px;
+  margin-inline: auto;
+}
+
+.head {
+  margin-bottom: 14px;
   display: flex;
-  align-items: end;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
 }
 
 .head__title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .head__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--accent);
   font: 800 11px/1 var(--sans);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.head__eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.7;
 }
 
 .head__title {
   margin: 0;
   font-family: var(--serif);
-  font-weight: 750;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  letter-spacing: -0.04em;
   line-height: 1.02;
-  font-size: clamp(20px, 2vw, 28px);
+  font-size: clamp(24px, 2.4vw, 34px);
 }
 
 .head__actions {
@@ -338,45 +382,44 @@ onBeforeUnmount(() => {
 }
 
 .nav {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.9);
   color: var(--ink);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+  box-shadow: 0 8px 16px rgba(12, 14, 18, 0.04);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .nav span {
   font-size: 22px;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.92;
 }
 
 @media (hover: hover) {
   .nav:hover {
-    transform: translateY(-1px);
-    border-color: var(--line-strong);
-    background: rgba(12, 14, 18, 0.025);
-  }
-}
-
-@media (max-width: 720px) {
-  .head__actions {
-    display: none;
+    transform: translateY(-2px);
+    border-color: rgba(49, 110, 185, 0.2);
+    background: #fff;
+    box-shadow: 0 12px 22px rgba(12, 14, 18, 0.07);
   }
 }
 
 .rail {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
+  position: relative;
 }
 
 .swiper {
-  padding: 6px 2px 16px;
+  padding: 6px 2px 18px;
 }
 
 .card {
@@ -384,85 +427,99 @@ onBeforeUnmount(() => {
 }
 
 .card__link {
+  position: relative;
   display: grid;
-  grid-template-rows: 146px 1fr;
-  height: 338px;
-  border-radius: 18px;
+  grid-template-rows: 168px 1fr;
+  height: 380px;
   overflow: hidden;
-  background: linear-gradient(180deg, #fff 0%, var(--paper-soft) 100%);
-  border: 1px solid var(--line);
+  border-radius: 22px;
+  border: 1px solid rgba(12, 14, 18, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(247, 249, 252, 1));
   text-decoration: none;
   color: inherit;
-  position: relative;
+  box-shadow: var(--shadow-sm);
   transform: translateZ(0);
-  box-shadow: var(--shadow);
   transition:
-    transform 200ms ease,
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-@media (max-width: 520px) {
-  .card__link {
-    height: 348px;
-    grid-template-rows: 140px 1fr;
-  }
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .media {
   position: relative;
-  background: #0b0d12;
+  overflow: hidden;
+  background: #0f1724;
 }
 
 .media__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
+  object-fit: cover;
   transform: scale(1.001);
-  filter: saturate(1.02) contrast(1.02);
+  transition: transform 700ms ease;
+  filter: saturate(1.05) contrast(1.04);
 }
 
-.media__shade {
+.media__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(9, 11, 16, 0.28),
-    rgba(9, 11, 16, 0.02)
-  );
+  background:
+    linear-gradient(to top, rgba(8, 12, 18, 0.5), rgba(8, 12, 18, 0.04) 55%),
+    linear-gradient(to right, rgba(49, 110, 185, 0.12), transparent 45%);
+  pointer-events: none;
+}
+
+.media__glow {
+  position: absolute;
+  inset: auto auto -34px -24px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: rgba(237, 229, 58, 0.26);
+  filter: blur(24px);
   pointer-events: none;
 }
 
 .badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 6px 10px;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
   border-radius: 999px;
-  background: var(--accent);
+  background: rgba(49, 110, 185, 0.92);
   color: #fff;
-  font: 800 11.5px/1 var(--sans);
-  letter-spacing: 0.01em;
-  box-shadow: 0 10px 20px rgba(53, 113, 189, 0.18);
+  font: 800 11px/1 var(--sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 24px rgba(49, 110, 185, 0.24);
 }
 
 .share {
   position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 34px;
-  height: 34px;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(10, 12, 16, 0.22);
   color: #fff;
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
 }
 
 .share .i {
@@ -473,22 +530,32 @@ onBeforeUnmount(() => {
 @media (hover: hover) {
   .share:hover {
     transform: translateY(-1px);
-    background: rgba(0, 0, 0, 0.24);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(10, 12, 16, 0.34);
+    border-color: rgba(255, 255, 255, 0.28);
   }
 }
 
 .body {
-  padding: 12px 12px 11px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  padding: 15px 15px 14px;
   gap: 14px;
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
 }
 
 .org {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 24px;
   color: var(--muted);
   font: 700 12px/1.2 var(--sans);
 }
@@ -497,28 +564,36 @@ onBeforeUnmount(() => {
   width: 24px;
   height: 24px;
   border-radius: 999px;
-  background: rgba(12, 14, 18, 0.05);
-  position: relative;
   flex-shrink: 0;
+  position: relative;
+  background: rgba(49, 110, 185, 0.08);
+  border: 1px solid rgba(49, 110, 185, 0.08);
 }
 
 .org__mark::after {
   content: "";
   position: absolute;
-  inset: 7px;
+  inset: 6px;
   border-radius: 999px;
-  background: var(--accent-2);
-  opacity: 0.95;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.16);
+}
+
+.org__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .title {
   margin: 0;
+  min-height: 58px;
   font-family: var(--sans);
   font-weight: 900;
-  letter-spacing: -0.01em;
-  line-height: 1.16;
+  font-size: 15px;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
-  font-size: 14px;
   color: var(--ink);
 
   display: -webkit-box;
@@ -529,57 +604,61 @@ onBeforeUnmount(() => {
 
 .meta {
   margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid rgba(12, 14, 18, 0.06);
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(12, 14, 18, 0.06);
 }
 
 .row {
   display: grid;
-  grid-template-columns: 16px 1fr;
-  gap: 8px;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
   align-items: start;
-  color: var(--ink);
 }
 
 .row__ic {
-  width: 11px;
-  height: 26px;
-  color: rgba(12, 14, 18, 0.74);
+  width: 18px;
+  height: 18px;
+  color: rgba(12, 14, 18, 0.7);
+  transform: translateY(1px);
 }
 
 .row__ic .i {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .row__tx {
-  font: 650 12.5px/1.35 var(--sans);
-  color: rgba(12, 14, 18, 0.8);
+  font: 650 12.5px/1.42 var(--sans);
+  color: rgba(12, 14, 18, 0.78);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.underline {
+.card__bar {
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 8px;
+  left: 14px;
+  right: 14px;
+  bottom: 10px;
   height: 4px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent), transparent 16%);
-  opacity: 0.92;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--gold), white 22%));
+  opacity: 0.95;
 }
 
 @media (hover: hover) {
   .card__link:hover {
-    transform: translateY(-3px);
-    border-color: rgba(12, 14, 18, 0.14);
-    box-shadow: 0 18px 34px rgba(12, 14, 18, 0.08);
+    transform: translateY(-5px);
+    border-color: rgba(49, 110, 185, 0.16);
+    box-shadow: var(--shadow-md);
   }
 
   .card__link:hover .media__img {
-    transform: scale(1.03);
-    transition: transform 520ms ease;
+    transform: scale(1.05);
   }
 }
 
@@ -589,7 +668,7 @@ onBeforeUnmount(() => {
 
 .card[data-io="0"] .card__link {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(12px);
 }
 
 .card[data-io="1"] .card__link {
@@ -598,20 +677,36 @@ onBeforeUnmount(() => {
   transition:
     opacity 480ms ease,
     transform 480ms ease,
-    box-shadow 200ms ease,
-    border-color 200ms ease;
+    box-shadow 220ms ease,
+    border-color 220ms ease;
 }
 
-.swiper :deep(.swiper-slide:nth-child(1)) .card__link { transition-delay: 40ms; }
-.swiper :deep(.swiper-slide:nth-child(2)) .card__link { transition-delay: 80ms; }
-.swiper :deep(.swiper-slide:nth-child(3)) .card__link { transition-delay: 120ms; }
-.swiper :deep(.swiper-slide:nth-child(4)) .card__link { transition-delay: 160ms; }
-.swiper :deep(.swiper-slide:nth-child(5)) .card__link { transition-delay: 200ms; }
-.swiper :deep(.swiper-slide:nth-child(6)) .card__link { transition-delay: 240ms; }
+.swiper :deep(.swiper-slide) {
+  height: auto;
+}
+
+.swiper :deep(.swiper-slide:nth-child(1)) .card__link {
+  transition-delay: 40ms;
+}
+.swiper :deep(.swiper-slide:nth-child(2)) .card__link {
+  transition-delay: 80ms;
+}
+.swiper :deep(.swiper-slide:nth-child(3)) .card__link {
+  transition-delay: 120ms;
+}
+.swiper :deep(.swiper-slide:nth-child(4)) .card__link {
+  transition-delay: 160ms;
+}
+.swiper :deep(.swiper-slide:nth-child(5)) .card__link {
+  transition-delay: 200ms;
+}
+.swiper :deep(.swiper-slide:nth-child(6)) .card__link {
+  transition-delay: 240ms;
+}
 
 @media (max-width: 768px) {
   .featured {
-    padding: 16px 0 6px;
+    padding: 18px 0 8px;
   }
 
   .head,
@@ -620,37 +715,48 @@ onBeforeUnmount(() => {
   }
 
   .head {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .head__title {
+    font-size: 24px;
   }
 
   .head__eyebrow {
     font-size: 10px;
   }
 
-  .head__title {
-    font-size: 22px;
+  .card__link {
+    height: 372px;
+    grid-template-rows: 160px 1fr;
+    border-radius: 20px;
   }
 
   .body {
-    padding: 11px 11px 10px;
+    padding: 13px 13px 12px;
     gap: 12px;
   }
 
-  .badge {
-    padding: 5px 9px;
-    font-size: 10.8px;
-  }
-
-  .org {
-    font-size: 11.5px;
-  }
-
   .title {
-    font-size: 13.5px;
+    font-size: 14px;
+    min-height: 54px;
   }
 
   .row__tx {
     font-size: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .head__actions {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .card__link {
+    height: 368px;
+    grid-template-rows: 154px 1fr;
   }
 }
 
