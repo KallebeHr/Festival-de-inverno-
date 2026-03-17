@@ -131,7 +131,9 @@ onBeforeUnmount(() => {
 }
 
 .hero__bg-image {
-  background: url("/banner/BannerD.webp") center center / cover no-repeat;
+  background-image: url("/banner/BannerD.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
   background-position: center 30%;
   transform: scale(1.08);
   filter: blur(2px);
@@ -318,6 +320,13 @@ onBeforeUnmount(() => {
   .hero {
     min-height: 72vh;
     padding: 96px 18px 28px;
+  }
+
+  .hero__bg-image {
+    background-image: url("/banner/BannerM.webp");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
   }
 
   .hero__bg-overlay {

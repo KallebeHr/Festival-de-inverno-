@@ -115,39 +115,60 @@ const breakpoints = {
 
 const guests = [
   {
-    name: "Erivaldo Oliveira",
-    work: "Édipo REC",
-    image:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=900&auto=format&fit=crop",
-    accent: "#22c7aa",
-  },
-  {
-    name: "Herson Capri",
-    work: "A Sabedoria dos Pais",
+    name: "Nome Artista",
+    work: "Nome Evento",
     image:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=900&auto=format&fit=crop",
     accent: "#f4b321",
   },
   {
-    name: "Malu Galli",
-    work: "Mulher em Fuga",
+   name: "Nome Artista",
+    work: "Nome Evento",
     image:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=900&auto=format&fit=crop",
     accent: "#ef4444",
   },
   {
-    name: "Miranda Lebrão",
-    work: "O Grande Cabaré Combo Drag Week",
+   name: "Nome Artista",
+    work: "Nome Evento",
     image:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=900&auto=format&fit=crop",
     accent: "#7c68ee",
   },
   {
-    name: "Natália do Vale",
-    work: "Natália do Vale",
+   name: "Nome Artista",
+    work: "Nome Evento",
     image:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=900&auto=format&fit=crop",
     accent: "#22c7aa",
+  },
+  {
+   name: "Nome Artista",
+    work: "Nome Evento",
+    image:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=900&auto=format&fit=crop",
+    accent: "#ef4444",
+  },
+  {
+   name: "Nome Artista",
+    work: "Nome Evento",
+    image:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=900&auto=format&fit=crop",
+    accent: "#7c68ee",
+  },
+  {
+   name: "Nome Artista",
+    work: "Nome Evento",
+    image:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=900&auto=format&fit=crop",
+    accent: "#22c7aa",
+  },
+  {
+    name: "Nome Artista",
+    work: "Nome Evento",
+    image:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=900&auto=format&fit=crop",
+    accent: "#f4b321",
   },
 ];
 </script>

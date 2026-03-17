@@ -206,12 +206,42 @@ const items =
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
           org: "Festival de Inverno",
-          title: "Evento - Nome Do Local",
+          title: "Nome Cantor - Nome Musica",
           date: "04 e 07 de Junho de 2026",
           place: "Pedro II - Praça da Matriz",
         },
         {
           id: 5,
+          badge: "Destaque",
+          image:
+            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+          org: "Festival de Inverno",
+          title: "Evento - Nome Do Local",
+          date: "04 e 07 de Junho de 2026",
+          place: "Pedro II - Praça da Matriz",
+        },
+        {
+          id: 6,
+          badge: "Destaque",
+          image:
+            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+          org: "Festival de Inverno",
+          title: "Nome Cantor - Nome Musica",
+          date: "04 e 07 de Junho de 2026",
+          place: "Pedro II - Praça da Matriz",
+        },
+        {
+          id: 7,
+          badge: "Destaque",
+          image:
+            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+          org: "Festival de Inverno",
+          title: "Evento - Nome Do Local",
+          date: "04 e 07 de Junho de 2026",
+          place: "Pedro II - Praça da Matriz",
+        },
+        {
+          id: 8,
           badge: "Destaque",
           image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
