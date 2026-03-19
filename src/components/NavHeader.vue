@@ -574,7 +574,7 @@ const itemBase = [
   },
   {
     id: "programacao",
-    hash: "#programacao",
+    hash: "/programacao",
     icon: "mdi-calendar-clock-outline",
     pt: { label: "Programação", desc: "Dias, palcos e horários." },
     en: { label: "Schedule", desc: "Days, stages and times." }

@@ -45,7 +45,7 @@
           :slidesPerView="1"
           :spaceBetween="16"
           :loop="true"
-          :autoplay="{ delay: 4200, disableOnInteraction: false }"
+          :autoplay="{ delay: 8200, disableOnInteraction: false }"
           :pagination="{ clickable: true, type: 'progressbar' }"
           class="placesSwiper"
           :breakpoints="{

@@ -1,1690 +1,1512 @@
 <template>
-  <section id="programacao" class="program" aria-label="Programação completa do Festival de Inverno — Edição 2026">
-    <!-- BG artístico igual pegada do hero -->
-    <div class="bg" aria-hidden="true">
-      <div class="bg__base"></div>
-      <div class="bg__overlay bg__overlay--vignette"></div>
-      <div class="bg__overlay bg__overlay--tint"></div>
-      <div class="bg__aurora"></div>
-      <div class="bg__grid"></div>
-      <div class="bg__noise"></div>
+  <section
+    id="programacao"
+    class="schedule"
+    :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
+    ref="root"
+    aria-label="Programação do Festival de Inverno"
+  >
+    <div class="schedule__bg" aria-hidden="true">
+      <div class="schedule__bg-grid"></div>
+      <div class="schedule__bg-glow schedule__bg-glow--a"></div>
+      <div class="schedule__bg-glow schedule__bg-glow--b"></div>
     </div>
 
-    <div class="container">
-      <!-- Header -->
-      <header class="head">
-        <p class="kicker">
-          <span class="dot" aria-hidden="true"></span>
-          Programação • Edição 2026 • Pedro II
-        </p>
+    <div class="schedule__container">
+      <!-- HEADER -->
+      <header v-if="hasActiveFilters" class="schedule__head">
+  <div class="schedule__head-left">
+    <p class="schedule__eyebrow">
+      <span class="schedule__dot" aria-hidden="true"></span>
+      Programação oficial
+    </p>
 
-        <div class="head__row">
-          <h2 class="title">Programação</h2>
-          <div class="chips" role="list" aria-label="Resumo rápido">
-            <span class="chip" role="listitem">
-              <span class="chip__ico" aria-hidden="true">🎭</span> 25 eventos
-            </span>
-            <span class="chip" role="listitem">
-              <span class="chip__ico" aria-hidden="true">📍</span> 8 locais
-            </span>
-            <span class="chip" role="listitem">
-              <span class="chip__ico" aria-hidden="true">⏱️</span> Tempo ao vivo
-            </span>
+    <h2 class="schedule__title">
+      Descubra a programação completa
+      <span>do Festival de Inverno</span>
+    </h2>
+
+    <p class="schedule__sub">
+      Use os filtros abaixo para encontrar eventos por dia, local, categoria
+      ou palavra-chave. A navegação foi pensada para ficar simples, rápida
+      e intuitiva em qualquer tela.
+    </p>
+  </div>
+
+  <div class="schedule__stats" aria-label="Resumo da programação">
+    <div class="schedule__stat">
+      <strong>{{ filteredEvents.length }}</strong>
+      <span>eventos visíveis</span>
+    </div>
+
+    <div class="schedule__stat">
+      <strong>{{ locations.length }}</strong>
+      <span>locais</span>
+    </div>
+
+    <div class="schedule__stat">
+      <strong>{{ favoriteIds.length }}</strong>
+      <span>favoritos</span>
+    </div>
+  </div>
+</header>
+      <!-- FILTER PANEL -->
+      <section class="schedule__filters" aria-label="Filtros da programação">
+        <div class="schedule__filters-head">
+          <div>
+            <p class="schedule__filters-kicker">Filtrar programação</p>
+            <h3 class="schedule__filters-title">Encontre o que deseja com facilidade</h3>
           </div>
-        </div>
 
-        <p class="subtitle">
-          Filtre por dia, local ou tipo. O contador ao vivo mostra quanto falta para começar, ou há quanto tempo iniciou.
-        </p>
-      </header>
-
-      <!-- Toolbar -->
-      <div class="toolbar" role="region" aria-label="Filtros e busca">
-        <div class="toolbar__left">
-          <label class="field" aria-label="Buscar evento">
-            <span class="field__ico" aria-hidden="true">⌕</span>
-            <input
-              v-model.trim="q"
-              class="input"
-              type="search"
-              placeholder="Buscar por nome, local, descrição…"
-              autocomplete="off"
-            />
-            <button
-              v-if="q"
-              class="clear"
-              type="button"
-              @click="q = ''"
-              aria-label="Limpar busca"
-              title="Limpar"
-            >
-              ✕
-            </button>
-          </label>
-
-          <div class="seg" role="tablist" aria-label="Visualização">
-            <button
-              class="seg__btn"
-              :class="{ 'is-on': view === 'grid' }"
-              type="button"
-              role="tab"
-              :aria-selected="view === 'grid'"
-              @click="view = 'grid'"
-            >
-              Grade
-            </button>
-            <button
-              class="seg__btn"
-              :class="{ 'is-on': view === 'list' }"
-              type="button"
-              role="tab"
-              :aria-selected="view === 'list'"
-              @click="view = 'list'"
-            >
-              Lista
-            </button>
-          </div>
-        </div>
-
-        <div class="toolbar__right">
-          <label class="selectWrap" aria-label="Filtrar por dia">
-            <span class="selectWrap__label">Dia</span>
-            <select v-model="day" class="select">
-              <option value="">Todos</option>
-              <option v-for="d in days" :key="d" :value="d">{{ formatDayLabel(d) }}</option>
-            </select>
-            <span class="selectWrap__chev" aria-hidden="true">▾</span>
-          </label>
-
-          <label class="selectWrap" aria-label="Filtrar por local">
-            <span class="selectWrap__label">Local</span>
-            <select v-model="place" class="select">
-              <option value="">Todos</option>
-              <option v-for="p in places" :key="p" :value="p">{{ p }}</option>
-            </select>
-            <span class="selectWrap__chev" aria-hidden="true">▾</span>
-          </label>
-
-          <label class="selectWrap" aria-label="Filtrar por tipo">
-            <span class="selectWrap__label">Tipo</span>
-            <select v-model="type" class="select">
-              <option value="">Todos</option>
-              <option v-for="t in types" :key="t" :value="t">{{ t }}</option>
-            </select>
-            <span class="selectWrap__chev" aria-hidden="true">▾</span>
-          </label>
-
-          <button class="btn btn--ghost" type="button" @click="resetFilters" aria-label="Limpar filtros">
-            Limpar
+          <button class="schedule__clear-btn" type="button" @click="resetFilters">
+            Limpar filtros
           </button>
         </div>
-      </div>
 
-      <!-- Info bar -->
-      <div class="info">
-        <div class="info__left">
-          <span class="badge" :class="{ 'is-live': nowLiveCount > 0 }" aria-live="polite">
-            <span class="pulse" aria-hidden="true"></span>
-            Agora: {{ nowLiveCount }} ao vivo
-          </span>
-
-          <span class="muted">
-            Mostrando <b>{{ filtered.length }}</b> de <b>{{ events.length }}</b>
-          </span>
-        </div>
-
-        <div class="info__right">
-          <button class="btn btn--primary" type="button" @click="scrollToNext" :disabled="!nextEvent">
-            Ir para o próximo
-            <span class="btn__glow" aria-hidden="true"></span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Conteúdo -->
-      <div v-if="grouped.length" class="content">
-        <div v-for="group in grouped" :key="group.day" class="dayGroup">
-          <div class="dayHeader">
-            <h3 class="dayTitle">{{ formatDayLabel(group.day) }}</h3>
-            <p class="daySub">
-              {{ group.items.length }} eventos • <span class="dayHint">ordem por horário</span>
+        <div class="schedule__filters-grid">
+          <div class="field field--search">
+            <label class="field__label" for="schedule-search">
+              Buscar evento
+            </label>
+            <div class="field__control field__control--search">
+              <span class="field__icon" aria-hidden="true">⌕</span>
+              <input
+                id="schedule-search"
+                v-model.trim="search"
+                class="field__input"
+                type="text"
+                placeholder="Ex.: show, oficina, praça, gastronomia..."
+                autocomplete="off"
+              />
+            </div>
+            <p class="field__hint">
+              Busque por nome, artista, atividade, categoria ou local.
             </p>
           </div>
 
-          <!-- GRID -->
-          <div v-if="view === 'grid'" class="grid" role="list" :aria-label="`Eventos do dia ${formatDayLabel(group.day)}`">
-            <article
-              v-for="ev in group.items"
-              :key="ev.id"
-              class="card"
-              :class="statusClass(ev)"
-              role="listitem"
-              :data-id="ev.id"
-            >
-              <div class="card__top">
-                <div class="typePill">
-                  <span class="typePill__dot" aria-hidden="true"></span>
-                  <span>{{ ev.type }}</span>
-                </div>
-
-                <button class="iconBtn" type="button" @click="openDetails(ev)" aria-label="Ver detalhes do evento">
-                  ⤢
-                </button>
-              </div>
-
-              <h4 class="card__title">{{ ev.title }}</h4>
-
-              <div class="card__meta">
-                <div class="mini">
-                  <span class="mini__ico" aria-hidden="true">📍</span>
-                  <span class="mini__txt">{{ ev.place }}</span>
-                </div>
-                <div class="mini">
-                  <span class="mini__ico" aria-hidden="true">🕒</span>
-                  <span class="mini__txt">{{ formatTime(ev.startISO) }} • {{ durationLabel(ev.durationMin) }}</span>
-                </div>
-              </div>
-
-              <p class="card__desc">{{ ev.description }}</p>
-
-              <div class="card__footer">
-                <div class="timeLive" :class="statusClass(ev)" aria-live="polite">
-                  <span class="timeLive__ico" aria-hidden="true">{{ statusIcon(ev) }}</span>
-                  <span class="timeLive__txt">
-                    {{ liveLabel(ev) }}
-                  </span>
-                </div>
-
-                <div class="actions">
-                  <button class="btnSmall btnSmall--ghost" type="button" @click="copyShare(ev)" :title="copiedId === ev.id ? 'Copiado!' : 'Copiar link'">
-                    {{ copiedId === ev.id ? "Copiado" : "Copiar" }}
-                  </button>
-                  <button class="btnSmall btnSmall--primary" type="button" @click="openDetails(ev)">
-                    Detalhes
-                  </button>
-                </div>
-              </div>
-
-              <div class="card__glow" aria-hidden="true"></div>
-            </article>
+          <div class="field">
+            <label class="field__label" for="schedule-day">
+              Escolha o dia
+            </label>
+            <div class="field__control field__control--select">
+              <select id="schedule-day" v-model="selectedDay" class="field__select">
+                <option value="all">Todos os dias</option>
+                <option v-for="day in days" :key="day.id" :value="day.id">
+                  {{ day.label }}
+                </option>
+              </select>
+              <span class="field__arrow" aria-hidden="true">⌄</span>
+            </div>
+            <p class="field__hint">
+              Filtra a programação por data do festival.
+            </p>
           </div>
 
-          <!-- LISTA -->
-          <div v-else class="list" role="list" :aria-label="`Eventos do dia ${formatDayLabel(group.day)} em lista`">
-            <article
-              v-for="ev in group.items"
-              :key="ev.id"
-              class="row"
-              :class="statusClass(ev)"
-              role="listitem"
-              :data-id="ev.id"
-            >
-              <div class="row__time">
-                <div class="clock">
-                  <span class="clock__h">{{ formatTime(ev.startISO) }}</span>
-                  <span class="clock__d">{{ durationLabel(ev.durationMin) }}</span>
-                </div>
-                <div class="row__status">
-                  <span class="badge2" :class="statusClass(ev)">
-                    <span class="badge2__dot" aria-hidden="true"></span>
-                    {{ statusText(ev) }}
-                  </span>
-                  <span class="muted2">{{ liveLabel(ev) }}</span>
-                </div>
-              </div>
+          <div class="field">
+            <label class="field__label" for="schedule-location">
+              Escolha o local
+            </label>
+            <div class="field__control field__control--select">
+              <select id="schedule-location" v-model="selectedLocation" class="field__select">
+                <option value="all">Todos os locais</option>
+                <option v-for="location in locations" :key="location.id" :value="location.id">
+                  {{ location.name }}
+                </option>
+              </select>
+              <span class="field__arrow" aria-hidden="true">⌄</span>
+            </div>
+            <p class="field__hint">
+              Mostra apenas os eventos daquele espaço.
+            </p>
+          </div>
 
-              <div class="row__main">
-                <div class="row__top">
-                  <h4 class="row__title">{{ ev.title }}</h4>
-                  <span class="typeTag">{{ ev.type }}</span>
-                </div>
-
-                <div class="row__meta">
-                  <span class="row__pill"><span aria-hidden="true">📍</span> {{ ev.place }}</span>
-                  <span class="row__pill"><span aria-hidden="true">🧭</span> {{ ev.area }}</span>
-                </div>
-
-                <p class="row__desc">{{ ev.description }}</p>
-              </div>
-
-              <div class="row__actions">
-                <button class="btnSmall btnSmall--ghost" type="button" @click="copyShare(ev)">
-                  {{ copiedId === ev.id ? "Copiado" : "Copiar" }}
-                </button>
-                <button class="btnSmall btnSmall--primary" type="button" @click="openDetails(ev)">
-                  Detalhes
-                </button>
-              </div>
-            </article>
+          <div class="field">
+            <label class="field__label" for="schedule-category">
+              Escolha a categoria
+            </label>
+            <div class="field__control field__control--select">
+              <select id="schedule-category" v-model="selectedCategory" class="field__select">
+                <option value="all">Todas as categorias</option>
+                <option v-for="category in categories" :key="category" :value="category">
+                  {{ category }}
+                </option>
+              </select>
+              <span class="field__arrow" aria-hidden="true">⌄</span>
+            </div>
+            <p class="field__hint">
+              Ideal para quem quer ver só shows, oficinas, feiras e mais.
+            </p>
           </div>
         </div>
+
+        <div class="schedule__filters-bottom">
+          <button
+            class="schedule__favorite-toggle"
+            :class="{ 'is-active': onlyFavorites }"
+            type="button"
+            @click="onlyFavorites = !onlyFavorites"
+          >
+            <span class="schedule__favorite-icon" aria-hidden="true">
+              {{ onlyFavorites ? "★" : "☆" }}
+            </span>
+            {{ onlyFavorites ? "Mostrando apenas favoritos" : "Mostrar apenas favoritos" }}
+          </button>
+
+          <p class="schedule__result-text">
+            <strong>{{ filteredEvents.length }}</strong>
+            evento<span v-if="filteredEvents.length !== 1">s</span> encontrado<span v-if="filteredEvents.length !== 1">s</span>
+            com os filtros atuais.
+          </p>
+        </div>
+      </section>
+
+      <!-- EMPTY -->
+      <div v-if="groupedSchedule.length === 0" class="schedule__empty">
+        <h3>Nenhum evento encontrado</h3>
+        <p>
+          Tente ajustar a busca, trocar o dia, escolher outro local ou remover os filtros.
+        </p>
       </div>
 
-      <div v-else class="empty" role="status" aria-live="polite">
-        <div class="empty__icon" aria-hidden="true">🧊</div>
-        <h3 class="empty__title">Nada encontrado</h3>
-        <p class="empty__text">Tente remover filtros ou ajustar a busca.</p>
-        <button class="btn btn--ghost" type="button" @click="resetFilters">Limpar tudo</button>
+      <!-- GROUPS -->
+      <div v-else class="schedule__groups">
+        <section
+          v-for="group in groupedSchedule"
+          :key="group.day.id"
+          class="schedule__group"
+          :aria-label="`Programação de ${group.day.label}`"
+        >
+          <header class="schedule__group-head">
+            <div class="schedule__group-head-left">
+              <p class="schedule__group-kicker">Dia do festival</p>
+              <h3 class="schedule__group-title">{{ group.day.label }}</h3>
+              <p class="schedule__group-sub">
+                Confira abaixo os eventos disponíveis para este dia.
+              </p>
+            </div>
+
+            <div class="schedule__group-count">
+              {{ group.events.length }} evento<span v-if="group.events.length !== 1">s</span>
+            </div>
+          </header>
+
+          <div class="schedule__list">
+            <article
+              v-for="event in group.events"
+              :key="event.id"
+              class="event-card"
+              :class="{ 'is-favorite': isFavorite(event.id) }"
+            >
+              <div class="event-card__time">
+                <span class="event-card__hour">{{ event.time }}</span>
+                <span class="event-card__day">{{ group.day.short }}</span>
+              </div>
+
+              <div class="event-card__content">
+                <div class="event-card__top">
+                  <div class="event-card__meta">
+                    <span class="event-card__category">{{ event.category }}</span>
+                    <span class="event-card__location">{{ getLocationName(event.locationId) }}</span>
+                  </div>
+
+                  <button
+                    class="event-card__fav"
+                    type="button"
+                    :aria-label="isFavorite(event.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+                    @click="toggleFavorite(event.id)"
+                  >
+                    {{ isFavorite(event.id) ? "★" : "☆" }}
+                  </button>
+                </div>
+
+                <h4 class="event-card__title">{{ event.title }}</h4>
+
+                <p class="event-card__about">
+                  {{ event.description }}
+                </p>
+
+                <div class="event-card__info">
+                  <span class="event-card__pill">
+                    <strong>Atividade:</strong> {{ event.host }}
+                  </span>
+
+                  <span class="event-card__pill">
+                    <strong>Público:</strong> {{ event.audience }}
+                  </span>
+
+                  <span class="event-card__pill">
+                    <strong>Duração:</strong> {{ event.duration }}
+                  </span>
+                </div>
+
+                <div class="event-card__actions">
+                  <button
+                    class="event-card__btn event-card__btn--ghost"
+                    type="button"
+                    @click="selectLocationFilter(event.locationId)"
+                  >
+                    Filtrar este local
+                  </button>
+
+                  <button
+                    class="event-card__btn event-card__btn--primary"
+                    type="button"
+                    @click="openEventMap(event.locationId)"
+                  >
+                    Como chegar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
       </div>
     </div>
-
-    <!-- Modal Detalhes -->
-    <teleport to="body">
-      <transition name="pop">
-        <div v-if="modalOpen" class="modalWrap" role="dialog" aria-modal="true" aria-label="Detalhes do evento">
-          <div class="modalBackdrop" @click="closeModal" aria-hidden="true"></div>
-
-          <div class="modal" ref="modalEl" tabindex="-1">
-            <div class="modal__head">
-              <div class="modal__kicker">
-                <span class="dot" aria-hidden="true"></span>
-                {{ selected?.type }} • {{ selected?.place }}
-              </div>
-
-              <button class="iconBtn iconBtn--close" type="button" @click="closeModal" aria-label="Fechar modal">
-                ✕
-              </button>
-            </div>
-
-            <h3 class="modal__title">{{ selected?.title }}</h3>
-            <p class="modal__desc">{{ selected?.description }}</p>
-
-            <div class="modal__grid">
-              <div class="infoCard">
-                <div class="infoCard__top">
-                  <span class="infoCard__ico" aria-hidden="true">📅</span>
-                  <span class="infoCard__title">Data</span>
-                </div>
-                <div class="infoCard__value">{{ selected ? formatDayLabel(dayKey(selected.startISO)) : "" }}</div>
-              </div>
-
-              <div class="infoCard">
-                <div class="infoCard__top">
-                  <span class="infoCard__ico" aria-hidden="true">🕒</span>
-                  <span class="infoCard__title">Horário</span>
-                </div>
-                <div class="infoCard__value">
-                  {{ selected ? `${formatTime(selected.startISO)} • ${durationLabel(selected.durationMin)}` : "" }}
-                </div>
-              </div>
-
-              <div class="infoCard">
-                <div class="infoCard__top">
-                  <span class="infoCard__ico" aria-hidden="true">📍</span>
-                  <span class="infoCard__title">Local</span>
-                </div>
-                <div class="infoCard__value">{{ selected?.place }}</div>
-              </div>
-
-              <div class="infoCard">
-                <div class="infoCard__top">
-                  <span class="infoCard__ico" aria-hidden="true">🧭</span>
-                  <span class="infoCard__title">Área</span>
-                </div>
-                <div class="infoCard__value">{{ selected?.area }}</div>
-              </div>
-            </div>
-
-            <div class="modal__live" :class="selected ? statusClass(selected) : ''" aria-live="polite">
-              <span class="modal__liveIco" aria-hidden="true">{{ selected ? statusIcon(selected) : "⏳" }}</span>
-              <span class="modal__liveTxt">{{ selected ? liveLabel(selected) : "" }}</span>
-            </div>
-
-            <div class="modal__actions">
-              <button class="btn btn--ghost" type="button" @click="copyShare(selected)" :disabled="!selected">
-                {{ selected && copiedId === selected.id ? "Copiado!" : "Copiar link" }}
-              </button>
-              <a
-                v-if="selected"
-                class="btn btn--primary"
-                :href="calendarLink(selected)"
-                target="_blank"
-                rel="noopener"
-                aria-label="Adicionar ao Google Agenda"
-              >
-                Adicionar ao Google Agenda
-                <span class="btn__glow" aria-hidden="true"></span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </teleport>
   </section>
 </template>
 
-<script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-/**
- * Paleta principal (mesma do hero):
- * --c1: #EDE53A
- * --c2: #4E4EFE
- * --c3: #ED4D93
- *
- * Observação: os eventos são fictícios. Ajuste datas/locais conforme precisar.
- */
+type Day = {
+  id: string;
+  label: string;
+  short: string;
+};
 
-// ========= Tempo =========
-const now = ref(Date.now());
-let tick;
-onMounted(() => {
-  tick = window.setInterval(() => (now.value = Date.now()), 1000); // ao vivo 1s
+type Location = {
+  id: string;
+  name: string;
+  query: string;
+};
+
+type FestivalEvent = {
+  id: string;
+  dayId: string;
+  time: string;
+  title: string;
+  description: string;
+  category: string;
+  host: string;
+  audience: string;
+  duration: string;
+  locationId: string;
+};
+
+const root = ref<HTMLElement | null>(null);
+const isVisible = ref(false);
+const reduceMotion = ref(false);
+
+let io: IntersectionObserver | null = null;
+let mq: MediaQueryList | null = null;
+let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
+
+const STORAGE_KEY = "fip_program_favorites_v2";
+
+const search = ref("");
+const selectedDay = ref<string>("all");
+const selectedLocation = ref<string>("all");
+const selectedCategory = ref<string>("all");
+const onlyFavorites = ref(false);
+const favoriteIds = ref<string[]>([]);
+
+const days: Day[] = [
+  { id: "2026-06-04", label: "04 de Junho • Quinta-feira", short: "QUI" },
+  { id: "2026-06-05", label: "05 de Junho • Sexta-feira", short: "SEX" },
+  { id: "2026-06-06", label: "06 de Junho • Sábado", short: "SÁB" },
+  { id: "2026-06-07", label: "07 de Junho • Domingo", short: "DOM" }
+];
+
+const locations: Location[] = [
+  { id: "praca-eventos", name: "Praça de Eventos", query: "Praça de Eventos Pedro II PI" },
+  { id: "mirante-gritador", name: "Mirante do Gritador", query: "Mirante do Gritador Pedro II PI" },
+  { id: "centro-historico", name: "Centro Histórico", query: "Centro Histórico Pedro II PI" },
+  { id: "feira-opala", name: "Feira da Opala", query: "Feira da Opala Pedro II PI" },
+  { id: "teatro-cultura", name: "Teatro da Cultura", query: "Teatro da Cultura Pedro II PI" },
+  { id: "pracinha-gastronomica", name: "Vila Gastronômica", query: "Vila Gastronômica Pedro II PI" },
+  { id: "largo-matriz", name: "Largo da Matriz", query: "Largo da Matriz Pedro II PI" },
+  { id: "polo-oficinas", name: "Polo de Oficinas", query: "Polo de Oficinas Pedro II PI" },
+  { id: "galeria-artes", name: "Galeria de Artes", query: "Galeria de Artes Pedro II PI" },
+  { id: "rota-paisagens", name: "Rota das Paisagens", query: "Rota das Paisagens Pedro II PI" }
+];
+
+const events: FestivalEvent[] = [
+  {
+    id: "ev01",
+    dayId: "2026-06-04",
+    time: "09:00",
+    title: "Abertura da Feira de Artesanato e Design Local",
+    description: "Início oficial do circuito criativo com expositores, peças autorais, opalas, moda artesanal e experiências ligadas à identidade cultural de Pedro II.",
+    category: "Feira",
+    host: "Coletivo Criativo de Pedro II",
+    audience: "Livre",
+    duration: "3h",
+    locationId: "feira-opala"
+  },
+  {
+    id: "ev02",
+    dayId: "2026-06-04",
+    time: "10:30",
+    title: "Oficina de Fotografia de Paisagem",
+    description: "Encontro prático para visitantes e criadores que desejam aprender composição, luz e enquadramento em cenários naturais da região.",
+    category: "Oficina",
+    host: "Lara Vasconcelos",
+    audience: "Jovens e adultos",
+    duration: "2h",
+    locationId: "polo-oficinas"
+  },
+  {
+    id: "ev03",
+    dayId: "2026-06-04",
+    time: "14:00",
+    title: "Roda de Conversa sobre Turismo Cultural",
+    description: "Debate sobre economia criativa, turismo responsável e valorização dos territórios culturais durante grandes eventos regionais.",
+    category: "Debate",
+    host: "Instituto Caminhos do Norte",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "teatro-cultura"
+  },
+  {
+    id: "ev04",
+    dayId: "2026-06-04",
+    time: "17:00",
+    title: "Pôr do Sol no Mirante com Música Instrumental",
+    description: "Sessão especial ao ar livre com repertório instrumental e contemplação da paisagem, ideal para quem busca uma experiência sensorial mais calma.",
+    category: "Experiência",
+    host: "Quarteto Serra Azul",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "mirante-gritador"
+  },
+  {
+    id: "ev05",
+    dayId: "2026-06-04",
+    time: "20:00",
+    title: "Show de Abertura — Noite das Montanhas",
+    description: "Grande abertura do festival com um espetáculo musical que mistura canções nordestinas, elementos contemporâneos e identidade visual marcante.",
+    category: "Show",
+    host: "Banda Ventos do Norte",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-eventos"
+  },
+  {
+    id: "ev06",
+    dayId: "2026-06-05",
+    time: "08:30",
+    title: "Caminhada Guiada pelo Centro Histórico",
+    description: "Percurso comentado por pontos tradicionais da cidade, destacando arquitetura, memória local e curiosidades históricas para visitantes.",
+    category: "Passeio",
+    host: "Guia João Matos",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "centro-historico"
+  },
+  {
+    id: "ev07",
+    dayId: "2026-06-05",
+    time: "10:00",
+    title: "Laboratório de Gastronomia Regional",
+    description: "Atividade prática com sabores típicos, ingredientes regionais e uma leitura contemporânea da culinária local.",
+    category: "Gastronomia",
+    host: "Chef Marina Luz",
+    audience: "Jovens e adultos",
+    duration: "2h",
+    locationId: "pracinha-gastronomica"
+  },
+  {
+    id: "ev08",
+    dayId: "2026-06-05",
+    time: "11:30",
+    title: "Mostra de Arte e Opala Contemporânea",
+    description: "Exposição comentada com foco na pedra símbolo de Pedro II, design autoral e processos criativos conectados ao artesanato local.",
+    category: "Exposição",
+    host: "Curadoria Opala Viva",
+    audience: "Livre",
+    duration: "2h30",
+    locationId: "galeria-artes"
+  },
+  {
+    id: "ev09",
+    dayId: "2026-06-05",
+    time: "15:00",
+    title: "Oficina de Ilustração para Cartazes de Festival",
+    description: "Oficina criativa voltada para linguagem visual, composições gráficas e produção de peças inspiradas no Festival de Inverno.",
+    category: "Oficina",
+    host: "Rita Nogueira",
+    audience: "Jovens e adultos",
+    duration: "2h",
+    locationId: "polo-oficinas"
+  },
+  {
+    id: "ev10",
+    dayId: "2026-06-05",
+    time: "18:30",
+    title: "Concerto na Matriz com Corais da Serra",
+    description: "Apresentação especial com repertório coral e arranjos que dialogam com a atmosfera histórica e afetiva do centro da cidade.",
+    category: "Concerto",
+    host: "Corais da Serra",
+    audience: "Livre",
+    duration: "1h15",
+    locationId: "largo-matriz"
+  },
+  {
+    id: "ev11",
+    dayId: "2026-06-05",
+    time: "21:00",
+    title: "Noite Pop Nordeste",
+    description: "Show com sonoridade festiva, repertório dançante e presença de artistas convidados para uma noite de grande circulação.",
+    category: "Show",
+    host: "Coletivo Solar Elétrico",
+    audience: "Livre",
+    duration: "2h30",
+    locationId: "praca-eventos"
+  },
+  {
+    id: "ev12",
+    dayId: "2026-06-06",
+    time: "07:30",
+    title: "Saída Fotográfica — Rota das Paisagens",
+    description: "Experiência guiada para observação das paisagens naturais da região, com foco em fotografia, contemplação e leitura do território.",
+    category: "Passeio",
+    host: "Expedição Serra Branda",
+    audience: "Livre",
+    duration: "3h",
+    locationId: "rota-paisagens"
+  },
+  {
+    id: "ev13",
+    dayId: "2026-06-06",
+    time: "10:00",
+    title: "Feira Gastronômica dos Sabores da Serra",
+    description: "Circuito com pratos regionais, cafés especiais, doces artesanais e espaços de convivência para visitantes e moradores.",
+    category: "Gastronomia",
+    host: "Rede Sabores da Serra",
+    audience: "Livre",
+    duration: "4h",
+    locationId: "pracinha-gastronomica"
+  },
+  {
+    id: "ev14",
+    dayId: "2026-06-06",
+    time: "14:30",
+    title: "Painel Criativo — Música, Cidade e Território",
+    description: "Conversa com produtores, artistas e agentes culturais sobre programação de festivais, circulação e impacto territorial.",
+    category: "Debate",
+    host: "Fórum Cultural do Festival",
+    audience: "Livre",
+    duration: "1h45",
+    locationId: "teatro-cultura"
+  },
+  {
+    id: "ev15",
+    dayId: "2026-06-06",
+    time: "16:30",
+    title: "Performance Visual na Galeria",
+    description: "Intervenção artística com pintura expandida, projeção e música ambiente em diálogo com o público presente.",
+    category: "Arte",
+    host: "Ateliê Horizonte",
+    audience: "Livre",
+    duration: "1h",
+    locationId: "galeria-artes"
+  },
+  {
+    id: "ev16",
+    dayId: "2026-06-06",
+    time: "19:00",
+    title: "Encontro de Danças Urbanas e Regionais",
+    description: "Apresentação híbrida reunindo grupos convidados, performances coreográficas e integração entre linguagens populares e contemporâneas.",
+    category: "Dança",
+    host: "Núcleo Movimento Livre",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "praca-eventos"
+  },
+  {
+    id: "ev17",
+    dayId: "2026-06-06",
+    time: "22:00",
+    title: "Show Principal — Sons da Neblina",
+    description: "Atração central da noite com identidade visual imersiva, palco expandido e repertório preparado para o ápice do festival.",
+    category: "Show",
+    host: "Aurora Atlântica",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-eventos"
+  },
+  {
+    id: "ev18",
+    dayId: "2026-06-07",
+    time: "09:00",
+    title: "Vivência de Bem-estar ao Ar Livre",
+    description: "Atividade voltada ao relaxamento, respiração, alongamento e conexão com a paisagem serrana em um ambiente mais silencioso.",
+    category: "Experiência",
+    host: "Coletivo Respira Serra",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "mirante-gritador"
+  },
+  {
+    id: "ev19",
+    dayId: "2026-06-07",
+    time: "11:00",
+    title: "Circuito de Visitação Guiada à Opala",
+    description: "Roteiro mediado para visitantes conhecerem melhor a simbologia da opala, o mercado local e os processos de valorização cultural.",
+    category: "Passeio",
+    host: "Associação da Opala de Pedro II",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "feira-opala"
+  },
+  {
+    id: "ev20",
+    dayId: "2026-06-07",
+    time: "18:00",
+    title: "Encerramento — Celebração das Luzes",
+    description: "Apresentação final do festival com música, projeções, agradecimentos e uma despedida pensada para reunir moradores e visitantes.",
+    category: "Encerramento",
+    host: "Orquestra Festival de Inverno",
+    audience: "Livre",
+    duration: "1h45",
+    locationId: "praca-eventos"
+  }
+];
+
+const categories = computed(() => {
+  return [...new Set(events.map((event) => event.category))].sort((a, b) =>
+    a.localeCompare(b)
+  );
 });
-onBeforeUnmount(() => window.clearInterval(tick));
 
-function pad2(n) {
-  return String(n).padStart(2, "0");
-}
+const getLocationName = (locationId: string) => {
+  return locations.find((location) => location.id === locationId)?.name || "Local não encontrado";
+};
 
-function toLocalISO(date) {
-  // ISO sem timezone (usando horário local do navegador)
-  const y = date.getFullYear();
-  const m = pad2(date.getMonth() + 1);
-  const d = pad2(date.getDate());
-  const hh = pad2(date.getHours());
-  const mm = pad2(date.getMinutes());
-  return `${y}-${m}-${d}T${hh}:${mm}:00`;
-}
+const normalizedSearch = computed(() => search.value.toLowerCase().trim());
 
-function parseISO(iso) {
-  // interpreta como local
-  const [d, t] = iso.split("T");
-  const [y, m, day] = d.split("-").map(Number);
-  const [hh, mm] = t.split(":").map(Number);
-  return new Date(y, m - 1, day, hh, mm, 0, 0).getTime();
-}
+const filteredEvents = computed(() => {
+  return events.filter((event) => {
+    const matchesDay =
+      selectedDay.value === "all" || event.dayId === selectedDay.value;
 
-function dayKey(iso) {
-  const ts = parseISO(iso);
-  const d = new Date(ts);
-  const y = d.getFullYear();
-  const m = pad2(d.getMonth() + 1);
-  const da = pad2(d.getDate());
-  return `${y}-${m}-${da}`;
-}
+    const matchesLocation =
+      selectedLocation.value === "all" || event.locationId === selectedLocation.value;
 
-function formatDayLabel(key) {
-  const [y, m, d] = key.split("-").map(Number);
-  const dt = new Date(y, m - 1, d);
-  return dt.toLocaleDateString(undefined, {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
+    const matchesCategory =
+      selectedCategory.value === "all" || event.category === selectedCategory.value;
+
+    const haystack = [
+      event.title,
+      event.description,
+      event.category,
+      event.host,
+      event.audience,
+      event.duration,
+      getLocationName(event.locationId)
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch =
+      !normalizedSearch.value || haystack.includes(normalizedSearch.value);
+
+    const matchesFavorites =
+      !onlyFavorites.value || favoriteIds.value.includes(event.id);
+
+    return (
+      matchesDay &&
+      matchesLocation &&
+      matchesCategory &&
+      matchesSearch &&
+      matchesFavorites
+    );
   });
-}
+});
 
-function formatTime(iso) {
-  const ts = parseISO(iso);
-  const d = new Date(ts);
-  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-}
+const groupedSchedule = computed(() => {
+  return days
+    .map((day) => ({
+      day,
+      events: filteredEvents.value
+        .filter((event) => event.dayId === day.id)
+        .sort((a, b) => a.time.localeCompare(b.time))
+    }))
+    .filter((group) => group.events.length > 0);
+});
 
-function durationLabel(min) {
-  if (!min) return "—";
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  if (h && m) return `${h}h ${m}min`;
-  if (h) return `${h}h`;
-  return `${m}min`;
-}
+const isFavorite = (eventId: string) => {
+  return favoriteIds.value.includes(eventId);
+};
 
-// ========= Dados fictícios (25) =========
-const baseYear = new Date().getFullYear();
-const events = ref(buildEvents());
+const toggleFavorite = (eventId: string) => {
+  if (favoriteIds.value.includes(eventId)) {
+    favoriteIds.value = favoriteIds.value.filter((id) => id !== eventId);
+  } else {
+    favoriteIds.value = [...favoriteIds.value, eventId];
+  }
+};
 
-function buildEvents() {
-  // cria 5 dias com 5 eventos cada (total 25)
-  // ajuste aqui se quiser datas exatas do festival
-  const start = new Date(baseYear, 6, 9, 18, 0, 0, 0); // 09/jul (exemplo), 18:00
-  const places = [
-    "Praça Bonelle",
-    "Palco Central",
-    "Teatro Municipal",
-    "Mercado Cultural",
-    "Mirante do Gritador",
-    "Centro de Artesanato",
-    "Auditório da Cultura",
-    "Coreto da Praça",
-  ];
+const selectLocationFilter = (locationId: string) => {
+  selectedLocation.value = locationId;
+};
 
-  const types = ["Show", "Teatro", "Oficina", "Feira", "Palestra", "Cinema", "Dança", "Gastronomia"];
+const openEventMap = (locationId: string) => {
+  const location = locations.find((item) => item.id === locationId);
+  if (!location) return;
 
-  const templates = [
-    {
-      title: "Abertura Oficial + Cortejo Cultural",
-      type: "Teatro",
-      area: "Centro Histórico",
-      desc:
-        "Cerimônia de abertura com cortejo, grupos locais e apresentação especial. Um começo grandioso para a edição 2026.",
-      dur: 80,
-    },
-    {
-      title: "Noite Pop & Indie: Aurora Azul",
-      type: "Show",
-      area: "Palco Principal",
-      desc:
-        "Show vibrante com repertório pop/indie e participação surpresa. Luzes, energia e clima de festival do início ao fim.",
-      dur: 95,
-    },
-    {
-      title: "Oficina: Fotografia Noturna (Mobile)",
-      type: "Oficina",
-      area: "Espaço Criativo",
-      desc:
-        "Aprenda composição, exposição e truques práticos para registrar o festival à noite usando apenas o celular.",
-      dur: 70,
-    },
-    {
-      title: "Feira Criativa de Inverno",
-      type: "Feira",
-      area: "Área Gastronômica",
-      desc:
-        "Artesanato, moda autoral, arte local e experiências. Um passeio completo com produtos exclusivos da cidade e região.",
-      dur: 180,
-    },
-    {
-      title: "Cine Inverno: Curtas da Serra",
-      type: "Cinema",
-      area: "Sala Multimídia",
-      desc:
-        "Sessão especial com curtas regionais + bate-papo com realizadores. Para quem ama cinema e histórias reais.",
-      dur: 85,
-    },
-    {
-      title: "Dança: Movimento & Neon",
-      type: "Dança",
-      area: "Palco Alternativo",
-      desc:
-        "Espetáculo contemporâneo com coreografias impactantes e trilha eletrônica. Uma experiência visual e sonora.",
-      dur: 55,
-    },
-    {
-      title: "Palestra: Criatividade e Território",
-      type: "Palestra",
-      area: "Auditório",
-      desc:
-        "Como cultura, turismo e economia criativa se conectam. Conteúdo direto e inspirador para artistas e empreendedores.",
-      dur: 60,
-    },
-    {
-      title: "Rota Gastronômica: Sabores do Inverno",
-      type: "Gastronomia",
-      area: "Mercado",
-      desc:
-        "Degustação guiada com receitas típicas, harmonizações e histórias dos sabores que fazem o inverno de Pedro II.",
-      dur: 75,
-    },
-    {
-      title: "Som no Mirante: Sunset Acústico",
-      type: "Show",
-      area: "Mirante",
-      desc:
-        "Pôr do sol com acústico intimista e vista incrível. Um set leve, emocional e perfeito para fotos memoráveis.",
-      dur: 65,
-    },
-  ];
+  const q = encodeURIComponent(location.query);
+  window.open(
+    `https://www.google.com/maps/search/?api=1&query=${q}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
 
-  let id = 1;
-  const out = [];
+const resetFilters = () => {
+  search.value = "";
+  selectedDay.value = "all";
+  selectedLocation.value = "all";
+  selectedCategory.value = "all";
+  onlyFavorites.value = false;
+};
 
-  for (let day = 0; day < 5; day++) {
-    for (let slot = 0; slot < 5; slot++) {
-      const t = templates[(day * 2 + slot) % templates.length];
-
-      // horários espaçados por 1h30
-      const dt = new Date(start);
-      dt.setDate(start.getDate() + day);
-      dt.setHours(16 + slot * 2); // 16:00, 18:00, 20:00, 22:00, 24:00 (ajusta abaixo)
-      dt.setMinutes(slot % 2 ? 30 : 0);
-      if (dt.getHours() >= 24) {
-        dt.setHours(dt.getHours() - 24);
-        dt.setDate(dt.getDate() + 1);
-      }
-
-      const place = places[(day + slot * 2) % places.length];
-      const type = t.type;
-
-      out.push({
-        id: `ev-${id++}`,
-        title: t.title + (slot === 4 ? " • Edição Especial" : ""),
-        place,
-        area: t.area,
-        type,
-        startISO: toLocalISO(dt),
-        durationMin: t.dur + (slot === 2 ? 20 : 0),
-        description: t.desc,
-      });
+watch(
+  favoriteIds,
+  (value) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+  },
+  { deep: true }
+);
+const hasActiveFilters = computed(() => {
+  return (
+    search.value !== "" ||
+    selectedDay.value !== "all" ||
+    selectedLocation.value !== "all" ||
+    selectedCategory.value !== "all" ||
+    onlyFavorites.value
+  );
+});
+onMounted(() => {
+  const savedFavorites = localStorage.getItem(STORAGE_KEY);
+  if (savedFavorites) {
+    try {
+      favoriteIds.value = JSON.parse(savedFavorites);
+    } catch {
+      favoriteIds.value = [];
     }
   }
 
-  return out
-    .sort((a, b) => parseISO(a.startISO) - parseISO(b.startISO))
-    .slice(0, 25);
-}
+  mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  reduceMotion.value = mq.matches;
 
-// ========= Filtros =========
-const q = ref("");
-const day = ref("");
-const place = ref("");
-const type = ref("");
-const view = ref("grid");
-
-const days = computed(() => {
-  const set = new Set(events.value.map((e) => dayKey(e.startISO)));
-  return [...set].sort();
-});
-
-const places = computed(() => {
-  const set = new Set(events.value.map((e) => e.place));
-  return [...set].sort((a, b) => a.localeCompare(b));
-});
-
-const types = computed(() => {
-  const set = new Set(events.value.map((e) => e.type));
-  return [...set].sort((a, b) => a.localeCompare(b));
-});
-
-const filtered = computed(() => {
-  const needle = q.value.toLowerCase();
-  return events.value.filter((e) => {
-    const matchQ =
-      !needle ||
-      e.title.toLowerCase().includes(needle) ||
-      e.place.toLowerCase().includes(needle) ||
-      e.area.toLowerCase().includes(needle) ||
-      e.type.toLowerCase().includes(needle) ||
-      e.description.toLowerCase().includes(needle);
-
-    const matchDay = !day.value || dayKey(e.startISO) === day.value;
-    const matchPlace = !place.value || e.place === place.value;
-    const matchType = !type.value || e.type === type.value;
-
-    return matchQ && matchDay && matchPlace && matchType;
-  });
-});
-
-const grouped = computed(() => {
-  const map = new Map();
-  for (const e of filtered.value) {
-    const k = dayKey(e.startISO);
-    if (!map.has(k)) map.set(k, []);
-    map.get(k).push(e);
-  }
-  return [...map.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([k, items]) => ({
-      day: k,
-      items: items.sort((a, b) => parseISO(a.startISO) - parseISO(b.startISO)),
-    }));
-});
-
-// ========= Status ao vivo =========
-function evEnd(ev) {
-  return parseISO(ev.startISO) + (ev.durationMin || 60) * 60 * 1000;
-}
-function statusText(ev) {
-  const t = now.value;
-  const s = parseISO(ev.startISO);
-  const e = evEnd(ev);
-  if (t < s) return "Em breve";
-  if (t >= s && t <= e) return "Ao vivo";
-  return "Encerrado";
-}
-function statusClass(ev) {
-  const t = now.value;
-  const s = parseISO(ev.startISO);
-  const e = evEnd(ev);
-  if (t < s) return "is-up";
-  if (t >= s && t <= e) return "is-live";
-  return "is-done";
-}
-function statusIcon(ev) {
-  const c = statusClass(ev);
-  if (c === "is-live") return "🔴";
-  if (c === "is-up") return "⏳";
-  return "✅";
-}
-function liveLabel(ev) {
-  const t = now.value;
-  const s = parseISO(ev.startISO);
-  const e = evEnd(ev);
-
-  if (t < s) {
-    const diff = s - t;
-    return `Começa em ${human(diff)}`;
-  }
-  if (t >= s && t <= e) {
-    const diff = t - s;
-    return `Ao vivo há ${human(diff)}`;
-  }
-  const diff = t - e;
-  return `Terminou há ${human(diff)}`;
-}
-function human(ms) {
-  const sec = Math.max(0, Math.floor(ms / 1000));
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = sec % 60;
-
-  if (h >= 24) {
-    const d = Math.floor(h / 24);
-    const hh = h % 24;
-    return `${d}d ${hh}h`;
-  }
-  if (h) return `${h}h ${m}min`;
-  if (m) return `${m}min ${s}s`;
-  return `${s}s`;
-}
-
-const nowLiveCount = computed(() => filtered.value.filter((e) => statusClass(e) === "is-live").length);
-
-const nextEvent = computed(() => {
-  const t = now.value;
-  const future = filtered.value
-    .filter((e) => parseISO(e.startISO) > t)
-    .sort((a, b) => parseISO(a.startISO) - parseISO(b.startISO));
-  return future[0] || null;
-});
-
-function scrollToNext() {
-  if (!nextEvent.value) return;
-  const el = document.querySelector(`[data-id="${nextEvent.value.id}"]`);
-  el?.scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-// ========= Ações =========
-function resetFilters() {
-  q.value = "";
-  day.value = "";
-  place.value = "";
-  type.value = "";
-}
-
-const copiedId = ref("");
-let copiedTimer;
-
-async function copyShare(ev) {
-  if (!ev) return;
-  const url = `${location.origin}${location.pathname}#programacao`;
-  const text = `${ev.title} • ${formatDayLabel(dayKey(ev.startISO))} ${formatTime(ev.startISO)} • ${ev.place}\n${url}`;
-
-  try {
-    await navigator.clipboard.writeText(text);
-    copiedId.value = ev.id;
-    window.clearTimeout(copiedTimer);
-    copiedTimer = window.setTimeout(() => (copiedId.value = ""), 1200);
-  } catch {
-    // fallback simples
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-    copiedId.value = ev.id;
-    window.clearTimeout(copiedTimer);
-    copiedTimer = window.setTimeout(() => (copiedId.value = ""), 1200);
-  }
-}
-
-// ========= Modal =========
-const modalOpen = ref(false);
-const selected = ref(null);
-const modalEl = ref(null);
-
-function openDetails(ev) {
-  selected.value = ev;
-  modalOpen.value = true;
-  requestAnimationFrame(() => modalEl.value?.focus());
-  document.documentElement.classList.add("noScroll");
-}
-function closeModal() {
-  modalOpen.value = false;
-  selected.value = null;
-  document.documentElement.classList.remove("noScroll");
-}
-
-function calendarLink(ev) {
-  const start = new Date(parseISO(ev.startISO));
-  const end = new Date(evEnd(ev));
-
-  // formato YYYYMMDDTHHMMSSZ — vamos usar horário local sem Z e deixar o Google ajustar
-  const fmt = (d) => {
-    const y = d.getFullYear();
-    const m = pad2(d.getMonth() + 1);
-    const da = pad2(d.getDate());
-    const hh = pad2(d.getHours());
-    const mm = pad2(d.getMinutes());
-    const ss = "00";
-    return `${y}${m}${da}T${hh}${mm}${ss}`;
+  onMqChange = (event: MediaQueryListEvent) => {
+    reduceMotion.value = event.matches;
   };
 
-  const dates = `${fmt(start)}/${fmt(end)}`;
-  const text = encodeURIComponent(ev.title);
-  const details = encodeURIComponent(`${ev.description}\nLocal: ${ev.place} • ${ev.area}`);
-  const location = encodeURIComponent(ev.place);
+  mq.addEventListener?.("change", onMqChange);
 
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}`;
-}
+  io = new IntersectionObserver(
+    ([entry]) => {
+      isVisible.value = !!entry?.isIntersecting;
+    },
+    { threshold: 0.12 }
+  );
 
-// ESC para fechar
-function onKey(e) {
-  if (!modalOpen.value) return;
-  if (e.key === "Escape") closeModal();
-}
-onMounted(() => window.addEventListener("keydown", onKey, { passive: true }));
-onBeforeUnmount(() => window.removeEventListener("keydown", onKey));
+  if (root.value) io.observe(root.value);
+});
+
+onBeforeUnmount(() => {
+  if (io && root.value) io.unobserve(root.value);
+  io?.disconnect();
+  io = null;
+
+  if (mq && onMqChange) {
+    mq.removeEventListener?.("change", onMqChange);
+  }
+});
 </script>
 
 <style scoped>
-/* =========================
-   TEMA (3 cores principais)
-========================= */
-.program {
-  --c1: #ede53a; /* amarelo */
-  --c2: #4e4efe; /* azul */
-  --c3: #ed4d93; /* rosa */
-
-  --bg: #05050c;
-  --card: rgba(0, 0, 0, 0.34);
-  --line: rgba(255, 255, 255, 0.14);
-  --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.72);
+.schedule {
+  --accent: #316eb9;
+  --accent-soft: rgba(49, 110, 185, 0.08);
+  --accent-soft-2: rgba(49, 110, 185, 0.14);
+  --text: #111111;
+  --muted: rgba(17, 17, 17, 0.64);
+  --line: rgba(17, 17, 17, 0.08);
+  --line-strong: rgba(49, 110, 185, 0.2);
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-2: #f7faff;
+  --shadow: 0 22px 60px rgba(17, 17, 17, 0.07);
 
   position: relative;
-  padding: clamp(64px, 8vh, 92px) 0;
-  color: var(--text);
-  background: var(--bg);
-  overflow: clip;
+  overflow: hidden;
+  padding: 72px 0;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
 }
 
-/* BG artístico (sem imagens; ultra leve) */
-.bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-.bg__base {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(1100px 520px at 25% 15%, rgba(237, 229, 58, 0.12), transparent 65%),
-    radial-gradient(1000px 520px at 70% 20%, rgba(237, 77, 147, 0.12), transparent 62%),
-    radial-gradient(1200px 700px at 55% 70%, rgba(78, 78, 254, 0.12), transparent 66%),
-    linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
-}
-.bg__overlay {
+.schedule__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-.bg__overlay--vignette {
-  background:
-    radial-gradient(900px 520px at 50% 20%, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.82) 74%),
-    linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.70));
-}
-.bg__overlay--tint {
-  background: linear-gradient(120deg, rgba(78, 78, 254, 0.14), rgba(237, 77, 147, 0.12), rgba(237, 229, 58, 0.10));
-  mix-blend-mode: screen;
-}
-.bg__aurora {
-  position: absolute;
-  inset: -12%;
-  background:
-    radial-gradient(760px 360px at 20% 25%, rgba(237, 229, 58, 0.18), transparent 60%),
-    radial-gradient(780px 360px at 72% 22%, rgba(237, 77, 147, 0.18), transparent 60%),
-    radial-gradient(980px 520px at 52% 65%, rgba(78, 78, 254, 0.16), transparent 64%);
-  filter: blur(18px);
-  opacity: 0.95;
-  transform: translateZ(0);
-  animation: aurora 10s ease-in-out infinite;
-}
-.bg__grid {
+
+.schedule__bg-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 66px 66px;
-  mask-image: radial-gradient(900px 520px at 50% 28%, rgba(0, 0, 0, 1), transparent 74%);
-  opacity: 0.18;
+    linear-gradient(to right, rgba(49, 110, 185, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(49, 110, 185, 0.04) 1px, transparent 1px);
+  background-size: 46px 46px;
+  opacity: 0.42;
+  mask-image: radial-gradient(circle at center, black 44%, transparent 100%);
 }
-.bg__noise {
+
+.schedule__bg-glow {
   position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  border-radius: 999px;
+  filter: blur(60px);
 }
 
-@keyframes aurora {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(0, -10px, 0) scale(1.03); }
+.schedule__bg-glow--a {
+  top: -120px;
+  left: -120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(49, 110, 185, 0.12);
 }
 
-/* Container */
-.container {
+.schedule__bg-glow--b {
+  right: -120px;
+  bottom: -120px;
+  width: 320px;
+  height: 320px;
+  background: rgba(49, 110, 185, 0.08);
+}
+
+.schedule__container {
   position: relative;
   z-index: 1;
-  width: min(1160px, calc(100% - 40px));
+  width: min(1200px, calc(100% - 40px));
   margin: 0 auto;
 }
 
-/* Header */
-.head {
+.schedule__head {
   display: grid;
-  gap: 14px;
-  margin-bottom: 18px;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 700ms ease, transform 700ms ease;
 }
 
-.kicker {
+.schedule__head-left {
+  max-width: 760px;
+}
+
+.schedule__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  width: fit-content;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.32);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  letter-spacing: 0.2px;
-  backdrop-filter: blur(10px);
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
-.dot {
+
+.schedule__dot {
   width: 9px;
   height: 9px;
   border-radius: 999px;
-  background: var(--c1);
-  box-shadow: 0 0 0 6px rgba(237, 229, 58, 0.14);
-}
-.head__row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.title {
-  margin: 0;
-  font-weight: 900;
-  line-height: 1.05;
-  font-size: clamp(34px, 4.8vw, 56px);
-  background-image: linear-gradient(90deg, var(--c1), var(--c3), var(--c2), var(--c1));
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: titleGlow 3.6s ease-in-out infinite;
-  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
-}
-@keyframes titleGlow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  background: var(--accent);
+  box-shadow: 0 0 0 7px rgba(49, 110, 185, 0.12);
 }
 
-.subtitle {
+.schedule__title {
+  margin: 0;
+  color: var(--text);
+  font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 0.98;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+
+.schedule__title span {
+  display: block;
+  color: rgba(17, 17, 17, 0.92);
+}
+
+.schedule__sub {
+  margin: 14px 0 0;
+  max-width: 700px;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.schedule__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.schedule__stat {
+  min-height: 88px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.schedule__stat strong {
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.schedule__stat span {
+  margin-top: 6px;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+/* filter panel */
+.schedule__filters {
+  margin-bottom: 20px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.schedule__filters-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.schedule__filters-kicker {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.schedule__filters-title {
+  margin: 0;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.schedule__clear-btn {
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(49, 110, 185, 0.06);
+  color: var(--accent);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.schedule__clear-btn:hover {
+  transform: translateY(-1px);
+}
+
+.schedule__filters-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  min-width: 0;
+}
+
+.field__label {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.field__control {
+  position: relative;
+}
+
+.field__control--search,
+.field__control--select {
+  min-height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.field__control--search:focus-within,
+.field__control--select:focus-within {
+  border-color: rgba(49, 110, 185, 0.24);
+  box-shadow:
+    0 0 0 4px rgba(49, 110, 185, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.field__control--search {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.field__icon {
+  margin-right: 10px;
+  color: rgba(17, 17, 17, 0.42);
+  font-size: 1rem;
+}
+
+.field__input {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.field__input::placeholder {
+  color: rgba(17, 17, 17, 0.42);
+}
+
+.field__control--select {
+  display: flex;
+  align-items: center;
+}
+
+.field__select {
+  appearance: none;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 42px 0 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.94rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.field__arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(17, 17, 17, 0.46);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.field__hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.schedule__filters-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.schedule__favorite-toggle {
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.schedule__favorite-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.schedule__favorite-toggle.is-active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.schedule__favorite-icon {
+  margin-right: 8px;
+}
+
+.schedule__result-text {
   margin: 0;
   color: var(--muted);
-  max-width: 72ch;
-  line-height: 1.65;
-  text-wrap: balance;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.9rem;
 }
 
-/* Chips */
-.chips {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.30);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(10px);
-  color: rgba(255,255,255,0.84);
-}
-.chip__ico {
-  width: 26px;
-  height: 26px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(78,78,254,0.18), rgba(237,77,147,0.18));
-  border: 1px solid rgba(255,255,255,0.12);
+.schedule__result-text strong {
+  color: var(--text);
 }
 
-/* Toolbar */
-.toolbar {
-  margin-top: 18px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 12px;
-  border-radius: 18px;
-  background: rgba(0,0,0,0.30);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(12px);
+.schedule__empty {
+  padding: 34px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  text-align: center;
+  box-shadow: var(--shadow);
 }
 
-.toolbar__left,
-.toolbar__right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* Search */
-.field {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 12px 0 40px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.26);
-  min-width: min(420px, 76vw);
-}
-.field__ico {
-  position: absolute;
-  left: 12px;
-  color: rgba(255,255,255,0.7);
-}
-.input {
-  width: 100%;
-  height: 42px;
-  background: transparent;
-  border: 0;
-  outline: none;
-  color: rgba(255,255,255,0.9);
-  font-weight: 650;
-}
-.input::placeholder {
-  color: rgba(255,255,255,0.55);
-}
-.clear {
-  border: 0;
-  background: transparent;
-  color: rgba(255,255,255,0.75);
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 10px;
-}
-.clear:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-/* Segment */
-.seg {
-  display: inline-flex;
-  padding: 4px;
-  border-radius: 14px;
-  background: rgba(0,0,0,0.22);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-.seg__btn {
-  height: 36px;
-  padding: 0 12px;
-  border: 0;
-  background: transparent;
-  color: rgba(255,255,255,0.74);
-  border-radius: 12px;
-  cursor: pointer;
+.schedule__empty h3 {
+  margin: 0;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.2rem;
   font-weight: 800;
 }
-.seg__btn.is-on {
-  color: rgba(0,0,0,0.92);
-  background: linear-gradient(90deg, rgba(237,229,58,0.95), rgba(237,229,58,0.80));
-  box-shadow: 0 10px 26px rgba(237,229,58,0.14);
+
+.schedule__empty p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Selects */
-.selectWrap {
-  position: relative;
-  display: grid;
-  gap: 6px;
-  min-width: 160px;
-}
-.selectWrap__label {
-  font-size: 12px;
-  color: rgba(255,255,255,0.66);
-  padding-left: 4px;
-}
-.select {
-  height: 44px;
-  padding: 0 38px 0 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.26);
-  color: rgba(255,255,255,0.9);
-  outline: none;
-  font-weight: 750;
-  appearance: none;
-}
-.selectWrap__chev {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  color: rgba(255,255,255,0.70);
-  pointer-events: none;
-}
-
-/* Buttons */
-.btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 14px;
-  border-radius: 14px;
-  text-decoration: none;
-  font-weight: 900;
-  letter-spacing: 0.2px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: transform 180ms ease, filter 180ms ease, background 180ms ease, border-color 180ms ease;
-  transform: translateZ(0);
-}
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-.btn:focus-visible {
-  outline: 3px solid rgba(237, 229, 58, 0.55);
-  outline-offset: 3px;
-}
-
-.btn--primary {
-  color: rgba(0,0,0,0.92);
-  background: linear-gradient(90deg, var(--c1), rgba(237,229,58,0.86));
-  border-color: rgba(237,229,58,0.50);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.42), 0 10px 26px rgba(237,229,58,0.14);
-  overflow: hidden;
-}
-.btn__glow {
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 30% 40%, rgba(237, 77, 147, 0.28), transparent 55%),
-    radial-gradient(circle at 70% 60%, rgba(78, 78, 254, 0.24), transparent 58%);
-  filter: blur(14px);
-  opacity: 0.9;
-  animation: btnGlow 3.8s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes btnGlow {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -10px, 0); }
-}
-
-.btn--ghost {
-  color: rgba(255,255,255,0.88);
-  background: rgba(0,0,0,0.26);
-  border-color: rgba(255,255,255,0.14);
-  backdrop-filter: blur(10px);
-}
-@media (hover: hover) and (pointer: fine) {
-  .btn:hover { transform: translateY(-2px); filter: brightness(1.03); }
-}
-
-/* Info bar */
-.info {
-  margin-top: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-.info__left {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.muted {
-  color: rgba(255,255,255,0.70);
-}
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(0,0,0,0.30);
-  backdrop-filter: blur(10px);
-  font-weight: 900;
-}
-.badge.is-live {
-  border-color: rgba(237,77,147,0.35);
-}
-.pulse {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.38);
-  box-shadow: 0 0 0 0 rgba(237,77,147,0.0);
-}
-.badge.is-live .pulse {
-  background: rgba(237,77,147,0.95);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(237,77,147,0.0); }
-  50% { box-shadow: 0 0 0 9px rgba(237,77,147,0.12); }
-  100% { box-shadow: 0 0 0 0 rgba(237,77,147,0.0); }
-}
-
-/* Content */
-.content {
-  margin-top: 18px;
+.schedule__groups {
   display: grid;
   gap: 22px;
 }
-.dayGroup {
-  display: grid;
-  gap: 12px;
-}
-.dayHeader {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.dayTitle {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 950;
-  letter-spacing: 0.2px;
-}
-.daySub {
-  margin: 0;
-  color: rgba(255,255,255,0.66);
-}
-.dayHint {
-  color: rgba(237,229,58,0.82);
+
+.schedule__group {
+  border-radius: 24px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-/* Grid cards */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.schedule__group-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(49, 110, 185, 0.08);
 }
-.card {
-  position: relative;
+
+.schedule__group-head-left {
+  max-width: 680px;
+}
+
+.schedule__group-kicker {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.schedule__group-title {
+  margin: 0;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.schedule__group-sub {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.88rem;
+}
+
+.schedule__group-count {
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.schedule__list {
+  display: grid;
+  gap: 14px;
+}
+
+.event-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
   padding: 14px;
   border-radius: 18px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(12px);
-  overflow: hidden;
-  min-height: 218px;
-  transform: translateZ(0);
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  border: 1px solid rgba(49, 110, 185, 0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(247,250,255,0.92));
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
-.card__glow {
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 22% 24%, rgba(237,229,58,0.20), transparent 58%),
-    radial-gradient(circle at 72% 22%, rgba(237,77,147,0.18), transparent 60%),
-    radial-gradient(circle at 55% 72%, rgba(78,78,254,0.18), transparent 64%);
-  filter: blur(18px);
-  opacity: 0.85;
-  pointer-events: none;
+
+.event-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(49, 110, 185, 0.18);
+  box-shadow: 0 18px 38px rgba(17, 17, 17, 0.05);
 }
-.card__top {
+
+.event-card.is-favorite {
+  border-color: rgba(49, 110, 185, 0.24);
+  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.06);
+}
+
+.event-card__time {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-}
-.typePill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.24);
-  color: rgba(255,255,255,0.84);
-  font-weight: 900;
-}
-.typePill__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: var(--c2);
-  box-shadow: 0 0 0 6px rgba(78,78,254,0.14);
+  justify-content: center;
+  min-height: 100%;
+  border-radius: 16px;
+  background: rgba(49, 110, 185, 0.07);
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  padding: 10px;
 }
 
-.card__title {
-  margin: 10px 0 0;
-  font-size: 16px;
-  font-weight: 950;
-  line-height: 1.25;
+.event-card__hour {
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.15rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
-.card__meta {
-  margin-top: 10px;
-  display: grid;
-  gap: 6px;
+
+.event-card__day {
+  margin-top: 6px;
+  color: var(--accent);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
-.mini {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.78);
+
+.event-card__content {
+  min-width: 0;
 }
-.mini__ico { opacity: 0.9; }
-.mini__txt { font-weight: 750; }
-.card__desc {
-  margin: 10px 0 0;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.card__footer {
-  margin-top: 12px;
+
+.event-card__top {
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.timeLive {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.22);
-  color: rgba(255,255,255,0.82);
-  font-weight: 900;
-}
-.timeLive.is-live {
-  border-color: rgba(237,77,147,0.35);
-  box-shadow: 0 14px 36px rgba(237,77,147,0.12);
-}
-.timeLive.is-up {
-  border-color: rgba(237,229,58,0.26);
-}
-.timeLive.is-done {
-  border-color: rgba(255,255,255,0.10);
-  opacity: 0.86;
-}
-
-.actions {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
-.btnSmall {
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: rgba(255,255,255,0.88);
-  font-weight: 950;
-  cursor: pointer;
-  transition: transform 180ms ease, filter 180ms ease, background 180ms ease, border-color 180ms ease;
-}
-.btnSmall--primary {
-  color: rgba(0,0,0,0.92);
-  background: linear-gradient(90deg, rgba(237,229,58,0.95), rgba(237,229,58,0.78));
-  border-color: rgba(237,229,58,0.45);
-}
-.btnSmall--ghost {
-  background: rgba(0,0,0,0.18);
-  border-color: rgba(255,255,255,0.12);
-}
-@media (hover: hover) and (pointer: fine) {
-  .card:hover { transform: translateY(-3px); border-color: rgba(237,229,58,0.22); }
-  .btnSmall:hover { transform: translateY(-2px); filter: brightness(1.03); }
-}
-
-/* List view */
-.list {
-  display: grid;
-  gap: 10px;
-}
-.row {
-  display: grid;
-  grid-template-columns: 210px 1fr 170px;
   gap: 12px;
-  padding: 14px;
-  border-radius: 18px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(12px);
-}
-.row__time {
-  display: grid;
-  gap: 10px;
-}
-.clock__h {
-  font-weight: 950;
-  font-size: 20px;
-}
-.clock__d {
-  color: rgba(255,255,255,0.68);
-}
-.row__status {
-  display: grid;
-  gap: 6px;
-}
-.badge2 {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.20);
-  font-weight: 950;
-}
-.badge2__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.36);
-}
-.badge2.is-live {
-  border-color: rgba(237,77,147,0.35);
-}
-.badge2.is-live .badge2__dot { background: rgba(237,77,147,0.95); }
-.badge2.is-up {
-  border-color: rgba(237,229,58,0.26);
-}
-.badge2.is-up .badge2__dot { background: rgba(237,229,58,0.95); }
-.badge2.is-done {
-  opacity: 0.86;
-}
-.muted2 {
-  color: rgba(255,255,255,0.66);
-}
-.row__main {
-  display: grid;
-  gap: 10px;
-}
-.row__top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: baseline;
-  flex-wrap: wrap;
-}
-.row__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 950;
-}
-.typeTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.20);
-  color: rgba(255,255,255,0.84);
-  font-weight: 950;
-}
-.row__meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.row__pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.16);
-  color: rgba(255,255,255,0.78);
-  font-weight: 850;
-}
-.row__desc {
-  margin: 0;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.row__actions {
-  display: grid;
-  gap: 8px;
-  align-content: start;
-  justify-items: end;
 }
 
-/* Icon button */
-.iconBtn {
+.event-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.event-card__category,
+.event-card__location {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.event-card__category {
+  background: rgba(49, 110, 185, 0.09);
+  color: var(--accent);
+}
+
+.event-card__location {
+  background: rgba(17, 17, 17, 0.05);
+  color: rgba(17, 17, 17, 0.72);
+}
+
+.event-card__fav {
+  flex: 0 0 auto;
   width: 38px;
   height: 38px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(0,0,0,0.18);
-  color: rgba(255,255,255,0.88);
-  cursor: pointer;
-  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
-}
-.iconBtn:hover {
-  transform: translateY(-2px);
-  background: rgba(0,0,0,0.28);
-  border-color: rgba(237,229,58,0.22);
-}
-.iconBtn--close {
-  width: 44px;
-  height: 44px;
-  border-radius: 16px;
-}
-
-/* Empty */
-.empty {
-  margin-top: 20px;
-  padding: 22px;
-  border-radius: 22px;
-  border: 1px dashed rgba(255,255,255,0.20);
-  background: rgba(0,0,0,0.26);
-  text-align: center;
-}
-.empty__icon {
-  font-size: 38px;
-}
-.empty__title {
-  margin: 8px 0 0;
-  font-weight: 950;
-}
-.empty__text {
-  margin: 8px auto 0;
-  max-width: 52ch;
-  color: rgba(255,255,255,0.72);
-}
-
-/* Modal */
-:global(html.noScroll),
-:global(body.noScroll) {
-  overflow: hidden;
-}
-
-.modalWrap {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-}
-.modalBackdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.62);
-  backdrop-filter: blur(8px);
-}
-.modal {
-  position: relative;
-  width: min(860px, 100%);
-  border-radius: 22px;
-  background: rgba(0,0,0,0.62);
-  border: 1px solid rgba(255,255,255,0.16);
-  backdrop-filter: blur(16px);
-  padding: 16px;
-  outline: none;
-  overflow: hidden;
-}
-.modal::before {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle at 22% 24%, rgba(237,229,58,0.20), transparent 58%),
-    radial-gradient(circle at 72% 22%, rgba(237,77,147,0.18), transparent 60%),
-    radial-gradient(circle at 55% 72%, rgba(78,78,254,0.18), transparent 64%);
-  filter: blur(18px);
-  opacity: 0.9;
-  pointer-events: none;
-}
-.modal > * { position: relative; z-index: 1; }
-
-.modal__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.modal__kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  width: fit-content;
-  padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.32);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: rgba(255,255,255,0.78);
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--accent);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
 }
-.modal__title {
-  margin: 14px 0 0;
-  font-weight: 950;
-  font-size: clamp(18px, 3.4vw, 26px);
+
+.event-card__fav:hover {
+  transform: translateY(-1px);
+  border-color: rgba(49, 110, 185, 0.22);
 }
-.modal__desc {
-  margin: 10px 0 0;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.6;
+
+.event-card__title {
+  margin: 12px 0 0;
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.08rem;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
-.modal__grid {
-  margin-top: 14px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+
+.event-card__about {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.7;
 }
-.infoCard {
-  padding: 12px;
-  border-radius: 18px;
-  background: rgba(0,0,0,0.26);
-  border: 1px solid rgba(255,255,255,0.12);
+
+.event-card__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
-.infoCard__top {
+
+.event-card__pill {
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.72);
-  font-weight: 900;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(49, 110, 185, 0.08);
+  color: rgba(17, 17, 17, 0.72);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
-.infoCard__value {
-  margin-top: 8px;
-  font-weight: 950;
-  color: rgba(255,255,255,0.90);
+
+.event-card__pill strong {
+  color: var(--text);
+  margin-right: 4px;
 }
-.modal__live {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.26);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 950;
-}
-.modal__live.is-live { border-color: rgba(237,77,147,0.35); }
-.modal__live.is-up { border-color: rgba(237,229,58,0.28); }
-.modal__live.is-done { opacity: 0.88; }
-.modal__actions {
-  margin-top: 14px;
+
+.event-card__actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  margin-top: 12px;
 }
 
-/* Transitions */
-.pop-enter-active,
-.pop-leave-active {
-  transition: opacity 160ms ease;
-}
-.pop-enter-from,
-.pop-leave-to {
-  opacity: 0;
-}
-.pop-enter-active .modal,
-.pop-leave-active .modal {
-  transition: transform 180ms ease, opacity 180ms ease;
-}
-.pop-enter-from .modal {
-  transform: translateY(10px) scale(0.98);
-  opacity: 0;
-}
-.pop-leave-to .modal {
-  transform: translateY(10px) scale(0.98);
-  opacity: 0;
+.event-card__btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  cursor: pointer;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
 }
 
-/* Responsivo */
-@media (max-width: 1000px) {
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .row { grid-template-columns: 200px 1fr 160px; }
-  .modal__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.event-card__btn:hover {
+  transform: translateY(-1px);
 }
-@media (max-width: 720px) {
-  .container { width: min(1160px, calc(100% - 28px)); }
-  .grid { grid-template-columns: 1fr; }
-  .field { min-width: 100%; }
-  .toolbar { padding: 10px; }
-  .selectWrap { min-width: min(170px, 46vw); }
-  .row { grid-template-columns: 1fr; }
-  .row__actions { justify-items: start; }
+
+.event-card__btn--ghost {
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--text);
 }
-@media (prefers-reduced-motion: reduce) {
-  .bg__aurora,
-  .title,
-  .btn__glow {
-    animation: none !important;
+
+.event-card__btn--primary {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.is-visible .schedule__head {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1080px) {
+  .schedule__head {
+    grid-template-columns: 1fr;
   }
+
+  .schedule__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .schedule__filters-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .schedule {
+    padding: 60px 0;
+  }
+
+  .event-card {
+    grid-template-columns: 82px 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .schedule {
+    padding: 48px 0;
+  }
+
+  .schedule__container {
+    width: min(1200px, calc(100% - 24px));
+  }
+
+  .schedule__title {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    line-height: 1;
+  }
+
+  .schedule__sub {
+    font-size: 0.94rem;
+    line-height: 1.7;
+  }
+
+  .schedule__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule__filters {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .schedule__filters-head {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .schedule__filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule__filters-bottom {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .schedule__favorite-toggle {
+    width: 100%;
+  }
+
+  .schedule__group {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .schedule__group-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .event-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .event-card__time {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 58px;
+  }
+
+  .event-card__actions {
+    flex-direction: column;
+  }
+
+  .event-card__btn {
+    width: 100%;
+  }
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
 }
 </style>
