@@ -33,7 +33,7 @@
       <a
         class="brand"
         href="#home"
-        @click.prevent="handleClick('#home')"
+        @click.prevent="jump('#home')"
         :aria-label="t.goHome"
       >
         <img
@@ -65,7 +65,11 @@
               class="mic"
               type="button"
               :class="{ 'is-on': listening && voiceTarget === 'header' }"
-              :aria-label="listening && voiceTarget === 'header' ? t.stopVoice : t.startVoice"
+              :aria-label="
+                listening && voiceTarget === 'header'
+                  ? t.stopVoice
+                  : t.startVoice
+              "
               @click.stop.prevent="toggleVoice('header')"
             >
               <v-icon
@@ -82,7 +86,7 @@
 
       <div class="right" aria-label="Preferências">
         <button
-          class="utilBtn"
+          class="utilBtn utilBtn--lang"
           type="button"
           @click="toggleLanguage"
           :aria-label="t.toggleLanguage"
@@ -165,18 +169,20 @@
       :aria-label="t.menuDialog"
     >
       <div class="fs__top">
-        <div
+        <button
           class="fs__brand"
+          type="button"
           @click="jump('#home')"
-          role="button"
-          tabindex="0"
+          @keydown.enter.prevent="jump('#home')"
+          @keydown.space.prevent="jump('#home')"
+          :aria-label="t.goHome"
         >
           <img src="/Logo/Logo.png" alt="Logo do Festival" class="fs__logo" />
           <div class="fs__brandTxt">
             <strong>Festival de Inverno</strong>
             <span>Pedro II • Edição 2026</span>
           </div>
-        </div>
+        </button>
 
         <div class="fs__topActions">
           <button
@@ -245,7 +251,9 @@
                 <span class="kdot" aria-hidden="true"></span>
                 {{ t.quickNavigation }}
               </span>
-              <span class="mini">• {{ t.simple }} • {{ t.clear }} • {{ t.official }}</span>
+              <span class="mini">
+                • {{ t.simple }} • {{ t.clear }} • {{ t.official }}
+              </span>
             </p>
 
             <h2 class="fs__title">{{ t.whereToGo }}</h2>
@@ -269,7 +277,11 @@
                   class="mic"
                   type="button"
                   :class="{ 'is-on': listening && voiceTarget === 'menu' }"
-                  :aria-label="listening && voiceTarget === 'menu' ? t.stopVoice : t.startVoice"
+                  :aria-label="
+                    listening && voiceTarget === 'menu'
+                      ? t.stopVoice
+                      : t.startVoice
+                  "
                   @click.stop.prevent="toggleVoice('menu')"
                 >
                   <v-icon
@@ -285,7 +297,10 @@
 
             <div class="fs__prefs" :aria-label="t.preferences">
               <button class="prefCard" type="button" @click="toggleLanguage">
-                <div class="prefCard__icon" :class="{ 'is-animating': langAnimating }">
+                <div
+                  class="prefCard__icon"
+                  :class="{ 'is-animating': langAnimating }"
+                >
                   <v-icon icon="mdi-translate" />
                 </div>
                 <div class="prefCard__txt">
@@ -296,7 +311,10 @@
               </button>
 
               <button class="prefCard" type="button" @click="toggleTheme">
-                <div class="prefCard__icon" :class="{ 'is-animating': themeAnimating }">
+                <div
+                  class="prefCard__icon"
+                  :class="{ 'is-animating': themeAnimating }"
+                >
                   <Transition name="icon-swap" mode="out-in">
                     <v-icon
                       v-if="theme === 'dark'"
@@ -318,7 +336,7 @@
             </div>
 
             <div class="fs__chips" :aria-label="t.shortcuts">
-              <button class="chip" type="button" @click="jump('#programacao')">
+              <button class="chip" type="button" @click="jump('/programacao')">
                 <v-icon icon="mdi-calendar-clock-outline" />
                 {{ t.programming }}
               </button>
@@ -326,7 +344,11 @@
                 <v-icon icon="mdi-map-marker-outline" />
                 {{ t.map }}
               </button>
-              <button class="chip" type="button" @click="jump('#acessibilidade')">
+              <button
+                class="chip"
+                type="button"
+                @click="jump('#acessibilidade')"
+              >
                 <v-icon icon="mdi-wheelchair-accessibility" />
                 {{ t.accessibility }}
               </button>
@@ -338,7 +360,11 @@
                 <span>{{ t.quickAccessText }}</span>
               </div>
 
-              <button class="fs__ctaBtn" type="button" @click="jump('#programacao')">
+              <button
+                class="fs__ctaBtn"
+                type="button"
+                @click="jump('/programacao')"
+              >
                 {{ t.seeProgramming }}
                 <v-icon icon="mdi-arrow-top-right" class="ml-2" />
               </button>
@@ -422,9 +448,10 @@
 
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue";
-import { useGoTo } from "vuetify";
+import { useRouter, useRoute } from "vue-router";
 
-const goTo = useGoTo();
+const router = useRouter();
+const route = useRoute();
 
 /* ===== Header state ===== */
 const headerEl = ref(null);
@@ -488,7 +515,8 @@ const messages = {
     map: "Mapa",
     accessibility: "Acessibilidade",
     quickAccess: "Acesso rápido",
-    quickAccessText: "Use a busca, altere o idioma ou ajuste o tema da interface.",
+    quickAccessText:
+      "Use a busca, altere o idioma ou ajuste o tema da interface.",
     seeProgramming: "Ver programação",
     tipEsc: "Dica: use Esc para fechar",
     sectionList: "Lista de seções",
@@ -500,7 +528,8 @@ const messages = {
     micDenied: "Permissão do microfone negada.",
     micNetwork: "Falha de rede no reconhecimento de voz.",
     micNoSpeech: "Não detectei voz. Tente novamente.",
-    micUnsupported: "Seu navegador não suporta busca por voz. Use Chrome/Edge.",
+    micUnsupported:
+      "Seu navegador não suporta busca por voz. Use Chrome/Edge.",
     micHttps: "Busca por voz precisa de HTTPS (ou localhost).",
     micInitFail: "Não foi possível iniciar o microfone.",
     micStartFail: "Falha ao iniciar o reconhecimento.",
@@ -539,7 +568,8 @@ const messages = {
     map: "Map",
     accessibility: "Accessibility",
     quickAccess: "Quick access",
-    quickAccessText: "Use search, change language, or switch the interface theme.",
+    quickAccessText:
+      "Use search, change language, or switch the interface theme.",
     seeProgramming: "See schedule",
     tipEsc: "Tip: use Esc to close",
     sectionList: "Section list",
@@ -551,7 +581,8 @@ const messages = {
     micDenied: "Microphone permission denied.",
     micNetwork: "Network error in voice recognition.",
     micNoSpeech: "No speech detected. Try again.",
-    micUnsupported: "Your browser does not support voice search. Use Chrome/Edge.",
+    micUnsupported:
+      "Your browser does not support voice search. Use Chrome/Edge.",
     micHttps: "Voice search requires HTTPS (or localhost).",
     micInitFail: "Could not start the microphone.",
     micStartFail: "Failed to start recognition.",
@@ -580,8 +611,8 @@ const itemBase = [
     en: { label: "Schedule", desc: "Days, stages and times." }
   },
   {
-    id: "guia",
-    hash: "#guia",
+    id: "servicos",
+    hash: "/servicos",
     icon: "mdi-compass-outline",
     pt: { label: "Serviços", desc: "Tudo pra curtir melhor o festival." },
     en: { label: "Services", desc: "Everything to enjoy the festival better." }
@@ -636,6 +667,7 @@ const items = computed(() =>
 const filteredItems = computed(() => {
   const term = (q.value || "").trim().toLowerCase();
   if (!term) return items.value;
+
   return items.value.filter((i) =>
     `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term)
   );
@@ -643,7 +675,9 @@ const filteredItems = computed(() => {
 
 function showToast(text, autoMs = 1800) {
   toast.value = { show: true, text };
+
   if (stopTimer) window.clearTimeout(stopTimer);
+
   if (autoMs > 0) {
     stopTimer = window.setTimeout(() => hideToast(), autoMs);
   }
@@ -651,6 +685,7 @@ function showToast(text, autoMs = 1800) {
 
 function hideToast() {
   toast.value = { ...toast.value, show: false };
+
   if (stopTimer) window.clearTimeout(stopTimer);
   stopTimer = 0;
 }
@@ -672,7 +707,10 @@ function applyTheme(nextTheme) {
 function toggleTheme() {
   themeAnimating.value = true;
   applyTheme(theme.value === "light" ? "dark" : "light");
-  showToast(theme.value === "dark" ? t.value.themeDark : t.value.themeLight, 1400);
+  showToast(
+    theme.value === "dark" ? t.value.themeDark : t.value.themeLight,
+    1400
+  );
 
   window.setTimeout(() => {
     themeAnimating.value = false;
@@ -683,7 +721,10 @@ function toggleLanguage() {
   langAnimating.value = true;
   lang.value = lang.value === "pt" ? "en" : "pt";
   localStorage.setItem("festival-lang", lang.value);
-  showToast(lang.value === "pt" ? messages.pt.langPt : messages.en.langEn, 1400);
+  showToast(
+    lang.value === "pt" ? messages.pt.langPt : messages.en.langEn,
+    1400
+  );
 
   window.setTimeout(() => {
     langAnimating.value = false;
@@ -706,17 +747,80 @@ function handleScroll() {
   lastScrollTop.value = st <= 0 ? 0 : st;
 }
 
-/* ===== Navigate ===== */
-function handleClick(hash) {
-  goTo(hash, {
-    duration: reduceMotion() ? 0 : 650,
-    offset: -Math.round(headerHeight() + 10),
-    easing: "easeInOutCubic"
+function setActiveByTarget(target) {
+  if (!target) return;
+
+  const found = itemBase.find((item) => item.hash === target);
+  if (found) {
+    activeId.value = found.id;
+    return;
+  }
+
+  if (target === "/" || target === "#home") {
+    activeId.value = "home";
+  }
+}
+
+function syncActiveFromRoute() {
+  if (route.path === "/programacao") {
+    activeId.value = "programacao";
+    return;
+  }
+
+  if (route.hash) {
+    const found = itemBase.find((item) => item.hash === route.hash);
+    activeId.value = found?.id || "home";
+    return;
+  }
+
+  activeId.value = route.path === "/" ? "home" : activeId.value;
+}
+
+function scrollToTarget(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+
+  const offset = headerHeight() + 10;
+  const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+
+  window.scrollTo({
+    top,
+    behavior: reduceMotion() ? "auto" : "smooth"
   });
 }
 
-function jump(hash) {
-  closeMenu(() => handleClick(hash));
+/* ===== Navigate ===== */
+async function jump(target) {
+  if (!target) return;
+
+  setActiveByTarget(target);
+  closeMenu();
+
+  if (target.startsWith("/")) {
+    if (route.path !== target) {
+      await router.push(target);
+    }
+    return;
+  }
+
+  if (!target.startsWith("#")) return;
+
+  if (route.path === "/") {
+    await nextTick();
+    scrollToTarget(target);
+    return;
+  }
+
+  await router.push({
+    path: "/",
+    hash: target
+  });
+
+  await nextTick();
+
+  window.setTimeout(() => {
+    scrollToTarget(target);
+  }, 150);
 }
 
 /* ===== Menu open/close ===== */
@@ -725,15 +829,22 @@ function openMenu() {
   hidden.value = false;
 }
 
-function closeMenu(after) {
+function closeMenu() {
   menuOpen.value = false;
-  after?.();
 }
 
 watch(menuOpen, (val) => {
   document.documentElement.style.overflow = val ? "hidden" : "";
   stopVoice();
 });
+
+watch(
+  () => [route.path, route.hash],
+  () => {
+    syncActiveFromRoute();
+  },
+  { immediate: true }
+);
 
 function onDialogToggle(val) {
   if (!val) return;
@@ -754,7 +865,7 @@ function onSearchEnter() {
     `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term)
   );
 
-  if (hit) handleClick(hit.hash);
+  if (hit) jump(hit.hash);
 }
 
 function onMenuSearchEnter() {
@@ -791,6 +902,7 @@ function createRecognition(target = "header") {
 
   r.onresult = (event) => {
     let transcript = "";
+
     for (let i = event.resultIndex; i < event.results.length; i++) {
       transcript += event.results[i][0]?.transcript || "";
     }
@@ -817,10 +929,12 @@ function createRecognition(target = "header") {
       showToast(t.value.micDenied, 2200);
       return;
     }
+
     if (e?.error === "network") {
       showToast(t.value.micNetwork, 2200);
       return;
     }
+
     if (e?.error === "no-speech") {
       showToast(t.value.micNoSpeech, 1800);
       return;
@@ -871,7 +985,9 @@ function toggleVoice(target = "header") {
     try {
       recognition.stop();
     } catch {}
+
     recognition = createRecognition(target);
+
     try {
       recognition?.start?.();
     } catch {
@@ -884,6 +1000,7 @@ function stopVoice() {
   try {
     recognition?.stop?.();
   } catch {}
+
   recognition = null;
   listening.value = false;
   voiceTarget.value = "header";
@@ -899,6 +1016,7 @@ onMounted(() => {
 
   window.addEventListener("scroll", handleScroll, { passive: true });
   handleScroll();
+  syncActiveFromRoute();
 });
 
 onUnmounted(() => {

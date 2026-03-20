@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/roboto": "5.2.5",
     "@mdi/font": "7.4.47",
+    "@mdi/js": "^7.4.47",
     "@vue-a11y/vlibras": "^1.0.6",
     "gsap": "^3.14.2",
     "leaflet": "^1.9.4",

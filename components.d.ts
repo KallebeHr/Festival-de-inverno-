@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AnteriotesV: typeof import('./src/components/anteriotesV.vue')['default']
+    AtracoesAtivas: typeof import('./src/components/atracoesAtivas.vue')['default']
     Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
     BannerFip: typeof import('./src/components/bannerFip.vue')['default']
     ConfirmedGuests: typeof import('./src/components/ConfirmedGuests.vue')['default']
@@ -27,6 +28,7 @@ declare module 'vue' {
     RealizacaoScrol: typeof import('./src/components/realizacaoScrol.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ServicosAtivo: typeof import('./src/components/ServicosAtivo.vue')['default']
     VLibras: typeof import('./src/components/VLibras.vue')['default']
   }
 }

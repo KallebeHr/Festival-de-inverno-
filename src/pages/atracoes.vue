@@ -1,7 +1,6 @@
 <template>
   <div class='container'>
-    <programa />
-    
+    <atracoesAtivas />
   </div>
 </template>
 

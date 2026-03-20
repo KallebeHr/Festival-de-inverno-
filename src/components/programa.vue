@@ -260,6 +260,7 @@
             </article>
           </div>
         </section>
+        <PatrocinioScrol/>
       </div>
     </div>
   </section>
@@ -267,6 +268,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import PatrocinioScrol from "./patrocinioScrol.vue";
 
 type Day = {
   id: string;
