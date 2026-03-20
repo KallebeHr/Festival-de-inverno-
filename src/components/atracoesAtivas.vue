@@ -1243,6 +1243,7 @@ const onEscape = (event: KeyboardEvent) => {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 22px;
+  margin-top: 3rem;
   align-items: end;
   margin-bottom: 26px;
 
