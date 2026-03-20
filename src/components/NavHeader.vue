@@ -619,7 +619,7 @@ const itemBase = [
   },
   {
     id: "atracoes",
-    hash: "#atracoes",
+    hash: "/atracoes",
     icon: "mdi-microphone-variant",
     pt: { label: "Atrações", desc: "Artistas, shows e cultura." },
     en: { label: "Attractions", desc: "Artists, shows and culture." }
