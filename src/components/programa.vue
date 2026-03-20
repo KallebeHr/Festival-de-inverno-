@@ -744,6 +744,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   padding: 72px 0;
   background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+
 }
 
 .schedule__bg {
@@ -790,6 +791,8 @@ onBeforeUnmount(() => {
   z-index: 1;
   width: min(1200px, calc(100% - 40px));
   margin: 0 auto;
+  margin-top: 3rem;
+
 }
 
 .schedule__head {
