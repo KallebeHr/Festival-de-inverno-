@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AnteriotesV: typeof import('./src/components/anteriotesV.vue')['default']
     AtracoesAtivas: typeof import('./src/components/atracoesAtivas.vue')['default']
+    AtracoesP: typeof import('./src/components/atracoesP.vue')['default']
     Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
     BannerFip: typeof import('./src/components/bannerFip.vue')['default']
     ConfirmedGuests: typeof import('./src/components/ConfirmedGuests.vue')['default']
@@ -18,6 +19,7 @@ declare module 'vue' {
     Footer: typeof import('./src/components/NavFooter.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     LocalMVisitado: typeof import('./src/components/localMVisitado.vue')['default']
+    MapaC: typeof import('./src/components/mapaC.vue')['default']
     MapaP2: typeof import('./src/components/mapaP2.vue')['default']
     NavFooter: typeof import('./src/components/NavFooter.vue')['default']
     NavHeader: typeof import('./src/components/NavHeader.vue')['default']

@@ -3,7 +3,10 @@
     id="como-chegar"
     ref="root"
     class="arrival"
-    :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
+    :class="{
+      'is-visible': hasAnimatedIn,
+      'reduce-motion': reduceMotion
+    }"
     aria-label="Como chegar a Pedro II"
   >
     <div class="arrival__bg" aria-hidden="true">
@@ -104,7 +107,11 @@
             </button>
           </div>
 
-          <div ref="mapEl" class="arrival__map" aria-label="Mapa de rota para Pedro II"></div>
+          <div
+            ref="mapEl"
+            class="arrival__map"
+            aria-label="Mapa de rota para Pedro II"
+          ></div>
 
           <div class="arrival__map-footer">
             <span class="arrival__pill">
@@ -140,19 +147,22 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 const root = ref<HTMLElement | null>(null);
 const mapEl = ref<HTMLElement | null>(null);
-const isVisible = ref(false);
+
 const reduceMotion = ref(false);
 const routingActive = ref(false);
 const scrollZoomEnabled = ref(false);
+const hasAnimatedIn = ref(false);
 
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
-let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
 let toastTimer: number | null = null;
+let mqHandler: ((event: MediaQueryListEvent) => void) | null = null;
 
 let map: L.Map | null = null;
 let marker: L.Marker | null = null;
+let destinationCircle: L.Circle | null = null;
 let routingControl: any = null;
+let mapInitialized = false;
 
 const destination = {
   label: "Pedro II, PI",
@@ -168,28 +178,30 @@ const toast = ref({
 const showToast = (text: string) => {
   toast.value = { show: true, text };
 
-  if (toastTimer) window.clearTimeout(toastTimer);
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = null;
+  }
 
   toastTimer = window.setTimeout(() => {
     toast.value.show = false;
   }, 2200);
 };
 
+const openExternalMap = (url: string) => {
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
 const openGoogleMaps = () => {
   const dest = `${destination.lat},${destination.lng}`;
-
-  window.open(
-    `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`,
-    "_blank",
-    "noopener,noreferrer"
+  openExternalMap(
+    `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`
   );
 };
 
 const openWaze = () => {
-  window.open(
-    `https://www.waze.com/ul?ll=${destination.lat}%2C${destination.lng}&navigate=yes`,
-    "_blank",
-    "noopener,noreferrer"
+  openExternalMap(
+    `https://www.waze.com/ul?ll=${destination.lat}%2C${destination.lng}&navigate=yes`
   );
 };
 
@@ -227,7 +239,9 @@ const getUserPosition = () =>
 
 const recenter = () => {
   if (!map) return;
-  map.setView([destination.lat, destination.lng], 13, { animate: true });
+  map.setView([destination.lat, destination.lng], 13, {
+    animate: !reduceMotion.value
+  });
   marker?.openPopup();
 };
 
@@ -244,82 +258,27 @@ const toggleScrollZoom = () => {
 };
 
 const clearRoute = (silent = false) => {
-  if (!map) return;
-
-  if (routingControl) {
-    map.removeControl(routingControl);
-    routingControl = null;
+  if (!map || !routingControl) {
+    routingActive.value = false;
+    return;
   }
 
+  map.removeControl(routingControl);
+  routingControl = null;
   routingActive.value = false;
 
   if (!silent) showToast("Rota removida.");
 };
 
-const traceRouteInMap = async () => {
-  if (!map) return;
+const ensureMap = async () => {
+  if (mapInitialized || !mapEl.value) return;
 
-  if (routingControl) {
-    clearRoute(true);
-  }
-
-  let origin: { lat: number; lng: number } | null = null;
-
-  try {
-    showToast("Obtendo sua localização...");
-    origin = await getUserPosition();
-  } catch {
-    showToast("GPS indisponível. Abrindo no Google Maps.");
-    openGoogleMaps();
-    return;
-  }
-
-  routingControl = L.Routing.control({
-    waypoints: [
-      L.latLng(origin.lat, origin.lng),
-      L.latLng(destination.lat, destination.lng)
-    ],
-    routeWhileDragging: false,
-    addWaypoints: false,
-    fitSelectedRoutes: true,
-    show: false,
-    lineOptions: {
-      addWaypoints: false,
-      styles: [
-        { color: "#316eb9", opacity: 0.95, weight: 6 },
-        { color: "rgba(49,110,185,0.14)", opacity: 1, weight: 14 }
-      ]
-    },
-    createMarker: function (i: number, wp: any) {
-      const html = `
-        <div class="route-pin ${i === 0 ? "origin" : "dest"}">
-          <div class="route-pin__core"></div>
-          <div class="route-pin__ring"></div>
-        </div>
-      `;
-
-      return L.marker(wp.latLng, {
-        icon: L.divIcon({
-          className: "route-pin-wrap",
-          html,
-          iconSize: [42, 42],
-          iconAnchor: [21, 34]
-        })
-      });
-    }
-  }).addTo(map);
-
-  routingActive.value = true;
-  showToast("Rota traçada no mapa.");
-  marker?.openPopup();
-};
-
-const initMap = () => {
-  if (!mapEl.value) return;
+  await nextTick();
 
   map = L.map(mapEl.value, {
     zoomControl: false,
-    scrollWheelZoom: false
+    scrollWheelZoom: false,
+    preferCanvas: true
   }).setView([destination.lat, destination.lng], 13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -347,7 +306,7 @@ const initMap = () => {
   marker = L.marker([destination.lat, destination.lng], { icon }).addTo(map);
   marker.bindPopup(`<strong>Pedro II • PI</strong><br/>Destino do Festival de Inverno`);
 
-  L.circle([destination.lat, destination.lng], {
+  destinationCircle = L.circle([destination.lat, destination.lng], {
     color: "#316eb9",
     weight: 1,
     fillColor: "#316eb9",
@@ -355,7 +314,68 @@ const initMap = () => {
     radius: 450
   }).addTo(map);
 
-  setTimeout(() => map?.invalidateSize(), 240);
+  requestAnimationFrame(() => {
+    map?.invalidateSize();
+  });
+
+  mapInitialized = true;
+};
+
+const traceRouteInMap = async () => {
+  await ensureMap();
+  if (!map) return;
+
+  if (routingControl) {
+    clearRoute(true);
+  }
+
+  try {
+    showToast("Obtendo sua localização...");
+
+    const origin = await getUserPosition();
+
+    routingControl = L.Routing.control({
+      waypoints: [
+        L.latLng(origin.lat, origin.lng),
+        L.latLng(destination.lat, destination.lng)
+      ],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      fitSelectedRoutes: true,
+      show: false,
+      lineOptions: {
+        addWaypoints: false,
+        styles: [
+          { color: "#316eb9", opacity: 0.95, weight: 6 },
+          { color: "rgba(49,110,185,0.14)", opacity: 1, weight: 14 }
+        ]
+      },
+      createMarker(i: number, wp: any) {
+        const html = `
+          <div class="route-pin ${i === 0 ? "origin" : "dest"}">
+            <div class="route-pin__core"></div>
+            <div class="route-pin__ring"></div>
+          </div>
+        `;
+
+        return L.marker(wp.latLng, {
+          icon: L.divIcon({
+            className: "route-pin-wrap",
+            html,
+            iconSize: [42, 42],
+            iconAnchor: [21, 34]
+          })
+        });
+      }
+    }).addTo(map);
+
+    routingActive.value = true;
+    showToast("Rota traçada no mapa.");
+    marker?.openPopup();
+  } catch {
+    showToast("GPS indisponível. Abrindo no Google Maps.");
+    openGoogleMaps();
+  }
 };
 
 onMounted(async () => {
@@ -364,44 +384,71 @@ onMounted(async () => {
   mq = window.matchMedia("(prefers-reduced-motion: reduce)");
   reduceMotion.value = mq.matches;
 
-  onMqChange = (event: MediaQueryListEvent) => {
+  mqHandler = (event: MediaQueryListEvent) => {
     reduceMotion.value = event.matches;
   };
 
-  mq.addEventListener?.("change", onMqChange);
+  mq.addEventListener?.("change", mqHandler);
 
   io = new IntersectionObserver(
-    ([entry]) => {
-      isVisible.value = !!entry?.isIntersecting;
+    async ([entry]) => {
+      if (!entry?.isIntersecting || hasAnimatedIn.value) return;
+
+      hasAnimatedIn.value = true;
+      await ensureMap();
+
+      if (root.value && io) {
+        io.unobserve(root.value);
+        io.disconnect();
+        io = null;
+      }
     },
-    { threshold: 0.15 }
+    {
+      threshold: 0.2,
+      rootMargin: "0px 0px -8% 0px"
+    }
   );
 
-  if (root.value) io.observe(root.value);
-
-  initMap();
+  if (root.value) {
+    io.observe(root.value);
+  }
 });
 
 onBeforeUnmount(() => {
-  if (io && root.value) io.unobserve(root.value);
+  if (io && root.value) {
+    io.unobserve(root.value);
+  }
   io?.disconnect();
   io = null;
 
-  if (mq && onMqChange) {
-    mq.removeEventListener?.("change", onMqChange);
+  if (mq && mqHandler) {
+    mq.removeEventListener?.("change", mqHandler);
   }
 
   if (toastTimer) {
     window.clearTimeout(toastTimer);
+    toastTimer = null;
   }
 
   clearRoute(true);
 
+  if (destinationCircle && map) {
+    map.removeLayer(destinationCircle);
+    destinationCircle = null;
+  }
+
+  if (marker && map) {
+    map.removeLayer(marker);
+    marker = null;
+  }
+
   if (map) {
     map.remove();
     map = null;
-    marker = null;
   }
+
+  routingControl = null;
+  mapInitialized = false;
 });
 </script>
 
@@ -443,6 +490,7 @@ onBeforeUnmount(() => {
   position: absolute;
   border-radius: 999px;
   filter: blur(60px);
+  will-change: transform, opacity;
 }
 
 .arrival__bg-glow--a {
@@ -468,13 +516,21 @@ onBeforeUnmount(() => {
   margin: 0 auto;
 }
 
+.arrival__head,
+.arrival__info,
+.arrival__map-area {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
 .arrival__head {
   text-align: center;
   max-width: 820px;
   margin: 0 auto 30px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms ease, transform 700ms ease;
 }
 
 .arrival__eyebrow {
@@ -508,6 +564,7 @@ onBeforeUnmount(() => {
   line-height: 0.98;
   font-weight: 800;
   letter-spacing: -0.05em;
+  text-wrap: balance;
 }
 
 .arrival__title span {
@@ -521,6 +578,7 @@ onBeforeUnmount(() => {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.7;
+  text-wrap: pretty;
 }
 
 .arrival__layout {
@@ -532,9 +590,6 @@ onBeforeUnmount(() => {
 
 .arrival__info {
   padding-top: 8px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms ease, transform 700ms ease;
 }
 
 .arrival__topline {
@@ -578,6 +633,7 @@ onBeforeUnmount(() => {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.75;
+  text-wrap: pretty;
 }
 
 .arrival__chips {
@@ -636,10 +692,20 @@ onBeforeUnmount(() => {
   transform: translateY(-1px);
 }
 
+.btn:focus-visible,
+.arrival__mini-btn:focus-visible {
+  outline: 2px solid rgba(49, 110, 185, 0.34);
+  outline-offset: 2px;
+}
+
 .btn--primary {
   background: var(--accent);
   color: #ffffff;
   box-shadow: 0 16px 34px rgba(49, 110, 185, 0.2);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 20px 38px rgba(49, 110, 185, 0.24);
 }
 
 .btn--ghost {
@@ -668,6 +734,7 @@ onBeforeUnmount(() => {
   height: 9px;
   border-radius: 999px;
   background: rgba(17, 17, 17, 0.18);
+  transition: background-color 180ms ease, box-shadow 180ms ease;
 }
 
 .arrival__status-dot.is-on {
@@ -680,12 +747,6 @@ onBeforeUnmount(() => {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
-}
-
-.arrival__map-area {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms ease, transform 700ms ease;
 }
 
 .arrival__map-head {
@@ -727,7 +788,8 @@ onBeforeUnmount(() => {
   font-weight: 700;
   transition:
     transform 180ms ease,
-    border-color 180ms ease;
+    border-color 180ms ease,
+    background-color 180ms ease;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
@@ -745,6 +807,7 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(49, 110, 185, 0.12);
   box-shadow: var(--shadow);
   background: #f4f8ff;
+  transform: translateZ(0);
 }
 
 .arrival__map-footer {
@@ -814,15 +877,15 @@ onBeforeUnmount(() => {
 .is-visible .arrival__info,
 .is-visible .arrival__map-area {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .is-visible .arrival__info {
-  transition-delay: 80ms;
+  transition-delay: 90ms;
 }
 
 .is-visible .arrival__map-area {
-  transition-delay: 140ms;
+  transition-delay: 160ms;
 }
 
 /* Leaflet */

@@ -2,6 +2,7 @@
 <Home/>
 <destaques />
 <BannerFip />
+<AtracoesP />
 <ConfirmedGuests />
 <LocalMVisitado />
 <MapaP2 />

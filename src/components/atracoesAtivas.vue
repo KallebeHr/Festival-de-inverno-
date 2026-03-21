@@ -27,7 +27,6 @@
             Descubra os shows, experiências,
             <span>intervenções e momentos especiais</span>
           </h2>
-
           <p class="attractions__sub">
             Explore as atrações do festival por categoria, local, dia e perfil.
             Encontre desde grandes shows e apresentações culturais até vivências
