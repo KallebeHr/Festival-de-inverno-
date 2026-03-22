@@ -1,9 +1,13 @@
 <template>
   <section
     id="programacao"
-    class="schedule"
-    :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     ref="root"
+    class="schedule"
+    :class="{
+      'is-visible': isVisible,
+      'reduce-motion': reduceMotion,
+      'mobile-filters-open': mobileFiltersOpen
+    }"
     aria-label="Programação do Festival de Inverno"
   >
     <div class="schedule__bg" aria-hidden="true">
@@ -14,149 +18,253 @@
 
     <div class="schedule__container">
       <!-- HEADER -->
-      <header v-if="hasActiveFilters" class="schedule__head">
-  <div class="schedule__head-left">
-    <p class="schedule__eyebrow">
-      <span class="schedule__dot" aria-hidden="true"></span>
-      Programação oficial
-    </p>
-
-    <h2 class="schedule__title">
-      Descubra a programação completa
-      <span>do Festival de Inverno</span>
-    </h2>
-
-    <p class="schedule__sub">
-      Use os filtros abaixo para encontrar eventos por dia, local, categoria
-      ou palavra-chave. A navegação foi pensada para ficar simples, rápida
-      e intuitiva em qualquer tela.
-    </p>
-  </div>
-
-  <div class="schedule__stats" aria-label="Resumo da programação">
-    <div class="schedule__stat">
-      <strong>{{ filteredEvents.length }}</strong>
-      <span>eventos visíveis</span>
-    </div>
-
-    <div class="schedule__stat">
-      <strong>{{ locations.length }}</strong>
-      <span>locais</span>
-    </div>
-
-    <div class="schedule__stat">
-      <strong>{{ favoriteIds.length }}</strong>
-      <span>favoritos</span>
-    </div>
-  </div>
-</header>
-      <!-- FILTER PANEL -->
-      <section class="schedule__filters" aria-label="Filtros da programação">
-        <div class="schedule__filters-head">
-          <div>
-            <p class="schedule__filters-kicker">Filtrar programação</p>
-            <h3 class="schedule__filters-title">Encontre o que deseja com facilidade</h3>
-          </div>
-
-          <button class="schedule__clear-btn" type="button" @click="resetFilters">
-            Limpar filtros
-          </button>
-        </div>
-
-        <div class="schedule__filters-grid">
-          <div class="field field--search">
-            <label class="field__label" for="schedule-search">
-              Buscar evento
-            </label>
-            <div class="field__control field__control--search">
-              <span class="field__icon" aria-hidden="true">⌕</span>
-              <input
-                id="schedule-search"
-                v-model.trim="search"
-                class="field__input"
-                type="text"
-                placeholder="Ex.: show, oficina, praça, gastronomia..."
-                autocomplete="off"
-              />
-            </div>
-            <p class="field__hint">
-              Busque por nome, artista, atividade, categoria ou local.
-            </p>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="schedule-day">
-              Escolha o dia
-            </label>
-            <div class="field__control field__control--select">
-              <select id="schedule-day" v-model="selectedDay" class="field__select">
-                <option value="all">Todos os dias</option>
-                <option v-for="day in days" :key="day.id" :value="day.id">
-                  {{ day.label }}
-                </option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">⌄</span>
-            </div>
-            <p class="field__hint">
-              Filtra a programação por data do festival.
-            </p>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="schedule-location">
-              Escolha o local
-            </label>
-            <div class="field__control field__control--select">
-              <select id="schedule-location" v-model="selectedLocation" class="field__select">
-                <option value="all">Todos os locais</option>
-                <option v-for="location in locations" :key="location.id" :value="location.id">
-                  {{ location.name }}
-                </option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">⌄</span>
-            </div>
-            <p class="field__hint">
-              Mostra apenas os eventos daquele espaço.
-            </p>
-          </div>
-
-          <div class="field">
-            <label class="field__label" for="schedule-category">
-              Escolha a categoria
-            </label>
-            <div class="field__control field__control--select">
-              <select id="schedule-category" v-model="selectedCategory" class="field__select">
-                <option value="all">Todas as categorias</option>
-                <option v-for="category in categories" :key="category" :value="category">
-                  {{ category }}
-                </option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">⌄</span>
-            </div>
-            <p class="field__hint">
-              Ideal para quem quer ver só shows, oficinas, feiras e mais.
-            </p>
-          </div>
-        </div>
-
-        <div class="schedule__filters-bottom">
-          <button
-            class="schedule__favorite-toggle"
-            :class="{ 'is-active': onlyFavorites }"
-            type="button"
-            @click="onlyFavorites = !onlyFavorites"
-          >
-            <span class="schedule__favorite-icon" aria-hidden="true">
-              {{ onlyFavorites ? "★" : "☆" }}
-            </span>
-            {{ onlyFavorites ? "Mostrando apenas favoritos" : "Mostrar apenas favoritos" }}
-          </button>
-
-          <p class="schedule__result-text">
-            <strong>{{ filteredEvents.length }}</strong>
-            evento<span v-if="filteredEvents.length !== 1">s</span> encontrado<span v-if="filteredEvents.length !== 1">s</span>
-            com os filtros atuais.
+      <header class="schedule__head">
+        <div class="schedule__head-left">
+          <p class="schedule__eyebrow">
+            <span class="schedule__dot" aria-hidden="true"></span>
+            Programação oficial
           </p>
+
+          <h2 class="schedule__title">
+            Explore a programação
+            <span>de forma simples e rápida</span>
+          </h2>
+
+          <p class="schedule__sub">
+            Encontre shows, oficinas, experiências e atrações por dia, local,
+            categoria ou busca. No celular, os filtros ficam organizados para
+            facilitar ainda mais a navegação.
+          </p>
+        </div>
+
+        <div class="schedule__stats" aria-label="Resumo da programação">
+          <div class="schedule__stat">
+            <strong>{{ filteredEvents.length }}</strong>
+            <span>eventos visíveis</span>
+          </div>
+
+          <div class="schedule__stat">
+            <strong>{{ locations.length }}</strong>
+            <span>locais</span>
+          </div>
+
+          <div class="schedule__stat">
+            <strong>{{ favoriteIds.length }}</strong>
+            <span>favoritos</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- NAVEGAÇÃO RÁPIDA POR DIA -->
+      <nav class="schedule__day-nav" aria-label="Navegar por dia">
+        <button
+          v-for="day in groupedSchedule"
+          :key="day.day.id"
+          type="button"
+          class="schedule__day-link"
+          @click="scrollToDay(day.day.id)"
+        >
+          {{ day.day.short }}
+        </button>
+      </nav>
+
+      <!-- FILTROS -->
+      <section class="schedule__filters" aria-label="Filtros da programação">
+        <div class="schedule__filters-top">
+          <div>
+            <p class="schedule__filters-kicker">Filtro inteligente</p>
+            <h3 class="schedule__filters-title">Encontre o que deseja com rapidez</h3>
+          </div>
+
+          <div class="schedule__filters-top-actions">
+            <button
+              class="schedule__accordion-btn"
+              type="button"
+              @click="mobileFiltersOpen = !mobileFiltersOpen"
+            >
+              {{ mobileFiltersOpen ? "Fechar filtros" : "Abrir filtros" }}
+            </button>
+
+            <button
+              class="schedule__clear-btn"
+              type="button"
+              @click="resetFilters"
+            >
+              Limpar filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- CHIPS -->
+        <div class="schedule__quick-scroll" aria-label="Atalhos rápidos">
+          <div class="schedule__quick-filters">
+            <button
+              type="button"
+              class="schedule__quick-chip"
+              :class="{ 'is-active': selectedDay === 'all' }"
+              @click="selectedDay = 'all'"
+            >
+              Todos os dias
+            </button>
+
+            <button
+              v-for="day in days"
+              :key="day.id"
+              type="button"
+              class="schedule__quick-chip"
+              :class="{ 'is-active': selectedDay === day.id }"
+              @click="selectedDay = day.id"
+            >
+              {{ day.short }}
+            </button>
+
+            <button
+              type="button"
+              class="schedule__quick-chip"
+              :class="{ 'is-active': onlyFavorites }"
+              @click="onlyFavorites = !onlyFavorites"
+            >
+              {{ onlyFavorites ? "Favoritos ativos" : "Só favoritos" }}
+            </button>
+
+            <button
+              type="button"
+              class="schedule__quick-chip"
+              @click="goToToday"
+            >
+              Hoje
+            </button>
+          </div>
+        </div>
+
+        <div class="schedule__filters-panel">
+          <div class="schedule__filters-grid">
+            <div class="field field--search">
+              <label class="field__label" for="schedule-search">
+                Buscar evento
+              </label>
+
+              <div class="field__control field__control--search">
+                <span class="field__icon" aria-hidden="true">⌕</span>
+                <input
+                  id="schedule-search"
+                  ref="searchInputRef"
+                  v-model.trim="search"
+                  class="field__input"
+                  type="text"
+                  placeholder="Ex.: show, oficina, praça, gastronomia..."
+                  autocomplete="off"
+                />
+              </div>
+
+              <p class="field__hint">
+                Busque por nome do evento, local, artista, categoria ou tema.
+              </p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="schedule-day">
+                Dia
+              </label>
+
+              <div class="field__control field__control--select">
+                <select id="schedule-day" v-model="selectedDay" class="field__select">
+                  <option value="all">Todos os dias</option>
+                  <option v-for="day in days" :key="day.id" :value="day.id">
+                    {{ day.label }}
+                  </option>
+                </select>
+                <span class="field__arrow" aria-hidden="true">⌄</span>
+              </div>
+
+              <p class="field__hint">
+                Filtra os eventos por dia do festival.
+              </p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="schedule-location">
+                Local
+              </label>
+
+              <div class="field__control field__control--select">
+                <select id="schedule-location" v-model="selectedLocation" class="field__select">
+                  <option value="all">Todos os locais</option>
+                  <option
+                    v-for="location in locations"
+                    :key="location.id"
+                    :value="location.id"
+                  >
+                    {{ location.name }}
+                  </option>
+                </select>
+                <span class="field__arrow" aria-hidden="true">⌄</span>
+              </div>
+
+              <p class="field__hint">
+                Mostra apenas os eventos do espaço selecionado.
+              </p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="schedule-category">
+                Categoria
+              </label>
+
+              <div class="field__control field__control--select">
+                <select id="schedule-category" v-model="selectedCategory" class="field__select">
+                  <option value="all">Todas as categorias</option>
+                  <option
+                    v-for="category in categories"
+                    :key="category"
+                    :value="category"
+                  >
+                    {{ category }}
+                  </option>
+                </select>
+                <span class="field__arrow" aria-hidden="true">⌄</span>
+              </div>
+
+              <p class="field__hint">
+                Ideal para encontrar shows, oficinas e vivências com rapidez.
+              </p>
+            </div>
+          </div>
+
+          <div v-if="activeFilterLabels.length" class="schedule__active-filters">
+            <p class="schedule__active-title">Filtros ativos:</p>
+
+            <div class="schedule__active-list">
+              <span
+                v-for="item in activeFilterLabels"
+                :key="item.key"
+                class="schedule__active-chip"
+              >
+                {{ item.label }}
+                <button type="button" @click="item.clear">×</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="schedule__filters-bottom">
+            <p class="schedule__result-text">
+              <strong>{{ filteredEvents.length }}</strong>
+              evento<span v-if="filteredEvents.length !== 1">s</span>
+              encontrado<span v-if="filteredEvents.length !== 1">s</span>
+            </p>
+
+            <button
+              class="schedule__favorite-toggle"
+              :class="{ 'is-active': onlyFavorites }"
+              type="button"
+              @click="onlyFavorites = !onlyFavorites"
+            >
+              <span class="schedule__favorite-icon" aria-hidden="true">
+                {{ onlyFavorites ? "★" : "☆" }}
+              </span>
+              {{ onlyFavorites ? "Mostrando apenas favoritos" : "Mostrar apenas favoritos" }}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -164,15 +272,16 @@
       <div v-if="groupedSchedule.length === 0" class="schedule__empty">
         <h3>Nenhum evento encontrado</h3>
         <p>
-          Tente ajustar a busca, trocar o dia, escolher outro local ou remover os filtros.
+          Tente alterar a busca, trocar os filtros ou limpar a seleção atual.
         </p>
       </div>
 
-      <!-- GROUPS -->
+      <!-- LISTAGEM -->
       <div v-else class="schedule__groups">
         <section
           v-for="group in groupedSchedule"
           :key="group.day.id"
+          :id="`day-${group.day.id}`"
           class="schedule__group"
           :aria-label="`Programação de ${group.day.label}`"
         >
@@ -181,7 +290,7 @@
               <p class="schedule__group-kicker">Dia do festival</p>
               <h3 class="schedule__group-title">{{ group.day.label }}</h3>
               <p class="schedule__group-sub">
-                Confira abaixo os eventos disponíveis para este dia.
+                Os eventos estão organizados por horário para facilitar sua navegação.
               </p>
             </div>
 
@@ -195,7 +304,10 @@
               v-for="event in group.events"
               :key="event.id"
               class="event-card"
-              :class="{ 'is-favorite': isFavorite(event.id) }"
+              :class="{
+                'is-favorite': isFavorite(event.id),
+                'is-expanded': isExpanded(event.id)
+              }"
             >
               <div class="event-card__time">
                 <span class="event-card__hour">{{ event.time }}</span>
@@ -205,8 +317,13 @@
               <div class="event-card__content">
                 <div class="event-card__top">
                   <div class="event-card__meta">
-                    <span class="event-card__category">{{ event.category }}</span>
-                    <span class="event-card__location">{{ getLocationName(event.locationId) }}</span>
+                    <span class="event-card__category">
+                      {{ event.category }}
+                    </span>
+
+                    <span class="event-card__location">
+                      {{ getLocationName(event.locationId) }}
+                    </span>
                   </div>
 
                   <button
@@ -221,13 +338,24 @@
 
                 <h4 class="event-card__title">{{ event.title }}</h4>
 
-                <p class="event-card__about">
+                <p
+                  class="event-card__about"
+                  :class="{ 'is-collapsed': !isExpanded(event.id) }"
+                >
                   {{ event.description }}
                 </p>
 
+                <button
+                  class="event-card__expand"
+                  type="button"
+                  @click="toggleExpanded(event.id)"
+                >
+                  {{ isExpanded(event.id) ? "Recolher descrição" : "Expandir descrição" }}
+                </button>
+
                 <div class="event-card__info">
                   <span class="event-card__pill">
-                    <strong>Atividade:</strong> {{ event.host }}
+                    <strong>Responsável:</strong> {{ event.host }}
                   </span>
 
                   <span class="event-card__pill">
@@ -245,7 +373,15 @@
                     type="button"
                     @click="selectLocationFilter(event.locationId)"
                   >
-                    Filtrar este local
+                    Ver este local
+                  </button>
+
+                  <button
+                    class="event-card__btn event-card__btn--ghost"
+                    type="button"
+                    @click="addToCalendar(event)"
+                  >
+                    Adicionar ao calendário
                   </button>
 
                   <button
@@ -260,15 +396,37 @@
             </article>
           </div>
         </section>
-        <PatrocinioScrol/>
       </div>
+    </div>
+
+    <!-- BARRA FLUTUANTE MOBILE -->
+    <div class="mobile-bar" aria-label="Ações rápidas no mobile">
+      <button type="button" class="mobile-bar__btn" @click="focusSearch">
+        Buscar
+      </button>
+
+      <button
+        type="button"
+        class="mobile-bar__btn"
+        :class="{ 'is-active': onlyFavorites }"
+        @click="onlyFavorites = !onlyFavorites"
+      >
+        Favoritos
+      </button>
+
+      <button type="button" class="mobile-bar__btn" @click="goToToday">
+        Hoje
+      </button>
+
+      <button type="button" class="mobile-bar__btn" @click="resetFilters">
+        Limpar
+      </button>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import PatrocinioScrol from "./patrocinioScrol.vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 type Day = {
   id: string;
@@ -296,21 +454,27 @@ type FestivalEvent = {
 };
 
 const root = ref<HTMLElement | null>(null);
+const searchInputRef = ref<HTMLInputElement | null>(null);
+
 const isVisible = ref(false);
 const reduceMotion = ref(false);
+const mobileFiltersOpen = ref(false);
 
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
 let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
 
-const STORAGE_KEY = "fip_program_favorites_v2";
+const STORAGE_KEY = "fip_program_favorites_v3";
+const STORAGE_EXPANDED_KEY = "fip_program_expanded_v1";
 
 const search = ref("");
 const selectedDay = ref<string>("all");
 const selectedLocation = ref<string>("all");
 const selectedCategory = ref<string>("all");
 const onlyFavorites = ref(false);
+
 const favoriteIds = ref<string[]>([]);
+const expandedIds = ref<string[]>([]);
 
 const days: Day[] = [
   { id: "2026-06-04", label: "04 de Junho • Quinta-feira", short: "QUI" },
@@ -338,7 +502,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-04",
     time: "09:00",
     title: "Abertura da Feira de Artesanato e Design Local",
-    description: "Início oficial do circuito criativo com expositores, peças autorais, opalas, moda artesanal e experiências ligadas à identidade cultural de Pedro II.",
+    description:
+      "Início oficial do circuito criativo com expositores, peças autorais, opalas, moda artesanal e experiências ligadas à identidade cultural de Pedro II.",
     category: "Feira",
     host: "Coletivo Criativo de Pedro II",
     audience: "Livre",
@@ -350,7 +515,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-04",
     time: "10:30",
     title: "Oficina de Fotografia de Paisagem",
-    description: "Encontro prático para visitantes e criadores que desejam aprender composição, luz e enquadramento em cenários naturais da região.",
+    description:
+      "Encontro prático para visitantes e criadores que desejam aprender composição, luz e enquadramento em cenários naturais da região.",
     category: "Oficina",
     host: "Lara Vasconcelos",
     audience: "Jovens e adultos",
@@ -362,7 +528,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-04",
     time: "14:00",
     title: "Roda de Conversa sobre Turismo Cultural",
-    description: "Debate sobre economia criativa, turismo responsável e valorização dos territórios culturais durante grandes eventos regionais.",
+    description:
+      "Debate sobre economia criativa, turismo responsável e valorização dos territórios culturais durante grandes eventos regionais.",
     category: "Debate",
     host: "Instituto Caminhos do Norte",
     audience: "Livre",
@@ -374,7 +541,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-04",
     time: "17:00",
     title: "Pôr do Sol no Mirante com Música Instrumental",
-    description: "Sessão especial ao ar livre com repertório instrumental e contemplação da paisagem, ideal para quem busca uma experiência sensorial mais calma.",
+    description:
+      "Sessão especial ao ar livre com repertório instrumental e contemplação da paisagem, ideal para quem busca uma experiência sensorial mais calma.",
     category: "Experiência",
     host: "Quarteto Serra Azul",
     audience: "Livre",
@@ -386,7 +554,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-04",
     time: "20:00",
     title: "Show de Abertura — Noite das Montanhas",
-    description: "Grande abertura do festival com um espetáculo musical que mistura canções nordestinas, elementos contemporâneos e identidade visual marcante.",
+    description:
+      "Grande abertura do festival com um espetáculo musical que mistura canções nordestinas, elementos contemporâneos e identidade visual marcante.",
     category: "Show",
     host: "Banda Ventos do Norte",
     audience: "Livre",
@@ -398,7 +567,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "08:30",
     title: "Caminhada Guiada pelo Centro Histórico",
-    description: "Percurso comentado por pontos tradicionais da cidade, destacando arquitetura, memória local e curiosidades históricas para visitantes.",
+    description:
+      "Percurso comentado por pontos tradicionais da cidade, destacando arquitetura, memória local e curiosidades históricas para visitantes.",
     category: "Passeio",
     host: "Guia João Matos",
     audience: "Livre",
@@ -410,7 +580,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "10:00",
     title: "Laboratório de Gastronomia Regional",
-    description: "Atividade prática com sabores típicos, ingredientes regionais e uma leitura contemporânea da culinária local.",
+    description:
+      "Atividade prática com sabores típicos, ingredientes regionais e uma leitura contemporânea da culinária local.",
     category: "Gastronomia",
     host: "Chef Marina Luz",
     audience: "Jovens e adultos",
@@ -422,7 +593,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "11:30",
     title: "Mostra de Arte e Opala Contemporânea",
-    description: "Exposição comentada com foco na pedra símbolo de Pedro II, design autoral e processos criativos conectados ao artesanato local.",
+    description:
+      "Exposição comentada com foco na pedra símbolo de Pedro II, design autoral e processos criativos conectados ao artesanato local.",
     category: "Exposição",
     host: "Curadoria Opala Viva",
     audience: "Livre",
@@ -434,7 +606,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "15:00",
     title: "Oficina de Ilustração para Cartazes de Festival",
-    description: "Oficina criativa voltada para linguagem visual, composições gráficas e produção de peças inspiradas no Festival de Inverno.",
+    description:
+      "Oficina criativa voltada para linguagem visual, composições gráficas e produção de peças inspiradas no Festival de Inverno.",
     category: "Oficina",
     host: "Rita Nogueira",
     audience: "Jovens e adultos",
@@ -446,7 +619,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "18:30",
     title: "Concerto na Matriz com Corais da Serra",
-    description: "Apresentação especial com repertório coral e arranjos que dialogam com a atmosfera histórica e afetiva do centro da cidade.",
+    description:
+      "Apresentação especial com repertório coral e arranjos que dialogam com a atmosfera histórica e afetiva do centro da cidade.",
     category: "Concerto",
     host: "Corais da Serra",
     audience: "Livre",
@@ -458,7 +632,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-05",
     time: "21:00",
     title: "Noite Pop Nordeste",
-    description: "Show com sonoridade festiva, repertório dançante e presença de artistas convidados para uma noite de grande circulação.",
+    description:
+      "Show com sonoridade festiva, repertório dançante e presença de artistas convidados para uma noite de grande circulação.",
     category: "Show",
     host: "Coletivo Solar Elétrico",
     audience: "Livre",
@@ -470,7 +645,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "07:30",
     title: "Saída Fotográfica — Rota das Paisagens",
-    description: "Experiência guiada para observação das paisagens naturais da região, com foco em fotografia, contemplação e leitura do território.",
+    description:
+      "Experiência guiada para observação das paisagens naturais da região, com foco em fotografia, contemplação e leitura do território.",
     category: "Passeio",
     host: "Expedição Serra Branda",
     audience: "Livre",
@@ -482,7 +658,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "10:00",
     title: "Feira Gastronômica dos Sabores da Serra",
-    description: "Circuito com pratos regionais, cafés especiais, doces artesanais e espaços de convivência para visitantes e moradores.",
+    description:
+      "Circuito com pratos regionais, cafés especiais, doces artesanais e espaços de convivência para visitantes e moradores.",
     category: "Gastronomia",
     host: "Rede Sabores da Serra",
     audience: "Livre",
@@ -494,7 +671,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "14:30",
     title: "Painel Criativo — Música, Cidade e Território",
-    description: "Conversa com produtores, artistas e agentes culturais sobre programação de festivais, circulação e impacto territorial.",
+    description:
+      "Conversa com produtores, artistas e agentes culturais sobre programação de festivais, circulação e impacto territorial.",
     category: "Debate",
     host: "Fórum Cultural do Festival",
     audience: "Livre",
@@ -506,7 +684,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "16:30",
     title: "Performance Visual na Galeria",
-    description: "Intervenção artística com pintura expandida, projeção e música ambiente em diálogo com o público presente.",
+    description:
+      "Intervenção artística com pintura expandida, projeção e música ambiente em diálogo com o público presente.",
     category: "Arte",
     host: "Ateliê Horizonte",
     audience: "Livre",
@@ -518,7 +697,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "19:00",
     title: "Encontro de Danças Urbanas e Regionais",
-    description: "Apresentação híbrida reunindo grupos convidados, performances coreográficas e integração entre linguagens populares e contemporâneas.",
+    description:
+      "Apresentação híbrida reunindo grupos convidados, performances coreográficas e integração entre linguagens populares e contemporâneas.",
     category: "Dança",
     host: "Núcleo Movimento Livre",
     audience: "Livre",
@@ -530,7 +710,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-06",
     time: "22:00",
     title: "Show Principal — Sons da Neblina",
-    description: "Atração central da noite com identidade visual imersiva, palco expandido e repertório preparado para o ápice do festival.",
+    description:
+      "Atração central da noite com identidade visual imersiva, palco expandido e repertório preparado para o ápice do festival.",
     category: "Show",
     host: "Aurora Atlântica",
     audience: "Livre",
@@ -542,7 +723,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-07",
     time: "09:00",
     title: "Vivência de Bem-estar ao Ar Livre",
-    description: "Atividade voltada ao relaxamento, respiração, alongamento e conexão com a paisagem serrana em um ambiente mais silencioso.",
+    description:
+      "Atividade voltada ao relaxamento, respiração, alongamento e conexão com a paisagem serrana em um ambiente mais silencioso.",
     category: "Experiência",
     host: "Coletivo Respira Serra",
     audience: "Livre",
@@ -554,7 +736,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-07",
     time: "11:00",
     title: "Circuito de Visitação Guiada à Opala",
-    description: "Roteiro mediado para visitantes conhecerem melhor a simbologia da opala, o mercado local e os processos de valorização cultural.",
+    description:
+      "Roteiro mediado para visitantes conhecerem melhor a simbologia da opala, o mercado local e os processos de valorização cultural.",
     category: "Passeio",
     host: "Associação da Opala de Pedro II",
     audience: "Livre",
@@ -566,7 +749,8 @@ const events: FestivalEvent[] = [
     dayId: "2026-06-07",
     time: "18:00",
     title: "Encerramento — Celebração das Luzes",
-    description: "Apresentação final do festival com música, projeções, agradecimentos e uma despedida pensada para reunir moradores e visitantes.",
+    description:
+      "Apresentação final do festival com música, projeções, agradecimentos e uma despedida pensada para reunir moradores e visitantes.",
     category: "Encerramento",
     host: "Orquestra Festival de Inverno",
     audience: "Livre",
@@ -581,11 +765,11 @@ const categories = computed(() => {
   );
 });
 
+const normalizedSearch = computed(() => search.value.toLowerCase().trim());
+
 const getLocationName = (locationId: string) => {
   return locations.find((location) => location.id === locationId)?.name || "Local não encontrado";
 };
-
-const normalizedSearch = computed(() => search.value.toLowerCase().trim());
 
 const filteredEvents = computed(() => {
   return events.filter((event) => {
@@ -637,15 +821,74 @@ const groupedSchedule = computed(() => {
     .filter((group) => group.events.length > 0);
 });
 
-const isFavorite = (eventId: string) => {
-  return favoriteIds.value.includes(eventId);
-};
+const activeFilterLabels = computed(() => {
+  const items: Array<{ key: string; label: string; clear: () => void }> = [];
+
+  if (search.value) {
+    items.push({
+      key: "search",
+      label: `Busca: "${search.value}"`,
+      clear: () => (search.value = "")
+    });
+  }
+
+  if (selectedDay.value !== "all") {
+    const day = days.find((item) => item.id === selectedDay.value);
+    if (day) {
+      items.push({
+        key: "day",
+        label: `Dia: ${day.short}`,
+        clear: () => (selectedDay.value = "all")
+      });
+    }
+  }
+
+  if (selectedLocation.value !== "all") {
+    const location = locations.find((item) => item.id === selectedLocation.value);
+    if (location) {
+      items.push({
+        key: "location",
+        label: `Local: ${location.name}`,
+        clear: () => (selectedLocation.value = "all")
+      });
+    }
+  }
+
+  if (selectedCategory.value !== "all") {
+    items.push({
+      key: "category",
+      label: `Categoria: ${selectedCategory.value}`,
+      clear: () => (selectedCategory.value = "all")
+    });
+  }
+
+  if (onlyFavorites.value) {
+    items.push({
+      key: "favorites",
+      label: "Somente favoritos",
+      clear: () => (onlyFavorites.value = false)
+    });
+  }
+
+  return items;
+});
+
+const isFavorite = (eventId: string) => favoriteIds.value.includes(eventId);
+const isExpanded = (eventId: string) => expandedIds.value.includes(eventId);
 
 const toggleFavorite = (eventId: string) => {
   if (favoriteIds.value.includes(eventId)) {
     favoriteIds.value = favoriteIds.value.filter((id) => id !== eventId);
   } else {
     favoriteIds.value = [...favoriteIds.value, eventId];
+  }
+};
+
+const toggleExpanded = (eventId: string) => {
+  if (expandedIds.value.includes(eventId)) {
+    expandedIds.value = expandedIds.value.filter((id) => id !== eventId);
+  } else {
+    expandedIds.value = [...expandedIds.value, eventId];
   }
 };
 
@@ -665,12 +908,73 @@ const openEventMap = (locationId: string) => {
   );
 };
 
+const formatCalendarDate = (date: string, time: string, addHours = 2) => {
+  const [year, month, day] = date.split("-");
+  const [hour, minute] = time.split(":").map(Number);
+
+  const start = new Date(Number(year), Number(month) - 1, Number(day), hour, minute);
+  const end = new Date(start.getTime() + addHours * 60 * 60 * 1000);
+
+  const toICS = (d: Date) => {
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mi = String(d.getMinutes()).padStart(2, "0");
+    const ss = "00";
+    return `${yyyy}${mm}${dd}T${hh}${mi}${ss}`;
+  };
+
+  return {
+    start: toICS(start),
+    end: toICS(end)
+  };
+};
+
+const addToCalendar = (event: FestivalEvent) => {
+  const locationName = getLocationName(event.locationId);
+  const dates = formatCalendarDate(event.dayId, event.time, 2);
+  const text = encodeURIComponent(
+    `${event.description}\n\nResponsável: ${event.host}\nPúblico: ${event.audience}\nDuração: ${event.duration}`
+  );
+  const location = encodeURIComponent(locationName);
+  const title = encodeURIComponent(event.title);
+
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates.start}/${dates.end}&details=${text}&location=${location}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+};
+
 const resetFilters = () => {
   search.value = "";
   selectedDay.value = "all";
   selectedLocation.value = "all";
   selectedCategory.value = "all";
   onlyFavorites.value = false;
+};
+
+const focusSearch = async () => {
+  mobileFiltersOpen.value = true;
+  await nextTick();
+  searchInputRef.value?.focus();
+  searchInputRef.value?.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+const goToToday = async () => {
+  const todayFestivalDay = days[0];
+  selectedDay.value = todayFestivalDay.id;
+  mobileFiltersOpen.value = false;
+  await nextTick();
+  scrollToDay(todayFestivalDay.id);
+};
+
+const scrollToDay = (dayId: string) => {
+  const el = document.getElementById(`day-${dayId}`);
+  if (!el) return;
+
+  el.scrollIntoView({
+    behavior: reduceMotion.value ? "auto" : "smooth",
+    block: "start"
+  });
 };
 
 watch(
@@ -680,22 +984,33 @@ watch(
   },
   { deep: true }
 );
-const hasActiveFilters = computed(() => {
-  return (
-    search.value !== "" ||
-    selectedDay.value !== "all" ||
-    selectedLocation.value !== "all" ||
-    selectedCategory.value !== "all" ||
-    onlyFavorites.value
-  );
-});
+
+watch(
+  expandedIds,
+  (value) => {
+    localStorage.setItem(STORAGE_EXPANDED_KEY, JSON.stringify(value));
+  },
+  { deep: true }
+);
+
 onMounted(() => {
+  isVisible.value = true;
+
   const savedFavorites = localStorage.getItem(STORAGE_KEY);
   if (savedFavorites) {
     try {
       favoriteIds.value = JSON.parse(savedFavorites);
     } catch {
       favoriteIds.value = [];
+    }
+  }
+
+  const savedExpanded = localStorage.getItem(STORAGE_EXPANDED_KEY);
+  if (savedExpanded) {
+    try {
+      expandedIds.value = JSON.parse(savedExpanded);
+    } catch {
+      expandedIds.value = [];
     }
   }
 
@@ -732,21 +1047,19 @@ onBeforeUnmount(() => {
 <style scoped>
 .schedule {
   --accent: #316eb9;
+  --accent-2: #285c9c;
   --accent-soft: rgba(49, 110, 185, 0.08);
   --accent-soft-2: rgba(49, 110, 185, 0.14);
   --text: #111111;
-  --muted: rgba(17, 17, 17, 0.64);
+  --muted: rgba(17, 17, 17, 0.68);
   --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(49, 110, 185, 0.2);
   --surface: rgba(255, 255, 255, 0.78);
-  --surface-2: #f7faff;
-  --shadow: 0 22px 60px rgba(17, 17, 17, 0.07);
+  --shadow: 0 20px 60px rgba(17, 17, 17, 0.08);
 
   position: relative;
-  overflow: hidden;
-  padding: 72px 0;
+  overflow: clip;
+  padding: 72px 0 110px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-
 }
 
 .schedule__bg {
@@ -794,22 +1107,16 @@ onBeforeUnmount(() => {
   width: min(1200px, calc(100% - 40px));
   margin: 0 auto;
   margin-top: 3rem;
-
 }
 
 .schedule__head {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1.2fr 0.8fr;
   gap: 18px;
   align-items: end;
-  margin-bottom: 24px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms ease, transform 700ms ease;
-}
-
-.schedule__head-left {
-  max-width: 760px;
+  margin-bottom: 22px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .schedule__eyebrow {
@@ -818,8 +1125,7 @@ onBeforeUnmount(() => {
   gap: 10px;
   margin: 0 0 12px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -837,7 +1143,7 @@ onBeforeUnmount(() => {
   margin: 0;
   color: var(--text);
   font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, 4vw, 3.15rem);
   line-height: 0.98;
   font-weight: 800;
   letter-spacing: -0.05em;
@@ -845,14 +1151,12 @@ onBeforeUnmount(() => {
 
 .schedule__title span {
   display: block;
-  color: rgba(17, 17, 17, 0.92);
 }
 
 .schedule__sub {
   margin: 14px 0 0;
-  max-width: 700px;
+  max-width: 720px;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -864,60 +1168,72 @@ onBeforeUnmount(() => {
 }
 
 .schedule__stat {
-  min-height: 88px;
+  min-height: 90px;
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(49, 110, 185, 0.1);
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .schedule__stat strong {
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   line-height: 1;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  color: black;
 }
 
 .schedule__stat span {
   margin-top: 6px;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 600;
 }
 
-/* filter panel */
+.schedule__day-nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.schedule__day-link {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .schedule__filters {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   padding: 18px;
   border-radius: 24px;
   border: 1px solid rgba(49, 110, 185, 0.1);
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.78);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
-.schedule__filters-head {
+.schedule__filters-top {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .schedule__filters-kicker {
   margin: 0 0 6px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -927,12 +1243,19 @@ onBeforeUnmount(() => {
 .schedule__filters-title {
   margin: 0;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1.18rem;
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
+.schedule__filters-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.schedule__accordion-btn,
 .schedule__clear-btn {
   min-height: 42px;
   padding: 0 14px;
@@ -940,18 +1263,50 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(49, 110, 185, 0.12);
   background: rgba(49, 110, 185, 0.06);
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
 }
 
-.schedule__clear-btn:hover {
-  transform: translateY(-1px);
+.schedule__quick-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+}
+
+.schedule__quick-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.schedule__quick-filters {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+}
+
+.schedule__quick-chip {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  background: #fff;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 180ms ease;
+}
+
+.schedule__quick-chip.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.schedule__filters-panel {
+  display: block;
 }
 
 .schedule__filters-grid {
@@ -960,15 +1315,10 @@ onBeforeUnmount(() => {
   gap: 14px;
 }
 
-.field {
-  min-width: 0;
-}
-
 .field__label {
   display: inline-block;
   margin-bottom: 8px;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.86rem;
   font-weight: 700;
 }
@@ -983,19 +1333,13 @@ onBeforeUnmount(() => {
   border-radius: 16px;
   border: 1px solid rgba(49, 110, 185, 0.12);
   background: rgba(255, 255, 255, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .field__control--search:focus-within,
 .field__control--select:focus-within {
   border-color: rgba(49, 110, 185, 0.24);
-  box-shadow:
-    0 0 0 4px rgba(49, 110, 185, 0.08),
-    inset 0 1px 0 rgba(255,255,255,0.6);
+  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.08);
 }
 
 .field__control--search {
@@ -1016,13 +1360,8 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.95rem;
   outline: none;
-}
-
-.field__input::placeholder {
-  color: rgba(17, 17, 17, 0.42);
 }
 
 .field__control--select {
@@ -1038,7 +1377,6 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.94rem;
   font-weight: 600;
   outline: none;
@@ -1058,9 +1396,49 @@ onBeforeUnmount(() => {
 .field__hint {
   margin: 8px 0 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.78rem;
   line-height: 1.5;
+}
+
+.schedule__active-filters {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(49, 110, 185, 0.08);
+}
+
+.schedule__active-title {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.schedule__active-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.schedule__active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(49, 110, 185, 0.08);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.schedule__active-chip button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
 }
 
 .schedule__filters-bottom {
@@ -1079,19 +1457,9 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(49, 110, 185, 0.12);
   background: rgba(255, 255, 255, 0.88);
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
-}
-
-.schedule__favorite-toggle:hover {
-  transform: translateY(-1px);
 }
 
 .schedule__favorite-toggle.is-active {
@@ -1107,7 +1475,6 @@ onBeforeUnmount(() => {
 .schedule__result-text {
   margin: 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.9rem;
 }
 
@@ -1124,20 +1491,6 @@ onBeforeUnmount(() => {
   box-shadow: var(--shadow);
 }
 
-.schedule__empty h3 {
-  margin: 0;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-
-.schedule__empty p {
-  margin: 8px 0 0;
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
 .schedule__groups {
   display: grid;
   gap: 22px;
@@ -1149,8 +1502,7 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.72);
   box-shadow: var(--shadow);
   padding: 18px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  scroll-margin-top: 110px;
 }
 
 .schedule__group-head {
@@ -1163,14 +1515,9 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid rgba(49, 110, 185, 0.08);
 }
 
-.schedule__group-head-left {
-  max-width: 680px;
-}
-
 .schedule__group-kicker {
   margin: 0 0 6px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -1180,7 +1527,6 @@ onBeforeUnmount(() => {
 .schedule__group-title {
   margin: 0;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -1189,13 +1535,11 @@ onBeforeUnmount(() => {
 .schedule__group-sub {
   margin: 6px 0 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.88rem;
 }
 
 .schedule__group-count {
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.88rem;
   font-weight: 700;
 }
@@ -1212,11 +1556,8 @@ onBeforeUnmount(() => {
   padding: 14px;
   border-radius: 18px;
   border: 1px solid rgba(49, 110, 185, 0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,0.82), rgba(247,250,255,0.92));
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease;
+  background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(247,250,255,0.96));
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .event-card:hover {
@@ -1235,34 +1576,26 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
   border-radius: 16px;
   background: rgba(49, 110, 185, 0.07);
   border: 1px solid rgba(49, 110, 185, 0.1);
   padding: 10px;
+  color: black;
 }
 
 .event-card__hour {
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1.15rem;
   line-height: 1;
   font-weight: 800;
-  letter-spacing: -0.03em;
 }
 
 .event-card__day {
   margin-top: 6px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-
-.event-card__content {
-  min-width: 0;
 }
 
 .event-card__top {
@@ -1285,7 +1618,6 @@ onBeforeUnmount(() => {
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.74rem;
   font-weight: 800;
 }
@@ -1301,7 +1633,6 @@ onBeforeUnmount(() => {
 }
 
 .event-card__fav {
-  flex: 0 0 auto;
   width: 38px;
   height: 38px;
   border-radius: 999px;
@@ -1310,20 +1641,11 @@ onBeforeUnmount(() => {
   color: var(--accent);
   font-size: 1.1rem;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease;
-}
-
-.event-card__fav:hover {
-  transform: translateY(-1px);
-  border-color: rgba(49, 110, 185, 0.22);
 }
 
 .event-card__title {
   margin: 12px 0 0;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1.08rem;
   line-height: 1.25;
   font-weight: 800;
@@ -1333,9 +1655,27 @@ onBeforeUnmount(() => {
 .event-card__about {
   margin: 8px 0 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.7;
+  transition: 180ms ease;
+}
+
+.event-card__about.is-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.event-card__expand {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .event-card__info {
@@ -1354,7 +1694,6 @@ onBeforeUnmount(() => {
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(49, 110, 185, 0.08);
   color: rgba(17, 17, 17, 0.72);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
 }
@@ -1377,17 +1716,8 @@ onBeforeUnmount(() => {
   border-radius: 999px;
   border: 1px solid rgba(49, 110, 185, 0.12);
   cursor: pointer;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 700;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.event-card__btn:hover {
-  transform: translateY(-1px);
 }
 
 .event-card__btn--ghost {
@@ -1401,9 +1731,40 @@ onBeforeUnmount(() => {
   border-color: var(--accent);
 }
 
-.is-visible .schedule__head {
-  opacity: 1;
-  transform: translateY(0);
+.mobile-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 30;
+  transform: translateX(-50%);
+  width: min(700px, calc(100% - 24px));
+  display: none;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  box-shadow: 0 18px 50px rgba(17, 17, 17, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.mobile-bar__btn {
+  min-height: 44px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  border-radius: 14px;
+  background: rgba(49, 110, 185, 0.06);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mobile-bar__btn.is-active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 @media (max-width: 1080px) {
@@ -1422,7 +1783,7 @@ onBeforeUnmount(() => {
 
 @media (max-width: 900px) {
   .schedule {
-    padding: 60px 0;
+    padding: 60px 0 120px;
   }
 
   .event-card {
@@ -1432,7 +1793,7 @@ onBeforeUnmount(() => {
 
 @media (max-width: 640px) {
   .schedule {
-    padding: 48px 0;
+    padding: 48px 0 130px;
   }
 
   .schedule__container {
@@ -1453,14 +1814,47 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr;
   }
 
+  .schedule__day-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .schedule__day-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .schedule__day-link {
+    white-space: nowrap;
+  }
+
   .schedule__filters {
     padding: 14px;
     border-radius: 20px;
   }
 
-  .schedule__filters-head {
+  .schedule__filters-top {
     flex-direction: column;
-    align-items: start;
+    align-items: stretch;
+  }
+
+  .schedule__filters-top-actions {
+    width: 100%;
+  }
+
+  .schedule__accordion-btn,
+  .schedule__clear-btn {
+    flex: 1;
+  }
+
+  .schedule__filters-panel {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .mobile-filters-open .schedule__filters-panel {
+    display: block;
   }
 
   .schedule__filters-grid {
@@ -1468,8 +1862,8 @@ onBeforeUnmount(() => {
   }
 
   .schedule__filters-bottom {
-    flex-direction: column;
-    align-items: start;
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 
   .schedule__favorite-toggle {
@@ -1499,12 +1893,34 @@ onBeforeUnmount(() => {
     min-height: 58px;
   }
 
+  .event-card__title {
+    font-size: 1rem;
+  }
+
+  .event-card__about {
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .event-card__info {
+    gap: 6px;
+  }
+
+  .event-card__pill {
+    font-size: 0.74rem;
+    min-height: 32px;
+  }
+
   .event-card__actions {
     flex-direction: column;
   }
 
   .event-card__btn {
     width: 100%;
+  }
+
+  .mobile-bar {
+    display: grid;
   }
 }
 
@@ -1513,5 +1929,6 @@ onBeforeUnmount(() => {
 .reduce-motion *::after {
   animation: none !important;
   transition: none !important;
+  scroll-behavior: auto !important;
 }
 </style>
