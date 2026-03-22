@@ -1158,7 +1158,9 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: 72px 0 130px;
+  margin-top: 2rem;
   background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  width: 100%;
 }
 
 .places__bg {

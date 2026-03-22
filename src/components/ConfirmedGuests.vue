@@ -1,1040 +1,621 @@
 <template>
-  <footer class="footer" role="contentinfo" aria-label="Rodapé do Festival de Inverno">
-    <!-- fundo decorativo -->
-    <div class="footer__bg" aria-hidden="true">
-      <span class="footer__glow footer__glow--1"></span>
-      <span class="footer__glow footer__glow--2"></span>
-      <span class="footer__noise"></span>
-    </div>
+  <section class="confirmed-section" aria-label="Presença confirmada">
+    <div class="confirmed-section__inner">
+      <header class="confirmed-section__head">
+        <span class="confirmed-section__eyebrow">Convidados</span>
+        <h2 class="confirmed-section__title">Presença confirmada</h2>
+      </header>
 
-    <!-- Toast -->
-    <div class="toastWrap" aria-live="polite" aria-atomic="true">
-      <Transition name="toast">
-        <div v-if="toast.show" class="toast" role="status">
-          <span class="toast__icon" aria-hidden="true">✓</span>
+      <div class="confirmed-section__slider">
+        <button
+          ref="prevEl"
+          class="confirmed-nav confirmed-nav--prev"
+          type="button"
+          aria-label="Voltar"
+        >
+          <span>‹</span>
+        </button>
 
-          <div class="toast__body">
-            <strong class="toast__title">{{ toast.title }}</strong>
-            <span class="toast__text">{{ toast.text }}</span>
-          </div>
-
-          <button
-            class="toast__close"
-            type="button"
-            @click="hideToast"
-            aria-label="Fechar aviso"
+        <Swiper
+          class="confirmed-swiper"
+          :modules="modules"
+          :slides-per-view="'auto'"
+          :space-between="18"
+          :grab-cursor="true"
+          :speed="560"
+          :watch-overflow="true"
+          :breakpoints="breakpoints"
+          @swiper="onSwiper"
+        >
+          <SwiperSlide
+            v-for="person in guests"
+            :key="person.name"
+            class="confirmed-slide"
           >
-            ×
-          </button>
-        </div>
-      </Transition>
-    </div>
-
-    <div class="wrap">
-      <!-- topo -->
-      <section class="hero" aria-label="Informações finais do festival">
-        <div class="hero__content">
-          <span class="hero__eyebrow">Festival de Inverno 2026</span>
-
-          <h2 class="hero__title">
-            Encerrando a navegação com
-            <span>informações úteis e rápidas.</span>
-          </h2>
-
-          <p class="hero__text">
-            Aqui você encontra os canais de contato, informações gerais e acessos
-            rápidos para compartilhar ou continuar acompanhando o evento.
-          </p>
-        </div>
-
-        <div class="hero__actions" aria-label="Ações rápidas">
-          <button class="heroBtn" type="button" @click="share">
-            Compartilhar
-            <span aria-hidden="true">↗</span>
-          </button>
-
-          <button class="heroBtn heroBtn--ghost" type="button" @click="copyPageLink">
-            Copiar link
-            <span aria-hidden="true">⧉</span>
-          </button>
-        </div>
-      </section>
-
-      <!-- grid -->
-      <div class="grid">
-        <!-- contato -->
-        <section class="card card--primary" aria-label="Contato">
-          <div class="card__top">
-            <span class="card__tag">Contato</span>
-            <h3 class="card__title">Fale com a organização</h3>
-            <p class="card__desc">
-              Canais rápidos para tirar dúvidas, pedir suporte ou localizar informações.
-            </p>
-          </div>
-
-          <div class="contactList">
-            <article class="contactItem" role="group" aria-label="WhatsApp">
-              <div class="contactItem__head">
-                <span class="contactItem__icon" aria-hidden="true">✆</span>
-                <div class="contactItem__info">
-                  <span class="label">WhatsApp</span>
-                  <strong class="value">{{ CONTACT.whatsapp }}</strong>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.whatsapp, 'WhatsApp copiado')"
-                >
-                  Copiar
-                </button>
-
-                <a
-                  class="btn btn--ghost"
-                  :href="waLink"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Abrir
-                </a>
-              </div>
-            </article>
-
-            <article class="contactItem" role="group" aria-label="Suporte">
-              <div class="contactItem__head">
-                <span class="contactItem__icon" aria-hidden="true">✉</span>
-                <div class="contactItem__info">
-                  <span class="label">Suporte</span>
-                  <strong class="value">{{ CONTACT.supportEmail }}</strong>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.supportEmail, 'E-mail copiado')"
-                >
-                  Copiar
-                </button>
-
-                <button class="btn btn--ghost" type="button" @click="reportIssue">
-                  Reportar
-                </button>
-              </div>
-            </article>
-
-            <article class="contactItem" role="group" aria-label="Local">
-              <div class="contactItem__head">
-                <span class="contactItem__icon" aria-hidden="true">⌂</span>
-                <div class="contactItem__info">
-                  <span class="label">Local</span>
-                  <strong class="value">{{ CONTACT.city }}</strong>
-                </div>
-              </div>
-
-              <div class="actions">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.city, 'Local copiado')"
-                >
-                  Copiar
-                </button>
-
-                <a
-                  class="btn btn--ghost"
-                  :href="mapsLink"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Ver mapa
-                </a>
-              </div>
-            </article>
-          </div>
-        </section>
-
-        <!-- informações -->
-        <section class="card" aria-label="Informações">
-          <div class="card__top">
-            <span class="card__tag">Informações</span>
-            <h3 class="card__title">Antes de sair, confira isso</h3>
-            <p class="card__desc">
-              Um resumo simples para o visitante saber onde acompanhar novidades.
-            </p>
-          </div>
-
-          <div class="infoList" role="list">
-            <div class="info" role="listitem">
-              <span class="label">Edição</span>
-              <strong class="value">2026</strong>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="label">Cidade</span>
-              <strong class="value">Pedro II • PI</strong>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="label">Horários</span>
-              <strong class="value">Consulte Programação e Comunicados</strong>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="label">Atualizações</span>
-              <strong class="value">Avisos na seção “Comunicados”</strong>
-            </div>
-          </div>
-
-          <div class="notice" aria-label="Aviso importante">
-            <strong class="notice__title">Importante</strong>
-
-            <p class="notice__text">
-              A programação pode sofrer alterações por motivos técnicos, climáticos
-              ou operacionais. Para evitar desencontros, consulte sempre os avisos
-              oficiais antes de sair.
-            </p>
-
-            <div class="legal">
-              <button class="textBtn" type="button" @click="openModal('privacy')">
-                Privacidade
-              </button>
-
-              <span class="dot" aria-hidden="true">•</span>
-
-              <button class="textBtn" type="button" @click="openModal('terms')">
-                Termos de uso
-              </button>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <!-- bottom -->
-      <div class="bottom">
-        <div class="bottom__left">
-          <strong class="brand">Festival de Inverno • Pedro II</strong>
-          <span class="muted">Edição 2026</span>
-        </div>
-
-        <div class="bottom__right">
-          <span class="muted">feito por</span>
-          <button
-            class="textBtn textBtn--strong"
-            type="button"
-            @click="copy('feito por @kallebe, entrar em contato', 'Crédito copiado')"
-          >
-            @MaxSistemas
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal -->
-    <Transition name="modal">
-      <div v-if="modal.open" class="modal" role="dialog" aria-modal="true" :aria-label="modalTitle">
-        <div class="backdrop" @click="closeModal" aria-hidden="true"></div>
-
-        <div class="modalCard" ref="modalCard" tabindex="-1">
-          <div class="modalHead">
-            <strong class="modalTitle">{{ modalTitle }}</strong>
-
-            <button
-              class="modalClose"
-              type="button"
-              @click="closeModal"
-              aria-label="Fechar"
+            <article
+              class="guest-card"
+              :style="{ '--card-accent': person.accent }"
             >
-              ×
-            </button>
-          </div>
+              <div class="guest-card__avatar-shell">
+                <div class="guest-card__avatar-wrap">
+                  <img
+                    :src="person.image"
+                    :alt="person.name"
+                    class="guest-card__avatar"
+                    loading="lazy"
+                    decoding="async"
+                    draggable="false"
+                  />
+                </div>
+              </div>
 
-          <div class="modalBody">
-            <p v-if="modal.kind === 'privacy'">
-              Este site pode armazenar preferências locais, como favoritos e escolhas
-              de navegação, para melhorar sua experiência.
-            </p>
+              <div class="guest-card__content">
+                <span class="guest-card__tag">Artista confirmado</span>
 
-            <p v-else>
-              Este conteúdo é informativo e pode ser atualizado a qualquer momento.
-              Para acompanhar informações oficiais, consulte a área de comunicados.
-            </p>
+                <h3 class="guest-card__name">{{ person.name }}</h3>
 
-            <div class="modalActions">
-              <button class="heroBtn" type="button" @click="closeModal">Entendi</button>
-              <button class="heroBtn heroBtn--ghost" type="button" @click="copyPageLink">
-                Copiar link
-              </button>
-            </div>
-          </div>
-        </div>
+                <p class="guest-card__work">{{ person.work }}</p>
+              </div>
+
+              <span class="guest-card__bar" aria-hidden="true"></span>
+            </article>
+          </SwiperSlide>
+        </Swiper>
+
+        <button
+          ref="nextEl"
+          class="confirmed-nav confirmed-nav--next"
+          type="button"
+          aria-label="Avançar"
+        >
+          <span>›</span>
+        </button>
       </div>
-    </Transition>
-  </footer>
+    </div>
+  </section>
 </template>
 
-<script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+<script setup>
+import { ref, nextTick } from "vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Navigation, A11y } from "swiper/modules";
 
-const CONTACT = {
-  whatsapp: "+55 86 9XXXX-XXXX",
-  supportEmail: "suporte@festivaldeinverno.com.br",
-  city: "Pedro II, Piauí",
-} as const;
+import "swiper/css";
+import "swiper/css/navigation";
 
-/* toast */
-const toast = reactive({
-  show: false,
-  title: "Pronto!",
-  text: "",
-  t: 0 as ReturnType<typeof setTimeout> | 0,
-});
+const modules = [Navigation, A11y];
 
-function showToast(text: string, title = "Pronto!") {
-  toast.title = title;
-  toast.text = text;
-  toast.show = true;
-  clearTimeout(toast.t);
-  toast.t = setTimeout(() => {
-    toast.show = false;
-  }, 2200);
-}
+const prevEl = ref(null);
+const nextEl = ref(null);
 
-function hideToast() {
-  toast.show = false;
-  clearTimeout(toast.t);
-}
-
-/* copiar */
-async function copy(value: string, msg = "Copiado!") {
-  try {
-    await navigator.clipboard.writeText(value);
-    showToast(msg, "Copiado");
-  } catch {
-    const ta = document.createElement("textarea");
-    ta.value = value;
-    ta.setAttribute("readonly", "true");
-    ta.style.position = "fixed";
-    ta.style.left = "-9999px";
-    document.body.appendChild(ta);
-    ta.select();
-
-    try {
-      document.execCommand("copy");
-      showToast(msg, "Copiado");
-    } catch {
-      showToast("Não foi possível copiar automaticamente.", "Ops");
-    } finally {
-      document.body.removeChild(ta);
-    }
-  }
-}
-
-async function copyPageLink() {
-  await copy(window.location.href, "Link do site copiado");
-}
-
-/* links */
-const waLink = computed(() => {
-  const phone = CONTACT.whatsapp.replace(/[^\d+]/g, "");
-  return `https://wa.me/${phone.replace("+", "")}`;
-});
-
-const mapsLink = computed(() => {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.city)}`;
-});
-
-/* share */
-async function share() {
-  const url = window.location.href;
-  const payload = {
-    title: "Festival de Inverno • Pedro II",
-    text: "Acesse programação, mapa e comunicados oficiais do Festival de Inverno 2026.",
-    url,
-  };
-
-  // @ts-ignore
-  if (navigator.share) {
-    try {
-      // @ts-ignore
-      await navigator.share(payload);
-      showToast("Compartilhado com sucesso!", "Compartilhar");
-      return;
-    } catch {}
-  }
-
-  await copy(url, "Link copiado para compartilhar");
-}
-
-function reportIssue() {
-  const subject = encodeURIComponent("Suporte — Festival de Inverno (site)");
-  const body = encodeURIComponent(
-    `Olá!\n\nPágina: ${window.location.href}\n\nDescreva o problema:\n- `
-  );
-
-  window.location.href = `mailto:${CONTACT.supportEmail}?subject=${subject}&body=${body}`;
-  showToast("Abrindo suporte…", "Suporte");
-}
-
-/* modal */
-const modal = reactive({
-  open: false,
-  kind: "privacy" as "privacy" | "terms",
-});
-
-const modalCard = ref<HTMLElement | null>(null);
-
-const modalTitle = computed(() => {
-  return modal.kind === "privacy" ? "Privacidade" : "Termos de uso";
-});
-
-async function openModal(kind: "privacy" | "terms") {
-  modal.kind = kind;
-  modal.open = true;
+const onSwiper = async (swiper) => {
   await nextTick();
-  modalCard.value?.focus?.();
-}
 
-function closeModal() {
-  modal.open = false;
-}
+  if (!prevEl.value || !nextEl.value) return;
 
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape" && modal.open) {
-    closeModal();
-  }
-}
+  swiper.params.navigation.prevEl = prevEl.value;
+  swiper.params.navigation.nextEl = nextEl.value;
 
-onMounted(() => {
-  window.addEventListener("keydown", onKeydown);
-});
+  swiper.navigation.destroy();
+  swiper.navigation.init();
+  swiper.navigation.update();
+};
 
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", onKeydown);
-  clearTimeout(toast.t);
-});
+const breakpoints = {
+  320: {
+    spaceBetween: 12,
+  },
+  768: {
+    spaceBetween: 16,
+  },
+  1200: {
+    spaceBetween: 18,
+  },
+};
+
+const guests = [
+  {
+    name: "Erivaldo Oliveira",
+    work: "Édipo REC",
+    image:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=900&auto=format&fit=crop",
+    accent: "#22c7aa",
+  },
+  {
+    name: "Herson Capri",
+    work: "A Sabedoria dos Pais",
+    image:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=900&auto=format&fit=crop",
+    accent: "#f4b321",
+  },
+  {
+    name: "Malu Galli",
+    work: "Mulher em Fuga",
+    image:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=900&auto=format&fit=crop",
+    accent: "#ef4444",
+  },
+  {
+    name: "Miranda Lebrão",
+    work: "O Grande Cabaré Combo Drag Week",
+    image:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=900&auto=format&fit=crop",
+    accent: "#7c68ee",
+  },
+  {
+    name: "Natália do Vale",
+    work: "Natália do Vale",
+    image:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=900&auto=format&fit=crop",
+    accent: "#22c7aa",
+  },
+];
 </script>
 
 <style scoped>
-.footer {
-  --primary: #316eb9;
-  --primary-strong: #245a9d;
-  --primary-soft: rgba(49, 110, 185, 0.10);
-  --primary-soft-2: rgba(49, 110, 185, 0.16);
+.confirmed-section {
+  --serif: ui-serif, "Georgia", "Times New Roman", Times, serif;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Arial, sans-serif;
 
-  --bg: #f7faff;
-  --card: rgba(255, 255, 255, 0.88);
-  --card-solid: #ffffff;
-  --stroke: rgba(24, 45, 74, 0.10);
-  --stroke-soft: rgba(24, 45, 74, 0.07);
-  --text: #18304d;
-  --muted: rgba(24, 48, 77, 0.68);
+  --ink: rgba(12, 14, 18, 0.95);
+  --muted: rgba(12, 14, 18, 0.62);
+  --line: rgba(12, 14, 18, 0.08);
+  --line-strong: rgba(12, 14, 18, 0.14);
 
-  position: relative;
-  overflow: clip;
-  padding: 28px 18px 16px;
+  --accent: #316eb9;
+  --paper: #ffffff;
+  --paper-soft: #f7f9fc;
+  --paper-deep: #eef3f8;
+
+  --shadow-sm: 0 10px 24px rgba(12, 14, 18, 0.05);
+  --shadow-md: 0 18px 38px rgba(12, 14, 18, 0.08);
+
+  width: 100%;
+  padding: 42px 0;
+  overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgba(49, 110, 185, 0.14), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(49, 110, 185, 0.10), transparent 30%),
-    linear-gradient(180deg, #f8fbff 0%, #f2f7fd 100%);
-  border-top: 1px solid var(--stroke);
-  color: var(--text);
+    radial-gradient(circle at top left, rgba(49, 110, 185, 0.05), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
 }
 
-.footer__bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.footer__glow {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(60px);
-  opacity: 0.55;
-}
-
-.footer__glow--1 {
-  top: -70px;
-  left: -20px;
-  width: 220px;
-  height: 220px;
-  background: rgba(49, 110, 185, 0.18);
-}
-
-.footer__glow--2 {
-  right: -30px;
-  bottom: -60px;
-  width: 260px;
-  height: 260px;
-  background: rgba(49, 110, 185, 0.12);
-}
-
-.footer__noise {
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  background-image:
-    linear-gradient(rgba(24, 48, 77, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(24, 48, 77, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent 85%);
-}
-
-.wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 1200px;
+.confirmed-section__inner {
+  width: min(1280px, calc(100% - 40px));
   margin: 0 auto;
 }
 
-/* topo */
-.hero {
-  display: grid;
-  grid-template-columns: 1.2fr auto;
-  gap: 18px;
-  align-items: end;
-  margin-bottom: 18px;
-}
-
-.hero__eyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.hero__title {
-  margin: 0;
-  font-size: clamp(1.55rem, 2.2vw, 2.25rem);
-  line-height: 1.05;
-  font-weight: 1000;
-  letter-spacing: -0.04em;
-  max-width: 12ch;
-}
-
-.hero__title span {
-  display: block;
-  color: rgba(24, 48, 77, 0.72);
-}
-
-.hero__text {
-  margin: 12px 0 0;
-  max-width: 58ch;
-  font-size: 0.98rem;
-  line-height: 1.75;
-  color: var(--muted);
-}
-
-.hero__actions {
+.confirmed-section__head {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 26px;
 }
 
-/* grid */
-.grid {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 16px;
-}
-
-.card {
-  position: relative;
-  border: 1px solid var(--stroke);
-  background: var(--card);
-  backdrop-filter: blur(14px);
-  border-radius: 26px;
-  padding: 18px;
-  box-shadow:
-    0 12px 30px rgba(24, 48, 77, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
-}
-
-.card--primary {
-  background:
-    linear-gradient(180deg, rgba(49, 110, 185, 0.08), rgba(255, 255, 255, 0.94) 30%),
-    rgba(255, 255, 255, 0.92);
-}
-
-.card__top {
-  margin-bottom: 14px;
-}
-
-.card__tag {
+.confirmed-section__eyebrow {
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
-  padding: 0 10px;
+  gap: 8px;
+  color: var(--accent);
+  font: 800 11px/1 var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.confirmed-section__eyebrow::before,
+.confirmed-section__eyebrow::after {
+  content: "";
+  width: 22px;
+  height: 1.5px;
   border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-size: 11px;
-  font-weight: 900;
+  background: currentColor;
+  opacity: 0.65;
+}
+
+.confirmed-section__title {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.55rem, 2.3vw, 2.45rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-family: var(--serif);
+  text-align: center;
+}
+
+.confirmed-section__slider {
+  position: relative;
+  padding: 0 46px;
+}
+
+.confirmed-swiper {
+  overflow: visible;
+}
+
+.confirmed-slide {
+  width: 246px !important;
+  height: auto;
+}
+
+.guest-card {
+  position: relative;
+  min-height: 362px;
+  height: 100%;
+  padding: 20px 16px 22px;
+  border-radius: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 249, 252, 1));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.guest-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--card-accent, #22c7aa), white 6%),
+    color-mix(in srgb, var(--card-accent, #22c7aa), white 34%)
+  );
+}
+
+.guest-card::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: -18px;
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-accent, #22c7aa), transparent 78%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.guest-card__avatar-shell {
+  display: grid;
+  place-items: center;
+  width: 186px;
+  height: 186px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(245, 247, 250, 0.82)),
+    color-mix(in srgb, var(--card-accent, #22c7aa), white 82%);
+  border: 1px solid color-mix(in srgb, var(--card-accent, #22c7aa), white 70%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 10px 24px rgba(12, 14, 18, 0.06);
+  flex-shrink: 0;
+}
+
+.guest-card__avatar-wrap {
+  width: 166px;
+  height: 166px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #d8d8d8;
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.6),
+    0 10px 24px rgba(12, 14, 18, 0.08);
+}
+
+.guest-card__avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.001);
+  transition: transform 520ms ease;
+}
+
+.guest-card__content {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+
+.guest-card__tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  margin-bottom: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-accent, #22c7aa), white 84%);
+  color: color-mix(in srgb, var(--card-accent, #22c7aa), black 18%);
+  border: 1px solid color-mix(in srgb, var(--card-accent, #22c7aa), white 68%);
+  font: 800 10px/1 var(--sans);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.card__title {
-  margin: 10px 0 0;
-  font-size: clamp(1.05rem, 1.3vw, 1.35rem);
-  font-weight: 1000;
-  letter-spacing: -0.03em;
-}
-
-.card__desc {
-  margin: 8px 0 0;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-/* contato */
-.contactList {
-  display: grid;
-  gap: 12px;
-}
-
-.contactItem {
-  border: 1px solid rgba(24, 48, 77, 0.08);
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 20px;
-  padding: 14px;
-  display: grid;
-  gap: 12px;
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.contactItem:hover {
-  transform: translateY(-2px);
-  border-color: rgba(49, 110, 185, 0.20);
-  box-shadow: 0 14px 28px rgba(49, 110, 185, 0.08);
-}
-
-.contactItem__head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.contactItem__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 42px;
-  background: var(--primary-soft);
-  border: 1px solid var(--primary-soft-2);
-  color: var(--primary);
-  font-size: 16px;
-  font-weight: 1000;
-}
-
-.contactItem__info {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-/* info */
-.infoList {
-  display: grid;
-  gap: 10px;
-}
-
-.info {
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 12px;
-  align-items: start;
-  border: 1px solid rgba(24, 48, 77, 0.08);
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.label {
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(24, 48, 77, 0.58);
-}
-
-.value {
-  font-size: 14px;
-  line-height: 1.55;
-  font-weight: 950;
-  color: var(--text);
-  word-break: break-word;
-}
-
-/* aviso */
-.notice {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--stroke-soft);
-}
-
-.notice__title {
-  display: inline-block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 1000;
-}
-
-.notice__text {
+.guest-card__name {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.8;
-  color: var(--muted);
-}
-
-.legal {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.dot {
-  opacity: 0.55;
-}
-
-/* botões */
-.actions,
-.modalActions {
+  min-height: 46px;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 850;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.btn,
-.heroBtn {
-  min-height: 42px;
-  padding: 0 14px;
-  border-radius: 15px;
-  border: 1px solid transparent;
-  font-size: 12px;
-  font-weight: 950;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
+  text-wrap: balance;
 }
 
-.btn,
-.heroBtn {
-  background: var(--primary);
-  color: #fff;
-  border-color: rgba(49, 110, 185, 0.2);
+.guest-card__work {
+  margin: 16px 0 0;
+  max-width: 188px;
+  color: rgba(12, 14, 18, 0.72);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-wrap: balance;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.btn:hover,
-.heroBtn:hover {
-  transform: translateY(-1px);
-  background: var(--primary-strong);
-  box-shadow: 0 10px 22px rgba(49, 110, 185, 0.22);
+.guest-card__bar {
+  width: calc(100% - 28px);
+  height: 4px;
+  margin-top: auto;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--card-accent, #22c7aa),
+    color-mix(in srgb, var(--card-accent, #22c7aa), white 25%)
+  );
+  opacity: 0.96;
 }
 
-.btn--ghost,
-.heroBtn--ghost {
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--primary);
-  border-color: rgba(49, 110, 185, 0.16);
-}
-
-.btn--ghost:hover,
-.heroBtn--ghost:hover {
-  background: rgba(49, 110, 185, 0.08);
-}
-
-.btn:focus-visible,
-.heroBtn:focus-visible,
-.textBtn:focus-visible,
-.modalClose:focus-visible,
-.toast__close:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(49, 110, 185, 0.18);
-}
-
-.textBtn {
-  background: none;
-  border: 0;
-  padding: 0;
-  color: var(--primary);
-  font-weight: 950;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.textBtn--strong {
-  font-weight: 1000;
-}
-
-/* bottom */
-.bottom {
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--stroke-soft);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.bottom__left,
-.bottom__right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.brand {
-  font-size: 13px;
-  font-weight: 1000;
-  letter-spacing: -0.02em;
-}
-
-.muted {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* toast */
-.toastWrap {
-  position: fixed;
-  right: 14px;
-  bottom: 14px;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.toast {
-  pointer-events: auto;
-  display: grid;
-  grid-template-columns: 34px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 12px;
-  min-width: min(360px, calc(100vw - 28px));
-  border-radius: 18px;
-  border: 1px solid rgba(24, 48, 77, 0.12);
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 18px 60px rgba(24, 48, 77, 0.16);
-}
-
-.toast__icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: var(--primary-soft);
-  border: 1px solid var(--primary-soft-2);
-  color: var(--primary);
-  font-weight: 1000;
-}
-
-.toast__body {
-  display: grid;
-  gap: 2px;
-}
-
-.toast__title {
-  font-size: 13px;
-  font-weight: 1000;
-}
-
-.toast__text {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.toast__close {
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  border: 1px solid rgba(24, 48, 77, 0.1);
-  background: rgba(24, 48, 77, 0.03);
-  cursor: pointer;
-  color: var(--text);
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.18s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-}
-
-/* modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-}
-
-.backdrop {
+.confirmed-nav {
   position: absolute;
-  inset: 0;
-  background: rgba(16, 29, 48, 0.5);
-}
-
-.modalCard {
-  position: relative;
-  width: min(520px, 100%);
-  border-radius: 22px;
-  border: 1px solid rgba(24, 48, 77, 0.12);
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 24px 90px rgba(24, 48, 77, 0.18);
-  padding: 14px;
-}
-
-.modalHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(24, 48, 77, 0.08);
-}
-
-.modalTitle {
-  font-weight: 1100;
-  letter-spacing: -0.02em;
-}
-
-.modalClose {
-  width: 40px;
-  height: 40px;
-  border-radius: 16px;
-  border: 1px solid rgba(24, 48, 77, 0.1);
-  background: rgba(24, 48, 77, 0.03);
+  top: 50%;
+  z-index: 20;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(12, 14, 18, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f1720;
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  transform: translateY(-50%);
+  box-shadow: 0 10px 20px rgba(12, 14, 18, 0.06);
+  transition:
+    transform 0.22s ease,
+    opacity 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
-.modalBody {
-  padding-top: 10px;
-  color: var(--text);
-  line-height: 1.75;
-  font-size: 13px;
+.confirmed-nav span {
+  font-size: 1.5rem;
+  line-height: 1;
+  transform: translateY(-1px);
 }
 
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.18s ease;
+.confirmed-nav:hover {
+  transform: translateY(-50%) scale(1.06);
+  background: #fff;
+  border-color: rgba(12, 14, 18, 0.12);
+  box-shadow: 0 14px 26px rgba(12, 14, 18, 0.09);
 }
 
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
+.confirmed-nav:active {
+  transform: translateY(-50%) scale(0.97);
 }
 
-/* responsivo */
-@media (max-width: 1024px) {
-  .hero {
-    grid-template-columns: 1fr;
-    align-items: start;
+.confirmed-nav.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.confirmed-nav--prev {
+  left: -2px;
+}
+
+.confirmed-nav--next {
+  right: -2px;
+}
+
+@media (hover: hover) {
+  .guest-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(12, 14, 18, 0.12);
+    box-shadow: var(--shadow-md);
   }
 
-  .hero__actions {
-    justify-content: flex-start;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .info {
-    grid-template-columns: 1fr;
+  .guest-card:hover .guest-card__avatar {
+    transform: scale(1.05);
   }
 }
 
-@media (max-width: 640px) {
-  .footer {
-    padding: 22px 14px 14px;
+@media (max-width: 1200px) {
+  .confirmed-section__inner {
+    width: min(100%, calc(100% - 28px));
   }
 
-  .hero__title {
-    max-width: none;
-    font-size: 1.5rem;
+  .confirmed-section__slider {
+    padding: 0 38px;
   }
 
-  .card {
-    padding: 16px;
+  .confirmed-slide {
+    width: 230px !important;
+  }
+
+  .guest-card {
+    min-height: 344px;
+    padding: 18px 14px 20px;
     border-radius: 22px;
   }
 
-  .actions,
-  .hero__actions,
-  .modalActions {
-    display: grid;
-    grid-template-columns: 1fr;
+  .guest-card__avatar-shell {
+    width: 174px;
+    height: 174px;
+    margin-bottom: 14px;
   }
 
-  .btn,
-  .heroBtn {
-    width: 100%;
+  .guest-card__avatar-wrap {
+    width: 154px;
+    height: 154px;
   }
 
-  .bottom {
-    flex-direction: column;
-    align-items: flex-start;
+  .guest-card__name {
+    font-size: 0.96rem;
+    min-height: 44px;
   }
 
-  .bottom__left,
-  .bottom__right {
-    width: 100%;
-    justify-content: space-between;
+  .guest-card__work {
+    max-width: 176px;
+  }
+}
+
+@media (max-width: 768px) {
+  .confirmed-section {
+    padding: 32px 0 38px;
   }
 
-  .toast {
-    min-width: min(100%, calc(100vw - 20px));
+  .confirmed-section__inner {
+    width: calc(100% - 18px);
+  }
+
+  .confirmed-section__head {
+    margin-bottom: 20px;
+  }
+
+  .confirmed-section__title {
+    font-size: 1.72rem;
+  }
+
+  .confirmed-section__slider {
+    padding: 0 30px;
+  }
+
+  .confirmed-slide {
+    width: 204px !important;
+  }
+
+  .guest-card {
+    min-height: 312px;
+    padding: 16px 13px 18px;
+    border-radius: 20px;
+  }
+
+  .guest-card__avatar-shell {
+    width: 154px;
+    height: 154px;
+    margin-bottom: 12px;
+  }
+
+  .guest-card__avatar-wrap {
+    width: 136px;
+    height: 136px;
+  }
+
+  .guest-card__tag {
+    min-height: 26px;
+    padding: 0 9px;
+    margin-bottom: 8px;
+    font-size: 9.5px;
+  }
+
+  .guest-card__name {
+    min-height: 42px;
+    font-size: 0.92rem;
+  }
+
+  .guest-card__work {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    max-width: 154px;
+  }
+
+  .confirmed-nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .confirmed-nav span {
+    font-size: 1.32rem;
+  }
+
+  .confirmed-nav--prev {
+    left: 0;
+  }
+
+  .confirmed-nav--next {
+    right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .confirmed-section__inner {
+    width: calc(100% - 14px);
+  }
+
+  .confirmed-section__slider {
+    padding: 0 26px;
+  }
+
+  .confirmed-slide {
+    width: 188px !important;
+  }
+
+  .guest-card {
+    min-height: 292px;
+  }
+
+  .guest-card__avatar-shell {
+    width: 142px;
+    height: 142px;
+  }
+
+  .guest-card__avatar-wrap {
+    width: 124px;
+    height: 124px;
+  }
+
+  .guest-card__work {
+    max-width: 144px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .btn,
-  .heroBtn,
-  .contactItem,
-  .toast-enter-active,
-  .toast-leave-active,
-  .modal-enter-active,
-  .modal-leave-active {
+  .confirmed-nav,
+  .guest-card,
+  .guest-card__avatar {
     transition: none !important;
+  }
+
+  .confirmed-nav:hover,
+  .confirmed-nav:active {
+    transform: translateY(-50%) !important;
+  }
+
+  .guest-card:hover {
+    transform: none !important;
   }
 }
 </style>
