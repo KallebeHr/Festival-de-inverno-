@@ -3,7 +3,11 @@
     id="locais"
     ref="root"
     class="places"
-    :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
+    :class="{
+      'is-visible': isVisible,
+      'reduce-motion': reduceMotion,
+      'mobile-filters-open': mobileFiltersOpen
+    }"
     aria-label="Locais do Festival no mapa"
   >
     <div class="places__bg" aria-hidden="true">
@@ -23,13 +27,12 @@
 
           <h2 class="places__title">
             Explore os espaços
-            <span>diretamente no mapa</span>
+            <span>de forma simples no mapa</span>
           </h2>
 
           <p class="places__sub">
-            Descubra os principais pontos do festival, visualize cada local no
-            mapa, veja informações úteis e abra detalhes completos em um modal
-            elegante e organizado.
+            Veja os principais pontos do festival, filtre por categoria,
+            encontre o local ideal e abra a rota com rapidez em qualquer tela.
           </p>
         </div>
 
@@ -51,6 +54,39 @@
         </div>
       </header>
 
+      <!-- MOBILE QUICK BAR -->
+      <div class="places__mobile-bar">
+        <button class="mobile-action" type="button" @click="focusSearch">
+          <v-icon size="18">mdi-magnify</v-icon>
+          <span>Buscar</span>
+        </button>
+
+        <button
+          class="mobile-action"
+          type="button"
+          @click="mobileFiltersOpen = !mobileFiltersOpen"
+        >
+          <v-icon size="18">mdi-filter-variant</v-icon>
+          <span>Filtros</span>
+        </button>
+
+        <button
+          class="mobile-action"
+          type="button"
+          @click="mobileView = mobileView === 'map' ? 'list' : 'map'"
+        >
+          <v-icon size="18">
+            {{ mobileView === 'map' ? 'mdi-format-list-bulleted' : 'mdi-map-outline' }}
+          </v-icon>
+          <span>{{ mobileView === 'map' ? 'Lista' : 'Mapa' }}</span>
+        </button>
+
+        <button class="mobile-action" type="button" @click="fitAllMarkers">
+          <v-icon size="18">mdi-crosshairs-gps</v-icon>
+          <span>Centralizar</span>
+        </button>
+      </div>
+
       <!-- FILTERS -->
       <section class="places__filters" aria-label="Filtros dos locais">
         <div class="places__filters-head">
@@ -59,79 +95,107 @@
             <h3 class="places__filters-title">Encontre o espaço ideal</h3>
           </div>
 
-          <button class="places__clear-btn" type="button" @click="resetFilters">
-            <v-icon size="18">mdi-filter-remove-outline</v-icon>
-            Limpar filtros
-          </button>
+          <div class="places__filters-actions">
+            <button
+              class="places__accordion-btn"
+              type="button"
+              @click="mobileFiltersOpen = !mobileFiltersOpen"
+            >
+              <v-icon size="18">
+                {{ mobileFiltersOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+              </v-icon>
+              {{ mobileFiltersOpen ? "Fechar filtros" : "Abrir filtros" }}
+            </button>
+
+            <button class="places__clear-btn" type="button" @click="resetFilters">
+              <v-icon size="18">mdi-filter-remove-outline</v-icon>
+              Limpar
+            </button>
+          </div>
         </div>
 
-        <div class="places__filters-grid">
-          <div class="field field--search">
-            <label class="field__label" for="place-search">Buscar local</label>
-            <div class="field__control field__control--search">
-              <span class="field__icon" aria-hidden="true">
-                <v-icon size="18">mdi-magnify</v-icon>
-              </span>
-              <input
-                id="place-search"
-                v-model.trim="search"
-                class="field__input"
-                type="text"
-                placeholder="Ex.: praça, teatro, mirante, gastronomia..."
-                autocomplete="off"
-              />
-            </div>
-            <p class="field__hint">
-              Pesquise por nome, estrutura, endereço ou categoria.
-            </p>
-          </div>
+        <div v-if="activeFilterLabels.length" class="places__active-filters">
+          <p class="places__active-title">Filtros ativos</p>
 
-          <div class="field">
-            <label class="field__label" for="place-category">Categoria</label>
-            <div class="field__control field__control--select">
-              <select
-                id="place-category"
-                v-model="selectedCategory"
-                class="field__select"
-              >
-                <option value="all">Todas as categorias</option>
-                <option
-                  v-for="category in categories"
-                  :key="category"
-                  :value="category"
+          <div class="places__active-list">
+            <span
+              v-for="item in activeFilterLabels"
+              :key="item.key"
+              class="places__active-chip"
+            >
+              {{ item.label }}
+              <button type="button" @click="item.clear">×</button>
+            </span>
+          </div>
+        </div>
+
+        <div class="places__filters-panel">
+          <div class="places__filters-grid">
+            <div class="field field--search">
+              <label class="field__label" for="place-search">Buscar local</label>
+
+              <div class="field__control field__control--search">
+                <span class="field__icon" aria-hidden="true">
+                  <v-icon size="18">mdi-magnify</v-icon>
+                </span>
+
+                <input
+                  id="place-search"
+                  ref="searchInputRef"
+                  v-model.trim="search"
+                  class="field__input"
+                  type="text"
+                  placeholder="Ex.: praça, teatro, mirante..."
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="place-category">Categoria</label>
+
+              <div class="field__control field__control--select">
+                <select
+                  id="place-category"
+                  v-model="selectedCategory"
+                  class="field__select"
                 >
-                  {{ category }}
-                </option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">
-                <v-icon size="18">mdi-chevron-down</v-icon>
-              </span>
-            </div>
-            <p class="field__hint">
-              Filtre os pontos por tipo de experiência.
-            </p>
-          </div>
+                  <option value="all">Todas as categorias</option>
+                  <option
+                    v-for="category in categories"
+                    :key="category"
+                    :value="category"
+                  >
+                    {{ category }}
+                  </option>
+                </select>
 
-          <div class="field">
-            <label class="field__label" for="place-highlight">Destaque</label>
-            <div class="field__control field__control--select">
-              <select
-                id="place-highlight"
-                v-model="highlightMode"
-                class="field__select"
-              >
-                <option value="all">Mostrar tudo</option>
-                <option value="accessible">Acessíveis</option>
-                <option value="family">Para famílias</option>
-                <option value="night">Funcionamento noturno</option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">
-                <v-icon size="18">mdi-chevron-down</v-icon>
-              </span>
+                <span class="field__arrow" aria-hidden="true">
+                  <v-icon size="18">mdi-chevron-down</v-icon>
+                </span>
+              </div>
             </div>
-            <p class="field__hint">
-              Destaque os locais mais adequados ao perfil desejado.
-            </p>
+
+            <div class="field">
+              <label class="field__label" for="place-highlight">Destaque</label>
+
+              <div class="field__control field__control--select">
+                <select
+                  id="place-highlight"
+                  v-model="highlightMode"
+                  class="field__select"
+                >
+                  <option value="all">Mostrar tudo</option>
+                  <option value="accessible">Acessíveis</option>
+                  <option value="family">Para famílias</option>
+                  <option value="night">Funcionamento noturno</option>
+                </select>
+
+                <span class="field__arrow" aria-hidden="true">
+                  <v-icon size="18">mdi-chevron-down</v-icon>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -145,7 +209,7 @@
           </div>
 
           <p class="places__selector-text">
-            Toque ou clique em um card para focar o local no mapa.
+            Toque ou clique em um local para focar no mapa.
           </p>
         </div>
 
@@ -154,37 +218,88 @@
           <p>Tente ajustar a busca ou mudar os filtros ativos.</p>
         </div>
 
-        <div v-else class="places__selector-grid">
-          <button
-            v-for="place in filteredLocations"
-            :key="place.id"
-            class="place-chip"
-            :class="{ 'is-active': selectedPlaceCard?.id === place.id }"
-            type="button"
-            @click="focusPlace(place)"
-          >
-            <div class="place-chip__icon">
-              <v-icon size="20">{{ getCategoryIcon(place.category) }}</v-icon>
-            </div>
+        <div v-else class="places__selector-scroll">
+          <div class="places__selector-grid">
+            <button
+              v-for="place in filteredLocations"
+              :key="place.id"
+              class="place-chip"
+              :class="{ 'is-active': selectedPlaceCard?.id === place.id }"
+              type="button"
+              @click="focusPlace(place)"
+            >
+              <div class="place-chip__icon">
+                <v-icon size="20">{{ getCategoryIcon(place.category) }}</v-icon>
+              </div>
 
-            <div class="place-chip__content">
-              <strong>{{ place.name }}</strong>
-              <span>{{ place.category }}</span>
-            </div>
+              <div class="place-chip__content">
+                <strong>{{ place.name }}</strong>
+                <span>{{ place.category }}</span>
+              </div>
 
-            <div class="place-chip__meta">
-              <span v-if="place.accessible" class="place-chip__badge">
-                <v-icon size="14">mdi-wheelchair-accessibility</v-icon>
-              </span>
+              <div class="place-chip__meta">
+                <span v-if="place.accessible" class="place-chip__badge">
+                  <v-icon size="14">mdi-wheelchair-accessibility</v-icon>
+                </span>
 
-              <v-icon size="18">mdi-arrow-top-right</v-icon>
-            </div>
-          </button>
+                <span v-if="place.familyFriendly" class="place-chip__badge">
+                  <v-icon size="14">mdi-account-group-outline</v-icon>
+                </span>
+
+                <span v-if="place.nightFriendly" class="place-chip__badge">
+                  <v-icon size="14">mdi-weather-night</v-icon>
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
       </section>
 
-      <!-- MAP PANEL -->
-      <section class="places__map-panel">
+      <!-- MOBILE LIST -->
+      <section
+        v-if="isMobile && mobileView === 'list'"
+        class="places__mobile-list"
+        aria-label="Lista de locais"
+      >
+        <article
+          v-for="place in filteredLocations"
+          :key="place.id"
+          class="mobile-place-card"
+          :class="{ 'is-active': selectedPlaceCard?.id === place.id }"
+          @click="focusPlace(place)"
+        >
+          <div class="mobile-place-card__top">
+            <span class="mobile-place-card__category">
+              <v-icon size="16">{{ getCategoryIcon(place.category) }}</v-icon>
+              {{ place.category }}
+            </span>
+
+            <span v-if="place.accessible" class="mobile-place-card__flag">
+              <v-icon size="16">mdi-wheelchair-accessibility</v-icon>
+              Acessível
+            </span>
+          </div>
+
+          <h4 class="mobile-place-card__title">{{ place.name }}</h4>
+          <p class="mobile-place-card__desc">{{ place.shortDescription }}</p>
+
+          <div class="mobile-place-card__actions">
+            <button type="button" class="mini-btn" @click.stop="openDetails(place)">
+              Detalhes
+            </button>
+
+            <button type="button" class="mini-btn mini-btn--primary" @click.stop="openDirections(place)">
+              Rota
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <!-- MAP -->
+      <section
+        v-show="!isMobile || mobileView === 'map'"
+        class="places__map-panel"
+      >
         <div class="places__map-shell">
           <div class="places__map-toolbar">
             <div class="places__map-toolbar-left">
@@ -202,6 +317,11 @@
               <button class="map-action" type="button" @click="fitAllMarkers">
                 <v-icon size="18">mdi-fit-to-screen-outline</v-icon>
                 Ver todos
+              </button>
+
+              <button class="map-action" type="button" @click="centerOnUser">
+                <v-icon size="18">mdi-crosshairs-gps</v-icon>
+                Minha localização
               </button>
 
               <button
@@ -233,7 +353,8 @@
               </div>
             </div>
 
-            <aside class="places__map-aside">
+            <!-- DESKTOP ASIDE -->
+            <aside v-if="!isMobile" class="places__map-aside">
               <div v-if="selectedPlaceCard" class="map-preview">
                 <div class="map-preview__top">
                   <span class="map-preview__category">
@@ -241,10 +362,7 @@
                     {{ selectedPlaceCard.category }}
                   </span>
 
-                  <span
-                    v-if="selectedPlaceCard.accessible"
-                    class="map-preview__access"
-                  >
+                  <span v-if="selectedPlaceCard.accessible" class="map-preview__access">
                     <v-icon size="16">mdi-wheelchair-accessibility</v-icon>
                     Acessível
                   </span>
@@ -262,45 +380,65 @@
                   </div>
 
                   <div class="map-preview__info-item">
-                    <v-icon size="18">mdi-clock-time-four-outline</v-icon>
-                    <span>{{ selectedPlaceCard.hours }}</span>
+                    <v-icon size="18">mdi-clock-outline</v-icon>
+                    <span>{{ selectedPlaceCard.schedule }}</span>
                   </div>
 
                   <div class="map-preview__info-item">
-                    <v-icon size="18">mdi-account-group-outline</v-icon>
-                    <span>{{ selectedPlaceCard.audience }}</span>
+                    <v-icon size="18">mdi-star-four-points-outline</v-icon>
+                    <span>{{ selectedPlaceCard.highlight }}</span>
                   </div>
                 </div>
 
+                <div class="map-preview__tags">
+                  <span v-if="selectedPlaceCard.familyFriendly" class="tag-chip">
+                    <v-icon size="14">mdi-account-group-outline</v-icon>
+                    Família
+                  </span>
+
+                  <span v-if="selectedPlaceCard.nightFriendly" class="tag-chip">
+                    <v-icon size="14">mdi-weather-night</v-icon>
+                    Noturno
+                  </span>
+
+                  <span v-if="selectedPlaceCard.accessible" class="tag-chip">
+                    <v-icon size="14">mdi-wheelchair-accessibility</v-icon>
+                    Acessível
+                  </span>
+                </div>
+
                 <div class="map-preview__actions">
-                  <button
-                    class="map-preview__btn map-preview__btn--ghost"
-                    type="button"
-                    @click="openDirections(selectedPlaceCard)"
-                  >
-                    <v-icon size="18">mdi-navigation-variant-outline</v-icon>
+                  <button class="preview-btn" type="button" @click="openDirections(selectedPlaceCard)">
+                    <v-icon size="18">mdi-directions</v-icon>
                     Como chegar
                   </button>
 
+                  <button class="preview-btn" type="button" @click="copyAddress(selectedPlaceCard)">
+                    <v-icon size="18">mdi-content-copy</v-icon>
+                    Copiar endereço
+                  </button>
+
+                  <button class="preview-btn" type="button" @click="sharePlace(selectedPlaceCard)">
+                    <v-icon size="18">mdi-share-variant-outline</v-icon>
+                    Compartilhar
+                  </button>
+
                   <button
-                    class="map-preview__btn map-preview__btn--primary"
+                    class="preview-btn preview-btn--primary"
                     type="button"
                     @click="openDetails(selectedPlaceCard)"
                   >
-                    <v-icon size="18">mdi-arrow-expand-all</v-icon>
+                    <v-icon size="18">mdi-information-outline</v-icon>
                     Ver detalhes
                   </button>
                 </div>
               </div>
 
               <div v-else class="map-preview map-preview--empty">
-                <div class="map-preview__empty-icon">
-                  <v-icon size="26">mdi-map-search-outline</v-icon>
-                </div>
+                <v-icon size="28">mdi-map-search-outline</v-icon>
                 <h4>Selecione um local</h4>
                 <p>
-                  Escolha um card acima ou clique em um marcador do mapa para ver
-                  as informações rápidas aqui.
+                  Escolha um espaço acima ou clique em um marcador no mapa para ver os detalhes.
                 </p>
               </div>
             </aside>
@@ -309,154 +447,138 @@
       </section>
     </div>
 
-    <!-- MODAL -->
-    <v-dialog
-      v-model="dialog"
-      max-width="920"
-      scrollable
-      content-class="place-dialog"
-    >
-      <div v-if="selectedPlace" class="place-modal">
-        <div class="place-modal__hero">
-          <div class="place-modal__hero-overlay"></div>
+    <!-- MOBILE SHEET -->
+    <transition name="sheet-fade">
+      <div
+        v-if="isMobile && mobileView === 'map' && selectedPlaceCard"
+        class="mobile-sheet"
+        aria-label="Preview do local selecionado"
+      >
+        <button class="mobile-sheet__drag" type="button" @click="openDetails(selectedPlaceCard)">
+          <span></span>
+        </button>
 
-          <div class="place-modal__hero-content">
-            <div class="place-modal__chips">
-              <span class="place-modal__chip">
-                <v-icon size="16">{{ getCategoryIcon(selectedPlace.category) }}</v-icon>
-                {{ selectedPlace.category }}
-              </span>
+        <div class="mobile-sheet__top">
+          <div class="mobile-sheet__top-main">
+            <span class="mobile-sheet__category">
+              <v-icon size="16">{{ getCategoryIcon(selectedPlaceCard.category) }}</v-icon>
+              {{ selectedPlaceCard.category }}
+            </span>
 
-              <span
-                v-if="selectedPlace.accessible"
-                class="place-modal__chip place-modal__chip--accent"
-              >
-                <v-icon size="16">mdi-wheelchair-accessibility</v-icon>
-                Acessível
-              </span>
-            </div>
-
-            <h3 class="place-modal__title">{{ selectedPlace.name }}</h3>
-            <p class="place-modal__sub">{{ selectedPlace.shortDescription }}</p>
+            <h4 class="mobile-sheet__title">{{ selectedPlaceCard.name }}</h4>
           </div>
 
-          <button
-            class="place-modal__close"
-            type="button"
-            aria-label="Fechar modal"
-            @click="dialog = false"
-          >
+          <button class="mobile-sheet__close" type="button" @click="selectedPlaceCard = null">
             <v-icon size="20">mdi-close</v-icon>
           </button>
         </div>
 
-        <div class="place-modal__body">
-          <div class="place-modal__main">
-            <section class="place-modal__section">
-              <p class="place-modal__kicker">Sobre o local</p>
-              <h4 class="place-modal__section-title">Detalhes do espaço</h4>
-              <p class="place-modal__text">{{ selectedPlace.description }}</p>
-            </section>
+        <p class="mobile-sheet__desc">{{ selectedPlaceCard.shortDescription }}</p>
 
-            <section class="place-modal__section">
-              <p class="place-modal__kicker">Estrutura</p>
-              <div class="place-modal__feature-grid">
-                <div
-                  v-for="feature in selectedPlace.features"
-                  :key="feature"
-                  class="place-modal__feature"
-                >
-                  <v-icon size="18">mdi-check-circle-outline</v-icon>
-                  <span>{{ feature }}</span>
-                </div>
-              </div>
-            </section>
+        <div class="mobile-sheet__actions">
+          <button class="mini-btn" type="button" @click="copyAddress(selectedPlaceCard)">
+            Copiar
+          </button>
 
-            <section class="place-modal__section">
-              <p class="place-modal__kicker">Informações úteis</p>
-              <div class="place-modal__cards">
-                <div class="place-modal__info-card">
-                  <v-icon size="18">mdi-map-marker-outline</v-icon>
-                  <div>
-                    <strong>Endereço</strong>
-                    <p>{{ selectedPlace.address }}</p>
-                  </div>
-                </div>
+          <button class="mini-btn" type="button" @click="sharePlace(selectedPlaceCard)">
+            Compartilhar
+          </button>
 
-                <div class="place-modal__info-card">
-                  <v-icon size="18">mdi-clock-outline</v-icon>
-                  <div>
-                    <strong>Funcionamento</strong>
-                    <p>{{ selectedPlace.hours }}</p>
-                  </div>
-                </div>
+          <button class="mini-btn mini-btn--primary" type="button" @click="openDirections(selectedPlaceCard)">
+            Rota
+          </button>
+        </div>
+      </div>
+    </transition>
 
-                <div class="place-modal__info-card">
-                  <v-icon size="18">mdi-account-group-outline</v-icon>
-                  <div>
-                    <strong>Público indicado</strong>
-                    <p>{{ selectedPlace.audience }}</p>
-                  </div>
-                </div>
+    <!-- MODAL -->
+    <v-dialog v-model="detailsOpen" max-width="960">
+      <div v-if="selectedPlaceDialog" class="place-dialog">
+        <div class="place-dialog__hero">
+          <div class="place-dialog__hero-top">
+            <span class="place-dialog__category">
+              <v-icon size="18">{{ getCategoryIcon(selectedPlaceDialog.category) }}</v-icon>
+              {{ selectedPlaceDialog.category }}
+            </span>
 
-                <div class="place-modal__info-card">
-                  <v-icon size="18">mdi-car-outline</v-icon>
-                  <div>
-                    <strong>Estacionamento</strong>
-                    <p>{{ selectedPlace.parking }}</p>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <button class="place-dialog__close" type="button" @click="detailsOpen = false">
+              <v-icon size="22">mdi-close</v-icon>
+            </button>
           </div>
 
-          <aside class="place-modal__aside">
-            <div class="place-modal__summary">
-              <h4 class="place-modal__aside-title">Resumo rápido</h4>
+          <h3 class="place-dialog__title">{{ selectedPlaceDialog.name }}</h3>
+          <p class="place-dialog__desc">{{ selectedPlaceDialog.description }}</p>
+        </div>
 
-              <div class="place-modal__summary-list">
-                <div class="place-modal__summary-item">
-                  <span>Categoria</span>
-                  <strong>{{ selectedPlace.category }}</strong>
-                </div>
+        <div class="place-dialog__body">
+          <div class="place-dialog__section">
+            <h4>Visão geral</h4>
 
-                <div class="place-modal__summary-item">
-                  <span>Ambiente</span>
-                  <strong>{{ selectedPlace.environment }}</strong>
-                </div>
-
-                <div class="place-modal__summary-item">
-                  <span>Acessibilidade</span>
-                  <strong>{{ selectedPlace.accessible ? "Sim" : "Parcial" }}</strong>
-                </div>
-
-                <div class="place-modal__summary-item">
-                  <span>Distância do centro</span>
-                  <strong>{{ selectedPlace.distance }}</strong>
+            <div class="place-dialog__grid">
+              <div class="info-box">
+                <v-icon size="20">mdi-map-marker-outline</v-icon>
+                <div>
+                  <strong>Endereço</strong>
+                  <span>{{ selectedPlaceDialog.address }}</span>
                 </div>
               </div>
 
-              <div class="place-modal__actions">
-                <button
-                  class="place-modal__btn place-modal__btn--ghost"
-                  type="button"
-                  @click="focusPlace(selectedPlace)"
-                >
-                  <v-icon size="18">mdi-crosshairs-gps</v-icon>
-                  Ver no mapa
-                </button>
+              <div class="info-box">
+                <v-icon size="20">mdi-clock-outline</v-icon>
+                <div>
+                  <strong>Funcionamento</strong>
+                  <span>{{ selectedPlaceDialog.schedule }}</span>
+                </div>
+              </div>
 
-                <button
-                  class="place-modal__btn place-modal__btn--primary"
-                  type="button"
-                  @click="openDirections(selectedPlace)"
-                >
-                  <v-icon size="18">mdi-navigation-variant-outline</v-icon>
-                  Como chegar
-                </button>
+              <div class="info-box">
+                <v-icon size="20">mdi-star-four-points-outline</v-icon>
+                <div>
+                  <strong>Destaque</strong>
+                  <span>{{ selectedPlaceDialog.highlight }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-compass-outline</v-icon>
+                <div>
+                  <strong>Referência</strong>
+                  <span>{{ selectedPlaceDialog.reference }}</span>
+                </div>
               </div>
             </div>
-          </aside>
+          </div>
+
+          <div class="place-dialog__section">
+            <h4>Estrutura</h4>
+
+            <div class="feature-list">
+              <span v-for="item in selectedPlaceDialog.features" :key="item" class="feature-chip">
+                {{ item }}
+              </span>
+            </div>
+          </div>
+
+          <div class="place-dialog__section">
+            <h4>Ações rápidas</h4>
+
+            <div class="place-dialog__actions">
+              <button class="dialog-btn" type="button" @click="openDirections(selectedPlaceDialog)">
+                <v-icon size="18">mdi-directions</v-icon>
+                Abrir rota
+              </button>
+
+              <button class="dialog-btn" type="button" @click="copyAddress(selectedPlaceDialog)">
+                <v-icon size="18">mdi-content-copy</v-icon>
+                Copiar endereço
+              </button>
+
+              <button class="dialog-btn" type="button" @click="sharePlace(selectedPlaceDialog)">
+                <v-icon size="18">mdi-share-variant-outline</v-icon>
+                Compartilhar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </v-dialog>
@@ -464,8 +586,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import L from "leaflet";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 type Place = {
   id: string;
@@ -474,440 +595,525 @@ type Place = {
   shortDescription: string;
   description: string;
   address: string;
+  schedule: string;
+  highlight: string;
+  reference: string;
   lat: number;
   lng: number;
-  hours: string;
-  audience: string;
-  parking: string;
-  environment: string;
-  distance: string;
   accessible: boolean;
-  family: boolean;
-  night: boolean;
+  familyFriendly: boolean;
+  nightFriendly: boolean;
   features: string[];
 };
 
 const root = ref<HTMLElement | null>(null);
 const mapEl = ref<HTMLElement | null>(null);
+const searchInputRef = ref<HTMLInputElement | null>(null);
 
-const isVisible = ref(false);
+const isVisible = ref(true);
 const reduceMotion = ref(false);
+const mobileFiltersOpen = ref(false);
+const mobileView = ref<"map" | "list">("map");
+const isMobile = ref(false);
 
 const search = ref("");
 const selectedCategory = ref("all");
 const highlightMode = ref("all");
 
-const dialog = ref(false);
-const selectedPlace = ref<Place | null>(null);
+const detailsOpen = ref(false);
 const selectedPlaceCard = ref<Place | null>(null);
+const selectedPlaceDialog = ref<Place | null>(null);
 
+let L: any = null;
+let map: any = null;
+let tileLayer: any = null;
+let mqMotion: MediaQueryList | null = null;
+let mqMobile: MediaQueryList | null = null;
+let onMotionChange: ((event: MediaQueryListEvent) => void) | null = null;
+let onMobileChange: ((event: MediaQueryListEvent) => void) | null = null;
 let io: IntersectionObserver | null = null;
-let mq: MediaQueryList | null = null;
-let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
 
-let map: L.Map | null = null;
-let markersLayer: L.LayerGroup | null = null;
+const markers = new Map<string, any>();
 
-const defaultCenter: [number, number] = [-4.4245, -41.4587];
-const defaultZoom = 14;
-
-const places: Place[] = [
+const places = ref<Place[]>([
   {
     id: "praca-eventos",
-    name: "Praça Central do Festival",
-    category: "Palco principal",
-    shortDescription:
-      "Espaço principal para shows, abertura oficial e grandes atrações noturnas.",
+    name: "Praça de Eventos",
+    category: "Shows",
+    shortDescription: "Palco principal com os grandes shows e atrações de maior circulação.",
     description:
-      "A Praça Central do Festival concentra os maiores momentos do evento, com palco principal, circulação ampla, apoio ao público, pontos de alimentação e grande movimento nas noites de festival.",
-    address: "Av. do Inverno, Centro Cultural, Pedro II - PI",
-    lat: -4.4254,
-    lng: -41.4578,
-    hours: "17h às 02h",
-    audience: "Livre",
-    parking: "Estacionamento próximo e bolsões auxiliares",
-    environment: "Aberto",
-    distance: "500 m do centro",
+      "A Praça de Eventos é o coração do festival, reunindo os shows principais, estrutura de palco, área de convivência e fácil acesso para quem deseja aproveitar a programação noturna.",
+    address: "Centro de Pedro II, Praça de Eventos",
+    schedule: "Tarde e noite",
+    highlight: "Grandes shows e circulação intensa",
+    reference: "Próximo ao centro comercial",
+    lat: -4.4257,
+    lng: -41.4581,
     accessible: true,
-    family: true,
-    night: true,
-    features: [
-      "Palco principal",
-      "Banheiros",
-      "Área gastronômica próxima",
-      "Acesso facilitado",
-      "Segurança reforçada",
-      "Ponto de apoio turístico"
-    ]
+    familyFriendly: true,
+    nightFriendly: true,
+    features: ["Palco principal", "Banheiros", "Alimentação próxima", "Área de convivência"]
   },
   {
-    id: "mirante-vento",
-    name: "Mirante Serra do Vento",
-    category: "Paisagem e experiência",
-    shortDescription:
-      "Local contemplativo para experiências ao ar livre, pôr do sol e atrações acústicas.",
+    id: "mirante-gritador",
+    name: "Mirante do Gritador",
+    category: "Paisagem",
+    shortDescription: "Vista panorâmica ideal para experiências ao ar livre e momentos contemplativos.",
     description:
-      "O Mirante Serra do Vento reúne natureza, clima serrano e uma vista panorâmica especial. Ideal para momentos contemplativos, atrações leves e experiências fotográficas.",
-    address: "Estrada do Mirante, Zona Serrana, Pedro II - PI",
-    lat: -4.4171,
-    lng: -41.4686,
-    hours: "08h às 20h",
-    audience: "Livre",
-    parking: "Área limitada para veículos",
-    environment: "Aberto",
-    distance: "4,2 km do centro",
+      "O Mirante do Gritador oferece uma das paisagens mais marcantes da região e funciona muito bem para programações especiais, contemplação e vivências ligadas à natureza.",
+    address: "Mirante do Gritador, Pedro II - PI",
+    schedule: "Manhã e fim de tarde",
+    highlight: "Pôr do sol e vista panorâmica",
+    reference: "Área serrana com acesso por estrada",
+    lat: -4.3995,
+    lng: -41.4465,
     accessible: false,
-    family: true,
-    night: false,
-    features: [
-      "Vista panorâmica",
-      "Ponto para fotos",
-      "Apresentações acústicas",
-      "Clima serrano",
-      "Espaço de contemplação"
-    ]
+    familyFriendly: true,
+    nightFriendly: false,
+    features: ["Vista panorâmica", "Fotos", "Experiências ao ar livre", "Contato com a natureza"]
   },
   {
-    id: "teatro-serra",
-    name: "Teatro Serra Azul",
-    category: "Cultura e debate",
-    shortDescription:
-      "Ambiente fechado para oficinas, debates, cinema e apresentações intimistas.",
+    id: "teatro-cultura",
+    name: "Teatro da Cultura",
+    category: "Cultura",
+    shortDescription: "Espaço ideal para debates, apresentações, mostras e encontros culturais.",
     description:
-      "O Teatro Serra Azul recebe programação cultural mais intimista, com debates, exibições e atividades organizadas em ambiente confortável, coberto e bem estruturado.",
-    address: "Rua das Artes, 120, Centro, Pedro II - PI",
-    lat: -4.4278,
-    lng: -41.4608,
-    hours: "09h às 22h",
-    audience: "Jovens e adultos",
-    parking: "Vagas nas ruas laterais",
-    environment: "Fechado",
-    distance: "700 m do centro",
+      "O Teatro da Cultura recebe programações mais intimistas, palestras, oficinas, debates e apresentações em ambiente coberto e organizado para atividades culturais.",
+    address: "Rua da Cultura, Pedro II - PI",
+    schedule: "Manhã, tarde e noite",
+    highlight: "Programação cultural em ambiente coberto",
+    reference: "Próximo à área histórica",
+    lat: -4.4251,
+    lng: -41.4569,
     accessible: true,
-    family: false,
-    night: true,
-    features: [
-      "Auditório coberto",
-      "Climatização",
-      "Assentos fixos",
-      "Acesso por rampa",
-      "Boa acústica"
-    ]
+    familyFriendly: true,
+    nightFriendly: true,
+    features: ["Ambiente coberto", "Cadeiras", "Boa acústica", "Programação cultural"]
   },
   {
     id: "vila-gastronomica",
-    name: "Vila Gastronômica da Serra",
+    name: "Vila Gastronômica",
     category: "Gastronomia",
-    shortDescription:
-      "Espaço com comidas regionais, cafés, doces e convivência para visitantes.",
+    shortDescription: "Área de alimentação com sabores regionais e espaço de convivência.",
     description:
-      "A Vila Gastronômica da Serra reúne sabores regionais, culinária criativa e áreas de convivência. É ideal para pausas durante o festival e costuma ter excelente circulação de público.",
-    address: "Praça dos Sabores, Pedro II - PI",
-    lat: -4.4236,
-    lng: -41.4559,
-    hours: "11h às 00h",
-    audience: "Livre",
-    parking: "Estacionamento rotativo no entorno",
-    environment: "Semiaberto",
-    distance: "350 m do centro",
+      "A Vila Gastronômica concentra barracas, pratos regionais, cafés, doces e experiências culinárias para visitantes que desejam conhecer os sabores locais durante o festival.",
+    address: "Área gastronômica, centro de Pedro II",
+    schedule: "Tarde e noite",
+    highlight: "Sabores regionais e convivência",
+    reference: "Ao lado do circuito principal",
+    lat: -4.4242,
+    lng: -41.459,
     accessible: true,
-    family: true,
-    night: true,
-    features: [
-      "Mesas e convivência",
-      "Comidas regionais",
-      "Sobremesas e cafés",
-      "Boa circulação",
-      "Espaço familiar"
-    ]
+    familyFriendly: true,
+    nightFriendly: true,
+    features: ["Comidas regionais", "Mesas", "Espaço de convivência", "Fluxo contínuo"]
   },
   {
-    id: "galeria-opala",
-    name: "Galeria Opala Viva",
+    id: "galeria-artes",
+    name: "Galeria de Artes",
     category: "Exposição",
-    shortDescription:
-      "Espaço expositivo com arte local, opalas e peças autorais contemporâneas.",
+    shortDescription: "Mostras visuais, opala, arte contemporânea e experiências criativas.",
     description:
-      "A Galeria Opala Viva conecta artes visuais, design local e identidade cultural da cidade. É um ambiente refinado para exposições, visitação e pequenas experiências artísticas.",
-    address: "Travessa da Memória, 45, Centro Histórico, Pedro II - PI",
-    lat: -4.4267,
-    lng: -41.4629,
-    hours: "10h às 21h",
-    audience: "Livre",
-    parking: "Vagas reduzidas",
-    environment: "Fechado",
-    distance: "900 m do centro",
+      "A Galeria de Artes é dedicada a exposições, mostras autorais, peças visuais e atividades relacionadas à produção artística e à identidade cultural local.",
+    address: "Galeria central, Pedro II - PI",
+    schedule: "Manhã e tarde",
+    highlight: "Arte, design e exposições",
+    reference: "Região central do circuito cultural",
+    lat: -4.4264,
+    lng: -41.4575,
     accessible: true,
-    family: true,
-    night: false,
-    features: [
-      "Exposições artísticas",
-      "Peças autorais",
-      "Circuito cultural",
-      "Iluminação controlada",
-      "Ambiente climatizado"
-    ]
+    familyFriendly: false,
+    nightFriendly: false,
+    features: ["Exposições", "Arte contemporânea", "Design local", "Circuito cultural"]
   },
   {
-    id: "espaco-oficinas",
-    name: "Pavilhão Criativo das Oficinas",
-    category: "Oficinas",
-    shortDescription:
-      "Local para atividades práticas, oficinas artísticas e experiências formativas.",
+    id: "feira-opala",
+    name: "Feira da Opala",
+    category: "Feira",
+    shortDescription: "Espaço para opalas, artesanato, design local e circulação de visitantes.",
     description:
-      "O Pavilhão Criativo das Oficinas abriga atividades educativas e criativas do festival, com estrutura adaptada para grupos, programação diurna e experiências colaborativas.",
-    address: "Alameda da Formação, Pedro II - PI",
-    lat: -4.4218,
-    lng: -41.4637,
-    hours: "08h às 18h",
-    audience: "Crianças, jovens e adultos",
-    parking: "Área moderada para estacionamento",
-    environment: "Coberto",
-    distance: "1,1 km do centro",
+      "A Feira da Opala reúne peças, artesanato, identidade local e experiências ligadas à pedra símbolo da cidade, sendo um dos pontos mais procurados por visitantes.",
+    address: "Feira da Opala, Pedro II - PI",
+    schedule: "Manhã, tarde e noite",
+    highlight: "Artesanato e opalas",
+    reference: "Região central com grande fluxo",
+    lat: -4.4248,
+    lng: -41.4572,
     accessible: true,
-    family: true,
-    night: false,
-    features: [
-      "Mesas de apoio",
-      "Estrutura para oficinas",
-      "Espaço coberto",
-      "Acessibilidade",
-      "Programação diurna"
-    ]
+    familyFriendly: true,
+    nightFriendly: true,
+    features: ["Opalas", "Artesanato", "Compras", "Design local"]
   }
-];
+]);
 
 const categories = computed(() => {
-  return [...new Set(places.map((place) => place.category))].sort((a, b) =>
+  return [...new Set(places.value.map((place) => place.category))].sort((a, b) =>
     a.localeCompare(b)
   );
 });
 
-const normalizedSearch = computed(() => search.value.toLowerCase().trim());
+const normalizedSearch = computed(() => search.value.trim().toLowerCase());
 
 const filteredLocations = computed(() => {
-  return places.filter((place) => {
-    const matchesCategory =
-      selectedCategory.value === "all" ||
-      place.category === selectedCategory.value;
-
-    const haystack = [
-      place.name,
-      place.category,
-      place.shortDescription,
-      place.description,
-      place.address,
-      place.hours,
-      place.audience,
-      place.environment,
-      place.features.join(" ")
-    ]
-      .join(" ")
-      .toLowerCase();
-
+  return places.value.filter((place) => {
     const matchesSearch =
-      !normalizedSearch.value || haystack.includes(normalizedSearch.value);
+      !normalizedSearch.value ||
+      [
+        place.name,
+        place.category,
+        place.shortDescription,
+        place.description,
+        place.address,
+        place.highlight,
+        place.reference,
+        ...place.features
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch.value);
+
+    const matchesCategory =
+      selectedCategory.value === "all" || place.category === selectedCategory.value;
 
     const matchesHighlight =
       highlightMode.value === "all" ||
       (highlightMode.value === "accessible" && place.accessible) ||
-      (highlightMode.value === "family" && place.family) ||
-      (highlightMode.value === "night" && place.night);
+      (highlightMode.value === "family" && place.familyFriendly) ||
+      (highlightMode.value === "night" && place.nightFriendly);
 
-    return matchesCategory && matchesSearch && matchesHighlight;
+    return matchesSearch && matchesCategory && matchesHighlight;
   });
 });
 
-const getCategoryIcon = (category: string) => {
-  const icons: Record<string, string> = {
-    "Palco principal": "mdi-music-circle-outline",
-    "Paisagem e experiência": "mdi-image-filter-hdr",
-    "Cultura e debate": "mdi-microphone-outline",
-    Gastronomia: "mdi-silverware-fork-knife",
-    Exposição: "mdi-image-outline",
-    Oficinas: "mdi-palette-outline"
-  };
+const activeFilterLabels = computed(() => {
+  const items: Array<{ key: string; label: string; clear: () => void }> = [];
 
-  return icons[category] || "mdi-map-marker-outline";
-};
-
-const createMarkerIcon = (isActive = false) => {
-  return L.divIcon({
-    className: "custom-pin-wrapper",
-    html: `
-      <div class="custom-pin ${isActive ? "is-active" : ""}">
-        <span></span>
-      </div>
-    `,
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-    popupAnchor: [0, -26]
-  });
-};
-
-const initMap = () => {
-  if (!mapEl.value || map) return;
-
-  map = L.map(mapEl.value, {
-    zoomControl: false,
-    scrollWheelZoom: false
-  }).setView(defaultCenter, defaultZoom);
-
-  L.control.zoom({ position: "bottomright" }).addTo(map);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
-
-  markersLayer = L.layerGroup().addTo(map);
-  renderMarkers();
-
-  setTimeout(() => {
-    map?.invalidateSize();
-  }, 140);
-};
-
-const renderMarkers = () => {
-  if (!map || !markersLayer) return;
-
-  markersLayer.clearLayers();
-
-  filteredLocations.value.forEach((place) => {
-    const isActive = selectedPlaceCard.value?.id === place.id;
-
-    const marker = L.marker([place.lat, place.lng], {
-      icon: createMarkerIcon(isActive)
-    });
-
-    marker.on("click", () => {
-      selectedPlaceCard.value = place;
-      if (map) {
-        map.flyTo([place.lat, place.lng], 16, {
-          duration: reduceMotion.value ? 0 : 0.8
-        });
-      }
-      renderMarkers();
-    });
-
-    marker.bindPopup(`
-      <div class="leaflet-place-popup">
-        <div class="leaflet-place-popup__title">${place.name}</div>
-        <div class="leaflet-place-popup__category">${place.category}</div>
-        <div class="leaflet-place-popup__text">${place.shortDescription}</div>
-        <button
-          class="leaflet-place-popup__btn"
-          onclick="window.dispatchEvent(new CustomEvent('open-place-detail', { detail: '${place.id}' }))"
-        >
-          Ver detalhes
-        </button>
-      </div>
-    `);
-
-    markersLayer?.addLayer(marker);
-  });
-};
-
-const fitAllMarkers = () => {
-  if (!map || filteredLocations.value.length === 0) return;
-
-  const bounds = L.latLngBounds(
-    filteredLocations.value.map((place) => [place.lat, place.lng] as [number, number])
-  );
-
-  map.fitBounds(bounds, { padding: [50, 50] });
-};
-
-const focusPlace = (place: Place) => {
-  selectedPlaceCard.value = place;
-
-  if (map) {
-    map.flyTo([place.lat, place.lng], 16, {
-      duration: reduceMotion.value ? 0 : 0.8
+  if (search.value) {
+    items.push({
+      key: "search",
+      label: `Busca: "${search.value}"`,
+      clear: () => (search.value = "")
     });
   }
 
-  renderMarkers();
-};
+  if (selectedCategory.value !== "all") {
+    items.push({
+      key: "category",
+      label: `Categoria: ${selectedCategory.value}`,
+      clear: () => (selectedCategory.value = "all")
+    });
+  }
 
-const openDetails = (place: Place) => {
-  selectedPlace.value = place;
+  if (highlightMode.value !== "all") {
+    const labelMap: Record<string, string> = {
+      accessible: "Acessíveis",
+      family: "Para famílias",
+      night: "Funcionamento noturno"
+    };
+
+    items.push({
+      key: "highlight",
+      label: `Destaque: ${labelMap[highlightMode.value] || highlightMode.value}`,
+      clear: () => (highlightMode.value = "all")
+    });
+  }
+
+  return items;
+});
+
+function getCategoryIcon(category: string) {
+  const normalized = category.toLowerCase();
+
+  if (normalized.includes("show")) return "mdi-music";
+  if (normalized.includes("gastro")) return "mdi-silverware-fork-knife";
+  if (normalized.includes("cultura")) return "mdi-theater";
+  if (normalized.includes("exposição")) return "mdi-image-outline";
+  if (normalized.includes("feira")) return "mdi-storefront-outline";
+  if (normalized.includes("paisagem")) return "mdi-image-filter-hdr";
+  return "mdi-map-marker-outline";
+}
+
+function resetFilters() {
+  search.value = "";
+  selectedCategory.value = "all";
+  highlightMode.value = "all";
+  mobileFiltersOpen.value = false;
+
+  nextTick(() => {
+    selectFirstFiltered();
+  });
+}
+
+function selectFirstFiltered() {
+  const first = filteredLocations.value[0] || null;
+
+  if (first) {
+    selectedPlaceCard.value = first;
+    focusPlace(first, false);
+  } else {
+    selectedPlaceCard.value = null;
+    fitAllMarkers();
+  }
+}
+
+function focusPlace(place: Place, shouldFly = true) {
   selectedPlaceCard.value = place;
-  dialog.value = true;
-  focusPlace(place);
-};
 
-const openDirections = (place: Place) => {
-  const q = encodeURIComponent(`${place.name}, ${place.address}`);
+  const marker = markers.get(place.id);
+
+  if (marker && map && shouldFly) {
+    map.flyTo([place.lat, place.lng], isMobile.value ? 15 : 16, {
+      animate: !reduceMotion.value,
+      duration: reduceMotion.value ? 0 : 0.8
+    });
+    marker.openPopup();
+  }
+
+  if (isMobile.value) {
+    mobileView.value = "map";
+  }
+
+  highlightSelectedMarker();
+}
+
+function openDetails(place: Place) {
+  selectedPlaceDialog.value = place;
+  detailsOpen.value = true;
+}
+
+function openDirections(place: Place) {
+  const q = encodeURIComponent(`${place.name} ${place.address}`);
   window.open(
     `https://www.google.com/maps/search/?api=1&query=${q}`,
     "_blank",
     "noopener,noreferrer"
   );
-};
+}
 
-const resetFilters = () => {
-  search.value = "";
-  selectedCategory.value = "all";
-  highlightMode.value = "all";
-  selectedPlaceCard.value = null;
-};
+async function copyAddress(place: Place) {
+  try {
+    await navigator.clipboard.writeText(`${place.name} — ${place.address}`);
+  } catch {}
+}
 
-const onExternalOpen = (event: Event) => {
-  const custom = event as CustomEvent<string>;
-  const place = places.find((item) => item.id === custom.detail);
-  if (place) openDetails(place);
-};
+async function sharePlace(place: Place) {
+  const text = `${place.name} — ${place.address}`;
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${place.name} ${place.address}`
+  )}`;
 
-watch(filteredLocations, (list) => {
-  renderMarkers();
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: place.name,
+        text,
+        url
+      });
+      return;
+    }
 
-  if (!map) return;
+    await navigator.clipboard.writeText(`${text}\n${url}`);
+  } catch {}
+}
 
-  if (list.length === 0) {
-    map.setView(defaultCenter, defaultZoom);
+function createMarkerIcon(active = false) {
+  const size = active ? 18 : 14;
+  const color = active ? "#316eb9" : "#7f97b7";
+
+  return L.divIcon({
+    className: "custom-map-marker",
+    html: `<span style="
+      width:${size}px;
+      height:${size}px;
+      display:block;
+      border-radius:999px;
+      background:${color};
+      border:3px solid #ffffff;
+      box-shadow:0 8px 18px rgba(17,17,17,.18);
+    "></span>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
+  });
+}
+
+function highlightSelectedMarker() {
+  markers.forEach((marker, key) => {
+    const isActive = selectedPlaceCard.value?.id === key;
+    marker.setIcon(createMarkerIcon(isActive));
+    marker.setZIndexOffset(isActive ? 1000 : 0);
+  });
+}
+
+function fitAllMarkers() {
+  if (!map || filteredLocations.value.length === 0) return;
+
+  if (filteredLocations.value.length === 1) {
+    const place = filteredLocations.value[0];
+    map.flyTo([place.lat, place.lng], isMobile.value ? 15 : 16, {
+      animate: !reduceMotion.value,
+      duration: reduceMotion.value ? 0 : 0.8
+    });
     return;
   }
 
-  const stillExists = selectedPlaceCard.value
-    ? list.some((item) => item.id === selectedPlaceCard.value?.id)
-    : false;
+  const bounds = L.latLngBounds(
+    filteredLocations.value.map((place) => [place.lat, place.lng])
+  );
 
-  if (!stillExists) {
+  map.fitBounds(bounds, {
+    padding: isMobile.value ? [20, 20] : [50, 50],
+    animate: !reduceMotion.value
+  });
+}
+
+function centerOnUser() {
+  if (!navigator.geolocation || !map) return;
+
+  navigator.geolocation.getCurrentPosition(
+    ({ coords }) => {
+      map.flyTo([coords.latitude, coords.longitude], 15, {
+        animate: !reduceMotion.value,
+        duration: reduceMotion.value ? 0 : 0.8
+      });
+    },
+    () => {},
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
+
+async function initMap() {
+  if (!mapEl.value || map) return;
+
+  const leaflet = await import("leaflet");
+  L = leaflet.default || leaflet;
+  await import("leaflet/dist/leaflet.css");
+
+  map = L.map(mapEl.value, {
+    zoomControl: false,
+    scrollWheelZoom: true,
+    preferCanvas: true
+  }).setView([-4.4255, -41.4579], 14);
+
+  tileLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors"
+  });
+
+  tileLayer.addTo(map);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+
+  rebuildMarkers();
+  selectFirstFiltered();
+
+  nextTick(() => {
+    setTimeout(() => map?.invalidateSize(), 120);
+  });
+}
+
+function rebuildMarkers() {
+  if (!map || !L) return;
+
+  markers.forEach((marker) => map.removeLayer(marker));
+  markers.clear();
+
+  filteredLocations.value.forEach((place) => {
+    const marker = L.marker([place.lat, place.lng], {
+      icon: createMarkerIcon(selectedPlaceCard.value?.id === place.id)
+    });
+
+    marker.bindPopup(`
+      <div style="min-width:180px;padding:2px 2px 0;">
+        <strong style="display:block;font-size:14px;line-height:1.25;margin-bottom:6px;">
+          ${place.name}
+        </strong>
+        <span style="display:block;font-size:12px;opacity:.75;margin-bottom:8px;">
+          ${place.category}
+        </span>
+        <span style="display:block;font-size:12px;line-height:1.45;">
+          ${place.shortDescription}
+        </span>
+      </div>
+    `);
+
+    marker.on("click", () => {
+      selectedPlaceCard.value = place;
+      highlightSelectedMarker();
+    });
+
+    marker.addTo(map);
+    markers.set(place.id, marker);
+  });
+
+  highlightSelectedMarker();
+}
+
+async function focusSearch() {
+  mobileFiltersOpen.value = true;
+  await nextTick();
+  searchInputRef.value?.focus();
+  searchInputRef.value?.scrollIntoView({
+    behavior: reduceMotion.value ? "auto" : "smooth",
+    block: "center"
+  });
+}
+
+watch(filteredLocations, (list) => {
+  if (!map) return;
+
+  rebuildMarkers();
+
+  const selectedStillVisible = list.some((item) => item.id === selectedPlaceCard.value?.id);
+
+  if (!selectedStillVisible) {
     selectedPlaceCard.value = list[0] || null;
   }
 
-  fitAllMarkers();
-});
+  if (!isMobile.value) {
+    fitAllMarkers();
+  } else if (!selectedStillVisible && list.length) {
+    focusPlace(list[0], false);
+  }
+}, { deep: true });
 
 watch(selectedPlaceCard, () => {
-  renderMarkers();
+  highlightSelectedMarker();
 });
 
-onMounted(() => {
-  mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  reduceMotion.value = mq.matches;
+watch(detailsOpen, (value) => {
+  if (!value) selectedPlaceDialog.value = null;
+});
 
-  onMqChange = (event: MediaQueryListEvent) => {
+onMounted(async () => {
+  mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  reduceMotion.value = mqMotion.matches;
+  onMotionChange = (event: MediaQueryListEvent) => {
     reduceMotion.value = event.matches;
   };
+  mqMotion.addEventListener?.("change", onMotionChange);
 
-  mq.addEventListener?.("change", onMqChange);
+  mqMobile = window.matchMedia("(max-width: 900px)");
+  isMobile.value = mqMobile.matches;
+  onMobileChange = (event: MediaQueryListEvent) => {
+    isMobile.value = event.matches;
+
+    if (!event.matches) {
+      mobileFiltersOpen.value = false;
+      mobileView.value = "map";
+    }
+
+    setTimeout(() => map?.invalidateSize(), 120);
+  };
+  mqMobile.addEventListener?.("change", onMobileChange);
 
   io = new IntersectionObserver(
     ([entry]) => {
       isVisible.value = !!entry?.isIntersecting;
-
-      if (entry?.isIntersecting) {
-        initMap();
-      }
     },
     { threshold: 0.12 }
   );
 
   if (root.value) io.observe(root.value);
 
-  window.addEventListener("open-place-detail", onExternalOpen as EventListener);
+  await initMap();
 });
 
 onBeforeUnmount(() => {
@@ -915,34 +1121,43 @@ onBeforeUnmount(() => {
   io?.disconnect();
   io = null;
 
-  if (mq && onMqChange) {
-    mq.removeEventListener?.("change", onMqChange);
+  if (mqMotion && onMotionChange) {
+    mqMotion.removeEventListener?.("change", onMotionChange);
   }
 
-  window.removeEventListener("open-place-detail", onExternalOpen as EventListener);
+  if (mqMobile && onMobileChange) {
+    mqMobile.removeEventListener?.("change", onMobileChange);
+  }
 
-  map?.remove();
-  map = null;
-  markersLayer = null;
+  markers.clear();
+
+  if (map) {
+    map.remove();
+    map = null;
+  }
 });
 </script>
 
 <style scoped>
+.places,
+.places *,
+.places *::before,
+.places *::after {
+  box-sizing: border-box;
+}
+
 .places {
   --accent: #316eb9;
-  --accent-2: #4a86d5;
+  --accent-2: #255893;
   --accent-soft: rgba(49, 110, 185, 0.08);
-  --accent-soft-2: rgba(49, 110, 185, 0.14);
   --text: #111111;
-  --muted: rgba(17, 17, 17, 0.64);
-  --line: rgba(17, 17, 17, 0.08);
-  --surface: rgba(255, 255, 255, 0.78);
-  --surface-2: #f7faff;
-  --shadow: 0 22px 60px rgba(17, 17, 17, 0.07);
+  --muted: rgba(17, 17, 17, 0.68);
+  --surface: rgba(255, 255, 255, 0.82);
+  --shadow: 0 20px 60px rgba(17, 17, 17, 0.08);
 
   position: relative;
   overflow: hidden;
-  padding: 72px 0;
+  padding: 72px 0 130px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
 }
 
@@ -988,9 +1203,11 @@ onBeforeUnmount(() => {
 .places__container {
   position: relative;
   z-index: 1;
-  width: min(1280px, calc(100% - 40px));
+  width: 100%;
+  max-width: 1240px;
   margin: 0 auto;
   margin-top: 3rem;
+  padding: 0 20px;
 }
 
 .places__head {
@@ -999,13 +1216,6 @@ onBeforeUnmount(() => {
   gap: 18px;
   align-items: end;
   margin-bottom: 24px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 700ms ease, transform 700ms ease;
-}
-
-.places__head-left {
-  max-width: 760px;
 }
 
 .places__eyebrow {
@@ -1014,7 +1224,6 @@ onBeforeUnmount(() => {
   gap: 10px;
   margin: 0 0 12px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -1033,10 +1242,11 @@ onBeforeUnmount(() => {
   margin: 0;
   color: var(--text);
   font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, 4vw, 3.15rem);
   line-height: 0.98;
   font-weight: 800;
   letter-spacing: -0.05em;
+  word-break: break-word;
 }
 
 .places__title span {
@@ -1045,9 +1255,8 @@ onBeforeUnmount(() => {
 
 .places__sub {
   margin: 14px 0 0;
-  max-width: 700px;
+  max-width: 720px;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.75;
 }
@@ -1059,22 +1268,19 @@ onBeforeUnmount(() => {
 }
 
 .places__stat {
-  min-height: 88px;
+  min-height: 90px;
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(49, 110, 185, 0.1);
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  backdrop-filter: blur(10px);
 }
 
 .places__stat strong {
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   line-height: 1;
   font-weight: 800;
 }
@@ -1082,17 +1288,20 @@ onBeforeUnmount(() => {
 .places__stat span {
   margin-top: 6px;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 600;
 }
 
+.places__mobile-bar {
+  display: none;
+}
+
 .places__filters,
 .places__selector,
-.places__map-panel {
+.places__map-shell {
   border-radius: 24px;
   border: 1px solid rgba(49, 110, 185, 0.1);
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.8);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -1103,22 +1312,14 @@ onBeforeUnmount(() => {
   padding: 18px;
 }
 
-.places__selector {
-  margin-bottom: 18px;
-  padding: 18px;
-}
-
-.places__map-panel {
-  padding: 14px;
-}
-
 .places__filters-head,
-.places__selector-head {
+.places__selector-head,
+.places__map-toolbar {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .places__filters-kicker,
@@ -1126,7 +1327,6 @@ onBeforeUnmount(() => {
 .places__map-kicker {
   margin: 0 0 6px;
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -1138,56 +1338,110 @@ onBeforeUnmount(() => {
 .places__map-title {
   margin: 0;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.18rem;
+  font-size: 1.16rem;
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
-.places__selector-text {
-  margin: 0;
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.88rem;
+.places__filters-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
+.places__accordion-btn,
+.places__clear-btn,
+.map-action,
+.preview-btn,
+.dialog-btn,
+.mini-btn,
+.mobile-action,
+.mobile-sheet__close {
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  cursor: pointer;
+  transition: 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.places__accordion-btn,
 .places__clear-btn {
   min-height: 42px;
   padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid rgba(49, 110, 185, 0.12);
   background: rgba(49, 110, 185, 0.06);
   color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 700;
-  cursor: pointer;
+  gap: 8px;
+}
+
+.places__active-filters {
+  margin-bottom: 14px;
+}
+
+.places__active-title {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.places__active-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.places__active-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(49, 110, 185, 0.08);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.places__active-chip button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.places__filters-panel {
+  display: block;
 }
 
 .places__filters-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-columns: 1.25fr 1fr 1fr;
   gap: 14px;
 }
 
 .field {
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .field__label {
-  display: inline-block;
   margin-bottom: 8px;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.86rem;
   font-weight: 700;
 }
 
 .field__control {
   position: relative;
+  width: 100%;
 }
 
 .field__control--search,
@@ -1196,14 +1450,6 @@ onBeforeUnmount(() => {
   border-radius: 16px;
   border: 1px solid rgba(49, 110, 185, 0.12);
   background: rgba(255, 255, 255, 0.92);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
-  transition: border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.field__control--search:focus-within,
-.field__control--select:focus-within {
-  border-color: rgba(49, 110, 185, 0.24);
-  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.08);
 }
 
 .field__control--search {
@@ -1215,8 +1461,6 @@ onBeforeUnmount(() => {
 .field__icon {
   margin-right: 10px;
   color: rgba(17, 17, 17, 0.42);
-  display: inline-flex;
-  align-items: center;
 }
 
 .field__input {
@@ -1225,7 +1469,6 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.95rem;
   outline: none;
 }
@@ -1243,7 +1486,6 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.94rem;
   font-weight: 600;
   outline: none;
@@ -1257,113 +1499,195 @@ onBeforeUnmount(() => {
   transform: translateY(-50%);
   color: rgba(17, 17, 17, 0.46);
   pointer-events: none;
-  display: inline-flex;
 }
 
-.field__hint {
-  margin: 8px 0 0;
+.places__selector {
+  margin-bottom: 18px;
+  padding: 18px;
+}
+
+.places__selector-text {
+  margin: 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+.places__selector-scroll {
+  overflow-x: auto;
+  padding-top: 14px;
+  padding-bottom: 8px; /* Evita corte da shadow */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.places__selector-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .places__selector-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
   gap: 12px;
 }
 
 .place-chip {
-  min-height: 88px;
-  padding: 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(49, 110, 185, 0.1);
-  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(247,250,255,0.92));
-  cursor: pointer;
+  flex: 0 0 250px;
+  scroll-snap-align: start;
   display: grid;
-  grid-template-columns: 46px 1fr auto;
+  grid-template-columns: 42px 1fr auto;
   gap: 12px;
   align-items: center;
+  min-height: 82px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(49, 110, 185, 0.09);
+  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(247,250,255,.96));
   text-align: left;
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.place-chip:hover {
-  transform: translateY(-2px);
-  border-color: rgba(49, 110, 185, 0.2);
-  box-shadow: 0 18px 38px rgba(17, 17, 17, 0.05);
 }
 
 .place-chip.is-active {
-  border-color: rgba(49, 110, 185, 0.28);
-  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,1), rgba(239,246,255,0.95));
+  border-color: rgba(49, 110, 185, 0.24);
+  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.06);
 }
 
 .place-chip__icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  background: rgba(49, 110, 185, 0.09);
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: rgba(49, 110, 185, 0.08);
   color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.place-chip__content {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .place-chip__content strong {
+  display: block;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-size: 0.94rem;
   line-height: 1.2;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .place-chip__content span {
+  display: block;
+  margin-top: 4px;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  line-height: 1.2;
 }
 
 .place-chip__meta {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: var(--accent);
+  gap: 6px;
 }
 
 .place-chip__badge {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  background: rgba(49, 110, 185, 0.1);
+  display: grid;
+  place-items: center;
+  background: rgba(49, 110, 185, 0.09);
+  color: var(--accent);
+}
+
+.places__empty {
+  margin-top: 14px;
+  padding: 24px;
+  border-radius: 18px;
+  text-align: center;
+  background: rgba(49, 110, 185, 0.04);
+  border: 1px dashed rgba(49, 110, 185, 0.14);
+}
+
+.places__mobile-list {
+  display: none;
+}
+
+.mobile-place-card {
+  margin-bottom: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(49, 110, 185, 0.09);
+  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(247,250,255,.96));
+}
+
+.mobile-place-card.is-active {
+  border-color: rgba(49, 110, 185, 0.24);
+  box-shadow: 0 0 0 4px rgba(49, 110, 185, 0.06);
+}
+
+.mobile-place-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mobile-place-card__category,
+.mobile-place-card__flag,
+.map-preview__category,
+.map-preview__access,
+.tag-chip,
+.mobile-sheet__category,
+.place-dialog__category {
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.mobile-place-card__category,
+.map-preview__category,
+.tag-chip,
+.mobile-sheet__category,
+.place-dialog__category {
+  background: rgba(49, 110, 185, 0.09);
+  color: var(--accent);
+}
+
+.mobile-place-card__flag,
+.map-preview__access {
+  background: rgba(17,17,17,.05);
+  color: rgba(17,17,17,.72);
+}
+
+.mobile-place-card__title {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.mobile-place-card__desc {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.mobile-place-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
 .places__map-shell {
-  display: grid;
-  gap: 14px;
+  padding: 18px;
 }
 
 .places__map-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 8px 6px 4px;
+  margin-bottom: 14px;
 }
 
 .places__map-toolbar-left {
@@ -1375,38 +1699,35 @@ onBeforeUnmount(() => {
 .places__map-toolbar-icon {
   width: 44px;
   height: 44px;
-  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
   background: rgba(49, 110, 185, 0.08);
   color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .places__map-toolbar-right {
   display: flex;
-  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.map-action {
+.map-action,
+.preview-btn,
+.dialog-btn {
   min-height: 42px;
   padding: 0 14px;
   border-radius: 999px;
-  border: 1px solid rgba(49, 110, 185, 0.12);
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.88);
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.84rem;
   font-weight: 700;
-  display: inline-flex;
-  align-items: center;
   gap: 8px;
-  cursor: pointer;
 }
 
-.map-action--primary {
+.map-action--primary,
+.preview-btn--primary,
+.mini-btn--primary {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
@@ -1414,17 +1735,23 @@ onBeforeUnmount(() => {
 
 .places__map-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 14px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr);
+  gap: 16px;
+  align-items: start;
 }
 
 .places__map-wrap {
-  min-height: clamp(320px, 55vh, 520px);
+  position: relative;
+  min-width: 0;
 }
 
 .places__map {
-  height: 100%;
-  min-height: clamp(320px, 55vh, 520px);
+  width: 100%;
+  height: 620px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  z-index: 10;
 }
 
 .places__map-legend {
@@ -1436,10 +1763,12 @@ onBeforeUnmount(() => {
   flex-wrap: wrap;
   padding: 10px 12px;
   border-radius: 16px;
-  background: rgba(255,255,255,0.88);
-  border: 1px solid rgba(49, 110, 185, 0.08);
-  box-shadow: 0 10px 24px rgba(17,17,17,0.06);
-  z-index: 500;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(49, 110, 185, 0.12);
+  box-shadow: 0 14px 34px rgba(17, 17, 17, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 20;
 }
 
 .legend-item {
@@ -1447,7 +1776,6 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -1456,109 +1784,60 @@ onBeforeUnmount(() => {
   width: 12px;
   height: 12px;
   border-radius: 999px;
+  display: inline-block;
+  border: 2px solid #fff;
 }
 
 .legend-dot--normal {
-  background: var(--accent);
+  background: #7f97b7;
 }
 
 .legend-dot--active {
-  background: #111111;
+  background: #316eb9;
 }
 
 .places__map-aside {
-  display: flex;
+  position: sticky;
+  top: 104px;
 }
 
 .map-preview {
-  width: 100%;
-  border-radius: 24px;
-  border: 1px solid rgba(49, 110, 185, 0.1);
-  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,250,255,0.94));
   padding: 18px;
-  box-shadow: 0 20px 40px rgba(17,17,17,0.05);
+  border-radius: 22px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(247,250,255,.96));
+  box-shadow: 0 18px 50px rgba(17, 17, 17, 0.06);
 }
 
 .map-preview--empty {
-  display: flex;
   min-height: 220px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.map-preview__empty-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  background: rgba(49, 110, 185, 0.08);
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.map-preview--empty h4 {
-  margin: 0;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.map-preview--empty p {
-  margin: 8px 0 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.88rem;
-  line-height: 1.65;
 }
 
 .map-preview__top {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.map-preview__category,
-.map-preview__access {
-  min-height: 32px;
-  padding: 0 10px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.map-preview__category {
-  background: rgba(49, 110, 185, 0.09);
-  color: var(--accent);
-}
-
-.map-preview__access {
-  background: rgba(17, 17, 17, 0.05);
-  color: rgba(17, 17, 17, 0.72);
 }
 
 .map-preview__title {
   margin: 14px 0 0;
   color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.14rem;
+  font-size: 1.2rem;
+  line-height: 1.2;
   font-weight: 800;
-  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
 .map-preview__desc {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   line-height: 1.7;
 }
 
@@ -1572,435 +1851,247 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: 18px 1fr;
   gap: 10px;
-  align-items: start;
-  color: rgba(17, 17, 17, 0.74);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.84rem;
+  color: var(--text);
+  font-size: 0.86rem;
   line-height: 1.55;
+}
+
+.map-preview__tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
 }
 
 .map-preview__actions {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
   margin-top: 16px;
 }
 
-.map-preview__btn {
-  min-height: 42px;
-  padding: 0 14px;
-  border-radius: 999px;
+.mobile-sheet {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 14px;
+  z-index: 2000;
+  padding: 12px 12px 14px;
+  border-radius: 24px;
   border: 1px solid rgba(49, 110, 185, 0.12);
-  cursor: pointer;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.84rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 50px rgba(17,17,17,.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-.map-preview__btn--ghost {
-  background: rgba(255,255,255,0.9);
-  color: var(--text);
-}
-
-.map-preview__btn--primary {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-}
-
-.places__empty {
-  padding: 34px 20px;
-  border-radius: 22px;
-  border: 1px solid rgba(49, 110, 185, 0.1);
-  background: rgba(255, 255, 255, 0.72);
-  text-align: center;
-}
-
-.places__empty h3 {
-  margin: 0;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.2rem;
-  font-weight: 800;
-}
-
-.places__empty p {
-  margin: 8px 0 0;
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
-/* modal */
-.place-modal {
-  overflow: hidden;
-  border-radius: 28px;
-  background: #fff;
-}
-
-.place-modal__hero {
-  position: relative;
-  min-height: 240px;
-  padding: 28px;
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.14), transparent 38%),
-    linear-gradient(135deg, #316eb9 0%, #4d87d2 45%, #7faee7 100%);
-  color: #fff;
-}
-
-.place-modal__hero-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 34px 34px;
-  opacity: 0.35;
-}
-
-.place-modal__hero-content {
-  position: relative;
-  z-index: 1;
-  max-width: 720px;
-}
-
-.place-modal__chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.place-modal__chip {
-  min-height: 32px;
-  padding: 0 12px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.16);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: #fff;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.76rem;
-  font-weight: 800;
-}
-
-.place-modal__chip--accent {
-  background: rgba(255,255,255,0.22);
-}
-
-.place-modal__title {
-  margin: 0;
-  font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-  font-size: clamp(2rem, 4vw, 2.8rem);
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-}
-
-.place-modal__sub {
-  margin: 12px 0 0;
-  max-width: 680px;
-  color: rgba(255,255,255,0.9);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-.place-modal__close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  z-index: 2;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.14);
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.mobile-sheet__drag {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0 0 10px;
   cursor: pointer;
 }
 
-.place-modal__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) 320px;
-  gap: 0;
+.mobile-sheet__drag span {
+  display: block;
+  width: 54px;
+  height: 5px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: rgba(17,17,17,.14);
 }
 
-.place-modal__main {
-  padding: 28px;
-}
-
-.place-modal__aside {
-  padding: 28px 28px 28px 0;
-}
-
-.place-modal__section + .place-modal__section {
-  margin-top: 26px;
-}
-
-.place-modal__kicker {
-  margin: 0 0 6px;
-  color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.place-modal__section-title {
-  margin: 0;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.14rem;
-  font-weight: 800;
-}
-
-.place-modal__text {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.96rem;
-  line-height: 1.8;
-}
-
-.place-modal__feature-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.place-modal__feature {
-  min-height: 46px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(49, 110, 185, 0.08);
-  background: rgba(49, 110, 185, 0.04);
+.mobile-sheet__top {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.place-modal__cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.place-modal__info-card {
-  min-height: 96px;
-  padding: 14px;
-  border-radius: 18px;
-  border: 1px solid rgba(49, 110, 185, 0.08);
-  background: #f9fbff;
-  display: grid;
-  grid-template-columns: 22px 1fr;
+  justify-content: space-between;
   gap: 12px;
   align-items: start;
 }
 
-.place-modal__info-card strong {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.88rem;
+.mobile-sheet__top-main {
+  min-width: 0;
+}
+
+.mobile-sheet__title {
+  margin: 10px 0 0;
+  font-size: 1.1rem;
+  line-height: 1.2;
   font-weight: 800;
 }
 
-.place-modal__info-card p {
-  margin: 0;
+.mobile-sheet__close {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(17,17,17,.05);
+  flex-shrink: 0;
+}
+
+.mobile-sheet__desc {
+  margin: 8px 0 0;
   color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: 0.86rem;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-.place-modal__summary {
-  position: sticky;
-  top: 0;
-  padding: 18px;
-  border-radius: 22px;
-  border: 1px solid rgba(49, 110, 185, 0.08);
-  background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
-  box-shadow: 0 20px 40px rgba(17,17,17,0.05);
-}
-
-.place-modal__aside-title {
-  margin: 0;
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.place-modal__summary-list {
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.place-modal__summary-item {
-  min-height: 52px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(49, 110, 185, 0.08);
+.mobile-sheet__actions {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mobile-sheet__actions button {
+  flex: 1;
+  min-width: 100px;
+}
+
+.place-dialog {
+  border-radius: 28px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  box-shadow: 0 24px 80px rgba(17,17,17,.12);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.place-dialog__hero {
+  padding: 22px 22px 18px;
+  background:
+    radial-gradient(circle at top right, rgba(49,110,185,.14), transparent 42%),
+    linear-gradient(180deg, #fafdff 0%, #ffffff 100%);
+  border-bottom: 1px solid rgba(49, 110, 185, 0.08);
+}
+
+.place-dialog__hero-top {
+  display: flex;
   justify-content: space-between;
-  gap: 10px;
+  align-items: start;
+  gap: 12px;
 }
 
-.place-modal__summary-item span {
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.place-modal__summary-item strong {
-  color: var(--text);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.84rem;
-  font-weight: 800;
-  text-align: right;
-}
-
-.place-modal__actions {
-  display: grid;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.place-modal__btn {
-  min-height: 44px;
-  padding: 0 14px;
+.place-dialog__close {
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   border: 1px solid rgba(49, 110, 185, 0.12);
+  background: rgba(255,255,255,.92);
   cursor: pointer;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.9rem;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+}
+
+.place-dialog__title {
+  margin: 16px 0 0;
+  color: var(--text);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.place-dialog__desc {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.place-dialog__body {
+  padding: 20px 22px 22px;
+  display: grid;
+  gap: 18px;
+}
+
+.place-dialog__section h4 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.place-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.info-box {
+  min-height: 86px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(49, 110, 185, 0.1);
+  background: rgba(247, 250, 255, 0.84);
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+}
+
+.info-box strong {
+  display: block;
+  font-size: 0.86rem;
+}
+
+.info-box span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
-.place-modal__btn--ghost {
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--text);
-}
-
-.place-modal__btn--primary {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-}
-
-.is-visible .places__head {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* leaflet pin */
-:deep(.custom-pin-wrapper) {
-  background: transparent;
-  border: none;
-}
-
-:deep(.custom-pin) {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px 999px 999px 0;
-  transform: rotate(-45deg);
-  background: linear-gradient(180deg, #316eb9, #245ea6);
-  box-shadow: 0 12px 22px rgba(49, 110, 185, 0.28);
-  border: 2px solid rgba(255,255,255,0.96);
-}
-
-:deep(.custom-pin span) {
-  position: absolute;
-  inset: 7px;
-  border-radius: 999px;
-  background: #ffffff;
-}
-
-:deep(.custom-pin.is-active) {
-  background: linear-gradient(180deg, #111111, #2f2f2f);
-  transform: rotate(-45deg) scale(1.08);
-  box-shadow: 0 16px 28px rgba(17,17,17,0.24);
-}
-
-/* popup */
-:deep(.leaflet-popup-content-wrapper) {
-  border-radius: 18px;
-  padding: 2px;
-  box-shadow: 0 18px 34px rgba(17,17,17,0.12);
-}
-
-:deep(.leaflet-popup-content) {
-  margin: 12px 14px;
-}
-
-:deep(.leaflet-place-popup__title) {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #111111;
-  margin-bottom: 6px;
-}
-
-:deep(.leaflet-place-popup__category) {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #316eb9;
-  margin-bottom: 8px;
-}
-
-:deep(.leaflet-place-popup__text) {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: rgba(17,17,17,0.72);
-  margin-bottom: 12px;
-}
-
-:deep(.leaflet-place-popup__btn) {
-  min-height: 36px;
+.feature-chip {
+  min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  border: none;
-  background: #316eb9;
-  color: #fff;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(49, 110, 185, 0.08);
+  color: var(--accent);
   font-size: 0.8rem;
   font-weight: 700;
-  cursor: pointer;
 }
 
-:deep(.place-dialog) {
-  border-radius: 28px;
-  overflow: hidden;
+.place-dialog__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 1180px) {
+.mini-btn {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.sheet-fade-enter-active,
+.sheet-fade-leave-active {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.sheet-fade-enter-from,
+.sheet-fade-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+/* =========================================
+   MEDIA QUERIES - RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 1080px) {
   .places__head {
     grid-template-columns: 1fr;
   }
@@ -2009,58 +2100,155 @@ onBeforeUnmount(() => {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .places__selector-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .places__filters-grid {
+    grid-template-columns: 1fr 1fr;
   }
 
   .places__map-layout {
     grid-template-columns: 1fr;
   }
 
-  .places__map-wrap,
+  .places__map-aside {
+    position: static;
+  }
+
   .places__map {
-    min-height: 560px;
+    height: 500px;
   }
 }
 
 @media (max-width: 900px) {
   .places {
-    padding: 60px 0;
+    padding: 52px 0 180px;
+  }
+
+  .places__mobile-bar {
+    position: sticky;
+    top: 74px;
+    z-index: 1000;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(49, 110, 185, 0.12);
+    box-shadow: 0 18px 50px rgba(17, 17, 17, 0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .mobile-action {
+    min-height: 46px;
+    border-radius: 14px;
+    background: rgba(49, 110, 185, 0.06);
+    color: var(--accent);
+    font-size: 0.76rem;
+    font-weight: 800;
+    flex-direction: column;
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .mobile-action span {
+    line-height: 1;
+  }
+
+  .places__filters,
+  .places__selector,
+  .places__map-shell {
+    border-radius: 20px;
+  }
+
+  .places__filters {
+    padding: 14px;
+  }
+
+  .places__filters-head,
+  .places__selector-head,
+  .places__map-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .places__filters-actions {
+    width: 100%;
+  }
+
+  .places__accordion-btn,
+  .places__clear-btn {
+    flex: 1;
+  }
+
+  .places__filters-panel {
+    display: none;
+    margin-top: 8px;
+  }
+
+  .mobile-filters-open .places__filters-panel {
+    display: block;
   }
 
   .places__filters-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .places__selector-head,
-  .places__filters-head,
-  .places__map-toolbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .place-modal__body {
     grid-template-columns: 1fr;
   }
 
-  .place-modal__main {
-    padding: 22px;
+  .places__selector {
+    padding: 14px;
   }
 
-  .place-modal__aside {
-    padding: 0 22px 22px;
+  .places__mobile-list {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .places__map-shell {
+    padding: 14px;
+  }
+
+  .places__map-toolbar-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .places__map {
+    height: 420px;
+    border-radius: 18px;
+  }
+
+  .places__map-legend {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .mobile-sheet {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 22px;
+  }
+
+  .place-dialog {
+    border-radius: 22px;
+  }
+
+  .place-dialog__hero,
+  .place-dialog__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .place-dialog__grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .places {
-    padding: 48px 0;
-  }
-
-  .places__container {
-    width: min(1280px, calc(100% - 24px));
-  }
-
   .places__title {
     font-size: clamp(1.8rem, 8vw, 2.5rem);
     line-height: 1;
@@ -2068,63 +2256,68 @@ onBeforeUnmount(() => {
 
   .places__sub {
     font-size: 0.94rem;
-    line-height: 1.7;
+    line-height: 1.6;
   }
 
   .places__stats {
     grid-template-columns: 1fr;
   }
 
-  .places__filters,
-  .places__selector,
-  .places__map-panel {
-    padding: 14px;
-    border-radius: 20px;
+  .places__mobile-bar {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .places__filters-grid,
-  .places__selector-grid {
-    grid-template-columns: 1fr;
+  .places__selector-text {
+    font-size: 0.84rem;
   }
 
   .place-chip {
-    grid-template-columns: 44px 1fr auto;
+    flex: 0 0 220px;
+    grid-template-columns: 38px 1fr;
+    padding: 12px;
   }
 
-  .places__map-wrap,
+  .place-chip__meta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .place-chip__icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .places__map-toolbar-right {
+    grid-template-columns: 1fr;
+  }
+
   .places__map {
-    min-height: 420px;
+    height: 360px;
   }
 
   .places__map-legend {
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
+    position: static;
+    margin-top: 10px;
   }
 
-  .place-modal__hero {
-    min-height: 220px;
-    padding: 22px 18px;
+  .mobile-place-card__actions,
+  .place-dialog__actions,
+  .mobile-sheet__actions {
+    flex-direction: column;
   }
 
-  .place-modal__main {
-    padding: 18px;
-  }
-
-  .place-modal__aside {
-    padding: 0 18px 18px;
-  }
-
-  .place-modal__feature-grid,
-  .place-modal__cards {
-    grid-template-columns: 1fr;
+  .mini-btn,
+  .dialog-btn {
+    width: 100%;
   }
 }
 
+/* Redução de movimento */
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
   animation: none !important;
   transition: none !important;
+  scroll-behavior: auto !important;
 }
 </style>

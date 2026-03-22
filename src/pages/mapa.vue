@@ -10,7 +10,8 @@
 <style scoped>
 .container{
     display:flex;
+    justify-content: center;
     height: auto;
-    width: auto;
+    background-color: aliceblue;
     }
 </style>
