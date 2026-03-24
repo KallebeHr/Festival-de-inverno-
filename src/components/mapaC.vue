@@ -1285,6 +1285,7 @@ onBeforeUnmount(() => {
   font-size: 1.55rem;
   line-height: 1;
   font-weight: 800;
+  color: black;
 }
 
 .places__stat span {
@@ -1958,6 +1959,7 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(49, 110, 185, 0.1);
   box-shadow: 0 24px 80px rgba(17,17,17,.12);
   max-height: 90vh;
+  color: black;
   overflow-y: auto;
 }
 

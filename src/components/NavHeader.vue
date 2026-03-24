@@ -336,14 +336,14 @@
                 <v-icon icon="mdi-calendar-clock-outline" />
                 {{ t.programming }}
               </button>
-              <button class="chip" type="button" @click="jump('#mapa')">
+              <button class="chip" type="button" @click="jump('/mapa')">
                 <v-icon icon="mdi-map-marker-outline" />
                 {{ t.map }}
               </button>
               <button
                 class="chip"
                 type="button"
-                @click="jump('#acessibilidade')"
+                @click="jump('/acessibilidade')"
               >
                 <v-icon icon="mdi-wheelchair-accessibility" />
                 {{ t.accessibility }}
@@ -420,7 +420,7 @@
                 <button
                   class="miniBtn"
                   type="button"
-                  @click="jump('#mapa')"
+                  @click="jump('/mapa')"
                   :aria-label="t.howToGet"
                 >
                   <v-icon icon="mdi-map-outline" />
@@ -629,21 +629,21 @@ const itemBase = [
   },
   {
     id: "fotos",
-    hash: "#fotos",
+    hash: "/fotos",
     icon: "mdi-camera-outline",
     pt: { label: "Galeria", desc: "Fotos oficiais e registros." },
     en: { label: "Gallery", desc: "Official photos and records." }
   },
   {
     id: "acessibilidade",
-    hash: "#acessibilidade",
+    hash: "/acessibilidade",
     icon: "mdi-wheelchair-accessibility",
     pt: { label: "Acessibilidade", desc: "Rotas e suporte PCD." },
     en: { label: "Accessibility", desc: "Routes and accessibility support." }
   },
   {
     id: "faq",
-    hash: "#faq",
+    hash: "/faq",
     icon: "mdi-help-circle-outline",
     pt: { label: "FAQ", desc: "Dúvidas frequentes." },
     en: { label: "FAQ", desc: "Frequently asked questions." }

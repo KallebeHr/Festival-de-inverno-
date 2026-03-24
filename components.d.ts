@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AcessibilidadeP: typeof import('./src/components/acessibilidadeP.vue')['default']
     AnteriotesV: typeof import('./src/components/anteriotesV.vue')['default']
     AtracoesAtivas: typeof import('./src/components/atracoesAtivas.vue')['default']
     AtracoesP: typeof import('./src/components/atracoesP.vue')['default']
@@ -16,7 +17,9 @@ declare module 'vue' {
     ConfirmedGuests: typeof import('./src/components/ConfirmedGuests.vue')['default']
     copy: typeof import('./src/components/autoscroll copy.vue')['default']
     Destaques: typeof import('./src/components/destaques.vue')['default']
+    FaqP: typeof import('./src/components/faqP.vue')['default']
     Footer: typeof import('./src/components/NavFooter.vue')['default']
+    GaleriaP: typeof import('./src/components/galeriaP.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     LocalMVisitado: typeof import('./src/components/localMVisitado.vue')['default']
     MapaC: typeof import('./src/components/mapaC.vue')['default']
