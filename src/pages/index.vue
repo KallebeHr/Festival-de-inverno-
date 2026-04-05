@@ -6,6 +6,7 @@
 <ConfirmedGuests />
 <LocalMVisitado />
 <MapaP2 />
+<BlogP /> 
 <PatrocinioScrol />
 </template>
 

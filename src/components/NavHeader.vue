@@ -634,6 +634,19 @@ const itemBase = [
     pt: { label: "Galeria", desc: "Fotos oficiais e registros." },
     en: { label: "Gallery", desc: "Official photos and records." }
   },
+{
+  id: "blog",
+  hash: "/blog",
+  icon: "mdi-newspaper-variant-outline", 
+  pt: { 
+    label: "Blog", 
+    desc: "Artigos, novidades e publicações." 
+  },
+  en: { 
+    label: "Blog", 
+    desc: "Articles, news, and publications." 
+  }
+},
   {
     id: "acessibilidade",
     hash: "/acessibilidade",
