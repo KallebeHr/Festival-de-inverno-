@@ -53,7 +53,7 @@ defineProps({
   width: 100%;
   display: flex;
   justify-content: center;
-  background: #ffffff;
+  background: #F8F9FC;
   padding: clamp(16px, 3vw, 40px);
   box-sizing: border-box;
 }

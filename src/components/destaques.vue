@@ -41,7 +41,11 @@
         @swiper="onSwiper"
       >
         <SwiperSlide v-for="(item, idx) in items" :key="item.id ?? idx">
-          <article class="card" :data-io="ioReady ? '1' : '0'">
+          <article 
+            class="card" 
+            :data-io="ioReady ? '1' : '0'"
+            :style="{ '--stagger-delay': `${idx * 60}ms` }"
+          >
             <a
               class="card__link"
               :href="item.href || '#'"
@@ -166,91 +170,53 @@ type FeaturedItem = {
 
 const props = defineProps<{ items?: FeaturedItem[] }>();
 
-const items =
-  props.items?.length
-    ? props.items
-    : ([
-        {
-          id: 1,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Nome Cantor - Nome Musica",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 2,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Evento - Nome Do Local",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 3,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Nome Cantor - Nome Musica",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 4,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Nome Cantor - Nome Musica",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 5,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Evento - Nome Do Local",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 6,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Nome Cantor - Nome Musica",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 7,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Evento - Nome Do Local",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-        {
-          id: 8,
-          badge: "Destaque",
-          image:
-            "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-          org: "Festival de Inverno",
-          title: "Nome Cantor - Nome Musica",
-          date: "04 e 07 de Junho de 2026",
-          place: "Pedro II - Praça da Matriz",
-        },
-      ] as FeaturedItem[]);
+const items = props.items?.length ? props.items : ([
+  {
+    id: 1,
+    badge: "Destaque",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    org: "Festival de Inverno",
+    title: "Nome Cantor - Nome Musica",
+    date: "04 e 07 de Junho de 2026",
+    place: "Pedro II - Praça da Matriz",
+  },
+  {
+    id: 2,
+    badge: "Destaque",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    org: "Festival de Inverno",
+    title: "Evento - Nome Do Local",
+    date: "04 e 07 de Junho de 2026",
+    place: "Pedro II - Praça da Matriz",
+  },
+  {
+    id: 3,
+    badge: "Destaque",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    org: "Festival de Inverno",
+    title: "Nome Cantor - Nome Musica",
+    date: "04 e 07 de Junho de 2026",
+    place: "Pedro II - Praça da Matriz",
+  },
+  {
+    id: 4,
+    badge: "Destaque",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    org: "Festival de Inverno",
+    title: "Nome Cantor - Nome Musica",
+    date: "04 e 07 de Junho de 2026",
+    place: "Pedro II - Praça da Matriz",
+  },
+  {
+    id: 5,
+    badge: "Destaque",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    org: "Festival de Inverno",
+    title: "Evento - Nome Do Local",
+    date: "04 e 07 de Junho de 2026",
+    place: "Pedro II - Praça da Matriz",
+  },
+] as FeaturedItem[]);
 
 const modules = [A11y];
 
@@ -281,7 +247,7 @@ async function share(item: FeaturedItem) {
       await navigator.share({ title: text, text, url });
       return;
     } catch {
-      // fallback abaixo
+      // fallback
     }
   }
 
@@ -298,9 +264,7 @@ const ioReady = ref(false);
 let io: IntersectionObserver | null = null;
 
 onMounted(() => {
-  const reduceMotion = window.matchMedia?.(
-    "(prefers-reduced-motion: reduce)"
-  )?.matches;
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
   if (reduceMotion) {
     ioReady.value = true;
@@ -308,10 +272,8 @@ onMounted(() => {
   }
 
   io = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0];
+    ([entry]) => {
       if (!entry?.isIntersecting) return;
-
       ioReady.value = true;
       io?.disconnect();
       io = null;
@@ -330,32 +292,28 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .featured {
-  --serif: ui-serif, "Georgia", "Times New Roman", Times, serif;
-  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Arial, sans-serif;
+  /* Alinhado com o Hero */
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #EDE53A;
+  
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-cond: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+box-shadow: inset 0px 32px 40px -24px rgb(6, 14, 42);
+  /* Adaptação para o Tema Claro usando as cores da marca */
+  --text-main: var(--blue-deep);
+  --text-muted: rgba(6, 14, 42, 0.65); /* Azul profundo com opacidade */
+  --line: rgba(6, 14, 42, 0.08);
+  
+  --shadow-sm: 0 10px 24px rgba(1, 25, 90, 0.06);
+  --shadow-md: 0 20px 44px rgba(1, 25, 90, 0.12);
 
-  --ink: rgba(12, 14, 18, 0.95);
-  --muted: rgba(12, 14, 18, 0.62);
-  --line: rgba(12, 14, 18, 0.08);
-  --line-strong: rgba(12, 14, 18, 0.14);
-
-  --accent: #316eb9;
-  --accent-strong: #24589a;
-  --accent-soft: rgba(49, 110, 185, 0.12);
-  --gold: #ede53a;
-
-  --paper: #ffffff;
-  --paper-soft: #f7f9fc;
-  --paper-deep: #eef3f9;
-
-  --shadow-sm: 0 10px 24px rgba(12, 14, 18, 0.05);
-  --shadow-md: 0 20px 44px rgba(12, 14, 18, 0.08);
-
-  padding: 24px 0 10px;
+  padding: 40px 0 20px;
   background:
-    radial-gradient(circle at top left, rgba(49, 110, 185, 0.05), transparent 35%),
-    linear-gradient(180deg, #fff 0%, #fbfcfe 100%);
-  color: var(--ink);
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.03), transparent 35%),
+    linear-gradient(180deg, #fff 0%, #f4f6fa 100%);
+  color: var(--text-main);
 }
 
 .head,
@@ -365,7 +323,7 @@ onBeforeUnmount(() => {
 }
 
 .head {
-  margin-bottom: 14px;
+  margin-bottom: 24px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -382,28 +340,28 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent);
-  font: 800 11px/1 var(--sans);
-  letter-spacing: 0.16em;
+  color: var(--blue);
+  font: 700 clamp(0.72rem, 1.2vw, 0.85rem)/1 var(--font-cond);
+  letter-spacing: 0.20em;
   text-transform: uppercase;
 }
 
 .head__eyebrow::before {
   content: "";
-  width: 26px;
-  height: 1.5px;
+  width: 32px;
+  height: 2px;
   border-radius: 999px;
-  background: var(--accent);
-  opacity: 0.7;
+  background: var(--gold);
 }
 
 .head__title {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
   line-height: 1.02;
-  font-size: clamp(24px, 2.4vw, 34px);
+  font-size: clamp(28px, 3.2vw, 42px);
+  color: var(--blue-deep);
 }
 
 .head__actions {
@@ -412,25 +370,21 @@ onBeforeUnmount(() => {
 }
 
 .nav {
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--ink);
+  background: #ffffff;
+  color: var(--blue-deep);
   display: grid;
   place-items: center;
   cursor: pointer;
-  box-shadow: 0 8px 16px rgba(12, 14, 18, 0.04);
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease,
-    box-shadow 180ms ease;
+  box-shadow: 0 4px 12px rgba(1, 25, 90, 0.04);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .nav span {
-  font-size: 22px;
+  font-size: 24px;
   line-height: 1;
   opacity: 0.92;
 }
@@ -438,9 +392,8 @@ onBeforeUnmount(() => {
 @media (hover: hover) {
   .nav:hover {
     transform: translateY(-2px);
-    border-color: rgba(49, 110, 185, 0.2);
-    background: #fff;
-    box-shadow: 0 12px 22px rgba(12, 14, 18, 0.07);
+    border-color: rgba(1, 25, 90, 0.15);
+    box-shadow: 0 8px 20px rgba(1, 25, 90, 0.08);
   }
 }
 
@@ -449,7 +402,7 @@ onBeforeUnmount(() => {
 }
 
 .swiper {
-  padding: 6px 2px 18px;
+  padding: 6px 2px 24px;
 }
 
 .card {
@@ -459,27 +412,23 @@ onBeforeUnmount(() => {
 .card__link {
   position: relative;
   display: grid;
-  grid-template-rows: 168px 1fr;
-  height: 380px;
+  grid-template-rows: 180px 1fr;
+  height: 390px;
   overflow: hidden;
-  border-radius: 22px;
-  border: 1px solid rgba(12, 14, 18, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(247, 249, 252, 1));
+  border-radius: 16px;
+  border: 1px solid rgba(6, 14, 42, 0.06);
+  background: #ffffff;
   text-decoration: none;
   color: inherit;
   box-shadow: var(--shadow-sm);
   transform: translateZ(0);
-  transition:
-    transform 220ms ease,
-    border-color 220ms ease,
-    box-shadow 220ms ease;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
 .media {
   position: relative;
   overflow: hidden;
-  background: #0f1724;
+  background: var(--blue-deep);
 }
 
 .media__img {
@@ -489,15 +438,12 @@ onBeforeUnmount(() => {
   object-fit: cover;
   transform: scale(1.001);
   transition: transform 700ms ease;
-  filter: saturate(1.05) contrast(1.04);
 }
 
 .media__overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to top, rgba(8, 12, 18, 0.5), rgba(8, 12, 18, 0.04) 55%),
-    linear-gradient(to right, rgba(49, 110, 185, 0.12), transparent 45%);
+  background: linear-gradient(to top, rgba(6,14,42,0.6), transparent 60%);
   pointer-events: none;
 }
 
@@ -507,27 +453,28 @@ onBeforeUnmount(() => {
   width: 120px;
   height: 120px;
   border-radius: 999px;
-  background: rgba(237, 229, 58, 0.26);
-  filter: blur(24px);
+  background: rgba(237, 229, 58, 0.35); /* Brilho dourado do hero */
+  filter: blur(28px);
   pointer-events: none;
 }
 
+/* Badge agora alinhado ao Hero */
 .badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 14px;
+  left: 14px;
   z-index: 2;
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
+  min-height: 26px;
   padding: 0 12px;
-  border-radius: 999px;
-  background: rgba(49, 110, 185, 0.92);
-  color: #fff;
-  font: 800 11px/1 var(--sans);
-  letter-spacing: 0.05em;
+  border-radius: 2px;
+  background: var(--gold);
+  color: #1a1200;
+  font: 800 11px/1 var(--font-cond);
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  box-shadow: 0 12px 24px rgba(49, 110, 185, 0.24);
+  box-shadow: 0 4px 14px rgba(237, 229, 58, 0.3);
 }
 
 .share {
@@ -537,19 +484,16 @@ onBeforeUnmount(() => {
   z-index: 2;
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  background: rgba(10, 12, 16, 0.22);
+  background: rgba(6, 14, 42, 0.3);
   color: #fff;
   display: grid;
   place-items: center;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition:
-    transform 160ms ease,
-    background 160ms ease,
-    border-color 160ms ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 160ms ease, background 160ms ease;
 }
 
 .share .i {
@@ -559,9 +503,9 @@ onBeforeUnmount(() => {
 
 @media (hover: hover) {
   .share:hover {
-    transform: translateY(-1px);
-    background: rgba(10, 12, 16, 0.34);
-    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-2px);
+    background: var(--blue);
+    border-color: var(--blue);
   }
 }
 
@@ -570,14 +514,14 @@ onBeforeUnmount(() => {
   flex-direction: column;
   justify-content: space-between;
   min-height: 0;
-  padding: 15px 15px 14px;
+  padding: 20px 18px;
   gap: 14px;
 }
 
 .top {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   min-height: 0;
 }
 
@@ -586,48 +530,31 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 8px;
   min-height: 24px;
-  color: var(--muted);
-  font: 700 12px/1.2 var(--sans);
+  color: var(--text-muted);
+  font: 700 13px/1.2 var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .org__mark {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   flex-shrink: 0;
-  position: relative;
-  background: rgba(49, 110, 185, 0.08);
-  border: 1px solid rgba(49, 110, 185, 0.08);
-}
-
-.org__mark::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border-radius: 999px;
   background: var(--gold);
-  box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.16);
-}
-
-.org__name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.2);
 }
 
 .title {
   margin: 0;
-  min-height: 58px;
-  font-family: var(--sans);
-  font-weight: 900;
-  font-size: 15px;
-  line-height: 1.18;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--ink);
-
+  min-height: 52px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--blue-deep);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -636,8 +563,8 @@ onBeforeUnmount(() => {
   margin-top: auto;
   display: grid;
   gap: 10px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(12, 14, 18, 0.06);
+  padding-top: 14px;
+  border-top: 1px solid rgba(6, 14, 42, 0.06);
 }
 
 .row {
@@ -648,21 +575,21 @@ onBeforeUnmount(() => {
 }
 
 .row__ic {
-  width: 18px;
-  height: 18px;
-  color: rgba(12, 14, 18, 0.7);
+  width: 16px;
+  height: 16px;
+  color: var(--blue);
+  opacity: 0.8;
   transform: translateY(1px);
 }
 
 .row__ic .i {
-  width: 18px;
-  height: 18px;
+  width: 100%;
+  height: 100%;
 }
 
 .row__tx {
-  font: 650 12.5px/1.42 var(--sans);
-  color: rgba(12, 14, 18, 0.78);
-
+  font: 500 13px/1.4 var(--font-sans);
+  color: var(--text-muted);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -671,140 +598,92 @@ onBeforeUnmount(() => {
 
 .card__bar {
   position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--gold), white 22%));
-  opacity: 0.95;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
+  opacity: 0.8;
+  transition: opacity 220ms ease;
 }
 
 @media (hover: hover) {
   .card__link:hover {
-    transform: translateY(-5px);
-    border-color: rgba(49, 110, 185, 0.16);
+    transform: translateY(-6px);
+    border-color: rgba(1, 25, 90, 0.1);
     box-shadow: var(--shadow-md);
   }
 
   .card__link:hover .media__img {
     transform: scale(1.05);
   }
+  
+  .card__link:hover .card__bar {
+    opacity: 1;
+  }
 }
 
-.card__link {
-  opacity: 1;
-}
+/* Animação simplificada com a variável inline */
+.card__link { opacity: 1; }
 
 .card[data-io="0"] .card__link {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(20px);
 }
 
 .card[data-io="1"] .card__link {
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 480ms ease,
-    transform 480ms ease,
+    opacity 600ms ease,
+    transform 600ms ease,
     box-shadow 220ms ease,
     border-color 220ms ease;
+  transition-delay: var(--stagger-delay, 0ms); /* Pega o delay do HTML */
 }
 
-.swiper :deep(.swiper-slide) {
-  height: auto;
-}
+/* Mantém o swiper ajustando a altura automaticamente */
+.swiper :deep(.swiper-slide) { height: auto; }
 
-.swiper :deep(.swiper-slide:nth-child(1)) .card__link {
-  transition-delay: 40ms;
-}
-.swiper :deep(.swiper-slide:nth-child(2)) .card__link {
-  transition-delay: 80ms;
-}
-.swiper :deep(.swiper-slide:nth-child(3)) .card__link {
-  transition-delay: 120ms;
-}
-.swiper :deep(.swiper-slide:nth-child(4)) .card__link {
-  transition-delay: 160ms;
-}
-.swiper :deep(.swiper-slide:nth-child(5)) .card__link {
-  transition-delay: 200ms;
-}
-.swiper :deep(.swiper-slide:nth-child(6)) .card__link {
-  transition-delay: 240ms;
-}
-
+/* ── Responsivo ──────────────────────────────────── */
 @media (max-width: 768px) {
-  .featured {
-    padding: 18px 0 8px;
-  }
-
-  .head,
-  .rail {
-    width: min(100%, calc(100% - 16px));
-  }
-
-  .head {
-    margin-bottom: 10px;
-  }
-
-  .head__title {
-    font-size: 24px;
-  }
-
-  .head__eyebrow {
-    font-size: 10px;
-  }
+  .featured { padding: 30px 0 10px; }
+  .head, .rail { width: min(100%, calc(100% - 32px)); }
+  .head { margin-bottom: 16px; }
+  .head__title { font-size: 26px; }
 
   .card__link {
-    height: 372px;
-    grid-template-rows: 160px 1fr;
-    border-radius: 20px;
+    height: 380px;
+    grid-template-rows: 170px 1fr;
+    border-radius: 12px;
   }
 
-  .body {
-    padding: 13px 13px 12px;
-    gap: 12px;
-  }
-
-  .title {
-    font-size: 14px;
-    min-height: 54px;
-  }
-
-  .row__tx {
-    font-size: 12px;
-  }
+  .body { padding: 16px 14px; gap: 12px; }
+  .title { font-size: 16px; min-height: 44px; }
+  .row__tx { font-size: 12px; }
 }
 
 @media (max-width: 720px) {
-  .head__actions {
-    display: none;
-  }
+  .head__actions { display: none; }
 }
 
 @media (max-width: 520px) {
   .card__link {
-    height: 368px;
-    grid-template-rows: 154px 1fr;
+    height: 370px;
+    grid-template-rows: 160px 1fr;
   }
 }
 
+/* ── Reduced motion ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .card[data-io="0"] .card__link {
     opacity: 1;
     transform: none;
   }
-
-  .card__link,
-  .media__img,
-  .nav,
-  .share {
+  .card__link, .media__img, .nav, .share {
     transition: none !important;
   }
 }
 
-.i {
-  display: block;
-}
+.i { display: block; }
 </style>

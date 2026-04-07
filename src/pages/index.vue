@@ -1,10 +1,9 @@
 <template>
 <Home/>
 <destaques />
-<BannerFip />
-<AtracoesP />
 <ConfirmedGuests />
 <LocalMVisitado />
+<AtracoesP />
 <MapaP2 />
 <BlogP /> 
 <PatrocinioScrol />

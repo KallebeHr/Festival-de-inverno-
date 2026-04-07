@@ -420,7 +420,9 @@ onBeforeUnmount(() => {
   position: relative;
   padding: 62px 0 64px;
   overflow: hidden;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  background:
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.03), transparent 35%),
+    linear-gradient(180deg, #fff 0%, #f4f6fa 100%);
 }
 
 .places__bg {
