@@ -6,24 +6,39 @@
     :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     aria-label="Locais mais visitados em Pedro II"
   >
+    <!-- ── Fundo branco com detalhes ── -->
     <div class="places__bg" aria-hidden="true">
-      <div class="places__bg-grid"></div>
+      <div class="places__bg-lines"></div>
       <div class="places__bg-glow places__bg-glow--a"></div>
       <div class="places__bg-glow places__bg-glow--b"></div>
     </div>
 
     <div class="places__container">
+
+      <!-- ── Cabeçalho ── -->
       <header class="places__head">
         <div class="places__head-left">
-          <p class="places__eyebrow" data-anim="eyebrow">
-            <span class="places__dot" aria-hidden="true"></span>
-            Descubra Pedro II
-          </p>
+
+          <!-- Badge categoria (mesmo estilo do hero) -->
+          <div class="places__badge-wrap" data-anim="eyebrow">
+            <span class="places__badge">
+              <span class="places__badge-dot" aria-hidden="true"></span>
+              Descubra Pedro II
+              <span class="places__badge-dot" aria-hidden="true"></span>
+            </span>
+          </div>
 
           <h2 class="places__title" data-anim="title">
-            Locais mais visitados
-            <span>durante o festival</span>
+            <span class="places__title-eyebrow">Locais mais visitados</span>
+            <span class="places__title-main">durante o festival</span>
           </h2>
+
+          <!-- Divisor (mesmo do hero) -->
+          <div class="places__divider" data-anim="divider" aria-hidden="true">
+            <span class="places__divider-line"></span>
+            <span class="places__divider-diamond"></span>
+            <span class="places__divider-line"></span>
+          </div>
 
           <p class="places__sub" data-anim="sub">
             Conheça cenários, experiências e pontos especiais para tornar sua
@@ -31,25 +46,27 @@
           </p>
         </div>
 
-        <ul class="places__badges" data-anim="badges" aria-label="Destaques dos locais">
-          <li class="places__badge">Paisagens marcantes</li>
-          <li class="places__badge">Turismo cultural</li>
-          <li class="places__badge">Passeios guiados</li>
-          <li class="places__badge">Experiências locais</li>
+        <!-- Tags de destaque (estilo hero: border-radius: 2px, uppercase) -->
+        <ul class="places__tags" data-anim="badges" aria-label="Destaques dos locais">
+          <li class="places__tag">Paisagens marcantes</li>
+          <li class="places__tag">Turismo cultural</li>
+          <li class="places__tag">Passeios guiados</li>
+          <li class="places__tag">Experiências locais</li>
         </ul>
       </header>
 
+      <!-- ── Slider ── -->
       <div class="places__slider" data-anim="slider">
         <swiper
           :modules="modules"
           :slidesPerView="1"
-          :spaceBetween="16"
+          :spaceBetween="20"
           :loop="true"
           :autoplay="{ delay: 8200, disableOnInteraction: false }"
           :pagination="{ clickable: true, type: 'progressbar' }"
           class="placesSwiper"
           :breakpoints="{
-            768: { slidesPerView: 2 },
+            768:  { slidesPerView: 2 },
             1120: { slidesPerView: 3 }
           }"
         >
@@ -66,6 +83,7 @@
               @keydown.enter.prevent="toggleActive(idx)"
               @keydown.space.prevent="toggleActive(idx)"
             >
+              <!-- ── Mídia ── -->
               <div class="place-card__media">
                 <img
                   :src="place.image"
@@ -73,69 +91,63 @@
                   class="place-card__img"
                   loading="lazy"
                 />
-
                 <div class="place-card__overlay"></div>
 
                 <div class="place-card__top">
-                  <span class="place-card__tag">
-                    {{ place.category }}
-                  </span>
+                  <span class="place-card__tag">{{ place.category }}</span>
                 </div>
 
                 <div class="place-card__bottom">
                   <h3 class="place-card__title">{{ place.title }}</h3>
-                  <p class="place-card__meta">{{ place.location }}</p>
+                  <p class="place-card__meta">
+                    <svg class="place-card__meta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M8 1.5C5.515 1.5 3.5 3.515 3.5 6c0 4.125 4.5 8.5 4.5 8.5s4.5-4.375 4.5-8.5c0-2.485-2.015-4.5-4.5-4.5z" stroke="currentColor" stroke-width="1.2"/>
+                      <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                    {{ place.location }}
+                  </p>
                 </div>
               </div>
 
+              <!-- ── Reveal ao hover/toque ── -->
               <div class="place-card__reveal">
-                <p class="place-card__about">
-                  {{ place.about }}
-                </p>
+                <p class="place-card__about">{{ place.about }}</p>
 
                 <div class="place-card__details">
-                  <p>
-                    <span class="label">Horário:</span>
-                    <span class="value">{{ place.bestTime }}</span>
-                  </p>
-
-                  <p>
-                    <span class="label">Perfil:</span>
-                    <span class="value">{{ place.profile }}</span>
-                  </p>
+                  <div class="place-card__detail-item">
+                    <span class="detail-label">Horário</span>
+                    <span class="detail-value">{{ place.bestTime }}</span>
+                  </div>
+                  <div class="place-card__detail-sep" aria-hidden="true">◆</div>
+                  <div class="place-card__detail-item">
+                    <span class="detail-label">Perfil</span>
+                    <span class="detail-value">{{ place.profile }}</span>
+                  </div>
                 </div>
 
                 <div class="place-card__actions">
-                  <button
-                    class="btn btn--ghost"
-                    type="button"
-                    @click.stop="seeDetails(place)"
-                  >
+                  <button class="btn btn--ghost" type="button" @click.stop="seeDetails(place)">
                     Ver detalhes
-                    <span class="btn__shine" aria-hidden="true"></span>
                   </button>
-
-                  <button
-                    class="btn btn--primary"
-                    type="button"
-                    @click.stop="chooseGuide(place)"
-                  >
+                  <button class="btn btn--primary" type="button" @click.stop="chooseGuide(place)">
                     Escolher guia
                     <span class="btn__chev" aria-hidden="true"></span>
-                    <span class="btn__shine" aria-hidden="true"></span>
                   </button>
                 </div>
               </div>
 
+              <!-- Brilho ao hover -->
               <span class="place-card__sheen" aria-hidden="true"></span>
             </article>
           </swiper-slide>
         </swiper>
 
         <p class="places__hint" data-anim="hint">
-          Dica: passe o mouse no desktop ou toque no card no mobile para ver mais.
+          <span class="places__hint-icon" aria-hidden="true">◆</span>
+          Passe o mouse no desktop ou toque no card no mobile para ver mais.
         </p>
       </div>
+
     </div>
   </section>
 </template>
@@ -143,32 +155,29 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
-// Swiper
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-// GSAP
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const modules = [Pagination, Autoplay];
 
-const root = ref<HTMLElement | null>(null);
-const isVisible = ref(false);
-const reduceMotion = ref(false);
-const activeIndex = ref<number | null>(null);
+const root          = ref<HTMLElement | null>(null);
+const isVisible     = ref(false);
+const reduceMotion  = ref(false);
+const activeIndex   = ref<number | null>(null);
 
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
-let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
-
+let onMqChange: ((e: MediaQueryListEvent) => void) | null = null;
 let mm: gsap.MatchMedia | null = null;
 let cleanupTilt: Array<() => void> = [];
 
-// Troque pelas suas imagens reais
+// ── Troque pelas imagens reais ──────────────────────────────────────
 import local1 from "/Local/Cachu1.png";
 import local2 from "/Local/Cachu1.png";
 import local3 from "/Local/Cachu1.png";
@@ -189,18 +198,16 @@ type Place = {
 const places: Place[] = [
   {
     title: "Mirante do Gritador",
-    about:
-      "Paisagem marcante da região, ideal para contemplação, fotos e uma experiência inesquecível em Pedro II.",
+    about: "Paisagem marcante da região, ideal para contemplação, fotos e uma experiência inesquecível em Pedro II.",
     image: local1,
     category: "Natureza",
-    location: "Pedro II • PI",
+    location: "Pedro II · PI",
     profile: "Famílias e casais",
     bestTime: "Manhã e pôr do sol"
   },
   {
     title: "Centro Histórico",
-    about:
-      "Perfeito para passeios leves, arquitetura local, cultura e o clima especial da cidade durante o festival.",
+    about: "Perfeito para passeios leves, arquitetura local, cultura e o clima especial da cidade durante o festival.",
     image: local2,
     category: "Cultura",
     location: "Centro de Pedro II",
@@ -209,8 +216,7 @@ const places: Place[] = [
   },
   {
     title: "Cachoeira do Salto Liso",
-    about:
-      "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso em meio às paisagens da região.",
+    about: "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso em meio às paisagens da região.",
     image: local3,
     category: "Ecoturismo",
     location: "Zona rural",
@@ -219,18 +225,16 @@ const places: Place[] = [
   },
   {
     title: "Feira de Opala",
-    about:
-      "Um dos espaços mais procurados para conhecer artesanato, cultura local e a identidade única de Pedro II.",
+    about: "Um dos espaços mais procurados para conhecer artesanato, cultura local e a identidade única de Pedro II.",
     image: local4,
     category: "Artesanato",
-    location: "Pedro II • PI",
+    location: "Pedro II · PI",
     profile: "Turistas e compradores",
     bestTime: "Manhã e tarde"
   },
   {
     title: "Praça de Eventos",
-    about:
-      "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
+    about: "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
     image: local5,
     category: "Festival",
     location: "Área principal do evento",
@@ -239,8 +243,7 @@ const places: Place[] = [
   },
   {
     title: "Rota das Paisagens",
-    about:
-      "Um percurso guiado para conhecer diferentes cenários naturais e pontos especiais da região de Pedro II.",
+    about: "Um percurso guiado para conhecer diferentes cenários naturais e pontos especiais da região de Pedro II.",
     image: local6,
     category: "Passeio guiado",
     location: "Região de Pedro II",
@@ -254,49 +257,36 @@ function toggleActive(idx: number) {
 }
 
 function chooseGuide(place: Place) {
-  const phone = "5586999999999"; // troque pelo número real
-  const text = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
+  const phone = "5586999999999";
+  const text  = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 }
 
 function seeDetails(place: Place) {
   console.log("Ver detalhes:", place.title);
-  // Aqui você pode abrir modal, rota ou drawer futuramente
 }
 
 function bindTilt(scope: HTMLElement) {
   const cards = scope.querySelectorAll<HTMLElement>("[data-card]");
-
-  const clamp = (n: number, min: number, max: number) =>
-    Math.max(min, Math.min(max, n));
+  const clamp  = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 
   cards.forEach((card) => {
     const media = card.querySelector<HTMLElement>(".place-card__media");
     if (!media) return;
 
     const onMove = (e: MouseEvent) => {
-      const r = card.getBoundingClientRect();
+      const r  = card.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top) / r.height;
-
-      const rx = clamp((0.5 - py) * 7, -5, 5);
-      const ry = clamp((px - 0.5) * 8, -6, 6);
-
+      const py = (e.clientY - r.top)  / r.height;
       gsap.to(media, {
-        rotateX: rx,
-        rotateY: ry,
-        duration: 0.25,
-        ease: "power2.out"
+        rotateX: clamp((0.5 - py) * 7, -5, 5),
+        rotateY: clamp((px - 0.5) * 8, -6, 6),
+        duration: 0.25, ease: "power2.out"
       });
     };
 
     const onLeave = () => {
-      gsap.to(media, {
-        rotateX: 0,
-        rotateY: 0,
-        duration: 0.35,
-        ease: "power2.out"
-      });
+      gsap.to(media, { rotateX: 0, rotateY: 0, duration: 0.35, ease: "power2.out" });
     };
 
     card.addEventListener("mousemove", onMove);
@@ -314,77 +304,63 @@ function bindTilt(scope: HTMLElement) {
 onMounted(async () => {
   await nextTick();
 
+  // ── Fontes (mesmo do hero) ──────────────────────────────────────
+  if (!document.querySelector('link[data-places-fonts]')) {
+    const link = document.createElement("link");
+    link.rel   = "stylesheet";
+    link.setAttribute("data-places-fonts", "1");
+    link.href  =
+      "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
+    document.head.appendChild(link);
+  }
+
   mq = window.matchMedia("(prefers-reduced-motion: reduce)");
   reduceMotion.value = mq.matches;
-
-  onMqChange = (event: MediaQueryListEvent) => {
-    reduceMotion.value = event.matches;
-  };
-
+  onMqChange = (e) => { reduceMotion.value = e.matches; };
   mq.addEventListener?.("change", onMqChange);
 
   io = new IntersectionObserver(
-    ([entry]) => {
-      isVisible.value = !!entry?.isIntersecting;
-    },
+    ([entry]) => { isVisible.value = !!entry?.isIntersecting; },
     { threshold: 0.15 }
   );
-
   if (root.value) io.observe(root.value);
 
   if (!root.value || reduceMotion.value) return;
 
-  const scope = root.value;
+  const scope   = root.value;
   const eyebrow = scope.querySelector('[data-anim="eyebrow"]');
-  const title = scope.querySelector('[data-anim="title"]');
-  const sub = scope.querySelector('[data-anim="sub"]');
-  const badges = scope.querySelectorAll(".places__badge");
-  const slider = scope.querySelector('[data-anim="slider"]');
-  const hint = scope.querySelector('[data-anim="hint"]');
-  const cards = scope.querySelectorAll("[data-card]");
+  const title   = scope.querySelector('[data-anim="title"]');
+  const divider = scope.querySelector('[data-anim="divider"]');
+  const sub     = scope.querySelector('[data-anim="sub"]');
+  const badges  = scope.querySelectorAll(".places__tag");
+  const slider  = scope.querySelector('[data-anim="slider"]');
+  const hint    = scope.querySelector('[data-anim="hint"]');
+  const cards   = scope.querySelectorAll("[data-card]");
 
-  gsap.set([eyebrow, title, sub, slider, hint], {
-    autoAlpha: 0,
-    y: 14,
-    filter: "blur(10px)"
-  });
-
-  gsap.set(badges, {
-    autoAlpha: 0,
-    y: 10,
-    filter: "blur(8px)"
-  });
-
-  gsap.set(cards, {
-    autoAlpha: 0,
-    y: 16,
-    filter: "blur(10px)"
-  });
+  gsap.set([eyebrow, title, divider, sub, slider, hint], { autoAlpha: 0, y: 18, filter: "blur(10px)" });
+  gsap.set(badges, { autoAlpha: 0, y: 10, filter: "blur(8px)" });
+  gsap.set(cards,  { autoAlpha: 0, y: 20, filter: "blur(10px)" });
 
   mm = gsap.matchMedia();
   mm.add("(min-width: 0px)", () => {
     const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: scope,
-        start: "top 80%",
-        once: true
-      },
+      scrollTrigger: { trigger: scope, start: "top 80%", once: true },
       defaults: { ease: "power2.out" }
     });
 
-    tl.to(eyebrow, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.00)
-      .to(title, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55 }, 0.06)
-      .to(sub, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.12)
-      .to(badges, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45, stagger: 0.08 }, 0.18)
-      .to(slider, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5 }, 0.24)
-      .to(cards, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, stagger: 0.08 }, 0.28)
-      .to(hint, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.35 }, 0.42);
+    tl
+      .to(eyebrow, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.00)
+      .to(title,   { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55 }, 0.08)
+      .to(divider, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.40 }, 0.14)
+      .to(sub,     { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.18)
+      .to(badges,  { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.40, stagger: 0.07 }, 0.22)
+      .to(slider,  { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.50 }, 0.28)
+      .to(cards,   { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, stagger: 0.08 }, 0.32)
+      .to(hint,    { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.35 }, 0.46);
 
     bindTilt(scope);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => { ScrollTrigger.getAll().forEach((t) => t.kill()); };
   });
 });
 
@@ -392,231 +368,304 @@ onBeforeUnmount(() => {
   if (io && root.value) io.unobserve(root.value);
   io?.disconnect();
   io = null;
-
-  if (mq && onMqChange) {
-    mq.removeEventListener?.("change", onMqChange);
-  }
-
+  if (mq && onMqChange) mq.removeEventListener?.("change", onMqChange);
   cleanupTilt.forEach((fn) => fn());
   cleanupTilt = [];
-
   mm?.revert();
   ScrollTrigger.getAll().forEach((t) => t.kill());
 });
 </script>
 
 <style scoped>
+/* ── Tokens (alinhados ao hero) ─────────────────────────────────── */
 .places {
-  --accent: #316eb9;
-  --accent-soft: rgba(49, 110, 185, 0.08);
-  --accent-soft-2: rgba(49, 110, 185, 0.14);
-  --text: #111111;
-  --muted: rgba(17, 17, 17, 0.62);
-  --line: rgba(17, 17, 17, 0.08);
-  --line-strong: rgba(49, 110, 185, 0.16);
-  --surface: rgba(255, 255, 255, 0.78);
-  --shadow: 0 24px 70px rgba(17, 17, 17, 0.08);
+  --blue:       #01195a;
+  --blue-deep:  #060e2a;
+  --blue-soft:  rgba(1, 25, 90, 0.06);
+  --blue-mid:   rgba(1, 25, 90, 0.12);
+  --gold:       #EDE53A;
+  --gold-dk:    #c8a830;
+  --gold-soft:  rgba(237, 229, 58, 0.14);
+  --gold-line:  rgba(237, 229, 58, 0.40);
+  --text:       #0d1326;
+  --muted:      rgba(13, 19, 38, 0.55);
+  --line:       rgba(1, 25, 90, 0.09);
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
 
   position: relative;
-  padding: 62px 0 64px;
+  padding: 72px 0 80px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(1, 25, 90, 0.03), transparent 35%),
-    linear-gradient(180deg, #fff 0%, #f4f6fa 100%);
+  background: #ffffff;
 }
 
+/* ── Fundo ─────────────────────────────────────────────────────── */
 .places__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.places__bg-grid {
+/* Grade sutil azul-escuro */
+.places__bg-lines {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(49, 110, 185, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(49, 110, 185, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.42;
-  mask-image: radial-gradient(circle at center, black 46%, transparent 100%);
+    linear-gradient(to right, rgba(1,25,90,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(1,25,90,0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
 }
 
 .places__bg-glow {
   position: absolute;
   border-radius: 999px;
-  filter: blur(60px);
+  filter: blur(72px);
 }
 
+/* Glow dourado sutil no topo-esquerdo */
 .places__bg-glow--a {
-  top: -120px;
-  left: -140px;
-  width: 340px;
-  height: 340px;
-  background: rgba(49, 110, 185, 0.12);
+  top: -80px;
+  left: -100px;
+  width: 360px;
+  height: 360px;
+  background: rgba(237, 229, 58, 0.10);
 }
 
+/* Glow azul no fundo-direito */
 .places__bg-glow--b {
-  right: -120px;
-  bottom: -120px;
+  right: -100px;
+  bottom: -80px;
   width: 320px;
   height: 320px;
-  background: rgba(49, 110, 185, 0.08);
+  background: rgba(1, 25, 90, 0.06);
 }
 
+/* ── Container ──────────────────────────────────────────────────── */
 .places__container {
   position: relative;
   z-index: 1;
   max-width: 1200px;
-  width: min(1200px, calc(100% - 40px));
+  width: min(1200px, calc(100% - 48px));
   margin: 0 auto;
 }
 
+/* ── Cabeçalho ──────────────────────────────────────────────────── */
 .places__head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 18px;
+  gap: 24px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 36px;
 }
 
 .places__head-left {
-  max-width: 680px;
+  max-width: 600px;
 }
 
-.places__eyebrow {
+/* Badge (mesmo do hero) */
+.places__badge-wrap {
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 12px;
-  color: var(--accent);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.places__dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 7px rgba(49, 110, 185, 0.12);
-}
-
-.places__title {
-  margin: 0;
-  color: var(--text);
-  font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-  font-size: clamp(1.9rem, 3.7vw, 3rem);
-  line-height: 0.98;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-}
-
-.places__title span {
-  display: block;
-  color: rgba(17, 17, 17, 0.92);
-}
-
-.places__sub {
-  margin: 14px 0 0;
-  max-width: 620px;
-  color: var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.65;
-}
-
-.places__badges {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(160px, 1fr));
-  gap: 8px;
-  padding: 0;
-  margin: 0;
-  width: min(380px, 100%);
+  margin-bottom: 18px;
 }
 
 .places__badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: rgba(49, 110, 185, 0.06);
-  border: 1px solid rgba(49, 110, 185, 0.1);
-  color: rgba(17, 17, 17, 0.78);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-align: center;
+  gap: 8px;
+  background: var(--gold);
+  color: #1a1200;
+  font-family: var(--font-cond);
+  font-size: clamp(0.58rem, 1.0vw, 0.70rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 2px;
 }
 
+.places__badge-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+/* Título (Playfair Display, mesmo do hero) */
+.places__title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.places__title-eyebrow {
+  font-family: var(--font-cond);
+  font-size: clamp(0.72rem, 1.3vw, 0.90rem);
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.places__title-main {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--blue);
+}
+
+/* Divisor (mesmo do hero) */
+.places__divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  max-width: 240px;
+}
+
+.places__divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold-line), transparent);
+}
+
+.places__divider-diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.places__sub {
+  margin: 0;
+  max-width: 520px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: clamp(0.88rem, 1.4vw, 0.98rem);
+  line-height: 1.70;
+}
+
+/* Tags de destaque (estilo condensado, uppercase, border-radius: 2px) */
+.places__tags {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  width: min(360px, 100%);
+  align-self: flex-start;
+  padding-top: 4px;
+}
+
+.places__tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 2px;
+  background: var(--blue-soft);
+  border: 1px solid rgba(1, 25, 90, 0.12);
+  color: var(--blue);
+  font-family: var(--font-cond);
+  font-size: clamp(0.62rem, 1.0vw, 0.74rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.places__tag:hover {
+  background: rgba(1, 25, 90, 0.10);
+  border-color: rgba(1, 25, 90, 0.20);
+}
+
+/* ── Slider ─────────────────────────────────────────────────────── */
 .places__slider {
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .placesSwiper {
   width: 100%;
-  padding: 10px 0 28px;
+  padding: 8px 0 32px;
 }
 
+/* Barra de progresso dourada (como o scroll-hint do hero) */
 :deep(.swiper-pagination-progressbar) {
-  background: rgba(49, 110, 185, 0.08);
-  height: 4px;
+  background: rgba(1, 25, 90, 0.07);
+  height: 3px;
   border-radius: 999px;
   overflow: hidden;
 }
 
 :deep(.swiper-pagination-progressbar-fill) {
-  background: linear-gradient(90deg, #316eb9, rgba(49, 110, 185, 0.5));
+  background: linear-gradient(90deg, var(--gold), var(--gold-dk));
   border-radius: 999px;
 }
 
 .places__hint {
-  margin: 4px 0 0;
-  color: rgba(17, 17, 17, 0.58);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.76rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-family: var(--font-cond);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
 }
 
-/* card */
+.places__hint-icon {
+  font-size: 0.45em;
+  color: var(--gold-dk);
+  opacity: 0.8;
+}
+
+/* ── Card ───────────────────────────────────────────────────────── */
 .place-card {
   width: 100%;
-  max-width: 320px;
-  height: 390px;
+  max-width: 330px;
+  height: 400px;
   margin: 0 auto;
-  border-radius: 22px;
+  border-radius: 4px;           /* hero usa bordas quase retas */
   overflow: hidden;
   position: relative;
   cursor: pointer;
   outline: none;
-  border: 1px solid rgba(49, 110, 185, 0.1);
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(1, 25, 90, 0.10);
+  background: #f8f9fc;
+  box-shadow:
+    0 2px 8px rgba(1, 25, 90, 0.06),
+    0 16px 48px rgba(1, 25, 90, 0.08);
 }
 
 .place-card:focus-visible {
-  border-color: rgba(49, 110, 185, 0.22);
   box-shadow:
-    0 0 0 6px rgba(49, 110, 185, 0.12),
-    0 24px 70px rgba(17, 17, 17, 0.1);
+    0 0 0 3px var(--gold),
+    0 16px 48px rgba(1, 25, 90, 0.10);
 }
 
+/* Brilho (sheen) ao hover */
 .place-card__sheen {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.24), transparent);
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%);
   transform: translateX(-140%);
-  transition: transform .7s ease;
+  transition: transform 0.65s ease;
   pointer-events: none;
-  z-index: 5;
+  z-index: 6;
 }
 
 .place-card:hover .place-card__sheen,
@@ -625,6 +674,7 @@ onBeforeUnmount(() => {
   transform: translateX(140%);
 }
 
+/* Mídia */
 .place-card__media {
   position: absolute;
   inset: 0;
@@ -637,7 +687,7 @@ onBeforeUnmount(() => {
   height: 100%;
   object-fit: cover;
   transform: scale(1.02);
-  transition: transform .55s ease;
+  transition: transform 0.55s ease;
 }
 
 .place-card:hover .place-card__img,
@@ -645,14 +695,20 @@ onBeforeUnmount(() => {
   transform: scale(1.08);
 }
 
+/* Overlay com gradiente azul-escuro (tom do hero) */
 .place-card__overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(10, 20, 40, 0.08), rgba(10, 20, 40, 0.68)),
-    radial-gradient(800px 280px at 20% 15%, rgba(49,110,185,0.18), transparent 60%);
+    linear-gradient(
+      180deg,
+      rgba(6, 14, 42, 0.05) 0%,
+      rgba(6, 14, 42, 0.55) 60%,
+      rgba(1, 25, 90, 0.88) 100%
+    );
 }
 
+/* Tag categoria (estilo ghost do hero: borda semitransparente) */
 .place-card__top {
   position: absolute;
   top: 12px;
@@ -666,63 +722,83 @@ onBeforeUnmount(() => {
 .place-card__tag {
   display: inline-flex;
   align-items: center;
-  min-height: 30px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.72rem;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 2px;
+  background: rgba(237, 229, 58, 0.18);
+  border: 1px solid rgba(237, 229, 58, 0.50);
+  color: var(--gold);
+  font-family: var(--font-cond);
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* Título e local (embaixo do card) */
 .place-card__bottom {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 14px 14px 16px;
+  padding: 14px 16px 18px;
   z-index: 2;
 }
 
 .place-card__title {
   margin: 0;
   color: #ffffff;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.08rem;
-  line-height: 1.02;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
 }
 
 .place-card__meta {
-  margin: 4px 0 0;
-  color: rgba(255, 255, 255, 0.74);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.8rem;
+  margin: 5px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(255, 255, 255, 0.68);
+  font-family: var(--font-cond);
+  font-size: 0.74rem;
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
+.place-card__meta-icon {
+  width: 12px;
+  height: 12px;
+  color: var(--gold);
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* ── Reveal ao hover ─────────────────────────────────────────────── */
 .place-card__reveal {
   position: absolute;
   inset: 0;
   z-index: 4;
-  padding: 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  gap: 10px;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity .35s ease, transform .35s ease;
+  transition: opacity 0.32s ease, transform 0.32s ease;
   background:
-    radial-gradient(900px 340px at 15% 8%, rgba(49,110,185,0.2), transparent 58%),
-    rgba(7, 16, 32, 0.56);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+    linear-gradient(
+      180deg,
+      rgba(1, 25, 90, 0.30) 0%,
+      rgba(1, 25, 90, 0.92) 100%
+    );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .place-card:hover .place-card__reveal,
@@ -733,178 +809,219 @@ onBeforeUnmount(() => {
 }
 
 .place-card__about {
-  margin: 0 0 10px;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.84rem;
-  line-height: 1.5;
-}
-
-.place-card__details {
-  display: grid;
-  gap: 6px;
-  padding: 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.place-card__details p {
   margin: 0;
-  display: grid;
-  grid-template-columns: 78px 1fr;
-  gap: 8px;
-  color: rgba(255,255,255,0.88);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  line-height: 1.55;
 }
 
-.label {
-  color: rgba(255,255,255,0.68);
+/* Detalhes: horário + perfil separados por losango (hero pattern) */
+.place-card__details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(237, 229, 58, 0.18);
+  background: rgba(1, 25, 90, 0.30);
+}
+
+.place-card__detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.place-card__detail-sep {
+  color: var(--gold);
+  font-size: 0.45em;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.detail-label {
+  color: rgba(237, 229, 58, 0.72);
+  font-family: var(--font-cond);
+  font-size: 0.64rem;
   font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.value {
-  color: rgba(255,255,255,0.95);
+.detail-value {
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-cond);
+  font-size: 0.78rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
+/* ── Botões (idênticos ao hero: border-radius: 2px) ──────────────── */
 .place-card__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 10px;
 }
 
 .btn {
   appearance: none;
-  border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 14px;
-  min-height: 40px;
-  padding: 0 12px;
+  border: none;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
+  min-height: 42px;
+  padding: 0 14px;
+  border-radius: 2px;
+  font-family: var(--font-cond);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  transition:
-    transform .2s ease,
-    background-color .2s ease,
-    border-color .2s ease,
-    box-shadow .2s ease;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
+.btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .btn--ghost {
-  background: rgba(255,255,255,0.08);
-  color: #ffffff;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .btn--primary {
-  background: linear-gradient(180deg, #316eb9, #255a9e);
-  color: #ffffff;
-  border-color: rgba(49, 110, 185, 0.55);
-  box-shadow: 0 14px 28px rgba(49, 110, 185, 0.22);
-}
-
-.btn__shine {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
-  transform: translateX(-140%);
-  transition: transform .6s ease;
-  pointer-events: none;
-}
-
-.btn:hover .btn__shine {
-  transform: translateX(140%);
+  background: var(--gold);
+  color: #140d00;
+  box-shadow: 0 4px 16px rgba(237, 229, 58, 0.22);
 }
 
 .btn__chev {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
   transform: rotate(-45deg);
+  flex-shrink: 0;
 }
 
-.places__head,
+@media (hover: hover) {
+  .btn--ghost:hover {
+    border-color: rgba(255, 255, 255, 0.50);
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .btn--primary:hover {
+    background: #f5ee50;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(237, 229, 58, 0.38);
+  }
+}
+
+/* ── Animações de entrada ────────────────────────────────────────── */
+.places__badge-wrap,
+.places__title,
+.places__divider,
+.places__sub,
+.places__tags,
 .places__slider {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 700ms ease, transform 700ms ease;
 }
 
-.is-visible .places__head,
-.is-visible .places__slider {
-  opacity: 1;
-  transform: translateY(0);
-}
+.is-visible .places__badge-wrap { opacity: 1; transform: none; transition-delay: 0ms;   }
+.is-visible .places__title      { opacity: 1; transform: none; transition-delay: 80ms;  }
+.is-visible .places__divider    { opacity: 1; transform: none; transition-delay: 140ms; }
+.is-visible .places__sub        { opacity: 1; transform: none; transition-delay: 200ms; }
+.is-visible .places__tags       { opacity: 1; transform: none; transition-delay: 260ms; }
+.is-visible .places__slider     { opacity: 1; transform: none; transition-delay: 320ms; }
 
+/* ── Responsivo ──────────────────────────────────────────────────── */
 @media (max-width: 1120px) {
-  .places__badges {
+  .places__tags {
     grid-template-columns: 1fr 1fr;
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .places {
-    padding: 52px 0 56px;
+    padding: 56px 0 64px;
+  }
+
+  .places__container {
+    width: min(1200px, calc(100% - 32px));
+  }
+
+  .places__head {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 28px;
+  }
+
+  .places__tags {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .place-card {
+    max-width: 100%;
+    height: 370px;
+  }
+}
+
+@media (max-width: 540px) {
+  .places {
+    padding: 48px 0 56px;
   }
 
   .places__container {
     width: min(1200px, calc(100% - 24px));
   }
 
-  .places__head {
-    margin-bottom: 18px;
+  .places__title-main {
+    font-size: clamp(2rem, 10vw, 2.8rem);
   }
 
-  .places__title {
-    font-size: clamp(1.8rem, 8vw, 2.6rem);
-    line-height: 1;
-  }
-
-  .places__sub {
-    font-size: 0.92rem;
-    line-height: 1.65;
-  }
-
-  .places__badges {
+  .places__tags {
     grid-template-columns: 1fr;
-    max-width: 100%;
   }
 
   .place-card {
-    max-width: 100%;
-    height: 360px;
-    border-radius: 20px;
+    height: 350px;
+    border-radius: 3px;
   }
 
   .place-card__actions {
     grid-template-columns: 1fr;
   }
 
-  .place-card__details p {
-    grid-template-columns: 70px 1fr;
+  .place-card__details {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .place-card__detail-sep {
+    display: none;
   }
 }
 
+/* ── Reduced motion ──────────────────────────────────────────────── */
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
   animation: none !important;
-  transition: none !important;
+  transition-duration: 0.01ms !important;
 }
 </style>

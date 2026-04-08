@@ -1,279 +1,139 @@
 <template>
-  <footer
-    class="footer"
-    role="contentinfo"
-    aria-label="Rodapé do Festival de Inverno"
-  >
-    <!-- brilho / ambientação -->
+  <footer class="footer" role="contentinfo" aria-label="Rodapé do Festival de Inverno">
     <div class="footer__bg" aria-hidden="true">
-      <span class="footer__glow footer__glow--a"></span>
-      <span class="footer__glow footer__glow--b"></span>
-      <span class="footer__grid"></span>
+      <div class="footer__noise"></div>
+      <div class="footer__glow"></div>
     </div>
 
-    <!-- Toast -->
-    <div class="toastWrap" aria-live="polite" aria-atomic="true">
+    <div class="toast-wrap" aria-live="polite" aria-atomic="true">
       <Transition name="toast">
         <div v-if="toast.show" class="toast" role="status">
-          <span class="toast__icon" aria-hidden="true">✓</span>
-
+          <span class="toast__icon" aria-hidden="true">◆</span>
           <div class="toast__body">
             <strong class="toast__title">{{ toast.title }}</strong>
             <span class="toast__text">{{ toast.text }}</span>
           </div>
-
-          <button
-            class="toast__close"
-            type="button"
-            @click="hideToast"
-            aria-label="Fechar aviso"
-          >
-            ×
-          </button>
+          <button class="toast__close" type="button" @click="hideToast" aria-label="Fechar">×</button>
         </div>
       </Transition>
     </div>
 
-    <div class="wrap">
-      <!-- Topo -->
-      <div class="footerHero">
-        <div class="footerHero__content">
-          <span class="footerHero__eyebrow">Festival de Inverno 2026</span>
-          <h2 class="footerHero__title">
-            Continue explorando
-            <span>Pedro II com praticidade.</span>
+    <div class="container">
+      <div class="hero-section">
+        <div class="hero-content">
+          <span class="eyebrow">Festival de Inverno ◆ 2026</span>
+          <h2 class="title">
+            Continue explorando<br />
+            <span class="italic">Pedro II com praticidade.</span>
           </h2>
-          <p class="footerHero__text">
-            Acesse contatos, localização, informações úteis e avisos oficiais do
-            evento em um só lugar.
-          </p>
         </div>
 
-        <div class="footerHero__actions" aria-label="Ações rápidas do rodapé">
-          <button class="heroBtn" type="button" @click="share">
+        <div class="hero-actions">
+          <button class="btn btn--primary" type="button" @click="share">
             Compartilhar site
-            <span aria-hidden="true">↗</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
-
-          <button class="heroBtn heroBtn--ghost" type="button" @click="copyPageLink">
+          <button class="btn btn--ghost" type="button" @click="copyPageLink">
             Copiar link
-            <span aria-hidden="true">⧉</span>
           </button>
         </div>
       </div>
 
-      <!-- Grid principal -->
-      <div class="grid">
-        <!-- Contato -->
-        <section class="card card--contact" aria-label="Contato">
-          <div class="card__head">
-            <span class="card__eyebrow">Contato</span>
-            <h3 class="card__title">Fale com a organização</h3>
-            <p class="card__text">
-              Canais rápidos para suporte, localização e atendimento.
-            </p>
-          </div>
+      <div class="main-grid">
+        <section class="info-block" aria-label="Contato">
+          <header class="info-header">
+            <h3 class="info-title">Fale com a organização</h3>
+            <p class="info-desc">Canais rápidos para suporte e localização.</p>
+          </header>
 
-          <div class="rows">
-            <article class="row">
-              <div class="row__main">
-                <span class="row__icon" aria-hidden="true">✆</span>
-                <div class="row__content">
-                  <span class="k">WhatsApp</span>
-                  <strong class="v">{{ CONTACT.whatsapp }}</strong>
-                </div>
+          <div class="contact-list">
+            <article class="contact-item">
+              <div class="contact-data">
+                <span class="label">WhatsApp</span>
+                <strong class="value">{{ CONTACT.whatsapp }}</strong>
               </div>
-
-              <div class="a">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.whatsapp, 'WhatsApp copiado')"
-                >
-                  Copiar
-                </button>
-                <a
-                  class="btn btn--ghost"
-                  :href="waLink"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Abrir
-                </a>
+              <div class="contact-actions">
+                <button class="text-link" type="button" @click="copy(CONTACT.whatsapp, 'WhatsApp copiado')">Copiar</button>
+                <a class="text-link" :href="waLink" target="_blank" rel="noopener">Abrir ↗</a>
               </div>
             </article>
 
-            <article class="row">
-              <div class="row__main">
-                <span class="row__icon" aria-hidden="true">✉</span>
-                <div class="row__content">
-                  <span class="k">Suporte</span>
-                  <strong class="v">{{ CONTACT.supportEmail }}</strong>
-                </div>
+            <article class="contact-item">
+              <div class="contact-data">
+                <span class="label">Suporte</span>
+                <strong class="value">{{ CONTACT.supportEmail }}</strong>
               </div>
-
-              <div class="a">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.supportEmail, 'E-mail copiado')"
-                >
-                  Copiar
-                </button>
-                <button class="btn btn--ghost" type="button" @click="reportIssue">
-                  Reportar
-                </button>
+              <div class="contact-actions">
+                <button class="text-link" type="button" @click="copy(CONTACT.supportEmail, 'E-mail copiado')">Copiar</button>
+                <button class="text-link" type="button" @click="reportIssue">Reportar</button>
               </div>
             </article>
 
-            <article class="row">
-              <div class="row__main">
-                <span class="row__icon" aria-hidden="true">⌂</span>
-                <div class="row__content">
-                  <span class="k">Local</span>
-                  <strong class="v">{{ CONTACT.city }}</strong>
-                </div>
+            <article class="contact-item">
+              <div class="contact-data">
+                <span class="label">Local</span>
+                <strong class="value">{{ CONTACT.city }}</strong>
               </div>
-
-              <div class="a">
-                <button
-                  class="btn"
-                  type="button"
-                  @click="copy(CONTACT.city, 'Local copiado')"
-                >
-                  Copiar
-                </button>
-                <a
-                  class="btn btn--ghost"
-                  :href="mapsLink"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Ver mapa
-                </a>
+              <div class="contact-actions">
+                <button class="text-link" type="button" @click="copy(CONTACT.city, 'Local copiado')">Copiar</button>
+                <a class="text-link" :href="mapsLink" target="_blank" rel="noopener">Ver mapa ↗</a>
               </div>
             </article>
           </div>
         </section>
 
-        <!-- Informações -->
-        <section class="card card--info" aria-label="Informações gerais">
-          <div class="card__head">
-            <span class="card__eyebrow">Informações</span>
-            <h3 class="card__title">Tudo o que você precisa saber</h3>
-            <p class="card__text">
-              Dados rápidos sobre a edição e orientações para acompanhar o evento.
-            </p>
+        <section class="info-block" aria-label="Informações úteis">
+          <header class="info-header">
+            <h3 class="info-title">Guia rápido</h3>
+            <p class="info-desc">Dados essenciais para acompanhar o evento.</p>
+          </header>
+
+          <ul class="quick-facts">
+            <li><span class="label">Edição</span> <span class="value">2026</span></li>
+            <li><span class="label">Cidade</span> <span class="value">Pedro II • PI</span></li>
+            <li><span class="label">Horários</span> <span class="value">Consulte a programação</span></li>
+            <li><span class="label">Avisos</span> <span class="value">Área de comunicados</span></li>
+          </ul>
+
+          <div class="disclaimer">
+            <strong>Importante:</strong> A programação pode sofrer alterações por motivos técnicos ou climáticos. Consulte sempre os canais oficiais.
           </div>
 
-          <div class="infoList" role="list">
-            <div class="info" role="listitem">
-              <span class="info__label">Edição</span>
-              <span class="info__value">2026</span>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="info__label">Cidade</span>
-              <span class="info__value">Pedro II • PI</span>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="info__label">Horários</span>
-              <span class="info__value">Consulte a programação oficial</span>
-            </div>
-
-            <div class="info" role="listitem">
-              <span class="info__label">Atualizações</span>
-              <span class="info__value">Avisos na área de comunicados</span>
-            </div>
-          </div>
-
-          <div class="notice" aria-label="Aviso importante">
-            <strong class="notice__t">Aviso importante</strong>
-
-            <p class="notice__p">
-              A programação pode sofrer alterações por motivos técnicos,
-              climáticos ou operacionais. Sempre consulte os comunicados
-              oficiais antes de sair de casa.
-            </p>
-
-            <div class="legal">
-              <button class="textBtn" type="button" @click="openModal('privacy')">
-                Privacidade
-              </button>
-              <span class="dot" aria-hidden="true">•</span>
-              <button class="textBtn" type="button" @click="openModal('terms')">
-                Termos de uso
-              </button>
-            </div>
+          <div class="legal-links">
+            <button type="button" @click="openModal('privacy')">Privacidade</button>
+            <span aria-hidden="true">•</span>
+            <button type="button" @click="openModal('terms')">Termos de uso</button>
           </div>
         </section>
       </div>
 
-      <!-- Bottom -->
-      <div class="bottom">
-        <div class="bottom__brand">
-          <strong class="brandName">Festival de Inverno • Pedro II</strong>
-          <span class="muted">Edição 2026</span>
-        </div>
-
-        <div class="bottom__credit">
-          <span class="muted">feito por</span>
-          <button
-            class="creditBtn"
-            type="button"
-            @click="copy('feito por @kallebe, entrar em contato', 'Crédito copiado')"
-          >
-            @MaxSistemas
-          </button>
+      <div class="bottom-bar">
+        <div class="brand">Festival de Inverno <span aria-hidden="true">◆</span> Pedro II</div>
+        <div class="credit">
+          Feito por 
+          <button type="button" @click="copy('feito por @kallebe', 'Crédito copiado')">@MaxSistemas</button>
         </div>
       </div>
     </div>
 
-    <!-- Modal -->
     <Transition name="modal">
-      <div
-        v-if="modal.open"
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        :aria-label="modalTitle"
-      >
-        <div class="backdrop" @click="closeModal" aria-hidden="true"></div>
-
-        <div class="modalCard" ref="modalCard" tabindex="-1">
-          <div class="modalHead">
-            <strong class="modalTitle">{{ modalTitle }}</strong>
-            <button
-              class="modalClose"
-              type="button"
-              @click="closeModal"
-              aria-label="Fechar"
-            >
-              ×
-            </button>
-          </div>
-
-          <div class="modalBody">
+      <div v-if="modal.open" class="modal-overlay" role="dialog" aria-modal="true" :aria-label="modalTitle" @click.self="closeModal">
+        <div class="modal-content" ref="modalCard" tabindex="-1">
+          <header class="modal-head">
+            <h4 class="modal-title">{{ modalTitle }}</h4>
+            <button class="close-btn" type="button" @click="closeModal" aria-label="Fechar">×</button>
+          </header>
+          <div class="modal-body">
             <p v-if="modal.kind === 'privacy'">
-              Este site pode armazenar preferências locais, como favoritos e
-              escolhas de navegação, para melhorar sua experiência.
+              Este site pode armazenar preferências locais, como favoritos e escolhas de navegação, para melhorar sua experiência.
             </p>
-
             <p v-else>
-              Este conteúdo é informativo e pode ser atualizado a qualquer
-              momento. Para informações oficiais, consulte a área de comunicados.
+              Este conteúdo é informativo e pode ser atualizado a qualquer momento. Para informações oficiais, consulte a área de comunicados.
             </p>
-
-            <div class="modalActions">
-              <button class="heroBtn" type="button" @click="closeModal">
-                Entendi
-              </button>
-              <button class="heroBtn heroBtn--ghost" type="button" @click="copyPageLink">
-                Copiar link
-              </button>
-            </div>
           </div>
+          <footer class="modal-actions">
+            <button class="btn btn--primary" type="button" @click="closeModal">Entendi</button>
+          </footer>
         </div>
       </div>
     </Transition>
@@ -289,800 +149,427 @@ const CONTACT = {
   city: "Pedro II, Piauí",
 } as const;
 
-/* ===== toast ===== */
 const toast = reactive({
   show: false,
-  title: "Pronto!",
+  title: "",
   text: "",
-  t: 0 as ReturnType<typeof setTimeout> | 0,
+  timer: 0 as ReturnType<typeof setTimeout> | 0,
 });
 
-function showToast(text: string, title = "Pronto!") {
+function showToast(text: string, title = "Pronto") {
   toast.title = title;
   toast.text = text;
   toast.show = true;
-  clearTimeout(toast.t);
-  toast.t = setTimeout(() => {
-    toast.show = false;
-  }, 2200);
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { toast.show = false; }, 2500);
 }
 
 function hideToast() {
   toast.show = false;
-  clearTimeout(toast.t);
+  clearTimeout(toast.timer);
 }
 
-/* ===== copiar ===== */
 async function copy(value: string, msg = "Copiado!") {
   try {
     await navigator.clipboard.writeText(value);
-    showToast(msg, "Copiado");
+    showToast(msg);
   } catch {
     const ta = document.createElement("textarea");
     ta.value = value;
-    ta.setAttribute("readonly", "true");
-    ta.style.position = "fixed";
-    ta.style.left = "-9999px";
+    Object.assign(ta.style, { position: 'fixed', left: '-9999px' });
     document.body.appendChild(ta);
     ta.select();
-
     try {
       document.execCommand("copy");
-      showToast(msg, "Copiado");
+      showToast(msg);
     } catch {
-      showToast("Não foi possível copiar automaticamente.", "Ops");
+      showToast("Falha ao copiar.", "Ops");
     } finally {
       document.body.removeChild(ta);
     }
   }
 }
 
-async function copyPageLink() {
-  await copy(window.location.href, "Link do site copiado");
-}
+const copyPageLink = () => copy(window.location.href, "Link copiado");
 
-/* ===== links ===== */
-const waLink = computed(() => {
-  const phone = CONTACT.whatsapp.replace(/[^\d+]/g, "");
-  return `https://wa.me/${phone.replace("+", "")}`;
-});
+const waLink = computed(() => `https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`);
+const mapsLink = computed(() => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.city)}`);
 
-const mapsLink = computed(() => {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.city)}`;
-});
-
-/* ===== share ===== */
 async function share() {
   const url = window.location.href;
-
-  const payload = {
-    title: "Festival de Inverno • Pedro II",
-    text: "Acesse programação, mapa e comunicados oficiais do Festival de Inverno 2026.",
-    url,
-  };
-
-  // @ts-ignore
   if (navigator.share) {
     try {
-      // @ts-ignore
-      await navigator.share(payload);
-      showToast("Compartilhado com sucesso!", "Compartilhar");
+      await navigator.share({ title: "Festival de Inverno", url });
       return;
-    } catch {
-      // usuário cancelou
-    }
+    } catch { /* abortado pelo usuário */ }
   }
-
-  await copy(url, "Link copiado para compartilhar");
+  await copy(url, "Link pronto para colar");
 }
 
 function reportIssue() {
-  const subject = encodeURIComponent("Suporte — Festival de Inverno (site)");
-  const body = encodeURIComponent(
-    `Olá!\n\nPágina: ${window.location.href}\n\nDescreva o problema:\n- `
-  );
-
-  window.location.href = `mailto:${CONTACT.supportEmail}?subject=${subject}&body=${body}`;
-  showToast("Abrindo suporte…", "Suporte");
+  const subject = encodeURIComponent("Suporte Site");
+  window.location.href = `mailto:${CONTACT.supportEmail}?subject=${subject}`;
 }
 
-/* ===== modal ===== */
-const modal = reactive({
-  open: false,
-  kind: "privacy" as "privacy" | "terms",
-});
-
+const modal = reactive({ open: false, kind: "privacy" as "privacy" | "terms" });
 const modalCard = ref<HTMLElement | null>(null);
-
-const modalTitle = computed(() => {
-  return modal.kind === "privacy" ? "Privacidade" : "Termos de uso";
-});
+const modalTitle = computed(() => modal.kind === "privacy" ? "Privacidade" : "Termos de uso");
 
 async function openModal(kind: "privacy" | "terms") {
   modal.kind = kind;
   modal.open = true;
   await nextTick();
-  modalCard.value?.focus?.();
+  modalCard.value?.focus();
 }
 
-function closeModal() {
-  modal.open = false;
-}
-
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape" && modal.open) {
-    closeModal();
-  }
-}
+const closeModal = () => { modal.open = false; };
+const onKeydown = (e: KeyboardEvent) => { if (e.key === "Escape") closeModal(); };
 
 onMounted(() => {
   window.addEventListener("keydown", onKeydown);
+  if (!document.querySelector('link[data-hero-fonts]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.setAttribute("data-hero-fonts", "1");
+    link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap";
+    document.head.appendChild(link);
+  }
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", onKeydown);
-  clearTimeout(toast.t);
+  clearTimeout(toast.timer);
 });
 </script>
 
 <style scoped>
 .footer {
-  --bg: #ffffff;
-  --card: rgba(255, 255, 255, 0.82);
-  --card-strong: rgba(255, 255, 255, 0.92);
-  --stroke: rgba(15, 23, 42, 0.1);
-  --stroke2: rgba(15, 23, 42, 0.07);
-  --text: rgba(15, 23, 42, 0.94);
-  --muted: rgba(15, 23, 42, 0.64);
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #EDE53A;
+  --text-main: rgba(255, 255, 255, 0.9);
+  --text-muted: rgba(255, 255, 255, 0.6);
+  --line: rgba(255, 255, 255, 0.1);
 
-  --cY: #ede53a;
-  --cB: #4e4efe;
-  --cP: #ed4d93;
+  --font-display: "Playfair Display", serif;
+  --font-cond: "Barlow Condensed", sans-serif;
+  --font-sans: "Barlow", sans-serif;
 
   position: relative;
-  overflow: clip;
-  background:
-    radial-gradient(circle at top left, rgba(237, 229, 58, 0.08), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(78, 78, 254, 0.08), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, #fbfbfe 100%);
-  border-top: 1px solid var(--stroke);
-  color: var(--text);
-  padding: 28px 18px 18px;
+  background: var(--blue-deep);
+  color: var(--text-main);
+  padding: clamp(60px, 8vw, 100px) 24px 32px;
+  overflow: hidden;
+  font-family: var(--font-sans);
 }
 
+/* Background Effects */
 .footer__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 0;
+}
+
+.footer__noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px;
+  opacity: 0.3;
 }
 
 .footer__glow {
   position: absolute;
-  border-radius: 999px;
-  filter: blur(60px);
-  opacity: 0.22;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(237,229,58,0.05) 0%, transparent 60%);
 }
 
-.footer__glow--a {
-  top: -60px;
-  left: -20px;
-  width: 220px;
-  height: 220px;
-}
-
-.footer__glow--b {
-  right: -30px;
-  bottom: -40px;
-  width: 260px;
-  height: 260px;
-  background: var(--cB);
-}
-
-.footer__grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,.25), transparent 85%);
-}
-
-.wrap {
+.container {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
+  max-width: 1024px;
   margin: 0 auto;
 }
 
-/* topo */
-.footerHero {
-  display: grid;
-  grid-template-columns: 1.25fr auto;
-  gap: 18px;
-  align-items: end;
-  margin-bottom: 18px;
-  padding: 0 2px;
-}
-
-.footerHero__eyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
-}
-
-.footerHero__title {
-  margin: 0;
-  font-size: clamp(1.4rem, 2vw, 2rem);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  font-weight: 1000;
-  max-width: 12ch;
-}
-
-.footerHero__title span {
+/* Typography & Layout */
+.eyebrow {
   display: block;
-  color: rgba(15, 23, 42, 0.62);
-}
-
-.footerHero__text {
-  margin: 12px 0 0;
-  max-width: 62ch;
-  font-size: 0.97rem;
-  line-height: 1.75;
-  color: rgba(15, 23, 42, 0.72);
-}
-
-.footerHero__actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.heroBtn {
-  min-height: 46px;
-  padding: 0 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(78, 78, 254, 0.16);
-  background: rgba(78, 78, 254, 0.09);
-  color: rgba(15, 23, 42, 0.92);
-  font-size: 13px;
-  font-weight: 950;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.heroBtn:hover {
-  transform: translateY(-2px);
-  background: rgba(78, 78, 254, 0.13);
-  box-shadow: 0 14px 28px rgba(78, 78, 254, 0.1);
-}
-
-.heroBtn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(78, 78, 254, 0.18);
-}
-
-.heroBtn--ghost {
-  background: rgba(255, 255, 255, 0.6);
-  border-color: rgba(15, 23, 42, 0.1);
-}
-
-/* grid */
-.grid {
-  display: grid;
-  grid-template-columns: 1.02fr 1fr;
-  gap: 16px;
-}
-
-.card {
-  position: relative;
-  border: 1px solid var(--stroke);
-  border-radius: 24px;
-  background: var(--card);
-  backdrop-filter: blur(14px);
-  padding: 18px;
-  box-shadow:
-    0 12px 32px rgba(2, 6, 23, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
-}
-
-.card__head {
-  margin-bottom: 14px;
-}
-
-.card__eyebrow {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.18em;
+  font-family: var(--font-cond);
+  color: var(--text-muted);
   text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
+  letter-spacing: 0.2em;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
 }
 
-.card__title {
-  margin: 0;
-  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
-  font-weight: 1000;
-  letter-spacing: -0.03em;
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  line-height: 1.1;
+  margin: 0 0 32px;
+  color: #fff;
 }
 
-.card__text {
-  margin: 8px 0 0;
-  color: rgba(15, 23, 42, 0.7);
-  line-height: 1.7;
-  font-size: 0.94rem;
+.title .italic {
+  font-style: italic;
+  color: var(--gold);
 }
 
-.rows {
-  display: grid;
-  gap: 12px;
-}
-
-.row {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(15,23,42,.02));
-  border-radius: 18px;
-  padding: 14px;
-  display: grid;
-  gap: 12px;
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.row:hover {
-  transform: translateY(-2px);
-  border-color: rgba(78, 78, 254, 0.16);
-  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.05);
-}
-
-.row__main {
+.hero-section {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.row__icon {
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  font-size: 16px;
-  border: 1px solid rgba(78, 78, 254, 0.14);
-  background: rgba(78, 78, 254, 0.08);
-}
-
-.row__content {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-.k {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.58);
-  font-weight: 800;
-}
-
-.v {
-  font-size: 14px;
-  font-weight: 950;
-  line-height: 1.45;
-  word-break: break-word;
-}
-
-.a {
-  display: flex;
-  gap: 8px;
   flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 64px;
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Buttons */
 .btn {
-  min-height: 40px;
-  padding: 0 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  background: rgba(15, 23, 42, 0.04);
-  color: rgba(15, 23, 42, 0.9);
-  font-size: 12px;
-  font-weight: 950;
-  cursor: pointer;
-  text-decoration: none;
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0 24px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    border-color 0.18s ease;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  border: none;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  background: rgba(15, 23, 42, 0.06);
-}
+.btn svg { width: 18px; height: 18px; }
 
-.btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(78, 78, 254, 0.16);
+.btn--primary {
+  background: var(--gold);
+  color: #140d00;
 }
+.btn--primary:hover { background: #fff; }
 
 .btn--ghost {
   background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--line);
+}
+.btn--ghost:hover {
+  border-color: var(--text-muted);
+  color: #fff;
 }
 
-.infoList {
+/* Main Grid */
+.main-grid {
   display: grid;
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  padding-bottom: 64px;
+  border-bottom: 1px solid var(--line);
 }
 
-.info {
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(15,23,42,.02));
-  border-radius: 18px;
-  padding: 14px;
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 12px;
-  align-items: start;
+.info-header {
+  margin-bottom: 32px;
 }
 
-.info__label {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.56);
-  font-weight: 800;
+.info-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin: 0 0 8px;
 }
 
-.info__value {
-  font-size: 14px;
-  line-height: 1.6;
-  font-weight: 900;
-}
-
-.notice {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--stroke2);
-}
-
-.notice__t {
-  display: inline-block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 1000;
-}
-
-.notice__p {
+.info-desc {
+  color: var(--text-muted);
   margin: 0;
-  font-size: 13px;
-  line-height: 1.8;
-  color: rgba(15, 23, 42, 0.72);
 }
 
-.legal {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.textBtn {
-  background: none;
-  border: 0;
-  padding: 0;
-  color: rgba(15, 23, 42, 0.92);
-  font-weight: 950;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.textBtn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(78, 78, 254, 0.14);
-  border-radius: 10px;
-}
-
-.dot {
-  opacity: 0.55;
-}
-
-/* bottom */
-.bottom {
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--stroke2);
+/* Clean Lists (No boxes) */
+.contact-list, .quick-facts {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-item {
+  display: flex;
   justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.bottom__brand,
-.bottom__credit {
-  display: flex;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.brandName {
-  font-size: 13px;
-  font-weight: 1000;
-  letter-spacing: -0.02em;
+.label {
+  display: block;
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
 }
 
-.muted {
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.6);
+.value {
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
-.creditBtn {
+.contact-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.text-link {
   background: none;
-  border: 0;
+  border: none;
   padding: 0;
-  font-size: 13px;
-  font-weight: 1000;
+  color: var(--gold);
+  font-family: var(--font-sans);
+  font-weight: 600;
   cursor: pointer;
-  color: rgba(15, 23, 42, 0.94);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.quick-facts li {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: baseline;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 16px;
 }
 
-/* toast */
-.toastWrap {
+/* Legal & Disclaimer */
+.disclaimer {
+  margin-top: 32px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid var(--gold);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.disclaimer strong { color: var(--text-main); }
+
+.legal-links {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.legal-links button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+}
+.legal-links button:hover { color: #fff; }
+
+/* Bottom Bar */
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 32px;
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.brand span { color: var(--gold); margin: 0 4px; }
+
+.credit button {
+  background: none;
+  border: none;
+  color: var(--gold);
+  cursor: pointer;
+  padding: 0;
+  font-weight: 700;
+}
+.credit button:hover { text-decoration: underline; }
+
+/* Minimal Toast */
+.toast-wrap {
   position: fixed;
-  right: 14px;
-  bottom: 14px;
-  z-index: 9999;
-  pointer-events: none;
+  bottom: 32px;
+  right: 32px;
+  z-index: 50;
 }
-
 .toast {
-  pointer-events: auto;
-  display: grid;
-  grid-template-columns: 34px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  padding: 12px;
-  min-width: min(360px, calc(100vw - 28px));
-  border-radius: 18px;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 18px 70px rgba(2, 6, 23, 0.14);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--blue);
+  border: 1px solid var(--line);
+  padding: 16px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+.toast__icon { color: var(--gold); }
+.toast__title { display: block; font-family: var(--font-cond); text-transform: uppercase; font-size: 0.9rem; margin-bottom: 2px; }
+.toast__text { font-size: 0.85rem; color: var(--text-muted); }
+.toast__close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; padding: 0; margin-top: -4px;}
+.toast-enter-active, .toast-leave-active { transition: all 0.3s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(10px); }
 
-.toast__icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: rgba(78, 78, 254, 0.1);
-  border: 1px solid rgba(78, 78, 254, 0.18);
-  font-weight: 1000;
-}
-
-.toast__body {
-  display: grid;
-  gap: 2px;
-}
-
-.toast__title {
-  font-size: 13px;
-  font-weight: 1000;
-}
-
-.toast__text {
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.72);
-}
-
-.toast__close {
-  width: 34px;
-  height: 34px;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(15, 23, 42, 0.03);
-  cursor: pointer;
-}
-
-.toast-enter-active,
-.toast-leave-active {
-  transition: all 0.2s ease;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-}
-
-/* modal */
-.modal {
+/* Clean Modal */
+.modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
   display: grid;
   place-items: center;
-  padding: 18px;
+  z-index: 100;
+  padding: 24px;
 }
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(2, 6, 23, 0.5);
+.modal-content {
+  background: var(--blue-deep);
+  border: 1px solid var(--line);
+  padding: 32px;
+  max-width: 480px;
+  width: 100%;
 }
-
-.modalCard {
-  position: relative;
-  width: min(520px, 100%);
-  border-radius: 22px;
-  border: 1px solid rgba(15, 23, 42, 0.14);
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 24px 90px rgba(2, 6, 23, 0.18);
-  padding: 14px;
-}
-
-.modalHead {
+.modal-head {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+  margin-bottom: 24px;
 }
+.modal-title { font-family: var(--font-display); color: var(--gold); font-size: 1.5rem; margin: 0; }
+.close-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+.modal-body { color: var(--text-muted); line-height: 1.6; margin-bottom: 32px; }
 
-.modalTitle {
-  font-weight: 1100;
-  letter-spacing: -0.02em;
+/* Responsive */
+@media (max-width: 768px) {
+  .title { font-size: 2rem; }
+  .main-grid { grid-template-columns: 1fr; gap: 48px; }
+  .bottom-bar { flex-direction: column; gap: 16px; text-align: center; }
+  .toast-wrap { bottom: 16px; right: 16px; left: 16px; }
 }
-
-.modalClose {
-  width: 40px;
-  height: 40px;
-  border-radius: 16px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(15, 23, 42, 0.03);
-  cursor: pointer;
-}
-
-.modalBody {
-  padding-top: 10px;
-  color: rgba(15, 23, 42, 0.82);
-  line-height: 1.75;
-  font-size: 13px;
-}
-
-.modalActions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-  flex-wrap: wrap;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.2s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
-}
-
-/* responsivo */
-@media (max-width: 1024px) {
-  .footer {
-    padding: 24px 16px 16px;
-  }
-
-  .footerHero {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .footerHero__actions {
-    justify-content: flex-start;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .info {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .footerHero__title {
-    max-width: none;
-    font-size: 1.45rem;
-  }
-
-  .card {
-    padding: 16px;
-    border-radius: 20px;
-  }
-
-  .row {
-    padding: 13px;
-  }
-
-  .row__main {
-    align-items: flex-start;
-  }
-
-  .row__icon {
-    width: 40px;
-    height: 40px;
-    flex-basis: 40px;
-  }
-
-  .a,
-  .footerHero__actions,
-  .modalActions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-
-  .btn,
-  .heroBtn {
-    width: 100%;
-  }
-
-  .bottom {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .bottom__brand,
-  .bottom__credit {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .toast {
-    min-width: min(100%, calc(100vw - 20px));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .heroBtn,
-  .btn,
-  .row,
-  .toast-enter-active,
-  .toast-leave-active,
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: none !important;
-  }
+@media (max-width: 480px) {
+  .contact-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .hero-actions { flex-direction: column; width: 100%; }
+  .btn { width: 100%; justify-content: center; }
 }
 </style>

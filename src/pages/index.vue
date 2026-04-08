@@ -4,8 +4,8 @@
 <ConfirmedGuests />
 <LocalMVisitado />
 <AtracoesP />
-<MapaP2 />
 <BlogP /> 
+<MapaP2 />
 <PatrocinioScrol />
 </template>
 
