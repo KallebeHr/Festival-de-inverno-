@@ -1000,11 +1000,17 @@ onMounted(() => {
 
   mq.addEventListener?.("change", onMqChange);
 
-  io = new IntersectionObserver(
+io = new IntersectionObserver(
     ([entry]) => {
-      isVisible.value = !!entry?.isIntersecting;
+      // Só altera para true, nunca volta para false. 
+      // Assim ele não some ao rolar a página ou redimensionar a tela.
+      if (entry.isIntersecting) {
+        isVisible.value = true;
+        // Opcional: parar de observar após a animação rodar
+        if (root.value) io?.unobserve(root.value); 
+      }
     },
-    { threshold: 0.12 }
+    { threshold: 0 } // Dispara assim que a seção apontar na tela
   );
 
   if (root.value) io.observe(root.value);
