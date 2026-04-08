@@ -421,7 +421,7 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: 88px 0 80px;
-  background: #ffffff;
+  background: #FBFBFD;
 }
 
 /* ── Fundo com pontos sutis ─────────────────────── */

@@ -660,17 +660,16 @@ async function share(post: BlogPost) {
 <style scoped>
 /* ── Design tokens ─────────────────────────────────────────────────────── */
 .blog-page {
-  --serif:  ui-serif, "Georgia", "Times New Roman", Times, serif;
-  --sans:   Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-            "Segoe UI", Roboto, Arial, sans-serif;
+  --serif:  "Playfair Display", Georgia, serif;
+  --sans:   "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
 
   --ink:          rgba(12, 14, 18, 0.95);
   --muted:        rgba(12, 14, 18, 0.55);
   --line:         rgba(12, 14, 18, 0.08);
   --line-mid:     rgba(12, 14, 18, 0.12);
 
-  --accent:       #316eb9;
-  --accent-strong: #24589a;
+  --accent:       #01195a;
+  --accent-strong: #01195a;
   --accent-soft:   rgba(49, 110, 185, 0.10);
   --gold:          #ede53a;
 
@@ -709,7 +708,7 @@ async function share(post: BlogPost) {
 .page-hero {
   position: relative;
   overflow: hidden;
-  background: #316EB9;
+  background: #01195a;
   padding: 80px 0 64px;
   color: #fff;
   margin-top: 5rem;

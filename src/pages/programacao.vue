@@ -14,7 +14,7 @@ import AtracoesP from '@/components/atracoesP.vue';
 <style scoped>
 .container{
   display:flex;
- margin-top: 5rem; 
+ margin-top: 2rem; 
   flex-direction: column;
   }
 </style>
