@@ -1,7 +1,8 @@
 <template>
   <div class='container'>
-    <atracoesP />
     <programa />
+<PatrocinioScrol />
+
     
   </div>
 </template>

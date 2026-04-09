@@ -8,8 +8,8 @@
     <!-- ── Background responsivo ──────────────────── -->
     <div class="hero__bg-wrap" aria-hidden="true">
       <picture class="hero__bg-picture">
-        <source media="(max-width: 767px)" srcset="/bg/bgFIPM.png" />
-        <source media="(min-width: 768px)"  srcset="/bg/bgFIPD.png" />
+        <source media="(max-width: 767px)" srcset="/bg/teste1.jpeg" />
+        <source media="(min-width: 768px)"  srcset="/bg/teste1.jpeg" />
         <img
           class="hero__bg-img"
           src="/bg/bgFIPD.png"
@@ -148,7 +148,6 @@ onBeforeUnmount(() => {
   --white-08:   rgba(255,255,255,0.08);
 
   /* Tint azul — ajuste opacity em .hero__bg-tint */
-  --tint-color: rgba(1, 18, 70, 0.52);
 
   --font-display: "Playfair Display", Georgia, serif;
   --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
@@ -187,17 +186,13 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Desktop: foca no centro; Mobile: sobrescreve abaixo */
   object-position: center center;
-  will-change: transform; /* GPU layer para performance */
 }
 
-/* Filtro azul sobre a foto — destaca logo e texto */
 .hero__bg-tint {
   position: absolute;
   inset: 0;
   background: var(--tint-color);
-  /* mix-blend-mode mantém a saturação da imagem visível */
   mix-blend-mode: multiply;
 }
 
@@ -286,7 +281,7 @@ onBeforeUnmount(() => {
   color: #1a1200;
   font-family: 'Rawline', sans-serif;
   font-size: clamp(0.60rem, 1.1vw, 0.72rem);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.10em;
   text-transform: uppercase;
   padding: 5px 16px;
@@ -316,7 +311,6 @@ onBeforeUnmount(() => {
   width: clamp(240px, 45vw, 480px);
   height: auto;
   object-fit: contain;
-  /* Sombra de texto na logo SVG para destacar sobre qualquer fundo */
   filter: drop-shadow(0 2px 16px rgba(6, 14, 42, 0.55));
 }
 
