@@ -41,7 +41,7 @@
         :aria-label="t.goHome"
       >
         <img
-          src="/Logo/Logo.png"
+          src="/Logo/LogoOfM.png"
           alt="Logo do Festival de Inverno de Pedro II"
           class="brand__img"
         />
@@ -219,7 +219,7 @@
           @click="jump('/')"
           :aria-label="t.goHome"
         >
-          <img src="/Logo/Logo.png" alt="Logo do Festival" class="fs__logo" />
+          <img src="/Logo/LogoOfM.png" alt="Logo do Festival" class="fs__logo" />
           <div class="fs__brandTxt">
             <strong>Festival de Inverno</strong>
             <span>Pedro II · Piauí · 2026</span>

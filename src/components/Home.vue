@@ -5,23 +5,39 @@
     :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     aria-label="Hero Festival de Inverno Pedro II 2026"
   >
-    <div class="hero__photo-wrap" aria-hidden="true">
-      <div class="hero__photo"></div>
-      <div class="hero__photo-overlay"></div>
-      <div class="hero__diagonal-cut"></div>
+    <!-- ── Background responsivo ──────────────────── -->
+    <div class="hero__bg-wrap" aria-hidden="true">
+      <picture class="hero__bg-picture">
+        <source media="(max-width: 767px)" srcset="/bg/bgFIPM.png" />
+        <source media="(min-width: 768px)"  srcset="/bg/bgFIPD.png" />
+        <img
+          class="hero__bg-img"
+          src="/bg/bgFIPD.png"
+          alt=""
+          role="presentation"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+
+      <!-- Filtro azul (intensidade calibrada) -->
+      <div class="hero__bg-tint" aria-hidden="true"></div>
+
+      <!-- Gradiente vertical para legibilidade do conteúdo -->
+      <div class="hero__bg-gradient" aria-hidden="true"></div>
     </div>
 
-    <div class="hero__bg" aria-hidden="true">
-      <div class="hero__noise"></div>
-      <div class="hero__glow"></div>
-    </div>
+    <!-- ── Textura / ruído sutil ───────────────────── -->
+    <div class="hero__noise" aria-hidden="true"></div>
 
+    <!-- ── Brilho dourado central ─────────────────── -->
+    <div class="hero__glow" aria-hidden="true"></div>
+
+    <!-- ── Conteúdo ───────────────────────────────── -->
     <div class="hero__container">
 
-      
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
         <img src="/Logo/LogoOf.svg" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
-        <!-- <span class="hero__title-sub">Terra da Opala</span> -->
       </h1>
 
       <div class="hero__divider" aria-hidden="true">
@@ -29,6 +45,7 @@
         <span class="hero__divider-diamond"></span>
         <span class="hero__divider-line"></span>
       </div>
+
       <div class="hero__badge-wrap">
         <span class="hero__badge">
           <span class="hero__badge-dot" aria-hidden="true"></span>
@@ -75,7 +92,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
-const root = ref<HTMLElement | null>(null);
+const root      = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
 const reduceMotion = ref(false);
 
@@ -83,20 +100,15 @@ let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
 let onMqChange: ((e: MediaQueryListEvent) => void) | null = null;
 
-const onPrimary = () => {
-  document.querySelector("#programacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
-};
-const onSecondary = () => {
-  document.querySelector("#como-chegar")?.scrollIntoView({ behavior: "smooth", block: "start" });
-};
+const onPrimary  = () => document.querySelector("#programacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
+const onSecondary = () => document.querySelector("#como-chegar")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
 onMounted(() => {
   if (!document.querySelector('link[data-hero-fonts]')) {
     const link = document.createElement("link");
-    link.rel = "stylesheet";
+    link.rel  = "stylesheet";
     link.setAttribute("data-hero-fonts", "1");
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
     document.head.appendChild(link);
   }
 
@@ -122,6 +134,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 @import url('https://fonts.cdnfonts.com/css/rawline');
+
 /* ── Tokens ─────────────────────────────────────── */
 .hero {
   --blue:       #01195a;
@@ -134,93 +147,96 @@ onBeforeUnmount(() => {
   --white-20:   rgba(255,255,255,0.20);
   --white-08:   rgba(255,255,255,0.08);
 
+  /* Tint azul — ajuste opacity em .hero__bg-tint */
+  --tint-color: rgba(1, 18, 70, 0.52);
+
   --font-display: "Playfair Display", Georgia, serif;
   --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
   --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
-
-  --photo-h: 45%;           /* altura da foto no topo */
 
   position: relative;
   isolation: isolate;
   overflow: hidden;
 
   min-height: 70vh;
-  height: 70vh;
+  height: 80vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 
+  /* Fallback enquanto a imagem carrega */
   background: var(--blue-deep);
 }
 
-/* ── Foto + corte diagonal ───────────────────────── */
-.hero__photo-wrap {
+/* ── Background responsivo ───────────────────────── */
+.hero__bg-wrap {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-/* Troca o url() pela sua foto real da cidade */
-.hero__photo {
-  position: absolute;
-  inset: 0;
-  background-image: url('/images/pedro-ii-portal.jpg');
-  background-size: cover;
-  background-position: center 20%;
-  height: 60%;
+.hero__bg-picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.hero__photo-overlay {
+.hero__bg-img {
   position: absolute;
   inset: 0;
-  height: 62%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Desktop: foca no centro; Mobile: sobrescreve abaixo */
+  object-position: center center;
+  will-change: transform; /* GPU layer para performance */
+}
+
+/* Filtro azul sobre a foto — destaca logo e texto */
+.hero__bg-tint {
+  position: absolute;
+  inset: 0;
+  background: var(--tint-color);
+  /* mix-blend-mode mantém a saturação da imagem visível */
+  mix-blend-mode: multiply;
+}
+
+/* Gradiente vertical → escurece de cima pra baixo
+   garante contraste máximo na área do conteúdo */
+.hero__bg-gradient {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(6,14,42,0.25) 0%,
-    rgba(6,14,42,0.60) 80%,
-    rgba(6,14,42,1)    100%
+    rgba(6, 14, 42, 0.10)  0%,
+    rgba(6, 14, 42, 0.20)  30%,
+    rgba(6, 14, 42, 0.55)  65%,
+    rgba(6, 14, 42, 0.88)  85%,
+    rgba(6, 14, 42, 0.98)  100%
   );
 }
 
-/* Corte diagonal — mesmo estilo do post */
-.hero__diagonal-cut {
-  position: absolute;
-  left: -5%;
-  right: -5%;
-  top: 52%;
-  height: 160px;
-  background: var(--blue);
-  transform: rotate(-3deg);
-  transform-origin: left center;
-}
-
-/* ── Fundo azul com textura ─────────────────────── */
-.hero__bg {
-  position: absolute;
-  inset: 0;
-  top: 56%;
-  z-index: 0;
-  background: var(--blue);
-}
-
-/* Ruído sutil */
+/* ── Ruído sutil ─────────────────────────────────── */
 .hero__noise {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   background-size: 200px 200px;
-  opacity: 0.4;
+  opacity: 0.35;
   pointer-events: none;
 }
 
+/* ── Brilho dourado central ──────────────────────── */
 .hero__glow {
   position: absolute;
-  top: -80px;
+  z-index: 1;
+  bottom: 30%;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
-  height: 300px;
-  background: radial-gradient(ellipse, rgba(237,229,58,0.10) 0%, transparent 70%);
+  width: 640px;
+  height: 320px;
+  background: radial-gradient(ellipse, rgba(237, 229, 58, 0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -241,7 +257,6 @@ onBeforeUnmount(() => {
 
 /* ── Animações de entrada ────────────────────────── */
 .hero__badge-wrap,
-.hero__kicker,
 .hero__title,
 .hero__divider,
 .hero__meta,
@@ -251,12 +266,11 @@ onBeforeUnmount(() => {
   transition: opacity 600ms ease, transform 600ms ease;
 }
 
-.is-visible .hero__badge-wrap  { opacity:1; transform:none; transition-delay: 0ms;   }
-.is-visible .hero__kicker      { opacity:1; transform:none; transition-delay: 80ms;  }
-.is-visible .hero__title       { opacity:1; transform:none; transition-delay: 160ms; }
-.is-visible .hero__divider     { opacity:1; transform:none; transition-delay: 260ms; }
-.is-visible .hero__meta        { opacity:1; transform:none; transition-delay: 340ms; }
-.is-visible .hero__actions     { opacity:1; transform:none; transition-delay: 420ms; }
+.is-visible .hero__badge-wrap { opacity: 1; transform: none; transition-delay: 0ms;   }
+.is-visible .hero__title      { opacity: 1; transform: none; transition-delay: 120ms; }
+.is-visible .hero__divider    { opacity: 1; transform: none; transition-delay: 220ms; }
+.is-visible .hero__meta       { opacity: 1; transform: none; transition-delay: 320ms; }
+.is-visible .hero__actions    { opacity: 1; transform: none; transition-delay: 420ms; }
 
 /* ── Badge ───────────────────────────────────────── */
 .hero__badge-wrap {
@@ -271,13 +285,11 @@ onBeforeUnmount(() => {
   background: var(--gold);
   color: #1a1200;
   font-family: 'Rawline', sans-serif;
-
   font-size: clamp(0.60rem, 1.1vw, 0.72rem);
   font-weight: 600;
   letter-spacing: 0.10em;
   text-transform: uppercase;
   padding: 5px 16px;
-
   border-radius: 2px;
 }
 
@@ -285,22 +297,11 @@ onBeforeUnmount(() => {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   flex-shrink: 0;
 }
 
-/* ── Kicker ──────────────────────────────────────── */
-.hero__kicker {
-  margin: 0;
-  font-family: var(--font-cond);
-  font-size: clamp(0.62rem, 1.0vw, 0.74rem);
-  font-weight: 600;
-  letter-spacing: 0.30em;
-  text-transform: uppercase;
-  color: var(--white-50);
-}
-
-/* ── Título ──────────────────────────────────────── */
+/* ── Título / Logo ───────────────────────────────── */
 .hero__title {
   margin: 0;
   display: flex;
@@ -310,23 +311,13 @@ onBeforeUnmount(() => {
   line-height: 1;
 }
 
-/* Classe Nova da Logo Responsiva */
 .hero__logo {
   display: block;
-  width: clamp(240px, 45vw, 480px); /* Escala perfeitamente do mobile ao desktop */
+  width: clamp(240px, 45vw, 480px);
   height: auto;
   object-fit: contain;
-  margin-bottom: 8px; /* Dá um respiro antes do 'Terra da Opala' */
-}
-
-.hero__title-sub {
-  font-family: var(--font-display);
-  font-size: clamp(1.0rem, 2.4vw, 1.8rem);
-  font-weight: 700;
-  font-style: italic;
-  color: var(--gold);
-  letter-spacing: 0.06em;
-  margin-top: 2px;
+  /* Sombra de texto na logo SVG para destacar sobre qualquer fundo */
+  filter: drop-shadow(0 2px 16px rgba(6, 14, 42, 0.55));
 }
 
 /* ── Divisor ─────────────────────────────────────── */
@@ -341,7 +332,7 @@ onBeforeUnmount(() => {
 .hero__divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(237,229,58,0.45), transparent);
+  background: linear-gradient(to right, transparent, rgba(237, 229, 58, 0.45), transparent);
 }
 
 .hero__divider-diamond {
@@ -424,7 +415,7 @@ onBeforeUnmount(() => {
 .btn--primary {
   background: var(--gold);
   color: #140d00;
-  box-shadow: 0 4px 20px rgba(237,229,58,0.28);
+  box-shadow: 0 4px 20px rgba(237, 229, 58, 0.28);
 }
 
 .btn--ghost {
@@ -437,7 +428,7 @@ onBeforeUnmount(() => {
   .btn--primary:hover {
     background: #f5ee50;
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(237,229,58,0.40);
+    box-shadow: 0 8px 28px rgba(237, 229, 58, 0.40);
   }
   .btn--ghost:hover {
     border-color: var(--white-50);
@@ -463,22 +454,30 @@ onBeforeUnmount(() => {
 }
 
 @keyframes scrollPulse {
-  0%,100% { transform: scaleY(1); opacity: 0.6; }
-  50% { transform: scaleY(0.5); opacity: 0.2; }
+  0%, 100% { transform: scaleY(1);   opacity: 0.6; }
+  50%       { transform: scaleY(0.5); opacity: 0.2; }
 }
 
-/* ── Responsivo ──────────────────────────────────── */
+/* ── Responsivo — Tablet ─────────────────────────── */
 @media (max-width: 860px) {
   .hero {
     height: auto;
     min-height: 60vh;
     align-items: flex-end;
   }
+}
 
-  .hero__photo { height: 55%; }
-  .hero__photo-overlay { height: 57%; }
-  .hero__diagonal-cut { top: 48%; }
-  .hero__bg { top: 52%; }
+/* ── Responsivo — Mobile ─────────────────────────── */
+@media (max-width: 767px) {
+  /* Reposiciona o foco da imagem mobile para o centro-topo */
+  .hero__bg-img {
+    object-position: center top;
+  }
+
+  /* Aumenta levemente o tint no mobile (tela menor = menos contexto) */
+  .hero {
+    --tint-color: rgba(1, 18, 70, 0.58);
+  }
 }
 
 @media (max-width: 540px) {
@@ -495,6 +494,7 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: 4px;
   }
+
   .hero__meta-sep { display: none; }
 
   .hero__actions {
@@ -502,7 +502,12 @@ onBeforeUnmount(() => {
     width: 100%;
     max-width: 280px;
   }
-  .btn { width: 100%; min-height: 50px; }
+
+  .btn {
+    width: 100%;
+    min-height: 50px;
+  }
+
   .hero__scroll-hint { display: none; }
 }
 
