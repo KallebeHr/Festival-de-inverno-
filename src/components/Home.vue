@@ -5,23 +5,19 @@
     :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     aria-label="Hero Festival de Inverno Pedro II 2026"
   >
-    <!-- ── Fundo com foto + corte diagonal ── -->
     <div class="hero__photo-wrap" aria-hidden="true">
       <div class="hero__photo"></div>
       <div class="hero__photo-overlay"></div>
       <div class="hero__diagonal-cut"></div>
     </div>
 
-    <!-- ── Fundo azul (base) ── -->
     <div class="hero__bg" aria-hidden="true">
       <div class="hero__noise"></div>
       <div class="hero__glow"></div>
     </div>
 
-    <!-- ── Conteúdo ── -->
     <div class="hero__container">
 
-      <!-- Badge categoria -->
       <div class="hero__badge-wrap">
         <span class="hero__badge">
           <span class="hero__badge-dot" aria-hidden="true"></span>
@@ -30,31 +26,17 @@
         </span>
       </div>
 
-      <!-- Título principal com ícone musical -->
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
-        <span class="hero__title-eyebrow">Festival de Inverno</span>
-        <span class="hero__title-city">
-          Pedro
-          <span class="hero__music-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 36V14l22-4v22" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="12" cy="36" r="6" stroke="currentColor" stroke-width="3"/>
-              <circle cx="34" cy="32" r="6" stroke="currentColor" stroke-width="3"/>
-            </svg>
-          </span>
-          II
-        </span>
+        <img src="/Logo/LogoOf.png" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
         <span class="hero__title-sub">Terra da Opala</span>
       </h1>
 
-      <!-- Linha decorativa -->
       <div class="hero__divider" aria-hidden="true">
         <span class="hero__divider-line"></span>
         <span class="hero__divider-diamond"></span>
         <span class="hero__divider-line"></span>
       </div>
 
-      <!-- Meta: data e local -->
       <div class="hero__meta">
         <div class="hero__meta-item">
           <svg class="hero__meta-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -73,7 +55,6 @@
         </div>
       </div>
 
-      <!-- Ações -->
       <div class="hero__actions">
         <button class="btn btn--primary" type="button" @click="onPrimary">
           Ver programação
@@ -83,7 +64,6 @@
         </button>
       </div>
 
-      <!-- Scroll hint -->
       <div class="hero__scroll-hint" aria-hidden="true">
         <span class="hero__scroll-bar"></span>
       </div>
@@ -141,6 +121,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
 /* ── Tokens ─────────────────────────────────────── */
 .hero {
   --blue:       #01195a;
@@ -289,12 +270,14 @@ onBeforeUnmount(() => {
   gap: 8px;
   background: var(--gold);
   color: #1a1200;
-  font-family: var(--font-cond);
+  font-family: 'Rawline', sans-serif;
+
   font-size: clamp(0.60rem, 1.1vw, 0.72rem);
-  font-weight: 800;
-  letter-spacing: 0.20em;
+  font-weight: 600;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
   padding: 5px 16px;
+
   border-radius: 2px;
 }
 
@@ -327,42 +310,13 @@ onBeforeUnmount(() => {
   line-height: 1;
 }
 
-.hero__title-eyebrow {
-  font-family: var(--font-cond);
-  font-size: clamp(0.72rem, 1.3vw, 0.90rem);
-  font-weight: 400;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--white-50);
-  margin-bottom: 4px;
-}
-
-.hero__title-city {
-  font-family: var(--font-display);
-  font-size: clamp(4rem, 11vw, 8.5rem);
-  font-weight: 900;
-  color: var(--white);
-  letter-spacing: -0.01em;
-  line-height: 0.92;
-  display: flex;
-  align-items: center;
-  gap: 0.15em;
-}
-
-.hero__music-icon {
-  display: inline-flex;
-  align-items: center;
-  color: var(--gold);
-  width: clamp(2.2rem, 5.5vw, 4.5rem);
-  height: clamp(2.2rem, 5.5vw, 4.5rem);
-  flex-shrink: 0;
-  position: relative;
-  top: 0.05em;
-}
-
-.hero__music-icon svg {
-  width: 100%;
-  height: 100%;
+/* Classe Nova da Logo Responsiva */
+.hero__logo {
+  display: block;
+  width: clamp(240px, 45vw, 480px); /* Escala perfeitamente do mobile ao desktop */
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 8px; /* Dá um respiro antes do 'Terra da Opala' */
 }
 
 .hero__title-sub {
@@ -517,7 +471,7 @@ onBeforeUnmount(() => {
 @media (max-width: 860px) {
   .hero {
     height: auto;
-    min-height: 70vh;
+    min-height: 60vh;
     align-items: flex-end;
   }
 
@@ -536,8 +490,6 @@ onBeforeUnmount(() => {
     gap: clamp(6px, 1.2vh, 10px);
     padding-bottom: clamp(24px, 4vh, 36px);
   }
-
-  .hero__title-city { gap: 0.10em; }
 
   .hero__meta {
     flex-direction: column;
