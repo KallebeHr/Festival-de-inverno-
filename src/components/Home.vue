@@ -18,23 +18,23 @@
 
     <div class="hero__container">
 
-      <div class="hero__badge-wrap">
-        <span class="hero__badge">
-          <span class="hero__badge-dot" aria-hidden="true"></span>
-          Música · Artesanato · Ecoturismo
-          <span class="hero__badge-dot" aria-hidden="true"></span>
-        </span>
-      </div>
-
+      
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
-        <img src="/Logo/LogoOf.png" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
-        <span class="hero__title-sub">Terra da Opala</span>
+        <img src="/Logo/LogoOf.svg" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
+        <!-- <span class="hero__title-sub">Terra da Opala</span> -->
       </h1>
 
       <div class="hero__divider" aria-hidden="true">
         <span class="hero__divider-line"></span>
         <span class="hero__divider-diamond"></span>
         <span class="hero__divider-line"></span>
+      </div>
+      <div class="hero__badge-wrap">
+        <span class="hero__badge">
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          Música · Artesanato · Ecoturismo
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+        </span>
       </div>
 
       <div class="hero__meta">
