@@ -6,20 +6,13 @@
     :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     aria-label="Locais mais visitados em Pedro II"
   >
-    <!-- ── Fundo branco com detalhes ── -->
     <div class="places__bg" aria-hidden="true">
       <div class="places__bg-lines"></div>
-      <div class="places__bg-glow places__bg-glow--a"></div>
-      <div class="places__bg-glow places__bg-glow--b"></div>
     </div>
 
     <div class="places__container">
-
-      <!-- ── Cabeçalho ── -->
       <header class="places__head">
         <div class="places__head-left">
-
-          <!-- Badge categoria (mesmo estilo do hero) -->
           <div class="places__badge-wrap" data-anim="eyebrow">
             <span class="places__badge">
               <span class="places__badge-dot" aria-hidden="true"></span>
@@ -33,7 +26,6 @@
             <span class="places__title-main">durante o festival</span>
           </h2>
 
-          <!-- Divisor (mesmo do hero) -->
           <div class="places__divider" data-anim="divider" aria-hidden="true">
             <span class="places__divider-line"></span>
             <span class="places__divider-diamond"></span>
@@ -46,7 +38,6 @@
           </p>
         </div>
 
-        <!-- Tags de destaque (estilo hero: border-radius: 2px, uppercase) -->
         <ul class="places__tags" data-anim="badges" aria-label="Destaques dos locais">
           <li class="places__tag">Paisagens marcantes</li>
           <li class="places__tag">Turismo cultural</li>
@@ -55,19 +46,19 @@
         </ul>
       </header>
 
-      <!-- ── Slider ── -->
       <div class="places__slider" data-anim="slider">
         <swiper
           :modules="modules"
-          :slidesPerView="1"
-          :spaceBetween="20"
+          :slides-per-view="1.1"
+          :space-between="16"
           :loop="true"
-          :autoplay="{ delay: 8200, disableOnInteraction: false }"
+          :autoplay="{ delay: 12000, disableOnInteraction: false, pauseOnMouseEnter: true }"
           :pagination="{ clickable: true, type: 'progressbar' }"
           class="placesSwiper"
           :breakpoints="{
-            768:  { slidesPerView: 2 },
-            1120: { slidesPerView: 3 }
+            600:  { slidesPerView: 1.8, spaceBetween: 20 },
+            900:  { slidesPerView: 2.4, spaceBetween: 24 },
+            1200: { slidesPerView: 3,   spaceBetween: 24 }
           }"
         >
           <swiper-slide v-for="(place, idx) in places" :key="place.title">
@@ -75,115 +66,100 @@
               class="place-card"
               :class="{ 'is-active': activeIndex === idx }"
               :data-idx="idx"
-              data-card
               tabindex="0"
               role="group"
-              :aria-label="`Local turístico ${place.title}`"
+              :aria-label="`${place.title} — ${place.category}`"
               @click="toggleActive(idx)"
               @keydown.enter.prevent="toggleActive(idx)"
               @keydown.space.prevent="toggleActive(idx)"
             >
-              <!-- ── Mídia ── -->
               <div class="place-card__media">
                 <img
                   :src="place.image"
                   :alt="place.title"
                   class="place-card__img"
                   loading="lazy"
+                  decoding="async"
                 />
-                <div class="place-card__overlay"></div>
+                <div class="place-card__overlay" aria-hidden="true"></div>
 
-                <div class="place-card__top">
-                  <span class="place-card__tag">{{ place.category }}</span>
-                </div>
+                <span class="place-card__tag" aria-hidden="true">{{ place.category }}</span>
+              </div>
 
-                <div class="place-card__bottom">
+              <div class="place-card__body">
+                <div class="place-card__base">
                   <h3 class="place-card__title">{{ place.title }}</h3>
                   <p class="place-card__meta">
-                    <svg class="place-card__meta-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                      <path d="M8 1.5C5.515 1.5 3.5 3.515 3.5 6c0 4.125 4.5 8.5 4.5 8.5s4.5-4.375 4.5-8.5c0-2.485-2.015-4.5-4.5-4.5z" stroke="currentColor" stroke-width="1.2"/>
-                      <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+                    <svg class="place-card__pin" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M8 1.5C5.515 1.5 3.5 3.515 3.5 6c0 4.125 4.5 8.5 4.5 8.5s4.5-4.375 4.5-8.5c0-2.485-2.015-4.5-4.5-4.5z" stroke="currentColor" stroke-width="1.3"/>
+                      <circle cx="8" cy="6" r="1.5" stroke="currentColor" stroke-width="1.3"/>
                     </svg>
                     {{ place.location }}
                   </p>
                 </div>
-              </div>
 
-              <!-- ── Reveal ao hover/toque ── -->
-              <div class="place-card__reveal">
-                <p class="place-card__about">{{ place.about }}</p>
+                <div class="place-card__reveal">
+                  <p class="place-card__about">{{ place.about }}</p>
 
-                <div class="place-card__details">
-                  <div class="place-card__detail-item">
-                    <span class="detail-label">Horário</span>
-                    <span class="detail-value">{{ place.bestTime }}</span>
+                  <div class="place-card__details">
+                    <div class="place-card__detail">
+                      <span class="detail-label">Horário</span>
+                      <span class="detail-value">{{ place.bestTime }}</span>
+                    </div>
+                    <span class="detail-sep" aria-hidden="true">◆</span>
+                    <div class="place-card__detail">
+                      <span class="detail-label">Perfil</span>
+                      <span class="detail-value">{{ place.profile }}</span>
+                    </div>
                   </div>
-                  <div class="place-card__detail-sep" aria-hidden="true">◆</div>
-                  <div class="place-card__detail-item">
-                    <span class="detail-label">Perfil</span>
-                    <span class="detail-value">{{ place.profile }}</span>
+
+                  <div class="place-card__actions">
+                    <button class="btn btn--ghost" type="button" @click.stop="seeDetails(place)">
+                      Ver detalhes
+                    </button>
+                    <button class="btn btn--primary" type="button" @click.stop="chooseGuide(place)">
+                      Escolher guia
+                      <span class="btn__chev" aria-hidden="true"></span>
+                    </button>
                   </div>
                 </div>
-
-                <div class="place-card__actions">
-                  <button class="btn btn--ghost" type="button" @click.stop="seeDetails(place)">
-                    Ver detalhes
-                  </button>
-                  <button class="btn btn--primary" type="button" @click.stop="chooseGuide(place)">
-                    Escolher guia
-                    <span class="btn__chev" aria-hidden="true"></span>
-                  </button>
-                </div>
               </div>
-
-              <!-- Brilho ao hover -->
-              <span class="place-card__sheen" aria-hidden="true"></span>
             </article>
           </swiper-slide>
         </swiper>
-
-        <p class="places__hint" data-anim="hint">
-          <span class="places__hint-icon" aria-hidden="true">◆</span>
-          Passe o mouse no desktop ou toque no card no mobile para ver mais.
-        </p>
       </div>
-
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
-
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-const modules = [Pagination, Autoplay];
+import local1 from "/Local/ca1.jpeg";
+import local2 from "/Local/ca3.jpeg";
+import local3 from "/Local/ca1.jpeg";
+import local4 from "/Local/ca4.jpeg";
+import local5 from "/Local/ca4.jpeg";
+import local6 from "/Local/ca1.jpeg";
 
-const root          = ref<HTMLElement | null>(null);
-const isVisible     = ref(false);
-const reduceMotion  = ref(false);
-const activeIndex   = ref<number | null>(null);
+const modules = [Pagination, Autoplay];
+const root = ref<HTMLElement | null>(null);
+const isVisible = ref(false);
+const reduceMotion = ref(false);
+const activeIndex = ref<number | null>(null);
 
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
 let onMqChange: ((e: MediaQueryListEvent) => void) | null = null;
 let mm: gsap.MatchMedia | null = null;
-let cleanupTilt: Array<() => void> = [];
-
-// ── Troque pelas imagens reais ──────────────────────────────────────
-import local1 from "/Local/Cachu1.png";
-import local2 from "/Local/Cachu1.png";
-import local3 from "/Local/Cachu1.png";
-import local4 from "/Local/Cachu1.png";
-import local5 from "/Local/Cachu1.png";
-import local6 from "/Local/Cachu1.png";
+let tiltCleanup: Array<() => void> = [];
 
 type Place = {
   title: string;
@@ -237,7 +213,7 @@ const places: Place[] = [
     about: "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
     image: local5,
     category: "Festival",
-    location: "Área principal do evento",
+    location: "Área do evento",
     profile: "Todos os públicos",
     bestTime: "Noite"
   },
@@ -258,7 +234,7 @@ function toggleActive(idx: number) {
 
 function chooseGuide(place: Place) {
   const phone = "5586999999999";
-  const text  = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
+  const text = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 }
 
@@ -267,36 +243,34 @@ function seeDetails(place: Place) {
 }
 
 function bindTilt(scope: HTMLElement) {
-  const cards = scope.querySelectorAll<HTMLElement>("[data-card]");
-  const clamp  = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const isTouch = window.matchMedia("(hover: none)").matches;
+  if (isTouch) return;
 
-  cards.forEach((card) => {
-    const media = card.querySelector<HTMLElement>(".place-card__media");
-    if (!media) return;
+  const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n));
+
+  scope.querySelectorAll<HTMLElement>(".place-card__media").forEach((media) => {
+    const card = media.closest<HTMLElement>(".place-card");
+    if (!card) return;
 
     const onMove = (e: MouseEvent) => {
-      const r  = card.getBoundingClientRect();
+      const r = card.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width;
-      const py = (e.clientY - r.top)  / r.height;
+      const py = (e.clientY - r.top) / r.height;
       gsap.to(media, {
-        rotateX: clamp((0.5 - py) * 7, -5, 5),
-        rotateY: clamp((px - 0.5) * 8, -6, 6),
-        duration: 0.25, ease: "power2.out"
+        rotateX: clamp((0.5 - py) * 6, -4, 4),
+        rotateY: clamp((px - 0.5) * 7, -5, 5),
+        duration: 0.3, ease: "power2.out"
       });
     };
 
-    const onLeave = () => {
-      gsap.to(media, { rotateX: 0, rotateY: 0, duration: 0.35, ease: "power2.out" });
-    };
+    const onLeave = () =>
+      gsap.to(media, { rotateX: 0, rotateY: 0, duration: 0.4, ease: "power2.out" });
 
     card.addEventListener("mousemove", onMove);
     card.addEventListener("mouseleave", onLeave);
-    card.addEventListener("focus", onLeave);
-
-    cleanupTilt.push(() => {
+    tiltCleanup.push(() => {
       card.removeEventListener("mousemove", onMove);
       card.removeEventListener("mouseleave", onLeave);
-      card.removeEventListener("focus", onLeave);
     });
   });
 }
@@ -304,13 +278,11 @@ function bindTilt(scope: HTMLElement) {
 onMounted(async () => {
   await nextTick();
 
-  // ── Fontes (mesmo do hero) ──────────────────────────────────────
   if (!document.querySelector('link[data-places-fonts]')) {
     const link = document.createElement("link");
-    link.rel   = "stylesheet";
+    link.rel = "stylesheet";
     link.setAttribute("data-places-fonts", "1");
-    link.href  =
-      "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
     document.head.appendChild(link);
   }
 
@@ -319,48 +291,56 @@ onMounted(async () => {
   onMqChange = (e) => { reduceMotion.value = e.matches; };
   mq.addEventListener?.("change", onMqChange);
 
+  // Aqui está a mágica: O Observer agora dispara apenas uma vez
   io = new IntersectionObserver(
-    ([entry]) => { isVisible.value = !!entry?.isIntersecting; },
-    { threshold: 0.15 }
+    ([e]) => { 
+      if (e.isIntersecting) {
+        isVisible.value = true;
+        if (root.value && io) {
+          io.unobserve(root.value);
+          io.disconnect();
+          io = null; // Limpa a referência
+        }
+      }
+    },
+    { threshold: 0.12 }
   );
+  
   if (root.value) io.observe(root.value);
 
   if (!root.value || reduceMotion.value) return;
 
-  const scope   = root.value;
-  const eyebrow = scope.querySelector('[data-anim="eyebrow"]');
-  const title   = scope.querySelector('[data-anim="title"]');
-  const divider = scope.querySelector('[data-anim="divider"]');
-  const sub     = scope.querySelector('[data-anim="sub"]');
-  const badges  = scope.querySelectorAll(".places__tag");
-  const slider  = scope.querySelector('[data-anim="slider"]');
-  const hint    = scope.querySelector('[data-anim="hint"]');
-  const cards   = scope.querySelectorAll("[data-card]");
+  const scope = root.value;
+  const els = {
+    eyebrow: scope.querySelector('[data-anim="eyebrow"]'),
+    title:   scope.querySelector('[data-anim="title"]'),
+    divider: scope.querySelector('[data-anim="divider"]'),
+    sub:     scope.querySelector('[data-anim="sub"]'),
+    badges:  scope.querySelectorAll(".places__tag"),
+    slider:  scope.querySelector('[data-anim="slider"]')
+  };
 
-  gsap.set([eyebrow, title, divider, sub, slider, hint], { autoAlpha: 0, y: 18, filter: "blur(10px)" });
-  gsap.set(badges, { autoAlpha: 0, y: 10, filter: "blur(8px)" });
-  gsap.set(cards,  { autoAlpha: 0, y: 20, filter: "blur(10px)" });
+  gsap.set(
+    [els.eyebrow, els.title, els.divider, els.sub, els.slider],
+    { autoAlpha: 0, y: 16 }
+  );
+  gsap.set(els.badges, { autoAlpha: 0, y: 8 });
 
   mm = gsap.matchMedia();
   mm.add("(min-width: 0px)", () => {
-    const tl = gsap.timeline({
-      scrollTrigger: { trigger: scope, start: "top 80%", once: true },
+    gsap.timeline({
+      scrollTrigger: { trigger: scope, start: "top 82%", once: true }, // O ScrollTrigger já executa apenas 1 vez com o once: true
       defaults: { ease: "power2.out" }
-    });
-
-    tl
-      .to(eyebrow, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.00)
-      .to(title,   { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55 }, 0.08)
-      .to(divider, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.40 }, 0.14)
-      .to(sub,     { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45 }, 0.18)
-      .to(badges,  { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.40, stagger: 0.07 }, 0.22)
-      .to(slider,  { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.50 }, 0.28)
-      .to(cards,   { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.55, stagger: 0.08 }, 0.32)
-      .to(hint,    { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.35 }, 0.46);
+    })
+      .to(els.eyebrow, { autoAlpha: 1, y: 0, duration: 0.4 }, 0)
+      .to(els.title,   { autoAlpha: 1, y: 0, duration: 0.5 }, 0.07)
+      .to(els.divider, { autoAlpha: 1, y: 0, duration: 0.35 }, 0.13)
+      .to(els.sub,     { autoAlpha: 1, y: 0, duration: 0.4 }, 0.17)
+      .to(els.badges,  { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.06 }, 0.21)
+      .to(els.slider,  { autoAlpha: 1, y: 0, duration: 0.45 }, 0.27);
 
     bindTilt(scope);
-
-    return () => { ScrollTrigger.getAll().forEach((t) => t.kill()); };
+    return () => { ScrollTrigger.getAll().forEach(t => t.kill()); };
   });
 });
 
@@ -369,90 +349,61 @@ onBeforeUnmount(() => {
   io?.disconnect();
   io = null;
   if (mq && onMqChange) mq.removeEventListener?.("change", onMqChange);
-  cleanupTilt.forEach((fn) => fn());
-  cleanupTilt = [];
+  tiltCleanup.forEach(fn => fn());
+  tiltCleanup = [];
   mm?.revert();
-  ScrollTrigger.getAll().forEach((t) => t.kill());
+  ScrollTrigger.getAll().forEach(t => t.kill());
 });
 </script>
 
 <style scoped>
-/* ── Tokens (alinhados ao hero) ─────────────────────────────────── */
+/* ── Tokens ── */
 .places {
-  --blue:       #01195a;
-  --blue-deep:  #060e2a;
-  --blue-soft:  rgba(1, 25, 90, 0.06);
-  --blue-mid:   rgba(1, 25, 90, 0.12);
-  --gold:       #EDE53A;
-  --gold-dk:    #c8a830;
-  --gold-soft:  rgba(237, 229, 58, 0.14);
-  --gold-line:  rgba(237, 229, 58, 0.40);
-  --text:       #0d1326;
-  --muted:      rgba(13, 19, 38, 0.55);
-  --line:       rgba(1, 25, 90, 0.09);
+  --blue:      #01195a;
+  --blue-soft: rgba(1, 25, 90, 0.06);
+  --gold:      #EDE53A;
+  --gold-dk:   #c8a830;
+  --gold-line: rgba(237, 229, 58, 0.40);
+  --text:      #0d1326;
+  --muted:     rgba(13, 19, 38, 0.52);
+  --line:      rgba(1, 25, 90, 0.08);
 
   --font-display: "Playfair Display", Georgia, serif;
-  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --font-cond:    "Barlow Condensed", ui-sans-serif, sans-serif;
   --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
 
   position: relative;
   padding: 72px 0 80px;
   overflow: hidden;
-  background: #ffffff;
+  background: #fff;
 }
 
-/* ── Fundo ─────────────────────────────────────────────────────── */
+/* ── Fundo minimalista ── */
 .places__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-/* Grade sutil azul-escuro */
 .places__bg-lines {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(1,25,90,0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(1,25,90,0.04) 1px, transparent 1px);
-  background-size: 52px 52px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+    linear-gradient(to right,  rgba(1,25,90,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(1,25,90,0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 50%, black 20%, transparent 100%);
 }
 
-.places__bg-glow {
-  position: absolute;
-  border-radius: 999px;
-  filter: blur(72px);
-}
-
-/* Glow dourado sutil no topo-esquerdo */
-.places__bg-glow--a {
-  top: -80px;
-  left: -100px;
-  width: 360px;
-  height: 360px;
-  background: rgba(237, 229, 58, 0.10);
-}
-
-/* Glow azul no fundo-direito */
-.places__bg-glow--b {
-  right: -100px;
-  bottom: -80px;
-  width: 320px;
-  height: 320px;
-  background: rgba(1, 25, 90, 0.06);
-}
-
-/* ── Container ──────────────────────────────────────────────────── */
+/* ── Container ── */
 .places__container {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
   width: min(1200px, calc(100% - 48px));
   margin: 0 auto;
 }
 
-/* ── Cabeçalho ──────────────────────────────────────────────────── */
+/* ── Cabeçalho ── */
 .places__head {
   display: flex;
   align-items: flex-end;
@@ -462,11 +413,8 @@ onBeforeUnmount(() => {
   margin-bottom: 36px;
 }
 
-.places__head-left {
-  max-width: 600px;
-}
+.places__head-left { max-width: 600px; }
 
-/* Badge (mesmo do hero) */
 .places__badge-wrap {
   display: inline-flex;
   margin-bottom: 18px;
@@ -479,7 +427,7 @@ onBeforeUnmount(() => {
   background: var(--gold);
   color: #1a1200;
   font-family: var(--font-cond);
-  font-size: clamp(0.58rem, 1.0vw, 0.70rem);
+  font-size: clamp(0.58rem, 1vw, 0.70rem);
   font-weight: 800;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -491,11 +439,10 @@ onBeforeUnmount(() => {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0,0,0,0.3);
   flex-shrink: 0;
 }
 
-/* Título (Playfair Display, mesmo do hero) */
 .places__title {
   margin: 0;
   display: flex;
@@ -505,7 +452,7 @@ onBeforeUnmount(() => {
 
 .places__title-eyebrow {
   font-family: var(--font-cond);
-  font-size: clamp(0.72rem, 1.3vw, 0.90rem);
+  font-size: clamp(0.70rem, 1.2vw, 0.88rem);
   font-weight: 400;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -514,20 +461,19 @@ onBeforeUnmount(() => {
 
 .places__title-main {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 900;
   line-height: 0.95;
   letter-spacing: -0.02em;
   color: var(--blue);
 }
 
-/* Divisor (mesmo do hero) */
 .places__divider {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 16px 0;
-  max-width: 240px;
+  max-width: 220px;
 }
 
 .places__divider-line {
@@ -542,71 +488,61 @@ onBeforeUnmount(() => {
   background: var(--gold);
   transform: rotate(45deg);
   flex-shrink: 0;
-  opacity: 0.9;
 }
 
 .places__sub {
   margin: 0;
-  max-width: 520px;
+  max-width: 500px;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: clamp(0.88rem, 1.4vw, 0.98rem);
+  font-size: clamp(0.88rem, 1.4vw, 0.97rem);
   line-height: 1.70;
 }
 
-/* Tags de destaque (estilo condensado, uppercase, border-radius: 2px) */
 .places__tags {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: 8px;
   padding: 0;
   margin: 0;
-  width: min(360px, 100%);
+  width: min(340px, 100%);
   align-self: flex-start;
-  padding-top: 4px;
 }
 
 .places__tag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  padding: 0 14px;
+  min-height: 34px;
+  padding: 0 12px;
   border-radius: 2px;
   background: var(--blue-soft);
-  border: 1px solid rgba(1, 25, 90, 0.12);
+  border: 1px solid rgba(1, 25, 90, 0.10);
   color: var(--blue);
   font-family: var(--font-cond);
-  font-size: clamp(0.62rem, 1.0vw, 0.74rem);
+  font-size: clamp(0.60rem, 1vw, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-align: center;
-  transition: background 200ms ease, border-color 200ms ease;
+  transition: background 180ms ease, border-color 180ms ease;
 }
 
 .places__tag:hover {
-  background: rgba(1, 25, 90, 0.10);
-  border-color: rgba(1, 25, 90, 0.20);
+  background: rgba(1, 25, 90, 0.09);
+  border-color: rgba(1, 25, 90, 0.18);
 }
 
-/* ── Slider ─────────────────────────────────────────────────────── */
-.places__slider {
-  margin-top: 4px;
-}
+/* ── Slider ── */
+.places__slider { margin-top: 4px; }
 
-.placesSwiper {
-  width: 100%;
-  padding: 8px 0 32px;
-}
+.placesSwiper { width: 100%; padding: 6px 0 36px; }
 
-/* Barra de progresso dourada (como o scroll-hint do hero) */
 :deep(.swiper-pagination-progressbar) {
-  background: rgba(1, 25, 90, 0.07);
-  height: 3px;
+  background: rgba(1, 25, 90, 0.06);
+  height: 2px;
   border-radius: 999px;
-  overflow: hidden;
 }
 
 :deep(.swiper-pagination-progressbar-fill) {
@@ -614,251 +550,187 @@ onBeforeUnmount(() => {
   border-radius: 999px;
 }
 
-.places__hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin: 6px 0 0;
-  color: var(--muted);
-  font-family: var(--font-cond);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-}
-
-.places__hint-icon {
-  font-size: 0.45em;
-  color: var(--gold-dk);
-  opacity: 0.8;
-}
-
-/* ── Card ───────────────────────────────────────────────────────── */
+/* ── Card ── */
 .place-card {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 330px;
-  height: 400px;
-  margin: 0 auto;
-  border-radius: 4px;           /* hero usa bordas quase retas */
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
   outline: none;
-  border: 1px solid rgba(1, 25, 90, 0.10);
+  border: 1px solid rgba(1, 25, 90, 0.09);
   background: #f8f9fc;
-  box-shadow:
-    0 2px 8px rgba(1, 25, 90, 0.06),
-    0 16px 48px rgba(1, 25, 90, 0.08);
+  box-shadow: 0 2px 12px rgba(1, 25, 90, 0.07);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+.place-card:hover {
+  box-shadow: 0 8px 32px rgba(1, 25, 90, 0.13);
+  transform: translateY(-2px);
 }
 
 .place-card:focus-visible {
-  box-shadow:
-    0 0 0 3px var(--gold),
-    0 16px 48px rgba(1, 25, 90, 0.10);
+  box-shadow: 0 0 0 3px var(--gold), 0 8px 32px rgba(1, 25, 90, 0.10);
 }
 
-/* Brilho (sheen) ao hover */
-.place-card__sheen {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%);
-  transform: translateX(-140%);
-  transition: transform 0.65s ease;
-  pointer-events: none;
-  z-index: 6;
-}
-
-.place-card:hover .place-card__sheen,
-.place-card:focus-visible .place-card__sheen,
-.place-card.is-active .place-card__sheen {
-  transform: translateX(140%);
-}
-
-/* Mídia */
+/* ── Mídia ── */
 .place-card__media {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  flex-shrink: 0;
   transform-style: preserve-3d;
   will-change: transform;
 }
 
 .place-card__img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.02);
-  transition: transform 0.55s ease;
+  transition: transform 0.5s ease;
 }
 
 .place-card:hover .place-card__img,
 .place-card.is-active .place-card__img {
-  transform: scale(1.08);
+  transform: scale(1.06);
 }
 
-/* Overlay com gradiente azul-escuro (tom do hero) */
 .place-card__overlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(6, 14, 42, 0.05) 0%,
-      rgba(6, 14, 42, 0.55) 60%,
-      rgba(1, 25, 90, 0.88) 100%
-    );
-}
-
-/* Tag categoria (estilo ghost do hero: borda semitransparente) */
-.place-card__top {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  display: flex;
-  justify-content: flex-start;
-  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(1, 25, 90, 0.65) 100%
+  );
+  z-index: 1;
 }
 
 .place-card__tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 12px;
+  min-height: 26px;
+  padding: 0 10px;
   border-radius: 2px;
-  background: rgba(237, 229, 58, 0.18);
-  border: 1px solid rgba(237, 229, 58, 0.50);
+  background: rgba(237, 229, 58, 0.16);
+  border: 1px solid rgba(237, 229, 58, 0.45);
   color: var(--gold);
   font-family: var(--font-cond);
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-/* Título e local (embaixo do card) */
-.place-card__bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 14px 16px 18px;
-  z-index: 2;
+/* ── Corpo do card ── */
+.place-card__body {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.place-card__base {
+  padding: 14px 16px 16px;
 }
 
 .place-card__title {
-  margin: 0;
-  color: #ffffff;
+  margin: 0 0 4px;
+  color: var(--text);
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, 2vw, 1.18rem);
   font-weight: 700;
-  line-height: 1.05;
+  line-height: 1.1;
   letter-spacing: -0.01em;
 }
 
 .place-card__meta {
-  margin: 5px 0 0;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(255, 255, 255, 0.68);
+  color: var(--muted);
   font-family: var(--font-cond);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.place-card__meta-icon {
-  width: 12px;
-  height: 12px;
-  color: var(--gold);
-  opacity: 0.85;
+.place-card__pin {
+  width: 11px;
+  height: 11px;
+  color: var(--gold-dk);
   flex-shrink: 0;
 }
 
-/* ── Reveal ao hover ─────────────────────────────────────────────── */
 .place-card__reveal {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  padding: 16px;
+  padding: 0 16px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   gap: 10px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.32s ease, transform 0.32s ease;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(1, 25, 90, 0.30) 0%,
-      rgba(1, 25, 90, 0.92) 100%
-    );
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.place-card:hover .place-card__reveal,
-.place-card:focus-visible .place-card__reveal,
-.place-card.is-active .place-card__reveal {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .place-card__about {
   margin: 0;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--muted);
   font-family: var(--font-sans);
   font-size: 0.84rem;
   line-height: 1.55;
 }
 
-/* Detalhes: horário + perfil separados por losango (hero pattern) */
 .place-card__details {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   border-radius: 2px;
-  border: 1px solid rgba(237, 229, 58, 0.18);
-  background: rgba(1, 25, 90, 0.30);
+  border: 1px solid rgba(1, 25, 90, 0.08);
+  background: rgba(1, 25, 90, 0.03);
 }
 
-.place-card__detail-item {
+.place-card__detail {
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
 }
 
-.place-card__detail-sep {
-  color: var(--gold);
-  font-size: 0.45em;
-  opacity: 0.6;
+.detail-sep {
+  color: var(--gold-dk);
+  font-size: 0.5em;
+  opacity: 0.5;
   flex-shrink: 0;
 }
 
 .detail-label {
-  color: rgba(237, 229, 58, 0.72);
+  color: var(--muted);
   font-family: var(--font-cond);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .detail-value {
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--text);
   font-family: var(--font-cond);
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
-/* ── Botões (idênticos ao hero: border-radius: 2px) ──────────────── */
+/* ── Botões ── */
 .place-card__actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -869,21 +741,19 @@ onBeforeUnmount(() => {
   appearance: none;
   border: none;
   cursor: pointer;
-  min-height: 42px;
-  padding: 0 14px;
+  min-height: 40px;
+  padding: 0 12px;
   border-radius: 2px;
   font-family: var(--font-cond);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+  gap: 7px;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
 
 .btn:focus-visible {
@@ -893,40 +763,39 @@ onBeforeUnmount(() => {
 
 .btn--ghost {
   background: transparent;
-  color: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--blue);
+  border: 1px solid rgba(1, 25, 90, 0.20);
 }
 
 .btn--primary {
   background: var(--gold);
   color: #140d00;
-  box-shadow: 0 4px 16px rgba(237, 229, 58, 0.22);
+  box-shadow: 0 2px 10px rgba(237, 229, 58, 0.20);
 }
 
 .btn__chev {
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
+  width: 6px;
+  height: 6px;
+  border-right: 1.8px solid currentColor;
+  border-bottom: 1.8px solid currentColor;
   transform: rotate(-45deg);
   flex-shrink: 0;
 }
 
 @media (hover: hover) {
   .btn--ghost:hover {
-    border-color: rgba(255, 255, 255, 0.50);
-    color: #ffffff;
+    border-color: rgba(1, 25, 90, 0.40);
     transform: translateY(-1px);
   }
 
   .btn--primary:hover {
     background: #f5ee50;
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(237, 229, 58, 0.38);
+    box-shadow: 0 6px 20px rgba(237, 229, 58, 0.34);
   }
 }
 
-/* ── Animações de entrada ────────────────────────────────────────── */
+/* ── Animações de entrada (CSS fallback sem gsap) ── */
 .places__badge-wrap,
 .places__title,
 .places__divider,
@@ -934,77 +803,47 @@ onBeforeUnmount(() => {
 .places__tags,
 .places__slider {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 700ms ease, transform 700ms ease;
+  transform: translateY(18px);
+  transition: opacity 600ms ease, transform 600ms ease;
 }
 
 .is-visible .places__badge-wrap { opacity: 1; transform: none; transition-delay: 0ms;   }
-.is-visible .places__title      { opacity: 1; transform: none; transition-delay: 80ms;  }
-.is-visible .places__divider    { opacity: 1; transform: none; transition-delay: 140ms; }
-.is-visible .places__sub        { opacity: 1; transform: none; transition-delay: 200ms; }
-.is-visible .places__tags       { opacity: 1; transform: none; transition-delay: 260ms; }
-.is-visible .places__slider     { opacity: 1; transform: none; transition-delay: 320ms; }
+.is-visible .places__title      { opacity: 1; transform: none; transition-delay: 70ms;  }
+.is-visible .places__divider    { opacity: 1; transform: none; transition-delay: 130ms; }
+.is-visible .places__sub        { opacity: 1; transform: none; transition-delay: 180ms; }
+.is-visible .places__tags       { opacity: 1; transform: none; transition-delay: 240ms; }
+.is-visible .places__slider     { opacity: 1; transform: none; transition-delay: 290ms; }
 
-/* ── Responsivo ──────────────────────────────────────────────────── */
-@media (max-width: 1120px) {
-  .places__tags {
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    max-width: 400px;
-  }
-}
-
+/* ── Responsivo ── */
 @media (max-width: 860px) {
-  .places {
-    padding: 56px 0 64px;
-  }
+  .places { padding: 52px 0 60px; }
 
-  .places__container {
-    width: min(1200px, calc(100% - 32px));
-  }
+  .places__container { width: min(1200px, calc(100% - 32px)); }
 
   .places__head {
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
   .places__tags {
     max-width: 100%;
     width: 100%;
   }
-
-  .place-card {
-    max-width: 100%;
-    height: 370px;
-  }
 }
 
 @media (max-width: 540px) {
-  .places {
-    padding: 48px 0 56px;
-  }
+  .places { padding: 44px 0 52px; }
 
-  .places__container {
-    width: min(1200px, calc(100% - 24px));
-  }
+  .places__container { width: min(1200px, calc(100% - 24px)); }
 
-  .places__title-main {
-    font-size: clamp(2rem, 10vw, 2.8rem);
-  }
+  .places__title-main { font-size: clamp(2rem, 10vw, 2.6rem); }
 
-  .places__tags {
-    grid-template-columns: 1fr;
-  }
+  .places__tags { grid-template-columns: 1fr 1fr; }
 
-  .place-card {
-    height: 350px;
-    border-radius: 3px; 
-  }
+  .place-card__media { aspect-ratio: 3 / 4; }
 
-  .place-card__actions {
-    grid-template-columns: 1fr;
-  }
+  .place-card__actions { grid-template-columns: 1fr; }
 
   .place-card__details {
     flex-direction: column;
@@ -1012,12 +851,10 @@ onBeforeUnmount(() => {
     align-items: flex-start;
   }
 
-  .place-card__detail-sep {
-    display: none;
-  }
+  .detail-sep { display: none; }
 }
 
-/* ── Reduced motion ──────────────────────────────────────────────── */
+/* ── Reduced motion ── */
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {

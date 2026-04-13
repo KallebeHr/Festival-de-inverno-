@@ -1580,7 +1580,8 @@ onBeforeUnmount(() => {
 .gallery-dialog__nav--next { right: 16px; }
 
 .gallery-dialog__body {
-  padding: 32px; overflow-y: auto; background: var(--paper);
+  padding: 32px; overflow-y: auto; background: #01195A;
+
 }
 
 .gallery-dialog__header { display: flex; justify-content: space-between; gap: 14px; }

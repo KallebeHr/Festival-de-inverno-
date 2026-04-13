@@ -64,6 +64,7 @@ const sponsors = [
   { name: "Nome Patrocinio" },
   { name: "Prefeitura de Pedro II" },
   { name: "Nome Patrocinio" },
+  { Name:"", linkSRc: "/"}
 ]
 
 const maskStyle = `
