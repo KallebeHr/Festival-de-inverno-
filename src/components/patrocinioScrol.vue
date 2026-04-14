@@ -74,11 +74,13 @@ const maskStyle = `
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 .sponsors {
   position: relative;
   padding: 56px 0;
   overflow: hidden;
-  background: #ffffff;
+  background: #FBFBFD;
 }
 
 .container {
@@ -94,7 +96,7 @@ const maskStyle = `
 .title {
   margin: 0;
   color: rgba(0, 0, 0, 0.96);
-  font-family:  ui-serif, "Georgia", "Times New Roman", Times, serif;;
+  font-family: 'Rawline', sans-serif;
   font-size: clamp(1.55rem, 2.3vw, 2.45rem);
 
   font-weight: 800;
@@ -106,7 +108,7 @@ const maskStyle = `
   margin: 12px auto 0;
   max-width: 640px;
   color: rgba(0, 0, 0, 0.56);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Rawline', sans-serif;
   font-size: 0.98rem;
   line-height: 1.6;
 }

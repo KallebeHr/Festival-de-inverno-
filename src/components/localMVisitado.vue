@@ -192,7 +192,7 @@ const places: Place[] = [
   },
   {
     title: "Cachoeira do Salto Liso",
-    about: "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso em meio às paisagens da região.",
+    about: "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso.",
     image: local3,
     category: "Ecoturismo",
     location: "Zona rural",
@@ -357,6 +357,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 /* ── Tokens ── */
 .places {
   --blue:      #01195a;
@@ -368,9 +370,9 @@ onBeforeUnmount(() => {
   --muted:     rgba(13, 19, 38, 0.52);
   --line:      rgba(1, 25, 90, 0.08);
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-cond:    "Barlow Condensed", ui-sans-serif, sans-serif;
-  --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond:    'Rawline', sans-serif;
+  --font-sans:    'Rawline', sans-serif;
 
   position: relative;
   padding: 72px 0 80px;

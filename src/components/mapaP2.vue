@@ -400,6 +400,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 /* ── Tokens (herdados do Hero) ─────────────────── */
 .arrival {
   --blue:        #01195a;
@@ -414,9 +416,9 @@ onBeforeUnmount(() => {
   --surface:     #ffffff;
   --border:      rgba(13, 13, 13, 0.09);
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond:    'Rawline', sans-serif;
+  --font-sans:    'Rawline', sans-serif;
 
   position: relative;
   overflow: hidden;

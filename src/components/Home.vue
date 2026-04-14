@@ -49,7 +49,7 @@
       <div class="hero__badge-wrap">
         <span class="hero__badge">
           <span class="hero__badge-dot" aria-hidden="true"></span>
-          Música · Artesanato · Ecoturismo
+          {{ t.heroExtr }}
           <span class="hero__badge-dot" aria-hidden="true"></span>
         </span>
       </div>
@@ -73,12 +73,12 @@
       </div>
 
       <div class="hero__actions">
-        <button class="btn btn--primary" type="button" @click="onPrimary">
-          Ver programação
-        </button>
-        <button class="btn btn--ghost" type="button" @click="onSecondary">
-          Como chegar
-        </button>
+<button class="btn btn--primary" type="button" @click="onPrimary">
+  {{ t.heroPrimary }}
+</button>
+<button class="btn btn--ghost" type="button" @click="onSecondary">
+  {{ t.heroSecondary }}
+</button>
       </div>
 
       <div class="hero__scroll-hint" aria-hidden="true">
@@ -90,7 +90,9 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, inject } from "vue";
+
+const { t } = inject('i18n') as any
 
 const root      = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
@@ -149,9 +151,9 @@ onBeforeUnmount(() => {
 
   /* Tint azul — ajuste opacity em .hero__bg-tint */
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond:    'Rawline', sans-serif;
+  --font-sans:    'Rawline', sans-serif;
 
   position: relative;
   isolation: isolate;

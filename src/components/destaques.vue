@@ -2,15 +2,15 @@
   <section ref="root" class="featured" aria-label="Ações do festival">
     <header class="head">
       <div class="head__title-wrap">
-        <span class="head__eyebrow">Festival de Inverno</span>
-        <h2 class="head__title">Ações do Festival</h2>
+        <span class="head__eyebrow">{{ t.featuredEyebrow }}</span>
+        <h2 class="head__title">{{ t.featuredTitle }}</h2>
       </div>
 
       <div class="head__actions">
-        <button class="nav nav--prev" type="button" aria-label="Voltar" @click="slidePrev">
+        <button class="nav nav--prev" type="button" :aria-label="t.featuredPrev" @click="slidePrev">
           <span aria-hidden="true">‹</span>
         </button>
-        <button class="nav nav--next" type="button" aria-label="Avançar" @click="slideNext">
+        <button class="nav nav--next" type="button" :aria-label="t.featuredNext" @click="slideNext">
           <span aria-hidden="true">›</span>
         </button>
       </div>
@@ -29,7 +29,7 @@
         :breakpoints="breakpoints"
         @swiper="onSwiper"
       >
-        <SwiperSlide v-for="(item, idx) in items" :key="item.id ?? idx">
+        <SwiperSlide v-for="(item, idx) in localizedItems" :key="item.id ?? idx">
           <article
             class="card"
             :data-io="ioReady ? '1' : '0'"
@@ -50,11 +50,11 @@
 
                 <span v-if="item.badge" class="badge">{{ item.badge }}</span>
 
-                <div v-if="item.ageRating" class="age-rating" :data-rating="item.ageRating" :aria-label="`Classificação etária: ${item.ageRating}`">
+                <div v-if="item.ageRating" class="age-rating" :data-rating="item.ageRating" :aria-label="`${t.featuredAgeLabel}: ${item.ageRating}`">
                   {{ item.ageRating }}
                 </div>
 
-                <button class="share" type="button" aria-label="Compartilhar" @click.stop.prevent="share(item)">
+                <button class="share" type="button" :aria-label="t.featuredShare" @click.stop.prevent="share(item)">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true">
                     <path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -87,7 +87,7 @@
                 </div>
 
                 <div class="card__cta">
-                  <span class="cta-text">Ver detalhes</span>
+                  <span class="cta-text">{{ t.featuredSeeDetails }}</span>
                   <svg viewBox="0 0 24 24" class="cta-icon" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
               </div>
@@ -112,7 +112,6 @@
           @keydown.esc="closeModal"
         >
           <div class="modal" ref="modalEl" tabindex="-1">
-            <!-- Hero Image -->
             <div class="modal__hero">
               <img
                 class="modal__hero-img"
@@ -122,7 +121,7 @@
               />
               <div class="modal__hero-overlay"></div>
 
-              <button class="modal__close" type="button" aria-label="Fechar" @click="closeModal">
+              <button class="modal__close" type="button" :aria-label="t.featuredClose" @click="closeModal">
                 <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
 
@@ -138,9 +137,7 @@
               </div>
             </div>
 
-            <!-- Body -->
             <div class="modal__body">
-              <!-- Chips de info rápida -->
               <div class="modal__chips">
                 <div class="chip" v-if="activeItem.ageRating">
                   <div class="chip__ic age-badge" :data-rating="activeItem.ageRating" aria-hidden="true">{{ activeItem.ageRating }}</div>
@@ -156,16 +153,15 @@
                 </div>
                 <div class="chip" v-if="activeItem.price !== undefined">
                   <svg viewBox="0 0 24 24" class="chip__ic i" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <span>{{ activeItem.price === 0 ? 'Gratuito' : `R$ ${activeItem.price}` }}</span>
+                  <span>{{ activeItem.price === 0 ? t.featuredFree : `R$ ${activeItem.price}` }}</span>
                 </div>
               </div>
 
-              <!-- Info grid: data e local -->
               <div class="modal__info-grid">
                 <div class="info-block">
                   <div class="info-block__label">
                     <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M7 2v3M17 2v3M3 9h18M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Data e horário
+                    {{ t.featuredDateLabel }}
                   </div>
                   <div class="info-block__value">{{ activeItem.date }}</div>
                   <div v-if="activeItem.time" class="info-block__sub">{{ activeItem.time }}</div>
@@ -174,48 +170,45 @@
                 <div class="info-block">
                   <div class="info-block__label">
                     <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 22s7-4.4 7-12a7 7 0 1 0-14 0c0 7.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 10.5a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                    Local
+                    {{ t.featuredPlaceLabel }}
                   </div>
                   <div class="info-block__value">{{ activeItem.place }}</div>
                   <div v-if="activeItem.address" class="info-block__sub">{{ activeItem.address }}</div>
                 </div>
               </div>
 
-              <!-- Mapa / localização -->
               <div v-if="activeItem.mapUrl || activeItem.mapEmbed" class="modal__map-wrap">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="M3 7l6-4 6 4 6-4v14l-6 4-6-4-6 4V7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3v14M15 7v14" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                  Mapa
+                  {{ t.featuredMapLabel }}
                 </div>
                 <div v-if="activeItem.mapEmbed" class="modal__map" v-html="activeItem.mapEmbed"></div>
                 <a v-else-if="activeItem.mapUrl" :href="activeItem.mapUrl" target="_blank" rel="noopener noreferrer" class="map-link">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 22s7-4.4 7-12a7 7 0 1 0-14 0c0 7.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 10.5a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                  Ver no mapa
+                  {{ t.featuredSeeOnMap }}
                   <svg viewBox="0 0 24 24" class="i ext-ic" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
               </div>
 
-              <!-- Descrição -->
               <div v-if="activeItem.description" class="modal__desc">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  Descrição
+                  {{ t.featuredDescLabel }}
                 </div>
                 <p class="desc-text">{{ activeItem.description }}</p>
               </div>
 
-              <!-- Galeria -->
               <div v-if="activeItem.gallery?.length" class="modal__gallery">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="m21 15-5-5L5 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  Galeria
+                  {{ t.featuredGalleryLabel }}
                 </div>
                 <div class="gallery-grid">
                   <img
                     v-for="(img, i) in activeItem.gallery"
                     :key="i"
                     :src="img.src"
-                    :alt="img.alt || `Foto ${i + 1}`"
+                    :alt="img.alt || `${t.featuredPhoto} ${i + 1}`"
                     class="gallery-img"
                     loading="lazy"
                     draggable="false"
@@ -223,11 +216,10 @@
                 </div>
               </div>
 
-              <!-- Atrações / line-up -->
               <div v-if="activeItem.lineup?.length" class="modal__lineup">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18 9 12 3 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Line-up / Atrações
+                  {{ t.featuredLineupLabel }}
                 </div>
                 <ul class="lineup-list">
                   <li v-for="(act, i) in activeItem.lineup" :key="i" class="lineup-item">
@@ -240,11 +232,10 @@
                 </ul>
               </div>
 
-              <!-- Footer de ações -->
               <div class="modal__footer">
                 <button class="btn-share" type="button" @click="share(activeItem)">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Compartilhar
+                  {{ t.featuredShare }}
                 </button>
                 <a
                   v-if="activeItem.ticketUrl"
@@ -254,14 +245,14 @@
                   class="btn-ticket"
                 >
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  Ingressos
+                  {{ t.featuredTickets }}
                 </a>
                 <a
                   v-else-if="activeItem.href && activeItem.href !== '#'"
                   :href="activeItem.href"
                   class="btn-ticket"
                 >
-                  Saiba mais
+                  {{ t.featuredLearnMore }}
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
               </div>
@@ -271,7 +262,7 @@
       </Transition>
     </Teleport>
 
-    <!-- Toast de link copiado -->
+    <!-- Toast -->
     <Transition name="toast">
       <div v-if="toast" class="toast" role="status" aria-live="polite">
         <svg viewBox="0 0 24 24" class="i toast__ic" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -282,57 +273,92 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { A11y } from "swiper/modules";
-import "swiper/css";
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
+import { Swiper, SwiperSlide } from "swiper/vue"
+import { A11y } from "swiper/modules"
+import "swiper/css"
 
-type LineupAct = { name: string; time?: string };
-type GalleryImg = { src: string; alt?: string };
+const { t, lang } = inject('i18n') as any
+
+// ── Tipos ────────────────────────────────────────────
+type LineupAct = { name: string; time?: string }
+type GalleryImg = { src: string; alt?: string }
+type L = { pt: string; en: string }
+
+type FeaturedItemRaw = {
+  id?: string | number
+  badge?: L
+  image: string
+  imageAlt?: L
+  org: L
+  title: L
+  subtitle?: L
+  date: L
+  time?: string
+  place: L
+  address?: L
+  href?: string
+  shareUrl?: string
+  ticketUrl?: string
+  description?: L
+  ageRating?: "L" | "10" | "12" | "14" | "16" | "18"
+  category?: L
+  duration?: string
+  price?: number
+  mapUrl?: string
+  mapEmbed?: string
+  gallery?: GalleryImg[]
+  lineup?: LineupAct[]
+}
 
 type FeaturedItem = {
-  id?: string | number;
-  badge?: string;
-  image: string;
-  imageAlt?: string;
-  org: string;
-  title: string;
-  subtitle?: string;
-  date: string;
-  time?: string;
-  place: string;
-  address?: string;
-  href?: string;
-  shareUrl?: string;
-  ticketUrl?: string;
-  description?: string;
-  ageRating?: "L" | "10" | "12" | "14" | "16" | "18";
-  category?: string;
-  duration?: string;
-  price?: number;
-  mapUrl?: string;
-  mapEmbed?: string;
-  gallery?: GalleryImg[];
-  lineup?: LineupAct[];
-};
+  id?: string | number
+  badge?: string
+  image: string
+  imageAlt?: string
+  org: string
+  title: string
+  subtitle?: string
+  date: string
+  time?: string
+  place: string
+  address?: string
+  href?: string
+  shareUrl?: string
+  ticketUrl?: string
+  description?: string
+  ageRating?: "L" | "10" | "12" | "14" | "16" | "18"
+  category?: string
+  duration?: string
+  price?: number
+  mapUrl?: string
+  mapEmbed?: string
+  gallery?: GalleryImg[]
+  lineup?: LineupAct[]
+}
 
-const props = defineProps<{ items?: FeaturedItem[] }>();
-
-const items: FeaturedItem[] = props.items?.length ? props.items : [
+// ── Dados brutos (pt + en) ───────────────────────────
+const rawItems: FeaturedItemRaw[] = [
   {
     id: 1,
-    badge: "Destaque",
+    badge: { pt: "Destaque", en: "Featured" },
     image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
-    org: "Festival de Inverno",
-    title: "Show de Abertura",
-    subtitle: "Uma noite inesquecível de música ao vivo",
-    date: "04 de Junho de 2026",
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "Show de Abertura", en: "Opening Show" },
+    subtitle: {
+      pt: "Uma noite inesquecível de música ao vivo",
+      en: "An unforgettable night of live music",
+    },
+    date: { pt: "04 de Junho de 2026", en: "June 4th, 2026" },
     time: "20h00 – 23h30",
-    place: "Pedro II – Praça da Matriz",
-    address: "Praça da Matriz, s/n, Pedro II – PI",
-    description: "O show de abertura do Festival de Inverno de Pedro II reúne os maiores nomes da música regional em uma noite mágica sob as estrelas do Piauí. Uma experiência única para toda a família.",
+    place: { pt: "Pedro II – Praça da Matriz", en: "Pedro II – Main Square" },
+    address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
+    description: {
+      pt: "O show de abertura do Festival de Inverno de Pedro II reúne os maiores nomes da música regional em uma noite mágica sob as estrelas do Piauí. Uma experiência única para toda a família.",
+      en: "The opening show of the Pedro II Winter Festival brings together the biggest names in regional music for a magical night under the Piauí stars. A unique experience for the whole family.",
+    },
     ageRating: "L",
-    category: "Show Musical",
+    category: { pt: "Show Musical", en: "Music Show" },
     duration: "3h30",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
@@ -349,19 +375,25 @@ const items: FeaturedItem[] = props.items?.length ? props.items : [
   },
   {
     id: 2,
-    badge: "Novidade",
+    badge: { pt: "Novidade", en: "New" },
     image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1400&q=70",
-    org: "Festival de Inverno",
-    title: "Mostra de Artesanato",
-    subtitle: "Cultura e tradição das mãos do povo piauiense",
-    date: "04 a 07 de Junho de 2026",
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "Mostra de Artesanato", en: "Crafts Exhibition" },
+    subtitle: {
+      pt: "Cultura e tradição das mãos do povo piauiense",
+      en: "Culture and tradition from the hands of Piauí's people",
+    },
+    date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
     time: "09h00 – 18h00",
-    place: "Centro Cultural de Pedro II",
-    address: "Rua Principal, 100, Pedro II – PI",
-    description: "Exposição com mais de 80 artesãos locais exibindo peças em couro, cerâmica, renda, bordado e muito mais. Compra direta com o artista.",
+    place: { pt: "Centro Cultural de Pedro II", en: "Pedro II Cultural Center" },
+    address: { pt: "Rua Principal, 100, Pedro II – PI", en: "Main Street, 100, Pedro II – PI" },
+    description: {
+      pt: "Exposição com mais de 80 artesãos locais exibindo peças em couro, cerâmica, renda, bordado e muito mais. Compra direta com o artista.",
+      en: "Exhibition with over 80 local artisans showcasing leather, ceramics, lace, embroidery and much more. Buy directly from the artist.",
+    },
     ageRating: "L",
-    category: "Cultura & Arte",
-    duration: "4 dias",
+    category: { pt: "Cultura & Arte", en: "Culture & Art" },
+    duration: "4 dias / 4 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
@@ -371,19 +403,25 @@ const items: FeaturedItem[] = props.items?.length ? props.items : [
   },
   {
     id: 3,
-    badge: "Destaque",
+    badge: { pt: "Destaque", en: "Featured" },
     image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=70",
-    org: "Festival de Inverno",
-    title: "Festival Gastronômico",
-    subtitle: "Sabores típicos do inverno serrano",
-    date: "05 e 06 de Junho de 2026",
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "Festival Gastronômico", en: "Food Festival" },
+    subtitle: {
+      pt: "Sabores típicos do inverno serrano",
+      en: "Typical flavors of the highland winter",
+    },
+    date: { pt: "05 e 06 de Junho de 2026", en: "June 5 & 6, 2026" },
     time: "11h00 – 22h00",
-    place: "Parque Municipal",
-    address: "Av. do Parque, s/n, Pedro II – PI",
-    description: "Deguste pratos típicos da culinária serrana: baião de dois, galinha caipira, pamonha, cuscuz e muito mais. Mais de 30 barracas de comida e bebidas regionais.",
+    place: { pt: "Parque Municipal", en: "Municipal Park" },
+    address: { pt: "Av. do Parque, s/n, Pedro II – PI", en: "Park Ave., s/n, Pedro II – PI" },
+    description: {
+      pt: "Deguste pratos típicos da culinária serrana: baião de dois, galinha caipira, pamonha, cuscuz e muito mais. Mais de 30 barracas de comida e bebidas regionais.",
+      en: "Taste typical highland dishes: baião de dois, free-range chicken, pamonha, couscous and much more. Over 30 food and drink stalls.",
+    },
     ageRating: "L",
-    category: "Gastronomia",
-    duration: "2 dias",
+    category: { pt: "Gastronomia", en: "Gastronomy" },
+    duration: "2 dias / 2 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     lineup: [
@@ -393,164 +431,223 @@ const items: FeaturedItem[] = props.items?.length ? props.items : [
   },
   {
     id: 4,
-    badge: "Família",
+    badge: { pt: "Família", en: "Family" },
     image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1400&q=70",
-    org: "Festival de Inverno",
-    title: "Noite do Forró",
-    subtitle: "Grandes nomes do forró pé de serra",
-    date: "07 de Junho de 2026",
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "Noite do Forró", en: "Forró Night" },
+    subtitle: {
+      pt: "Grandes nomes do forró pé de serra",
+      en: "Big names in traditional forró music",
+    },
+    date: { pt: "07 de Junho de 2026", en: "June 7th, 2026" },
     time: "19h00 – 02h00",
-    place: "Arena do Festival",
-    address: "Av. Principal, Pedro II – PI",
-    description: "A noite mais esperada do festival! Grandes nomes do forró em um show imperdível com direito a muito sanfona, zabumba e triângulo.",
+    place: { pt: "Arena do Festival", en: "Festival Arena" },
+    address: { pt: "Av. Principal, Pedro II – PI", en: "Main Ave., Pedro II – PI" },
+    description: {
+      pt: "A noite mais esperada do festival! Grandes nomes do forró em um show imperdível com direito a muito sanfona, zabumba e triângulo.",
+      en: "The most anticipated night of the festival! Big names in forró in an unmissable show featuring accordion, bass drum and triangle.",
+    },
     ageRating: "16",
-    category: "Show Musical",
+    category: { pt: "Show Musical", en: "Music Show" },
     duration: "7h",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     lineup: [
       { name: "Rei do Baião", time: "19h00" },
       { name: "Sanfoneiros do Nordeste", time: "21h00" },
-      { name: "Atração Surpresa", time: "23h30" },
+      { name: "Atração Surpresa / Surprise Act", time: "23h30" },
     ],
   },
   {
     id: 5,
-    badge: "Família",
+    badge: { pt: "Família", en: "Family" },
     image: "https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?auto=format&fit=crop&w=1400&q=70",
-    org: "Festival de Inverno",
-    title: "Circo e Teatro de Rua",
-    subtitle: "Espetáculos gratuitos para toda a família",
-    date: "04 a 07 de Junho de 2026",
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "Circo e Teatro de Rua", en: "Street Circus & Theatre" },
+    subtitle: {
+      pt: "Espetáculos gratuitos para toda a família",
+      en: "Free shows for the whole family",
+    },
+    date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
     time: "16h00 e 18h00",
-    place: "Praça Central",
-    address: "Praça Central, s/n, Pedro II – PI",
-    description: "Malabaristas, palhaços, atores e contadores de histórias tomam conta das praças e ruas do município em apresentações gratuitas e encantadoras para crianças e adultos.",
+    place: { pt: "Praça Central", en: "Central Square" },
+    address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
+    description: {
+      pt: "Malabaristas, palhaços, atores e contadores de histórias tomam conta das praças e ruas do município em apresentações gratuitas e encantadoras para crianças e adultos.",
+      en: "Jugglers, clowns, actors and storytellers take over the squares and streets of the town in free and enchanting performances for children and adults alike.",
+    },
     ageRating: "L",
-    category: "Teatro & Circo",
-    duration: "~1h por sessão",
+    category: { pt: "Teatro & Circo", en: "Theatre & Circus" },
+    duration: "~1h",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
   },
-];
+]
+
+// ── Computed: traduz os itens para o idioma ativo ────
+const l = computed(() => lang.value as 'pt' | 'en')
+
+function pick(field: L | undefined): string {
+  if (!field) return ''
+  return field[l.value] ?? field.pt
+}
+
+const localizedItems = computed<FeaturedItem[]>(() =>
+  rawItems.map(item => ({
+    id:          item.id,
+    badge:       pick(item.badge),
+    image:       item.image,
+    imageAlt:    pick(item.imageAlt),
+    org:         pick(item.org),
+    title:       pick(item.title),
+    subtitle:    pick(item.subtitle),
+    date:        pick(item.date),
+    time:        item.time,
+    place:       pick(item.place),
+    address:     pick(item.address),
+    href:        item.href,
+    shareUrl:    item.shareUrl,
+    ticketUrl:   item.ticketUrl,
+    description: pick(item.description),
+    ageRating:   item.ageRating,
+    category:    pick(item.category),
+    duration:    item.duration,
+    price:       item.price,
+    mapUrl:      item.mapUrl,
+    mapEmbed:    item.mapEmbed,
+    gallery:     item.gallery,
+    lineup:      item.lineup,
+  }))
+)
 
 // ── Swiper ──────────────────────────────────────────
-const modules = [A11y];
+const modules    = [A11y]
 const breakpoints = {
-  520: { slidesPerView: 1.18, spaceBetween: 14 },
-  760: { slidesPerView: 2.1, spaceBetween: 16 },
+  520:  { slidesPerView: 1.18, spaceBetween: 14 },
+  760:  { slidesPerView: 2.1,  spaceBetween: 16 },
   1040: { slidesPerView: 3.02, spaceBetween: 18 },
   1280: { slidesPerView: 3.72, spaceBetween: 18 },
-};
-const swiperRef = ref<any>(null);
-const onSwiper = (s: any) => (swiperRef.value = s);
-const slidePrev = () => swiperRef.value?.slidePrev();
-const slideNext = () => swiperRef.value?.slideNext();
+}
+const swiperRef = ref<any>(null)
+const onSwiper  = (s: any) => (swiperRef.value = s)
+const slidePrev = () => swiperRef.value?.slidePrev()
+const slideNext = () => swiperRef.value?.slideNext()
 
 // ── Modal ────────────────────────────────────────────
-const activeItem = ref<FeaturedItem | null>(null);
-const modalEl = ref<HTMLElement | null>(null);
-let prevFocus: HTMLElement | null = null;
+const activeItem = ref<FeaturedItem | null>(null)
+const modalEl    = ref<HTMLElement | null>(null)
+let prevFocus: HTMLElement | null = null
 
 function open(item: FeaturedItem) {
-  prevFocus = document.activeElement as HTMLElement;
-  activeItem.value = item;
-  const scrollY = window.scrollY;
-  document.body.style.position = "fixed";
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.width = "100%";
-  document.body.style.overflow = "hidden";
-  nextTick(() => modalEl.value?.focus());
+  prevFocus = document.activeElement as HTMLElement
+  activeItem.value = item
+  const scrollY = window.scrollY
+  document.body.style.position = "fixed"
+  document.body.style.top      = `-${scrollY}px`
+  document.body.style.width    = "100%"
+  document.body.style.overflow = "hidden"
+  nextTick(() => modalEl.value?.focus())
 }
 
 function closeModal() {
-  const scrollY = document.body.style.top;
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.width = "";
-  document.body.style.overflow = "";
-  window.scrollTo(0, parseInt(scrollY || "0") * -1);
-  activeItem.value = null;
-  nextTick(() => prevFocus?.focus());
+  const scrollY = document.body.style.top
+  document.body.style.position = ""
+  document.body.style.top      = ""
+  document.body.style.width    = ""
+  document.body.style.overflow = ""
+  window.scrollTo(0, parseInt(scrollY || "0") * -1)
+  activeItem.value = null
+  nextTick(() => prevFocus?.focus())
 }
 
+// Se o modal estiver aberto e o idioma mudar,
+// atualiza o conteúdo do modal para o novo idioma
+watch(lang, () => {
+  if (!activeItem.value) return
+  const id      = activeItem.value.id
+  const updated = localizedItems.value.find(i => i.id === id)
+  if (updated) activeItem.value = updated
+})
+
 // ── Share / Toast ────────────────────────────────────
-const toast = ref<string | null>(null);
-let toastTimer: ReturnType<typeof setTimeout>;
+const toast = ref<string | null>(null)
+let toastTimer: ReturnType<typeof setTimeout>
 
 async function share(item: FeaturedItem) {
-  const url = item.shareUrl || item.href || window.location.href;
+  const url = item.shareUrl || item.href || window.location.href
   if (navigator.share) {
-    try { await navigator.share({ title: item.title, text: item.subtitle || item.title, url }); return; } catch {}
+    try { await navigator.share({ title: item.title, text: item.subtitle || item.title, url }); return } catch {}
   }
   try {
-    await navigator.clipboard.writeText(url);
-    showToast("Link copiado!");
+    await navigator.clipboard.writeText(url)
+    showToast(t.value.featuredLinkCopied)
   } catch {
-    showToast("Não foi possível copiar.");
+    showToast(t.value.featuredCopyFail)
   }
 }
 
 function showToast(msg: string) {
-  toast.value = msg;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => (toast.value = null), 2800);
+  toast.value = msg
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => (toast.value = null), 2800)
 }
 
 // ── Age rating ───────────────────────────────────────
 function ageLabel(r: string) {
   const map: Record<string, string> = {
-    L: "Livre para todos",
-    "10": "10 anos ou mais",
-    "12": "12 anos ou mais",
-    "14": "14 anos ou mais",
-    "16": "16 anos ou mais",
-    "18": "18 anos (adulto)",
-  };
-  return map[r] ?? `${r} anos`;
+    L:    t.value.ageL,
+    "10": t.value.age10,
+    "12": t.value.age12,
+    "14": t.value.age14,
+    "16": t.value.age16,
+    "18": t.value.age18,
+  }
+  return map[r] ?? `${r} anos`
 }
 
 // ── IntersectionObserver ─────────────────────────────
-const root = ref<HTMLElement | null>(null);
-const ioReady = ref(false);
-let io: IntersectionObserver | null = null;
+const root    = ref<HTMLElement | null>(null)
+const ioReady = ref(false)
+let io: IntersectionObserver | null = null
 
 onMounted(() => {
   if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) {
-    ioReady.value = true;
-    return;
+    ioReady.value = true
+    return
   }
   io = new IntersectionObserver(([e]) => {
-    if (!e?.isIntersecting) return;
-    ioReady.value = true;
-    io?.disconnect(); io = null;
-  }, { threshold: 0.15 });
-  if (root.value) io.observe(root.value);
-});
+    if (!e?.isIntersecting) return
+    ioReady.value = true
+    io?.disconnect(); io = null
+  }, { threshold: 0.15 })
+  if (root.value) io.observe(root.value)
+})
 
 onBeforeUnmount(() => {
-  io?.disconnect(); io = null;
-  clearTimeout(toastTimer);
-  // garante reset do scroll lock mesmo se o componente desmontar com modal aberto
-  const scrollY = document.body.style.top;
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.width = "";
-  document.body.style.overflow = "";
-  if (scrollY) window.scrollTo(0, parseInt(scrollY) * -1);
-});
+  io?.disconnect(); io = null
+  clearTimeout(toastTimer)
+  const scrollY = document.body.style.top
+  document.body.style.position = ""
+  document.body.style.top      = ""
+  document.body.style.width    = ""
+  document.body.style.overflow = ""
+  if (scrollY) window.scrollTo(0, parseInt(scrollY) * -1)
+})
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+  
+
 /* ── Tokens globais (precisam alcançar o Teleport fora do .featured) ── */
 :root,
 .featured {
   --fiv-blue:        #01195a;
   --fiv-blue-deep:   #060e2a;
   --fiv-gold:        #EDE53A;
-  --fiv-font-display: "Playfair Display", Georgia, serif;
-  --fiv-font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  --fiv-font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --fiv-font-display: 'Rawline', sans-serif;
+  --fiv-font-cond:    'Rawline', sans-serif;
+  --fiv-font-sans:   'Rawline', sans-serif;
   --fiv-shadow-sm:   0 10px 24px rgba(1,25,90,0.06);
   --fiv-shadow-md:   0 20px 44px rgba(1,25,90,0.12);
   --fiv-text-main:   #060e2a;

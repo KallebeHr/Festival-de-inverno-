@@ -243,6 +243,8 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 .footer {
   --blue: #01195a;
   --blue-deep: #060e2a;
@@ -251,9 +253,9 @@ onBeforeUnmount(() => {
   --text-muted: rgba(255, 255, 255, 0.6);
   --line: rgba(255, 255, 255, 0.1);
 
-  --font-display: "Playfair Display", serif;
-  --font-cond: "Barlow Condensed", sans-serif;
-  --font-sans: "Barlow", sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond: 'Rawline', sans-serif;
+  --font-sans: 'Rawline', sans-serif;
 
   position: relative;
   background: var(--blue-deep);

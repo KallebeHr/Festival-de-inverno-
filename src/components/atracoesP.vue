@@ -180,13 +180,15 @@ const events = [
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 .week-events {
   --blue: #01195a;
   --blue-deep: #060e2a;
   --gold: #EDE53A;
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-cond: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond: 'Rawline', sans-serif;
+  --font-sans: 'Rawline', sans-serif;
   --shadow-sm: 0 14px 28px rgba(1, 25, 90, 0.05);
   --shadow-md: 0 22px 48px rgba(1, 25, 90, 0.12);
 

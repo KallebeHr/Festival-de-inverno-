@@ -173,7 +173,7 @@ const guests = [
   },
   {
     name: "Miranda Lebrão",
-    work: "O Grande Cabaré Combo Drag Week",
+    work: "O Grande evento Combo Drag Week",
     image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=900&auto=format&fit=crop",
     accent: "#6ee7d4",
   },
@@ -187,6 +187,8 @@ const guests = [
 </script>
 
 <style scoped>
+@import url('https://fonts.cdnfonts.com/css/rawline');
+
 /* ── Tokens ─────────────────────────────────────────── */
 .confirmed {
   /* ── Tokens ── */
@@ -204,9 +206,9 @@ const guests = [
   --white-10:   rgba(255, 255, 255, 0.08);
   --white-06:   rgba(255, 255, 255, 0.05);
 
-  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
-  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  --font-sans:    "Barlow", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Rawline', sans-serif;
+  --font-cond:    'Rawline', sans-serif;
+  --font-sans:    'Rawline', sans-serif;
 
   --shadow-card: 0 20px 50px rgba(0, 0, 0, 0.35);
   --radius-card: 22px;

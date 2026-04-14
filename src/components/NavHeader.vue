@@ -453,7 +453,12 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { inject } from 'vue'
 
+const { t, lang, toggleLanguage } = inject('i18n')
+
+// langAnimating continua local, pois é só visual do header
+const langAnimating = ref(false)
 const router = useRouter();
 const route  = useRoute();
 
@@ -481,9 +486,7 @@ let stopTimer     = 0;
 
 /* ── Theme / language ── */
 const theme          = ref("light");
-const lang           = ref("pt");
 const themeAnimating = ref(false);
-const langAnimating  = ref(false);
 
 /* ── Toast ── */
 const toast = ref({ show: false, text: "" });
@@ -496,112 +499,8 @@ const fsScroll = ref(null);
 /* ═══════════════════════════════════════
    STRINGS / i18n
 ══════════════════════════════════════ */
-const messages = {
-  pt: {
-    openMenu: "Abrir menu de navegação",
-    closeMenu: "Fechar menu",
-    goHome: "Ir para o início",
-    searchPlaceholder: "Buscar (programação, atrações, mapa...)",
-    searchLabel: "Buscar no site",
-    startVoice: "Iniciar busca por voz",
-    stopVoice: "Parar busca por voz",
-    toggleLanguage: "Mudar idioma para inglês",
-    toggleTheme: "Alternar entre tema claro e escuro",
-    close: "Fechar",
-    menuDialog: "Menu de navegação completo",
-    menuContent: "Conteúdo do menu",
-    quickNavigation: "Navegação rápida",
-    whereToGo: "Para onde você quer ir?",
-    menuSubtitle: "Toque em uma seção para navegar.",
-    filterSections: "Filtrar seções…",
-    shortcuts: "Atalhos rápidos",
-    preferences: "Preferências do site",
-    language: "Idioma",
-    theme: "Aparência",
-    darkMode: "Modo escuro ativo",
-    lightMode: "Modo claro ativo",
-    active: "Ativo",
-    programming: "Programação",
-    map: "Mapa",
-    accessibility: "Acessibilidade",
-    quickAccess: "Acesso rápido",
-    quickAccessText: "Confira a programação completa do festival.",
-    seeProgramming: "Ver programação",
-    tipEsc2: "para fechar",
-    sectionList: "Lista de seções do site",
-    siteSections: "Seções do site",
-    officialSite: "Site oficial do festival",
-    howToGet: "Como chegar",
-    noResults: "Nenhuma seção encontrada.",
-    social: "Redes sociais",
-    heard: "Ouvindo…",
-    captured: "Texto capturado ✓",
-    micDenied: "Permissão do microfone negada.",
-    micNetwork: "Falha de rede no reconhecimento de voz.",
-    micNoSpeech: "Nenhuma voz detectada. Tente novamente.",
-    micUnsupported: "Seu navegador não suporta busca por voz.",
-    micHttps: "Busca por voz requer conexão segura (HTTPS).",
-    micInitFail: "Não foi possível iniciar o microfone.",
-    micStartFail: "Falha ao iniciar o reconhecimento.",
-    themeDark: "Tema escuro ativado",
-    themeLight: "Tema claro ativado",
-    langPt: "Idioma: Português",
-    langEn: "Language: English"
-  },
-  en: {
-    openMenu: "Open navigation menu",
-    closeMenu: "Close menu",
-    goHome: "Go to home",
-    searchPlaceholder: "Search (schedule, artists, map...)",
-    searchLabel: "Search site",
-    startVoice: "Start voice search",
-    stopVoice: "Stop voice search",
-    toggleLanguage: "Switch language to Portuguese",
-    toggleTheme: "Toggle light / dark theme",
-    close: "Close",
-    menuDialog: "Full navigation menu",
-    menuContent: "Menu content",
-    quickNavigation: "Quick navigation",
-    whereToGo: "Where do you want to go?",
-    menuSubtitle: "Tap a section to navigate there.",
-    filterSections: "Filter sections…",
-    shortcuts: "Quick shortcuts",
-    preferences: "Site preferences",
-    language: "Language",
-    theme: "Appearance",
-    darkMode: "Dark mode active",
-    lightMode: "Light mode active",
-    active: "Active",
-    programming: "Schedule",
-    map: "Map",
-    accessibility: "Accessibility",
-    quickAccess: "Quick access",
-    quickAccessText: "Check the full festival schedule.",
-    seeProgramming: "See schedule",
-    tipEsc2: "to close",
-    sectionList: "Site section list",
-    siteSections: "Site sections",
-    officialSite: "Official festival site",
-    howToGet: "How to get there",
-    noResults: "No sections found.",
-    social: "Social media",
-    heard: "Listening…",
-    captured: "Text captured ✓",
-    micDenied: "Microphone permission denied.",
-    micNetwork: "Network error in voice recognition.",
-    micNoSpeech: "No speech detected. Try again.",
-    micUnsupported: "Your browser doesn't support voice search.",
-    micHttps: "Voice search requires a secure connection (HTTPS).",
-    micInitFail: "Could not start the microphone.",
-    micStartFail: "Failed to start recognition.",
-    themeDark: "Dark theme enabled",
-    themeLight: "Light theme enabled",
-    langPt: "Idioma: Português",
-    langEn: "Language: English"
-  }
-};
 
-const t = computed(() => messages[lang.value]);
+
 
 /* ═══════════════════════════════════════
    ITEMS
@@ -694,14 +593,13 @@ function toggleTheme() {
   showToast(theme.value === "dark" ? t.value.themeDark : t.value.themeLight, 1400);
   window.setTimeout(() => { themeAnimating.value = false; }, 380);
 }
-
-function toggleLanguage() {
-  langAnimating.value = true;
-  lang.value = lang.value === "pt" ? "en" : "pt";
-  localStorage.setItem("festival-lang", lang.value);
-  showToast(lang.value === "pt" ? messages.pt.langPt : messages.en.langEn, 1400);
-  window.setTimeout(() => { langAnimating.value = false; }, 380);
+function onToggleLanguage() {
+  langAnimating.value = true
+  toggleLanguage()  // ← chama o global
+  showToast(lang.value === 'pt' ? t.value.langPt : t.value.langEn, 1400)
+  window.setTimeout(() => { langAnimating.value = false }, 380)
 }
+
 
 /* ═══════════════════════════════════════
    SCROLL
@@ -957,9 +855,7 @@ onMounted(() => {
   }
 
   const savedTheme = localStorage.getItem("festival-theme");
-  const savedLang  = localStorage.getItem("festival-lang");
   applyTheme(savedTheme === "dark" ? "dark" : "light");
-  lang.value = savedLang === "en" ? "en" : "pt";
 
   window.addEventListener("scroll", handleScroll, { passive: true });
   handleScroll();

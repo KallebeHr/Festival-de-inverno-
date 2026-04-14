@@ -16,6 +16,11 @@
 import { ref, onMounted } from 'vue';
 import NavFooter from './components/NavFooter.vue';
 import Preloader from './components/Preloader.vue';
+import { provide } from 'vue'
+import { useI18n } from '@/composables/useI18n'
+
+provide('i18n', useI18n())
+
 const isLoaded = ref(false);
 
 onMounted(() => {
