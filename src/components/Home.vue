@@ -8,8 +8,8 @@
     <!-- ── Background responsivo ──────────────────── -->
     <div class="hero__bg-wrap" aria-hidden="true">
       <picture class="hero__bg-picture">
-        <source media="(max-width: 767px)" srcset="/bg/teste1.jpeg" />
-        <source media="(min-width: 768px)"  srcset="/bg/teste1.jpeg" />
+        <source media="(max-width: 767px)" srcset="/bg/teste1.webp" />
+        <source media="(min-width: 768px)"  srcset="/bg/teste1.webp" />
         <img
           class="hero__bg-img"
           src="/bg/bgFIPD.webp"
