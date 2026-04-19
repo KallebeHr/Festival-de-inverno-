@@ -12,7 +12,7 @@
         <source media="(min-width: 768px)"  srcset="/bg/teste1.jpeg" />
         <img
           class="hero__bg-img"
-          src="/bg/bgFIPD.png"
+          src="/bg/bgFIPD.webp"
           alt=""
           role="presentation"
           fetchpriority="high"
