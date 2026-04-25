@@ -1,11 +1,16 @@
 <template>
   <Transition name="fade-slow">
-    <div v-if="isLoading" class="preloader" aria-busy="true" aria-label="Carregando o Festival de Inverno">
-      
+    <div
+      v-if="isLoading"
+      class="preloader"
+      aria-busy="true"
+      aria-label="Carregando o Festival de Inverno"
+    >
       <div class="preloader__bg" aria-hidden="true">
+        <div class="preloader__image"></div>
         <div class="preloader__noise"></div>
         <div class="preloader__glow"></div>
-        
+
         <div class="preloader__particles">
           <div class="particle p-1"></div>
           <div class="particle p-2"></div>
@@ -15,7 +20,6 @@
       </div>
 
       <div class="preloader__content">
-        
         <div class="preloader__core" aria-hidden="true">
           <div class="orbit orbit-1"></div>
           <div class="orbit orbit-2"></div>
@@ -29,20 +33,22 @@
             <span class="preloader__eyebrow">Afinando os instrumentos</span>
             <span class="preloader__city">Pedro II 2026</span>
           </h2>
+
           <div class="preloader__counter">{{ progress }}%</div>
         </div>
 
         <div class="preloader__equalizer" aria-hidden="true">
-          <div 
-            v-for="i in 5" 
-            :key="i" 
-            class="eq-bar" 
-            :style="{ animationDelay: `${i * 0.15}s`, opacity: progress > 10 ? 1 : 0.3 }"
+          <div
+            v-for="i in 5"
+            :key="i"
+            class="eq-bar"
+            :style="{
+              animationDelay: `${i * 0.15}s`,
+              opacity: progress > 10 ? 1 : 0.3
+            }"
           ></div>
         </div>
-
       </div>
-      
     </div>
   </Transition>
 </template>
@@ -54,17 +60,13 @@ const isLoading = ref(true);
 const progress = ref(0);
 
 onMounted(() => {
-  // Simulação de um carregamento real (0 a 100%)
-  // O tempo total aqui será de aproximadamente 3 segundos.
   const interval = setInterval(() => {
-    // Incremento aleatório para parecer um download real
-    const increment = Math.floor(Math.random() * 15) + 5; 
-    
+    const increment = Math.floor(Math.random() * 15) + 5;
+
     if (progress.value + increment >= 100) {
       progress.value = 100;
       clearInterval(interval);
-      
-      // Aguarda meio segundo no 100% antes de desaparecer
+
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
@@ -78,14 +80,14 @@ onMounted(() => {
 <style scoped>
 /* ── Tokens ── */
 .preloader {
-  --blue:       #01195a;
-  --blue-deep:  #060e2a;
-  --gold:       #EDE53A;
-  --white:      #ffffff;
-  --white-50:   rgba(255,255,255,0.50);
-  
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #ede53a;
+  --white: #ffffff;
+  --white-50: rgba(255, 255, 255, 0.5);
+
   --font-display: "Playfair Display", Georgia, serif;
-  --font-cond:    "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --font-cond: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
 
   position: fixed;
   inset: 0;
@@ -102,6 +104,27 @@ onMounted(() => {
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+}
+
+.preloader__image {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  /*
+    Troque o caminho abaixo pela sua imagem.
+    Exemplo:
+    url('/images/preloader-bg.webp')
+  */
+  background:
+    linear-gradient(rgba(6, 14, 42, 0.45), rgba(6, 14, 42, 0.85)),
+    url('/bg/teste1.webp') center / cover no-repeat;
+
+  opacity: 0;
+  transform: scale(1.08);
+  animation: revealBg 2.4s ease-out forwards;
+  will-change: opacity, transform;
 }
 
 .preloader__noise {
@@ -119,7 +142,7 @@ onMounted(() => {
   transform: translate(-50%, -50%);
   width: 50vh;
   height: 50vh;
-  background: radial-gradient(circle, rgba(237,229,58,0.12) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(237, 229, 58, 0.12) 0%, transparent 60%);
   animation: pulseGlow 4s ease-in-out infinite alternate;
 }
 
@@ -137,15 +160,36 @@ onMounted(() => {
   height: 4px;
   background: var(--gold);
   border-radius: 50%;
-  box-shadow: 0 0 10px 2px rgba(237,229,58,0.6);
+  box-shadow: 0 0 10px 2px rgba(237, 229, 58, 0.6);
   opacity: 0;
   animation: floatUp 5s ease-in infinite;
 }
 
-.p-1 { left: 30%; animation-delay: 0s; animation-duration: 6s; }
-.p-2 { left: 70%; animation-delay: 2s; width: 6px; height: 6px; }
-.p-3 { left: 45%; animation-delay: 1.5s; animation-duration: 7s; }
-.p-4 { left: 60%; animation-delay: 4s; width: 3px; height: 3px; }
+.p-1 {
+  left: 30%;
+  animation-delay: 0s;
+  animation-duration: 6s;
+}
+
+.p-2 {
+  left: 70%;
+  animation-delay: 2s;
+  width: 6px;
+  height: 6px;
+}
+
+.p-3 {
+  left: 45%;
+  animation-delay: 1.5s;
+  animation-duration: 7s;
+}
+
+.p-4 {
+  left: 60%;
+  animation-delay: 4s;
+  width: 3px;
+  height: 3px;
+}
 
 /* ── Conteúdo Central ── */
 .preloader__content {
@@ -157,7 +201,7 @@ onMounted(() => {
   gap: 32px;
 }
 
-/* ── Núcleo Animado (Órbitas e Diamante) ── */
+/* ── Núcleo Animado ── */
 .preloader__core {
   position: relative;
   width: 100px;
@@ -232,7 +276,7 @@ onMounted(() => {
   font-style: italic;
   color: var(--white);
   letter-spacing: 0.05em;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .preloader__counter {
@@ -244,7 +288,7 @@ onMounted(() => {
   margin-top: 4px;
 }
 
-/* ── Equalizador (Ondas Sonoras) ── */
+/* ── Equalizador ── */
 .preloader__equalizer {
   display: flex;
   align-items: flex-end;
@@ -261,47 +305,102 @@ onMounted(() => {
   animation: eqPulse 1.2s ease-in-out infinite alternate;
 }
 
-/* ── Animações (Keyframes) ── */
+/* ── Animações ── */
+@keyframes revealBg {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes pulseGlow {
-  0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
-  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
 }
 
 @keyframes floatUp {
-  0% { transform: translateY(0) scale(0.5); opacity: 0; }
-  20% { opacity: 0.8; }
-  80% { opacity: 0.8; }
-  100% { transform: translateY(-300px) scale(1.5); opacity: 0; }
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translateY(-300px) scale(1.5);
+    opacity: 0;
+  }
 }
 
 @keyframes rotateOrbit1 {
-  0% { transform: rotateX(65deg) rotateZ(0deg); }
-  100% { transform: rotateX(65deg) rotateZ(360deg); }
+  0% {
+    transform: rotateX(65deg) rotateZ(0deg);
+  }
+
+  100% {
+    transform: rotateX(65deg) rotateZ(360deg);
+  }
 }
 
 @keyframes rotateOrbit2 {
-  0% { transform: rotateY(65deg) rotateX(45deg) rotateZ(360deg); }
-  100% { transform: rotateY(65deg) rotateX(45deg) rotateZ(0deg); }
+  0% {
+    transform: rotateY(65deg) rotateX(45deg) rotateZ(360deg);
+  }
+
+  100% {
+    transform: rotateY(65deg) rotateX(45deg) rotateZ(0deg);
+  }
 }
 
 @keyframes levitate {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50% { transform: rotate(45deg) translateY(-8px); }
+  0%,
+  100% {
+    transform: rotate(45deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(45deg) translateY(-8px);
+  }
 }
 
 @keyframes eqPulse {
-  0% { height: 8px; }
-  100% { height: 30px; }
+  0% {
+    height: 8px;
+  }
+
+  100% {
+    height: 30px;
+  }
 }
 
 /* ── Transição do Vue ── */
 .fade-slow-enter-active,
 .fade-slow-leave-active {
-  transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), transform 0.8s ease;
+  transition:
+    opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1),
+    transform 0.8s ease;
 }
 
 .fade-slow-leave-to {
   opacity: 0;
-  transform: scale(1.05); /* Dá um leve zoom ao desaparecer, conectando com a página */
+  transform: scale(1.05);
 }
 </style>

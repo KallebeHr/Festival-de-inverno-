@@ -342,7 +342,7 @@ const rawItems: FeaturedItemRaw[] = [
   {
     id: 1,
     badge: { pt: "Destaque", en: "Featured" },
-    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1400&q=70",
+    image: "/Destaques/destaque2.png",
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
     title: { pt: "Show de Abertura", en: "Opening Show" },
     subtitle: {
@@ -368,9 +368,9 @@ const rawItems: FeaturedItemRaw[] = [
       { name: "Maria Forró e Convidados", time: "22h30" },
     ],
     gallery: [
-      { src: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=600&q=70", alt: "Show noturno" },
-      { src: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=600&q=70", alt: "Público festival" },
-      { src: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=70", alt: "Palco iluminado" },
+      { src: "/Destaques/destaque1.png", alt: "Show noturno" },
+      { src: "/Destaques/destaque1.png", alt: "Público festival" },
+      { src: "/Destaques/destaque1.png", alt: "Palco iluminado" },
     ],
   },
   {
@@ -741,7 +741,7 @@ onBeforeUnmount(() => {
   position: relative;
   display: grid;
   grid-template-rows: 180px 1fr;
-  height: 420px;
+  height: 400px;
   overflow: hidden;
   border-radius: 16px;
   border: 1px solid rgba(6,14,42,0.06);
@@ -775,7 +775,7 @@ onBeforeUnmount(() => {
   position: absolute; inset: auto auto -34px -24px;
   width: 120px; height: 120px;
   border-radius: 999px;
-  background: rgba(237,229,58,0.35);
+  background: rgba(237, 228, 58, 0.13);
   filter: blur(28px);
   pointer-events: none;
 }
@@ -791,7 +791,6 @@ onBeforeUnmount(() => {
   font: 800 11px/1 var(--font-cond);
   letter-spacing: .15em;
   text-transform: uppercase;
-  box-shadow: 0 4px 14px rgba(237,229,58,0.3);
 }
 
 /* ── Age rating chip (card) ──────────────────────────── */

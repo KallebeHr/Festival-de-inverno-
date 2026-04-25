@@ -8,16 +8,15 @@
     <!-- ── Background responsivo ──────────────────── -->
     <div class="hero__bg-wrap" aria-hidden="true">
       <picture class="hero__bg-picture">
-        <source media="(max-width: 767px)" srcset="/bg/teste1.webp" />
-        <source media="(min-width: 768px)"  srcset="/bg/teste1.webp" />
-        <img
-          class="hero__bg-img"
-          src="/bg/bgFIPD.webp"
-          alt=""
-          role="presentation"
-          fetchpriority="high"
-          decoding="async"
-        />
+  <img
+    class="hero__bg-img"
+    src="/bg/teste1.webp"
+    alt=""
+    width="1920"
+    height="1080"
+    fetchpriority="high"
+    decoding="async"
+  />
       </picture>
 
       <!-- Filtro azul (intensidade calibrada) -->
@@ -37,7 +36,7 @@
     <div class="hero__container">
 
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
-        <img src="/Logo/LogoOf.svg" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
+        <img src="/Logo/fip20.png" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
       </h1>
 
       <div class="hero__divider" aria-hidden="true">
