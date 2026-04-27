@@ -13,7 +13,7 @@
     src="/bg/teste1.webp"
     alt=""
     width="1920"
-    height="1080"
+    height="1080" 
     fetchpriority="high"
     decoding="async"
   />

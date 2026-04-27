@@ -75,7 +75,7 @@ const maskStyle = `
 
 <style scoped>
 @import url('https://fonts.cdnfonts.com/css/rawline');
-
+ 
 .sponsors {
   position: relative;
   padding: 56px 0;
