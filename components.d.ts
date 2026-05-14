@@ -35,6 +35,7 @@ declare module 'vue' {
     RealizacaoScrol: typeof import('./src/components/realizacaoScrol.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScrollP: typeof import('./src/components/scrollP.vue')['default']
     ServicosAtivo: typeof import('./src/components/ServicosAtivo.vue')['default']
     VLibras: typeof import('./src/components/VLibras.vue')['default']
   }

@@ -1,670 +1,813 @@
 <template>
   <section
     id="como-chegar"
-    ref="root"
     class="arrival"
-    :class="{
-      'is-visible': hasAnimatedIn,
-      'reduce-motion': reduceMotion
-    }"
     aria-label="Como chegar a Pedro II"
   >
-    <!-- Fundo com textura sutil -->
-    <div class="arrival__bg" aria-hidden="true">
-      <div class="arrival__bg-dots"></div>
-    </div>
-
     <div class="arrival__container">
-
-      <!-- ── Cabeçalho ── -->
       <header class="arrival__head">
-        <span class="arrival__badge">
-          <span class="arrival__badge-dot" aria-hidden="true"></span>
-          Como chegar
-          <span class="arrival__badge-dot" aria-hidden="true"></span>
-        </span>
+        <div class="arrival__head-content">
+          <span class="arrival__eyebrow">Como chegar</span>
 
-        <h2 class="arrival__title">
-          Chegue ao Festival de Inverno
-          <em>em Pedro II</em>
-        </h2>
+          <h2 class="arrival__title">
+            Visite Pedro II
+            <span>no Festival de Inverno</span>
+          </h2>
 
-        <p class="arrival__sub">
-          Trace a rota automática diretamente no mapa ou abra seu app preferido.
-          Em poucos cliques você está a caminho!
-        </p>
+          <p class="arrival__subtitle">
+            Pedro II, no Piauí, espera por você. Veja a localização da cidade,
+            calcule a distância aproximada e abra a rota no Google Maps ou Waze.
+          </p>
+        </div>
       </header>
 
-      <!-- ── Layout principal ── -->
       <div class="arrival__layout">
-
-        <!-- ─ Lado esquerdo: informações e ações ─ -->
-        <aside class="arrival__info">
-
-          <!-- Destino -->
+        <aside class="arrival__panel" aria-label="Informações de localização">
           <div class="arrival__dest-card">
             <div class="arrival__dest-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="9" r="2.5" stroke="currentColor" stroke-width="1.8"/>
+              <svg viewBox="0 0 24 24" class="icon">
+                <path
+                  d="M12 22s7-4.4 7-12a7 7 0 1 0-14 0c0 7.6 7 12 7 12Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 10.5a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
               </svg>
             </div>
+
             <div>
-              <p class="arrival__dest-label">Destino do festival</p>
-              <p class="arrival__dest-name">Pedro II • Piauí</p>
+              <p class="arrival__dest-label">Localização oficial</p>
+              <h3 class="arrival__dest-name">{{ destination.name }}</h3>
+              <p class="arrival__dest-address">{{ destination.address }}</p>
             </div>
           </div>
 
-          <!-- Passos numerados -->
-          <ol class="arrival__steps" aria-label="Passos para traçar a rota">
-            <li class="arrival__step">
-              <span class="arrival__step-num" aria-hidden="true">1</span>
-              <div class="arrival__step-body">
-                <p class="arrival__step-title">Clique em "Traçar rota"</p>
-                <p class="arrival__step-desc">Permita o acesso ao GPS quando o navegador solicitar.</p>
-              </div>
-            </li>
-            <li class="arrival__step">
-              <span class="arrival__step-num" aria-hidden="true">2</span>
-              <div class="arrival__step-body">
-                <p class="arrival__step-title">Visualize no mapa</p>
-                <p class="arrival__step-desc">A rota é desenhada automaticamente a partir da sua posição.</p>
-              </div>
-            </li>
-            <li class="arrival__step">
-              <span class="arrival__step-num" aria-hidden="true">3</span>
-              <div class="arrival__step-body">
-                <p class="arrival__step-title">Ou use um app externo</p>
-                <p class="arrival__step-desc">Google Maps e Waze abrem com o destino já preenchido.</p>
-              </div>
-            </li>
-          </ol>
+          <div class="arrival__quick-info">
+            <div class="info-card">
+              <span class="info-card__label">Cidade</span>
+              <strong class="info-card__value">Pedro II</strong>
+            </div>
 
-          <!-- Ações principais -->
+            <div class="info-card">
+              <span class="info-card__label">Estado</span>
+              <strong class="info-card__value">Piauí</strong>
+            </div>
+
+            <div class="info-card info-card--wide">
+              <span class="info-card__label">Distância aproximada</span>
+              <strong class="info-card__value">
+                {{ distanceText }}
+              </strong>
+            </div>
+          </div>
+
           <div class="arrival__actions">
-            <button class="btn btn--primary" type="button" @click="traceRouteInMap">
-              <svg class="btn__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M10 2C6.686 2 4 4.686 4 8c0 5.25 6 10 6 10s6-4.75 6-10c0-3.314-2.686-6-6-6z" stroke="currentColor" stroke-width="1.6"/>
-                <circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.6"/>
+            <button
+              class="btn btn--primary"
+              type="button"
+              @click="locateUser"
+            >
+              <svg viewBox="0 0 24 24" class="btn__icon" aria-hidden="true">
+                <path
+                  d="M12 2v3M12 19v3M2 12h3M19 12h3"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
               </svg>
-              Traçar rota automática
+              Usar minha localização
             </button>
 
             <div class="arrival__app-row">
-              <button class="btn btn--app" type="button" @click="openGoogleMaps" aria-label="Abrir no Google Maps">
-                <svg class="btn__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M7 10h6M10 7v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
+              <button
+                class="btn btn--app"
+                type="button"
+                @click="openGoogleMaps"
+              >
                 Google Maps
               </button>
-              <button class="btn btn--app" type="button" @click="openWaze" aria-label="Abrir no Waze">
-                <svg class="btn__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M7.5 8.5c0-.828.672-1.5 1.5-1.5h2a1.5 1.5 0 0 1 0 3h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                  <circle cx="10" cy="13" r=".75" fill="currentColor"/>
-                </svg>
+
+              <button
+                class="btn btn--app"
+                type="button"
+                @click="openWaze"
+              >
                 Waze
               </button>
-              <button class="btn btn--app" type="button" @click="copyDestination" aria-label="Copiar endereço do destino">
-                <svg class="btn__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <rect x="7" y="3" width="10" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/>
-                  <path d="M4 6H3a1 1 0 0 0-1 1v10a2 2 0 0 0 2 2h8a1 1 0 0 0 1-1v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
+
+              <button
+                class="btn btn--app"
+                type="button"
+                @click="copyDestination"
+              >
                 Copiar
               </button>
             </div>
 
-            <button
-              v-if="routingActive"
-              class="btn btn--clear"
-              type="button"
-              @click="clearRoute"
-            >
-              Limpar rota
-            </button>
+            <div class="arrival__app-row">
+              <button
+                class="btn btn--soft"
+                type="button"
+                @click="focusDestination"
+              >
+                Ver Pedro II
+              </button>
+
+              <button
+                class="btn btn--soft"
+                type="button"
+                @click="fitMap"
+              >
+                Ajustar mapa
+              </button>
+
+              <button
+                class="btn btn--clear"
+                type="button"
+                @click="clearUserLocation"
+              >
+                Limpar
+              </button>
+            </div>
           </div>
 
-          <!-- Status da rota -->
           <div class="arrival__status" role="status" aria-live="polite">
-            <span class="arrival__status-dot" :class="{ 'is-on': routingActive }" aria-hidden="true"></span>
-            <span class="arrival__status-text">
-              {{ routingActive ? "Rota ativa no mapa" : "Rota ainda não traçada" }}
+            <span
+              class="arrival__status-dot"
+              :class="{ 'is-on': hasUserLocation }"
+              aria-hidden="true"
+            ></span>
+
+            <span>
+              {{ statusText }}
             </span>
+          </div>
+
+          <div class="arrival__tips">
+            <h4 class="arrival__tips-title">Informações úteis</h4>
+
+            <ul class="arrival__tips-list">
+              <li>O mapa mostra a localização da cidade de Pedro II.</li>
+              <li>Use Google Maps ou Waze para navegação em tempo real.</li>
+              <li>A distância exibida é aproximada, calculada em linha reta.</li>
+            </ul>
           </div>
         </aside>
 
-        <!-- ─ Lado direito: mapa ─ -->
-        <div class="arrival__map-wrap">
-          <!-- Cabeçalho do mapa -->
+        <div class="arrival__map-card">
           <div class="arrival__map-head">
-            <div class="arrival__map-title-group">
-              <p class="arrival__map-title">Mapa interativo</p>
-              <p class="arrival__map-hint">A rota aparece aqui após liberar o GPS</p>
+            <div>
+              <p class="arrival__map-kicker">Mapa interativo</p>
+              <h3 class="arrival__map-title">Pedro II · Piauí</h3>
             </div>
-            <button class="arrival__zoom-btn" type="button" @click="toggleScrollZoom" :aria-pressed="scrollZoomEnabled">
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" width="14" height="14">
-                <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/>
-                <path d="M5 7h4M7 5v4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                <path d="M11 11l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-              </svg>
-              Scroll zoom {{ scrollZoomEnabled ? 'Ligado' : 'Desligado' }}
+
+            <button
+              class="arrival__map-copy"
+              type="button"
+              @click="copyCoordinates"
+            >
+              Copiar coordenadas
             </button>
           </div>
 
-          <!-- Mapa -->
           <div
             ref="mapEl"
             class="arrival__map"
-            aria-label="Mapa de rota para Pedro II"
+            aria-label="Mapa com localização de Pedro II no Piauí"
           ></div>
 
-          <!-- Rodapé do mapa -->
           <div class="arrival__map-footer">
             <span class="arrival__pill arrival__pill--dest">
               <span class="arrival__pill-dot" aria-hidden="true"></span>
-              Destino marcado
+              Pedro II marcado no mapa
             </span>
-            <span class="arrival__pill" :class="routingActive ? 'arrival__pill--route' : 'arrival__pill--idle'">
+
+            <span
+              class="arrival__pill"
+              :class="hasUserLocation ? 'arrival__pill--user' : 'arrival__pill--idle'"
+            >
               <span class="arrival__pill-dot" aria-hidden="true"></span>
-              {{ routingActive ? "Rota ativa" : "Aguardando rota" }}
+              {{ hasUserLocation ? "Sua localização ativa" : "Localização não ativada" }}
             </span>
-            <button class="arrival__recenter" type="button" @click="recenter" aria-label="Centralizar mapa no destino">
-              <svg viewBox="0 0 16 16" fill="none" width="14" height="14" aria-hidden="true">
-                <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/>
-                <path d="M8 1v3M8 12v3M1 8h3M12 8h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-              </svg>
-              Centralizar
-            </button>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Toast -->
     <div
+      v-if="toast"
       class="arrival__toast"
-      :class="{ 'is-show': toast.show }"
-      aria-live="polite"
-      aria-atomic="true"
       role="status"
+      aria-live="polite"
     >
-      {{ toast.text }}
+      {{ toast }}
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-routing-machine";
-import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
-const root    = ref<HTMLElement | null>(null);
-const mapEl   = ref<HTMLElement | null>(null);
+type UserLocation = {
+  lat: number;
+  lng: number;
+};
 
-const reduceMotion    = ref(false);
-const routingActive   = ref(false);
-const scrollZoomEnabled = ref(false);
-const hasAnimatedIn   = ref(false);
+const mapEl = ref<HTMLElement | null>(null);
 
-let io: IntersectionObserver | null = null;
-let mq: MediaQueryList | null = null;
-let toastTimer: number | null = null;
-let mqHandler: ((e: MediaQueryListEvent) => void) | null = null;
+const destination = {
+  name: "Pedro II",
+  address: "Pedro II, Piauí, Brasil",
+  lat: -4.4247,
+  lng: -41.4581,
+};
+
+const userLocation = ref<UserLocation | null>(null);
+const toast = ref("");
 
 let map: L.Map | null = null;
-let marker: L.Marker | null = null;
-let destinationCircle: L.Circle | null = null;
-let routingControl: any = null;
-let mapInitialized = false;
+let destinationMarker: L.Marker | null = null;
+let userMarker: L.Marker | null = null;
+let lineLayer: L.Polyline | null = null;
+let toastTimer: number | null = null;
 
-const destination = { label: "Pedro II, PI", lat: -4.4247, lng: -41.4581 };
+const hasUserLocation = computed(() => Boolean(userLocation.value));
 
-const toast = ref({ show: false, text: "" });
+const distanceText = computed(() => {
+  if (!userLocation.value) return "Ative sua localização";
 
-const showToast = (text: string) => {
-  toast.value = { show: true, text };
-  if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = null; }
-  toastTimer = window.setTimeout(() => { toast.value.show = false; }, 2400);
-};
+  const distance = getDistanceInKm(
+    userLocation.value.lat,
+    userLocation.value.lng,
+    destination.lat,
+    destination.lng
+  );
 
-const openExternalMap = (url: string) =>
-  window.open(url, "_blank", "noopener,noreferrer");
-
-const openGoogleMaps = () =>
-  openExternalMap(`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}&travelmode=driving`);
-
-const openWaze = () =>
-  openExternalMap(`https://www.waze.com/ul?ll=${destination.lat}%2C${destination.lng}&navigate=yes`);
-
-const copyDestination = async () => {
-  try {
-    await navigator.clipboard.writeText(destination.label);
-    showToast("Destino copiado para a área de transferência.");
-  } catch {
-    showToast("Não foi possível copiar agora.");
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)} m`;
   }
-};
 
-const getUserPosition = () =>
-  new Promise<{ lat: number; lng: number }>((resolve, reject) => {
-    if (!navigator.geolocation) { reject(new Error("Geolocalização não suportada")); return; }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      (err) => reject(err),
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-    );
+  return `${distance.toFixed(1)} km`;
+});
+
+const statusText = computed(() => {
+  if (hasUserLocation.value) {
+    return `Localização ativa · distância aproximada até Pedro II: ${distanceText.value}`;
+  }
+
+  return "Ative sua localização para calcular a distância aproximada até Pedro II.";
+});
+
+function createDestinationIcon() {
+  return L.divIcon({
+    className: "arrival-marker arrival-marker--destination",
+    html: `
+      <div class="arrival-marker__inner">
+        <span class="arrival-marker__dot"></span>
+      </div>
+    `,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
   });
+}
 
-const recenter = () => {
-  if (!map) return;
-  map.setView([destination.lat, destination.lng], 13, { animate: !reduceMotion.value });
-  marker?.openPopup();
-};
+function createUserIcon() {
+  return L.divIcon({
+    className: "arrival-marker arrival-marker--user",
+    html: `
+      <div class="arrival-marker__inner">
+        <span class="arrival-marker__dot"></span>
+      </div>
+    `,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+  });
+}
 
-const toggleScrollZoom = () => {
-  if (!map) return;
-  scrollZoomEnabled.value = !scrollZoomEnabled.value;
-  scrollZoomEnabled.value ? map.scrollWheelZoom.enable() : map.scrollWheelZoom.disable();
-};
+function showToast(message: string) {
+  toast.value = message;
 
-const clearRoute = (silent = false) => {
-  if (map && routingControl) { map.removeControl(routingControl); routingControl = null; }
-  routingActive.value = false;
-  if (!silent) showToast("Rota removida.");
-};
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+  }
 
-const ensureMap = async () => {
-  if (mapInitialized || !mapEl.value) return;
-  await nextTick();
+  toastTimer = window.setTimeout(() => {
+    toast.value = "";
+  }, 2300);
+}
+
+function initMap() {
+  if (!mapEl.value || map) return;
 
   map = L.map(mapEl.value, {
     zoomControl: false,
     scrollWheelZoom: false,
-    preferCanvas: true
+    preferCanvas: true,
   }).setView([destination.lat, destination.lng], 13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
-    attribution: "&copy; OpenStreetMap"
+    attribution: "&copy; OpenStreetMap",
   }).addTo(map);
 
-  L.control.zoom({ position: "bottomright" }).addTo(map);
-
-  const pinHtml = `
-    <div class="arrival-pin">
-      <div class="arrival-pin__pulse"></div>
-      <div class="arrival-pin__core"></div>
-      <div class="arrival-pin__ring"></div>
-    </div>
-  `;
-
-  marker = L.marker([destination.lat, destination.lng], {
-    icon: L.divIcon({ className: "arrival-pin-wrap", html: pinHtml, iconSize: [44, 44], iconAnchor: [22, 22] })
+  L.control.zoom({
+    position: "bottomright",
   }).addTo(map);
 
-  marker.bindPopup(`<strong>Pedro II • PI</strong><br/>Festival de Inverno 2026`);
+  renderDestinationMarker();
 
-  destinationCircle = L.circle([destination.lat, destination.lng], {
-    color: "#EDE53A",
-    weight: 1.5,
-    fillColor: "#EDE53A",
-    fillOpacity: 0.08,
-    radius: 450
-  }).addTo(map);
+  nextTick(() => {
+    map?.invalidateSize();
+  });
+}
 
-  requestAnimationFrame(() => map?.invalidateSize());
-  mapInitialized = true;
-};
-
-const traceRouteInMap = async () => {
-  await ensureMap();
+function renderDestinationMarker() {
   if (!map) return;
-  if (routingControl) clearRoute(true);
 
-  try {
-    showToast("Obtendo sua localização…");
-    const origin = await getUserPosition();
-
-    routingControl = L.Routing.control({
-      waypoints: [L.latLng(origin.lat, origin.lng), L.latLng(destination.lat, destination.lng)],
-      routeWhileDragging: false,
-      addWaypoints: false,
-      fitSelectedRoutes: true,
-      show: false,
-      lineOptions: {
-        addWaypoints: false,
-        styles: [
-          { color: "#01195a", opacity: 0.9, weight: 5 },
-          { color: "rgba(1,25,90,0.12)", opacity: 1, weight: 14 }
-        ]
-      },
-      createMarker(i: number, wp: any) {
-        const html = `
-          <div class="route-pin ${i === 0 ? "route-pin--origin" : "route-pin--dest"}">
-            <div class="route-pin__core"></div>
-            <div class="route-pin__ring"></div>
-          </div>
-        `;
-        return L.marker(wp.latLng, {
-          icon: L.divIcon({ className: "route-pin-wrap", html, iconSize: [36, 36], iconAnchor: [18, 18] })
-        });
-      }
+  if (destinationMarker) {
+    destinationMarker.setLatLng([destination.lat, destination.lng]);
+    destinationMarker.setPopupContent(
+      `<strong>${destination.name}</strong><br>${destination.address}`
+    );
+  } else {
+    destinationMarker = L.marker([destination.lat, destination.lng], {
+      icon: createDestinationIcon(),
     }).addTo(map);
 
-    routingActive.value = true;
-    showToast("Rota traçada com sucesso!");
-    marker?.openPopup();
-  } catch {
-    showToast("GPS indisponível. Abrindo no Google Maps…");
-    openGoogleMaps();
+    destinationMarker.bindPopup(
+      `<strong>${destination.name}</strong><br>${destination.address}`
+    );
   }
-};
 
-onMounted(async () => {
-  await nextTick();
+  destinationMarker.openPopup();
+}
 
-  mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  reduceMotion.value = mq.matches;
-  mqHandler = (e) => { reduceMotion.value = e.matches; };
-  mq.addEventListener?.("change", mqHandler);
+function renderUserMarker() {
+  if (!map || !userLocation.value) return;
 
-  io = new IntersectionObserver(
-    async ([entry]) => {
-      if (!entry?.isIntersecting || hasAnimatedIn.value) return;
-      hasAnimatedIn.value = true;
-      await ensureMap();
-      if (root.value && io) { io.unobserve(root.value); io.disconnect(); io = null; }
+  const position = userLocation.value;
+
+  if (userMarker) {
+    userMarker.setLatLng([position.lat, position.lng]);
+  } else {
+    userMarker = L.marker([position.lat, position.lng], {
+      icon: createUserIcon(),
+    }).addTo(map);
+
+    userMarker.bindPopup("<strong>Sua localização</strong>");
+  }
+}
+
+function renderLine() {
+  if (!map) return;
+
+  if (lineLayer) {
+    map.removeLayer(lineLayer);
+    lineLayer = null;
+  }
+
+  if (!userLocation.value) return;
+
+  lineLayer = L.polyline(
+    [
+      [userLocation.value.lat, userLocation.value.lng],
+      [destination.lat, destination.lng],
+    ],
+    {
+      color: "#01195a",
+      weight: 4,
+      opacity: 0.85,
+      dashArray: "8 8",
+    }
+  ).addTo(map);
+}
+
+function focusDestination() {
+  if (!map) return;
+
+  map.setView([destination.lat, destination.lng], 13);
+  renderDestinationMarker();
+  renderLine();
+  destinationMarker?.openPopup();
+}
+
+function fitMap() {
+  if (!map) return;
+
+  if (!userLocation.value) {
+    map.setView([destination.lat, destination.lng], 13);
+    destinationMarker?.openPopup();
+    return;
+  }
+
+  const bounds = L.latLngBounds([
+    [userLocation.value.lat, userLocation.value.lng],
+    [destination.lat, destination.lng],
+  ]);
+
+  map.fitBounds(bounds, {
+    padding: [36, 36],
+    maxZoom: 13,
+  });
+}
+
+function locateUser() {
+  if (!navigator.geolocation) {
+    showToast("Seu navegador não suporta geolocalização.");
+    return;
+  }
+
+  showToast("Buscando sua localização...");
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userLocation.value = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      renderUserMarker();
+      renderLine();
+      fitMap();
+
+      showToast("Localização encontrada.");
     },
-    { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    () => {
+      showToast("Não foi possível acessar sua localização.");
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 9000,
+      maximumAge: 60000,
+    }
   );
+}
 
-  if (root.value) io.observe(root.value);
+function clearUserLocation() {
+  if (!map) return;
+
+  userLocation.value = null;
+
+  if (userMarker) {
+    map.removeLayer(userMarker);
+    userMarker = null;
+  }
+
+  if (lineLayer) {
+    map.removeLayer(lineLayer);
+    lineLayer = null;
+  }
+
+  focusDestination();
+  showToast("Localização removida.");
+}
+
+function openGoogleMaps() {
+  let url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}&travelmode=driving`;
+
+  if (userLocation.value) {
+    url += `&origin=${userLocation.value.lat},${userLocation.value.lng}`;
+  }
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function openWaze() {
+  const url = `https://www.waze.com/ul?ll=${destination.lat}%2C${destination.lng}&navigate=yes`;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+async function copyDestination() {
+  const text = `${destination.name} - ${destination.address}`;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("Destino copiado.");
+  } catch {
+    showToast("Não foi possível copiar o destino.");
+  }
+}
+
+async function copyCoordinates() {
+  const text = `${destination.lat}, ${destination.lng}`;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("Coordenadas copiadas.");
+  } catch {
+    showToast("Não foi possível copiar as coordenadas.");
+  }
+}
+
+function getDistanceInKm(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+) {
+  const earthRadiusKm = 6371;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+}
+
+function toRad(value: number) {
+  return (value * Math.PI) / 180;
+}
+
+onMounted(() => {
+  nextTick(() => {
+    initMap();
+  });
 });
 
 onBeforeUnmount(() => {
-  if (io && root.value) io.unobserve(root.value);
-  io?.disconnect(); io = null;
-  if (mq && mqHandler) mq.removeEventListener?.("change", mqHandler);
-  if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = null; }
-  clearRoute(true);
-  if (destinationCircle && map) { map.removeLayer(destinationCircle); destinationCircle = null; }
-  if (marker && map) { map.removeLayer(marker); marker = null; }
-  if (map) { map.remove(); map = null; }
-  routingControl = null;
-  mapInitialized = false;
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = null;
+  }
+
+  if (map) {
+    map.remove();
+    map = null;
+  }
+
+  destinationMarker = null;
+  userMarker = null;
+  lineLayer = null;
 });
 </script>
 
 <style scoped>
-@import url('https://fonts.cdnfonts.com/css/rawline');
+@import url("https://fonts.cdnfonts.com/css/rawline");
 
-/* ── Tokens (herdados do Hero) ─────────────────── */
 .arrival {
-  --blue:        #01195a;
-  --blue-mid:    #316eb9;
-  --blue-soft:   rgba(1, 25, 90, 0.06);
-  --blue-line:   rgba(1, 25, 90, 0.10);
-  --gold:        #EDE53A;
-  --gold-dk:     #c8a830;
-  --gold-soft:   rgba(237, 229, 58, 0.15);
-  --text:        #0d0d0d;
-  --muted:       rgba(13, 13, 13, 0.56);
-  --surface:     #ffffff;
-  --border:      rgba(13, 13, 13, 0.09);
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #ede53a;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --text: #060e2a;
+  --muted: rgba(6, 14, 42, 0.65);
+  --line: rgba(6, 14, 42, 0.08);
+  --danger: #9c2525;
+  --success: #1f8f4d;
+  --shadow-sm: 0 10px 24px rgba(1, 25, 90, 0.06);
 
-  --font-display: 'Rawline', sans-serif;
-  --font-cond:    'Rawline', sans-serif;
-  --font-sans:    'Rawline', sans-serif;
+  --font-display: "Rawline", sans-serif;
+  --font-cond: "Rawline", sans-serif;
+  --font-sans: "Rawline", sans-serif;
 
   position: relative;
   overflow: hidden;
-  padding: 88px 0 80px;
-  background: #FBFBFD;
+  padding: 58px 0 64px;
+  background:
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+  color: var(--text);
+  box-shadow: inset 0 32px 42px -34px rgba(6, 14, 42, 0.55);
 }
 
-/* ── Fundo com pontos sutis ─────────────────────── */
-.arrival__bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.arrival__bg-dots {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(1,25,90,0.07) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
-}
-
-/* ── Container ──────────────────────────────────── */
 .arrival__container {
-  position: relative;
-  z-index: 1;
-  width: min(1160px, calc(100% - 40px));
-  margin: 0 auto;
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
 }
 
-/* ── Animações de entrada ────────────────────────── */
-.arrival__head,
-.arrival__info,
-.arrival__map-wrap {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.65s ease, transform 0.65s ease;
-}
-
-.is-visible .arrival__head    { opacity: 1; transform: none; transition-delay: 0ms; }
-.is-visible .arrival__info    { opacity: 1; transform: none; transition-delay: 100ms; }
-.is-visible .arrival__map-wrap{ opacity: 1; transform: none; transition-delay: 190ms; }
-
-/* ── Cabeçalho ──────────────────────────────────── */
 .arrival__head {
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto 52px;
+  margin-bottom: 28px;
 }
 
-/* Badge reutilizado do Hero */
-.arrival__badge {
+.arrival__head-content {
+  max-width: 720px;
+}
+
+.arrival__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--gold);
-  color: #1a1200;
+  margin-bottom: 10px;
+  color: var(--blue);
   font-family: var(--font-cond);
-  font-size: clamp(0.60rem, 1.1vw, 0.72rem);
+  font-size: clamp(0.72rem, 1.2vw, 0.85rem);
   font-weight: 800;
-  letter-spacing: 0.20em;
+  line-height: 1;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  padding: 5px 16px;
-  border-radius: 2px;
-  margin-bottom: 18px;
 }
 
-.arrival__badge-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.30);
-  flex-shrink: 0;
+.arrival__eyebrow::before {
+  content: "";
+  width: 32px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gold);
 }
 
 .arrival__title {
   margin: 0;
+  color: var(--blue-deep);
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
   font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
-.arrival__title em {
+.arrival__title span {
   display: block;
-  font-style: italic;
   color: var(--blue);
 }
 
-.arrival__sub {
-  margin: 14px auto 0;
-  max-width: 560px;
-  font-family: var(--font-sans);
-  font-size: clamp(0.92rem, 1.4vw, 1rem);
-  line-height: 1.75;
+.arrival__subtitle {
+  max-width: 580px;
+  margin: 14px 0 0;
   color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.35vw, 1rem);
+  font-weight: 500;
+  line-height: 1.65;
 }
 
-/* ── Layout duas colunas ────────────────────────── */
 .arrival__layout {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 32px;
-  align-items: start;
+  grid-template-columns: 0.86fr 1.14fr;
+  gap: 22px;
+  align-items: stretch;
 }
 
-/* ── Card de destino ────────────────────────────── */
+.arrival__panel,
+.arrival__map-card {
+  border: 1px solid rgba(6, 14, 42, 0.06);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.arrival__panel {
+  padding: 20px;
+}
+
 .arrival__dest-card {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 46px 1fr;
   gap: 14px;
-  padding: 16px 18px;
-  background: var(--blue-soft);
-  border: 1px solid var(--blue-line);
-  border-radius: 10px;
-  margin-bottom: 28px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid rgba(1, 25, 90, 0.08);
+  border-radius: 14px;
+  background: rgba(1, 25, 90, 0.04);
+  margin-bottom: 16px;
 }
 
 .arrival__dest-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: var(--blue);
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--blue), #0a2d7a);
   color: var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
 }
 
-.arrival__dest-icon svg {
-  width: 20px;
-  height: 20px;
+.icon {
+  width: 22px;
+  height: 22px;
 }
 
 .arrival__dest-label {
-  margin: 0;
+  margin: 0 0 4px;
+  color: var(--blue);
   font-family: var(--font-cond);
   font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
 }
 
 .arrival__dest-name {
-  margin: 2px 0 0;
-  font-family: var(--font-cond);
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: var(--blue);
-}
-
-/* ── Passos numerados ───────────────────────────── */
-.arrival__steps {
-  list-style: none;
-  margin: 0 0 28px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.arrival__step {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  position: relative;
-  padding-bottom: 18px;
-}
-
-/* Linha conectora entre passos */
-.arrival__step:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  left: 15px;
-  top: 34px;
-  bottom: 0;
-  width: 1px;
-  background: var(--blue-line);
-}
-
-.arrival__step-num {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--blue);
-  color: var(--gold);
-  font-family: var(--font-cond);
-  font-size: 0.82rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.arrival__step-title {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.3;
-  padding-top: 6px;
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.15;
 }
 
-.arrival__step-desc {
+.arrival__dest-address {
   margin: 4px 0 0;
-  font-family: var(--font-sans);
-  font-size: 0.84rem;
   color: var(--muted);
-  line-height: 1.6;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
-/* ── Ações ──────────────────────────────────────── */
-.arrival__actions {
-  display: flex;
-  flex-direction: column;
+.arrival__quick-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
+  margin-bottom: 14px;
+}
+
+.info-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(1, 25, 90, 0.08);
+  border-radius: 12px;
+  background: rgba(1, 25, 90, 0.04);
+}
+
+.info-card--wide {
+  grid-column: 1 / -1;
+}
+
+.info-card__label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--blue);
+  font-family: var(--font-cond);
+  font-size: 0.65rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.info-card__value {
+  display: block;
+  color: var(--blue-deep);
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.arrival__actions {
+  display: grid;
+  gap: 9px;
+}
+
+.arrival__app-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
 }
 
 .btn {
   appearance: none;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  border-radius: 2px;
-  font-family: var(--font-cond);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
+  font-family: var(--font-cond);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .btn:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .btn__icon {
@@ -673,377 +816,335 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 
-/* CTA principal — igual ao Hero */
 .btn--primary {
-  min-height: 52px;
-  padding: 0 28px;
-  font-size: 0.85rem;
-  background: var(--blue);
+  min-height: 50px;
+  background: linear-gradient(135deg, var(--blue), #0a2d7a);
   color: #ffffff;
-  box-shadow: 0 4px 20px rgba(1,25,90,0.18);
 }
 
-@media (hover: hover) {
-  .btn--primary:hover {
-    background: #0a2470;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(1,25,90,0.26);
-  }
+.btn--app,
+.btn--soft {
+  background: #ffffff;
+  color: var(--blue);
+  border: 1px solid rgba(1, 25, 90, 0.14);
 }
 
-/* Apps externos */
-.arrival__app-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.btn--app {
-  min-height: 44px;
-  padding: 0 12px;
-  font-size: 0.74rem;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-@media (hover: hover) {
-  .btn--app:hover {
-    border-color: var(--blue-line);
-    background: var(--blue-soft);
-    transform: translateY(-1px);
-  }
-}
-
-/* Limpar rota */
 .btn--clear {
-  min-height: 40px;
-  padding: 0 20px;
-  font-size: 0.74rem;
-  background: rgba(200,36,36,0.06);
-  color: #8f1f1f;
-  border: 1px solid rgba(200,36,36,0.14);
+  background: rgba(156, 37, 37, 0.06);
+  color: var(--danger);
+  border: 1px solid rgba(156, 37, 37, 0.18);
 }
 
-/* ── Status ─────────────────────────────────────── */
 .arrival__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 15px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(1, 25, 90, 0.04);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .arrival__status-dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: background 200ms ease, box-shadow 200ms ease;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: rgba(6, 14, 42, 0.18);
   flex-shrink: 0;
 }
 
 .arrival__status-dot.is-on {
-  background: var(--blue-mid);
-  box-shadow: 0 0 0 6px rgba(49,110,185,0.12);
+  background: var(--success);
+  box-shadow: 0 0 0 4px rgba(31, 143, 77, 0.12);
 }
 
-.arrival__status-text {
-  font-family: var(--font-cond);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
+.arrival__tips {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.arrival__tips-title {
+  margin: 0 0 8px;
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.arrival__tips-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
   color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.45;
 }
 
-/* ── Mapa ───────────────────────────────────────── */
+.arrival__map-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .arrival__map-head {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 14px;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.arrival__map-kicker {
+  margin: 0 0 5px;
+  color: var(--blue);
+  font-family: var(--font-cond);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .arrival__map-title {
   margin: 0;
-  font-family: var(--font-cond);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text);
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 900;
+  line-height: 1.15;
 }
 
-.arrival__map-hint {
-  margin: 3px 0 0;
-  font-family: var(--font-sans);
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
-.arrival__zoom-btn {
+.arrival__map-copy {
   appearance: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
   min-height: 36px;
-  padding: 0 14px;
-  border-radius: 2px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: var(--font-cond);
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(1, 25, 90, 0.14);
+  background: #ffffff;
+  color: var(--blue);
   cursor: pointer;
+  font-family: var(--font-cond);
+  font-size: 0.66rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   white-space: nowrap;
-  transition: border-color 150ms, color 150ms;
 }
 
-.arrival__zoom-btn:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
-}
-
-@media (hover: hover) {
-  .arrival__zoom-btn:hover { border-color: var(--blue-line); color: var(--text); }
+.arrival__map-copy:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .arrival__map {
   width: 100%;
-  height: 500px;
-  border-radius: 4px;
-  overflow: hidden;
-  border: 2px solid var(--blue);
+  height: 505px;
   background: #eef3fa;
 }
 
-/* ── Rodapé do mapa ─────────────────────────────── */
 .arrival__map-footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--line);
 }
 
 .arrival__pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 34px;
+  min-height: 32px;
   padding: 0 12px;
-  border-radius: 2px;
-  font-family: var(--font-cond);
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border: 1px solid var(--border);
+  border-radius: 999px;
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  background: rgba(1, 25, 90, 0.04);
   color: var(--muted);
-  background: var(--surface);
+  font-family: var(--font-cond);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .arrival__pill-dot {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: 999px;
+  background: rgba(6, 14, 42, 0.2);
   flex-shrink: 0;
 }
 
-.arrival__pill--dest .arrival__pill-dot   { background: var(--blue); box-shadow: 0 0 0 4px rgba(1,25,90,0.1); }
-.arrival__pill--route .arrival__pill-dot  { background: #22a65e; box-shadow: 0 0 0 4px rgba(34,166,94,0.12); }
-.arrival__pill--idle .arrival__pill-dot   { background: var(--border); }
-
-.arrival__pill--dest  { border-color: var(--blue-line); color: var(--blue); }
-.arrival__pill--route { border-color: rgba(34,166,94,0.2); color: #22a65e; }
-
-.arrival__recenter {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  appearance: none;
-  min-height: 34px;
-  padding: 0 12px;
-  border-radius: 2px;
-  background: transparent;
-  border: 1px solid var(--border);
-  font-family: var(--font-cond);
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  cursor: pointer;
-  transition: border-color 150ms, color 150ms;
+.arrival__pill--dest {
+  color: var(--blue);
 }
 
-.arrival__recenter:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
+.arrival__pill--dest .arrival__pill-dot {
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.22);
 }
 
-@media (hover: hover) {
-  .arrival__recenter:hover { border-color: var(--blue-line); color: var(--text); }
+.arrival__pill--user {
+  color: var(--success);
 }
 
-/* ── Toast ──────────────────────────────────────── */
+.arrival__pill--user .arrival__pill-dot {
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(31, 143, 77, 0.12);
+}
+
 .arrival__toast {
   position: fixed;
   left: 50%;
-  bottom: 22px;
-  transform: translate(-50%, 16px);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 60;
+  bottom: 24px;
+  z-index: 9999;
+  transform: translateX(-50%);
+  max-width: min(520px, calc(100% - 32px));
   min-height: 44px;
-  padding: 0 20px;
+  padding: 0 18px;
+  border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  border-radius: 2px;
-  background: var(--blue);
+  justify-content: center;
+  background: var(--blue-deep);
   color: #ffffff;
-  font-family: var(--font-cond);
+  box-shadow: 0 10px 30px rgba(6, 14, 42, 0.28);
+  font-family: var(--font-sans);
   font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  box-shadow: 0 8px 28px rgba(1,25,90,0.22);
-  transition: opacity 200ms ease, transform 200ms ease;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
 }
 
-.arrival__toast.is-show {
-  opacity: 1;
-  transform: translate(-50%, 0);
+/* Leaflet */
+:deep(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-sans);
+  background: #eef3fa;
 }
 
-/* ── Leaflet overrides ──────────────────────────── */
+:deep(.leaflet-control-attribution) {
+  font-size: 10px;
+}
+
 :deep(.leaflet-control-zoom a) {
   background: #ffffff !important;
-  color: var(--text) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 0 !important;
+  color: var(--blue-deep) !important;
+  border: 1px solid rgba(1, 25, 90, 0.12) !important;
 }
 
 :deep(.leaflet-popup-content-wrapper) {
-  background: #ffffff;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  box-shadow: 0 12px 32px rgba(1,25,90,0.12);
+  border-radius: 12px;
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  box-shadow: 0 12px 32px rgba(1, 25, 90, 0.12);
+  color: var(--blue-deep);
   font-family: var(--font-sans);
 }
 
-:deep(.leaflet-popup-tip) { background: #ffffff; }
-:deep(.leaflet-routing-container) { display: none !important; }
-
-/* Pin do destino */
-:deep(.arrival-pin-wrap) { background: transparent; border: 0; }
-
-:deep(.arrival-pin) {
-  position: relative; width: 44px; height: 44px;
+:deep(.leaflet-popup-content) {
+  margin: 12px 14px;
+  line-height: 1.4;
 }
 
-:deep(.arrival-pin__core) {
-  position: absolute; left: 50%; top: 50%;
-  width: 12px; height: 12px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 0 3px var(--gold);
+:deep(.arrival-marker) {
+  background: transparent;
+  border: 0;
 }
 
-:deep(.arrival-pin__ring) {
-  position: absolute; left: 50%; top: 50%;
-  width: 24px; height: 24px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1.5px solid rgba(1,25,90,0.35);
+:deep(.arrival-marker__inner) {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--blue);
+  box-shadow: 0 8px 22px rgba(1, 25, 90, 0.18);
 }
 
-:deep(.arrival-pin__pulse) {
-  position: absolute; left: 50%; top: 50%;
-  width: 22px; height: 22px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: rgba(1,25,90,0.15);
-  animation: pinPulse 1.8s ease-out infinite;
+:deep(.arrival-marker--user .arrival-marker__inner) {
+  border-color: var(--success);
 }
 
-@keyframes pinPulse {
-  0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
-  100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0; }
+:deep(.arrival-marker__dot) {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--gold);
 }
 
-/* Pins de rota */
-:deep(.route-pin-wrap) { background: transparent; border: 0; }
-
-:deep(.route-pin) { position: relative; width: 36px; height: 36px; }
-
-:deep(.route-pin__core) {
-  position: absolute; left: 50%; top: 50%;
-  width: 10px; height: 10px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--text);
+:deep(.arrival-marker--user .arrival-marker__dot) {
+  background: var(--success);
 }
 
-:deep(.route-pin--dest .route-pin__core) { background: var(--blue); }
-
-:deep(.route-pin__ring) {
-  position: absolute; left: 50%; top: 50%;
-  width: 22px; height: 22px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1.5px solid rgba(13,13,13,0.25);
-}
-
-:deep(.route-pin--dest .route-pin__ring) { border-color: rgba(1,25,90,0.4); }
-
-/* ── Responsivo ─────────────────────────────────── */
-@media (max-width: 960px) {
-  .arrival { padding: 64px 0 60px; }
+@media (max-width: 980px) {
+  .arrival {
+    padding: 48px 0 54px;
+  }
 
   .arrival__layout {
     grid-template-columns: 1fr;
-    gap: 28px;
   }
 
-  .arrival__map { height: 420px; }
+  .arrival__map {
+    height: 430px;
+  }
 }
 
-@media (max-width: 600px) {
-  .arrival { padding: 52px 0 48px; }
+@media (max-width: 640px) {
+  .arrival {
+    padding: 42px 0 48px;
+  }
 
-  .arrival__container { width: min(1160px, calc(100% - 24px)); }
+  .arrival__container {
+    width: min(100%, calc(100% - 24px));
+  }
 
-  .arrival__head { margin-bottom: 36px; }
+  .arrival__panel {
+    padding: 16px;
+  }
 
-  .arrival__app-row { grid-template-columns: 1fr 1fr 1fr; }
+  .arrival__quick-info {
+    grid-template-columns: 1fr;
+  }
 
-  .arrival__map { height: 320px; }
+  .arrival__app-row {
+    grid-template-columns: 1fr;
+  }
 
   .arrival__map-head {
     flex-direction: column;
-    align-items: flex-start;
   }
 
-  .arrival__zoom-btn { width: 100%; justify-content: center; }
+  .arrival__map-copy {
+    width: 100%;
+  }
 
-  .arrival__map-footer { flex-direction: column; align-items: flex-start; }
+  .arrival__map {
+    height: 340px;
+  }
 
-  .arrival__recenter { margin-left: 0; width: 100%; justify-content: center; }
-}
+  .arrival__map-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-/* ── Reduced motion ─────────────────────────────── */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
-  animation: none !important;
-  transition-duration: 0.01ms !important;
+  .arrival__pill {
+    width: 100%;
+  }
 }
 </style>

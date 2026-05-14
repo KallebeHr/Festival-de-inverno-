@@ -1,33 +1,21 @@
 <template>
   <section
-    ref="root"
     class="hero"
-    :class="{ 'is-visible': isVisible, 'reduce-motion': reduceMotion }"
     aria-label="Hero Festival de Inverno Pedro II 2026"
   >
-    <!-- ── Background responsivo ──────────────────── -->
+    <!-- ── Background ──────────────────────────────── -->
     <div class="hero__bg-wrap" aria-hidden="true">
-      <picture class="hero__bg-picture">
-  <img
-    class="hero__bg-img"
-    src="/bg/teste1.webp"
-    alt=""
-    width="1920"
-    height="1080" 
-    fetchpriority="high"
-    decoding="async"
-  />
-      </picture>
-
-      <!-- Filtro azul (intensidade calibrada) -->
-      <div class="hero__bg-tint" aria-hidden="true"></div>
-
-      <!-- Gradiente vertical para legibilidade do conteúdo -->
+      <img
+        class="hero__bg-img"
+        src="/bg/teste1.webp"
+        alt=""
+        width="1920"
+        height="1080"
+        fetchpriority="high"
+        decoding="async"
+      />
       <div class="hero__bg-gradient" aria-hidden="true"></div>
     </div>
-
-    <!-- ── Textura / ruído sutil ───────────────────── -->
-    <div class="hero__noise" aria-hidden="true"></div>
 
     <!-- ── Brilho dourado central ─────────────────── -->
     <div class="hero__glow" aria-hidden="true"></div>
@@ -36,7 +24,14 @@
     <div class="hero__container">
 
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
-        <img src="/Logo/fip20.png" alt="Logo Festival de Inverno Pedro II" class="hero__logo" />
+        <img
+          src="/Logo/fip20.png"
+          alt="Logo Festival de Inverno Pedro II"
+          class="hero__logo"
+          width="480"
+          height="240"
+          decoding="async"
+        />
       </h1>
 
       <div class="hero__divider" aria-hidden="true">
@@ -72,16 +67,12 @@
       </div>
 
       <div class="hero__actions">
-<button class="btn btn--primary" type="button" @click="onPrimary">
-  {{ t.heroPrimary }}
-</button>
-<button class="btn btn--ghost" type="button" @click="onSecondary">
-  {{ t.heroSecondary }}
-</button>
-      </div>
-
-      <div class="hero__scroll-hint" aria-hidden="true">
-        <span class="hero__scroll-bar"></span>
+        <button class="btn btn--primary" type="button" @click="onPrimary">
+          {{ t.heroPrimary }}
+        </button>
+        <button class="btn btn--ghost" type="button" @click="onSecondary">
+          {{ t.heroSecondary }}
+        </button>
       </div>
 
     </div>
@@ -89,96 +80,39 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, inject } from "vue";
+import { inject } from "vue";
 
-const { t } = inject('i18n') as any
+const { t } = inject("i18n") as any;
 
-const root      = ref<HTMLElement | null>(null);
-const isVisible = ref(false);
-const reduceMotion = ref(false);
-
-let io: IntersectionObserver | null = null;
-let mq: MediaQueryList | null = null;
-let onMqChange: ((e: MediaQueryListEvent) => void) | null = null;
-
-const onPrimary  = () => document.querySelector("#programacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
+const onPrimary   = () => document.querySelector("#programacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
 const onSecondary = () => document.querySelector("#como-chegar")?.scrollIntoView({ behavior: "smooth", block: "start" });
-
-onMounted(() => {
-  if (!document.querySelector('link[data-hero-fonts]')) {
-    const link = document.createElement("link");
-    link.rel  = "stylesheet";
-    link.setAttribute("data-hero-fonts", "1");
-    link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
-    document.head.appendChild(link);
-  }
-
-  mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  reduceMotion.value = mq.matches;
-  onMqChange = (e) => { reduceMotion.value = e.matches; };
-  mq.addEventListener?.("change", onMqChange);
-
-  io = new IntersectionObserver(
-    ([entry]) => { isVisible.value = !!entry?.isIntersecting; },
-    { threshold: 0.10 }
-  );
-  if (root.value) io.observe(root.value);
-});
-
-onBeforeUnmount(() => {
-  if (io && root.value) io.unobserve(root.value);
-  io?.disconnect();
-  io = null;
-  if (mq && onMqChange) mq.removeEventListener?.("change", onMqChange);
-});
 </script>
 
 <style scoped>
-@import url('https://fonts.cdnfonts.com/css/rawline');
-
 /* ── Tokens ─────────────────────────────────────── */
 .hero {
-  --blue:       #01195a;
-  --blue-deep:  #060e2a;
-  --gold:       #EDE53A;
-  --gold-dk:    #c8a830;
-  --white:      #ffffff;
-  --white-80:   rgba(255,255,255,0.80);
-  --white-50:   rgba(255,255,255,0.50);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-08:   rgba(255,255,255,0.08);
-
-  /* Tint azul — ajuste opacity em .hero__bg-tint */
-
-  --font-display: 'Rawline', sans-serif;
-  --font-cond:    'Rawline', sans-serif;
-  --font-sans:    'Rawline', sans-serif;
+  --gold:      #EDE53A;
+  --white-80:  rgba(255, 255, 255, 0.80);
+  --white-50:  rgba(255, 255, 255, 0.50);
+  --white-20:  rgba(255, 255, 255, 0.20);
+  --font:      'Rawline', sans-serif;
 
   position: relative;
   isolation: isolate;
   overflow: hidden;
-
   min-height: 70vh;
   height: 80vh;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-
-  /* Fallback enquanto a imagem carrega */
-  background: var(--blue-deep);
+  background: #060e2a;
 }
 
-/* ── Background responsivo ───────────────────────── */
+/* ── Background ──────────────────────────────────── */
 .hero__bg-wrap {
   position: absolute;
   inset: 0;
   z-index: 0;
-}
-
-.hero__bg-picture {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 .hero__bg-img {
@@ -190,37 +124,17 @@ onBeforeUnmount(() => {
   object-position: center center;
 }
 
-.hero__bg-tint {
-  position: absolute;
-  inset: 0;
-  background: var(--tint-color);
-  mix-blend-mode: multiply;
-}
-
-/* Gradiente vertical → escurece de cima pra baixo
-   garante contraste máximo na área do conteúdo */
 .hero__bg-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
     rgba(6, 14, 42, 0.10)  0%,
-    rgba(6, 14, 42, 0.20)  30%,
-    rgba(6, 14, 42, 0.55)  65%,
-    rgba(6, 14, 42, 0.88)  85%,
-    rgba(6, 14, 42, 0.98)  100%
+    rgba(6, 14, 42, 0.20) 30%,
+    rgba(6, 14, 42, 0.55) 65%,
+    rgba(6, 14, 42, 0.88) 85%,
+    rgba(6, 14, 42, 0.98) 100%
   );
-}
-
-/* ── Ruído sutil ─────────────────────────────────── */
-.hero__noise {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  opacity: 0.35;
-  pointer-events: none;
 }
 
 /* ── Brilho dourado central ──────────────────────── */
@@ -251,23 +165,6 @@ onBeforeUnmount(() => {
   gap: clamp(8px, 1.4vh, 14px);
 }
 
-/* ── Animações de entrada ────────────────────────── */
-.hero__badge-wrap,
-.hero__title,
-.hero__divider,
-.hero__meta,
-.hero__actions {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 600ms ease, transform 600ms ease;
-}
-
-.is-visible .hero__badge-wrap { opacity: 1; transform: none; transition-delay: 0ms;   }
-.is-visible .hero__title      { opacity: 1; transform: none; transition-delay: 120ms; }
-.is-visible .hero__divider    { opacity: 1; transform: none; transition-delay: 220ms; }
-.is-visible .hero__meta       { opacity: 1; transform: none; transition-delay: 320ms; }
-.is-visible .hero__actions    { opacity: 1; transform: none; transition-delay: 420ms; }
-
 /* ── Badge ───────────────────────────────────────── */
 .hero__badge-wrap {
   display: flex;
@@ -280,7 +177,7 @@ onBeforeUnmount(() => {
   gap: 8px;
   background: var(--gold);
   color: #1a1200;
-  font-family: 'Rawline', sans-serif;
+  font-family: var(--font);
   font-size: clamp(0.60rem, 1.1vw, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.10em;
@@ -301,10 +198,8 @@ onBeforeUnmount(() => {
 .hero__title {
   margin: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0;
-  line-height: 1;
+  justify-content: center;
 }
 
 .hero__logo {
@@ -353,7 +248,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--font-cond);
+  font-family: var(--font);
   font-size: clamp(0.78rem, 1.3vw, 0.90rem);
   font-weight: 600;
   letter-spacing: 0.10em;
@@ -394,12 +289,11 @@ onBeforeUnmount(() => {
   min-height: 46px;
   padding: 0 28px;
   border-radius: 2px;
-  font-family: var(--font-cond);
+  font-family: var(--font);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
 .btn:focus-visible {
@@ -422,35 +316,12 @@ onBeforeUnmount(() => {
 @media (hover: hover) {
   .btn--primary:hover {
     background: #f5ee50;
-    transform: translateY(-2px);
     box-shadow: 0 8px 28px rgba(237, 229, 58, 0.40);
   }
   .btn--ghost:hover {
     border-color: var(--white-50);
-    color: var(--white);
-    transform: translateY(-2px);
+    color: #ffffff;
   }
-}
-
-/* ── Scroll hint ─────────────────────────────────── */
-.hero__scroll-hint {
-  display: flex;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-.hero__scroll-bar {
-  display: block;
-  width: 1px;
-  height: 32px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  animation: scrollPulse 1.8s ease-in-out infinite;
-  opacity: 0.6;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { transform: scaleY(1);   opacity: 0.6; }
-  50%       { transform: scaleY(0.5); opacity: 0.2; }
 }
 
 /* ── Responsivo — Tablet ─────────────────────────── */
@@ -458,28 +329,17 @@ onBeforeUnmount(() => {
   .hero {
     height: auto;
     min-height: 60vh;
-    align-items: flex-end;
   }
 }
 
 /* ── Responsivo — Mobile ─────────────────────────── */
 @media (max-width: 767px) {
-  /* Reposiciona o foco da imagem mobile para o centro-topo */
   .hero__bg-img {
     object-position: center top;
-  }
-
-  /* Aumenta levemente o tint no mobile (tela menor = menos contexto) */
-  .hero {
-    --tint-color: rgba(1, 18, 70, 0.58);
   }
 }
 
 @media (max-width: 540px) {
-  .hero {
-    padding-bottom: 0;
-  }
-
   .hero__container {
     gap: clamp(6px, 1.2vh, 10px);
     padding-bottom: clamp(24px, 4vh, 36px);
@@ -502,15 +362,5 @@ onBeforeUnmount(() => {
     width: 100%;
     min-height: 50px;
   }
-
-  .hero__scroll-hint { display: none; }
-}
-
-/* ── Reduced motion ──────────────────────────────── */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
-  animation: none !important;
-  transition-duration: 0.01ms !important;
 }
 </style>

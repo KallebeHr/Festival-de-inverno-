@@ -1,737 +1,724 @@
 <template>
-  <section ref="root" class="blog" aria-label="Blog do festival">
-    <div class="blog__noise" aria-hidden="true"></div>
-
+  <section class="blog" aria-label="Blog do festival">
     <div class="blog__inner">
-      <header class="head">
-        <div class="head__title-wrap">
-          <span class="head__eyebrow">Blog</span>
-          <h2 class="head__title">Histórias do Festival</h2>
+      <header class="blog__head">
+        <div class="blog__title-wrap">
+          <span class="blog__eyebrow">Blog</span>
+
+          <h2 class="blog__title">
+            Histórias do Festival
+          </h2>
+
+          <p class="blog__subtitle">
+            Conteúdos, bastidores, dicas e curiosidades para aproximar o público
+            da cultura, da cidade e da experiência do Festival de Inverno.
+          </p>
         </div>
-        <a :href="viewAllHref" class="head__all btn-ghost">
+
+        <a :href="viewAllHrefComputed" class="blog__all">
           Ver todos
-          <svg viewBox="0 0 24 24" class="head__all-ic" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6"
-              fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg viewBox="0 0 24 24" class="blog__all-icon" aria-hidden="true">
+            <path
+              d="M5 12h14M13 6l6 6-6 6"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </a>
       </header>
 
-      <div class="grid" :class="{ 'grid--ready': ioReady }">
-
+      <div class="blog__grid">
         <article
-          v-if="posts[0]"
-          class="hero-post card"
-          :style="{ '--delay': '0ms' }"
+          v-if="mainPost"
+          class="post-card post-card--featured"
         >
-          <a class="card__link" :href="posts[0].href || '#'" @click.prevent="open(posts[0])">
-            <div class="media">
+          <a
+            class="post-card__link"
+            :href="mainPost.href || '#'"
+            @click.prevent="open(mainPost)"
+          >
+            <div class="post-card__media">
               <img
-                class="media__img"
-                :src="posts[0].image"
-                :alt="posts[0].imageAlt || posts[0].title"
+                class="post-card__image"
+                :src="mainPost.image"
+                :alt="mainPost.imageAlt || mainPost.title"
                 loading="lazy"
                 decoding="async"
                 draggable="false"
               />
-              <div class="media__overlay"></div>
-              <div class="media__grain"></div>
 
-              <span v-if="posts[0].category" class="category">
-                <span class="category-dot" aria-hidden="true"></span>
-                {{ posts[0].category }}
+              <div class="post-card__overlay" aria-hidden="true"></div>
+
+              <span v-if="mainPost.category" class="post-card__badge">
+                {{ mainPost.category }}
               </span>
 
               <button
-                class="share"
+                class="post-card__share"
                 type="button"
-                aria-label="Compartilhar"
-                @click.stop.prevent="share(posts[0])"
+                aria-label="Compartilhar artigo"
+                @click.stop.prevent="share(mainPost)"
               >
-                <svg viewBox="0 0 24 24" class="i" aria-hidden="true">
-                  <path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z"
-                    fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                  <path
+                    d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
               </button>
             </div>
 
-            <div class="body">
-              <div class="body__top">
-                <div class="author-row">
-                  <span class="author-avatar" aria-hidden="true">
-                    <img
-                      v-if="posts[0].authorAvatar"
-                      :src="posts[0].authorAvatar"
-                      :alt="posts[0].author"
-                      class="author-avatar__img"
-                    />
-                    <span v-else class="author-avatar__initials">
-                      {{ initials(posts[0].author) }}
-                    </span>
+            <div class="post-card__body">
+              <div class="post-card__meta">
+                <span class="author-avatar" aria-hidden="true">
+                  <img
+                    v-if="mainPost.authorAvatar"
+                    :src="mainPost.authorAvatar"
+                    :alt="mainPost.author"
+                    class="author-avatar__img"
+                    loading="lazy"
+                    decoding="async"
+                  />
+
+                  <span v-else class="author-avatar__initials">
+                    {{ initials(mainPost.author) }}
                   </span>
-                  <span class="author-name">{{ posts[0].author }}</span>
-                  <span class="meta-sep" aria-hidden="true">◆</span>
-                  <time class="post-date" :datetime="posts[0].dateIso">{{ posts[0].date }}</time>
-                  <span v-if="posts[0].readTime" class="meta-sep" aria-hidden="true">◆</span>
-                  <span v-if="posts[0].readTime" class="read-time">{{ posts[0].readTime }}</span>
-                </div>
-
-                <h3 class="post-title post-title--hero" :title="posts[0].title">
-                  {{ posts[0].title }}
-                </h3>
-
-                <p v-if="posts[0].excerpt" class="excerpt excerpt--hero">
-                  {{ posts[0].excerpt }}
-                </p>
-              </div>
-
-              <div class="body__footer">
-                <span class="read-more">
-                  Ler artigo
-                  <svg viewBox="0 0 24 24" class="read-more__ic" aria-hidden="true">
-                    <path d="M5 12h14M13 6l6 6-6 6"
-                      fill="none" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
                 </span>
+
+                <span class="post-card__author">{{ mainPost.author }}</span>
+
+                <span class="post-card__sep" aria-hidden="true"></span>
+
+                <time
+                  class="post-card__date"
+                  :datetime="mainPost.dateIso"
+                >
+                  {{ mainPost.date }}
+                </time>
+
+                <template v-if="mainPost.readTime">
+                  <span class="post-card__sep" aria-hidden="true"></span>
+                  <span class="post-card__read-time">{{ mainPost.readTime }}</span>
+                </template>
               </div>
+
+              <h3 class="post-card__title post-card__title--featured">
+                {{ mainPost.title }}
+              </h3>
+
+              <p v-if="mainPost.excerpt" class="post-card__excerpt">
+                {{ mainPost.excerpt }}
+              </p>
+
+              <span class="post-card__cta">
+                Ler artigo
+                <svg viewBox="0 0 24 24" class="post-card__cta-icon" aria-hidden="true">
+                  <path
+                    d="M5 12h14M13 6l6 6-6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
             </div>
-            <span class="card__bar" aria-hidden="true"></span>
+
+            <span class="post-card__bar" aria-hidden="true"></span>
           </a>
         </article>
 
-        <div class="side-grid">
+        <div class="blog__side">
           <article
-            v-for="(post, idx) in secondaryPosts"
-            :key="post.id ?? idx"
-            class="card side-card"
-            :style="{ '--delay': `${(idx + 1) * 60}ms` }"
+            v-for="post in secondaryPosts"
+            :key="post.id ?? post.title"
+            class="post-card post-card--side"
           >
-            <a class="card__link" :href="post.href || '#'" @click.prevent="open(post)">
-              <div class="media media--side">
+            <a
+              class="post-card__link post-card__link--side"
+              :href="post.href || '#'"
+              @click.prevent="open(post)"
+            >
+              <div class="post-card__media post-card__media--side">
                 <img
-                  class="media__img"
+                  class="post-card__image"
                   :src="post.image"
                   :alt="post.imageAlt || post.title"
                   loading="lazy"
                   decoding="async"
                   draggable="false"
                 />
-                <div class="media__overlay media__overlay--side"></div>
-                <div class="media__grain"></div>
 
-                <span v-if="post.category" class="category category--sm">
-                  <span class="category-dot" aria-hidden="true"></span>
+                <div class="post-card__overlay" aria-hidden="true"></div>
+
+                <span v-if="post.category" class="post-card__badge post-card__badge--sm">
                   {{ post.category }}
                 </span>
 
                 <button
-                  class="share share--sm"
+                  class="post-card__share post-card__share--sm"
                   type="button"
-                  aria-label="Compartilhar"
+                  aria-label="Compartilhar artigo"
                   @click.stop.prevent="share(post)"
                 >
-                  <svg viewBox="0 0 24 24" class="i" aria-hidden="true">
-                    <path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z"
-                      fill="none" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
+                    <path
+                      d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </svg>
                 </button>
               </div>
 
-              <div class="body body--side">
-                <div class="author-row author-row--sm">
+              <div class="post-card__body post-card__body--side">
+                <div class="post-card__meta post-card__meta--side">
                   <span class="author-avatar author-avatar--sm" aria-hidden="true">
                     <img
                       v-if="post.authorAvatar"
                       :src="post.authorAvatar"
                       :alt="post.author"
                       class="author-avatar__img"
+                      loading="lazy"
+                      decoding="async"
                     />
+
                     <span v-else class="author-avatar__initials">
                       {{ initials(post.author) }}
                     </span>
                   </span>
-                  <span class="author-name author-name--sm">{{ post.author }}</span>
-                  <span class="meta-sep" aria-hidden="true">◆</span>
-                  <time class="post-date post-date--sm" :datetime="post.dateIso">{{ post.date }}</time>
+
+                  <span class="post-card__author">{{ post.author }}</span>
+
+                  <span class="post-card__sep" aria-hidden="true"></span>
+
+                  <time
+                    class="post-card__date"
+                    :datetime="post.dateIso"
+                  >
+                    {{ post.date }}
+                  </time>
                 </div>
 
-                <h3 class="post-title post-title--side" :title="post.title">
+                <h3 class="post-card__title post-card__title--side">
                   {{ post.title }}
                 </h3>
 
-                <p v-if="post.excerpt" class="excerpt excerpt--side">
+                <p v-if="post.excerpt" class="post-card__excerpt post-card__excerpt--side">
                   {{ post.excerpt }}
                 </p>
 
-                <span class="read-more read-more--sm">
+                <span class="post-card__cta post-card__cta--side">
                   Ler artigo
-                  <svg viewBox="0 0 24 24" class="read-more__ic" aria-hidden="true">
-                    <path d="M5 12h14M13 6l6 6-6 6"
-                      fill="none" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <svg viewBox="0 0 24 24" class="post-card__cta-icon" aria-hidden="true">
+                    <path
+                      d="M5 12h14M13 6l6 6-6 6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </svg>
                 </span>
               </div>
-              <span class="card__bar" aria-hidden="true"></span>
+
+              <span class="post-card__bar" aria-hidden="true"></span>
             </a>
           </article>
         </div>
-
       </div>
+    </div>
+
+    <div
+      v-if="toast"
+      class="blog__toast"
+      role="status"
+      aria-live="polite"
+    >
+      {{ toast }}
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from "vue";
 
 type BlogPost = {
-  id?: string | number
-  category?: string
-  image: string
-  imageAlt?: string
-  author: string
-  authorAvatar?: string
-  date: string
-  dateIso?: string
-  readTime?: string
-  title: string
-  excerpt?: string
-  href?: string
-  shareUrl?: string
-}
+  id?: string | number;
+  category?: string;
+  image: string;
+  imageAlt?: string;
+  author: string;
+  authorAvatar?: string;
+  date: string;
+  dateIso?: string;
+  readTime?: string;
+  title: string;
+  excerpt?: string;
+  href?: string;
+  shareUrl?: string;
+};
 
 const props = defineProps<{
-  posts?: BlogPost[]
-  viewAllHref?: string
-}>()
+  posts?: BlogPost[];
+  viewAllHref?: string;
+}>();
 
-const viewAllHref = props.viewAllHref ?? '#'
+const fallbackPosts: BlogPost[] = [
+  {
+    id: 1,
+    category: "Bastidores",
+    image:
+      "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=70",
+    author: "Equipe Festival",
+    date: "28 Mai 2026",
+    dateIso: "2026-05-28",
+    readTime: "5 min de leitura",
+    title: "Como nasceu o Festival de Inverno de Pedro II: história e tradição",
+    excerpt:
+      "Conheça a trajetória, a identidade cultural e os bastidores que tornam o Festival de Inverno uma das experiências mais marcantes do Piauí.",
+    href: "#",
+  },
+  {
+    id: 2,
+    category: "Culinária",
+    image:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70",
+    author: "Maria Fernanda",
+    date: "22 Mai 2026",
+    dateIso: "2026-05-22",
+    readTime: "3 min",
+    title: "Os sabores imperdíveis da gastronomia típica do festival",
+    excerpt:
+      "Pratos regionais, memórias afetivas e experiências gastronômicas que fazem parte da visita a Pedro II.",
+    href: "#",
+  },
+  {
+    id: 3,
+    category: "Atrações",
+    image:
+      "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=900&q=70",
+    author: "Carlos Nogueira",
+    date: "15 Mai 2026",
+    dateIso: "2026-05-15",
+    readTime: "4 min",
+    title: "Shows e apresentações que movimentam a cidade",
+    excerpt:
+      "Da música regional aos grandes palcos, veja como a programação transforma Pedro II durante o festival.",
+    href: "#",
+  },
+  {
+    id: 4,
+    category: "Dicas",
+    image:
+      "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=900&q=70",
+    author: "Júlia Soares",
+    date: "10 Mai 2026",
+    dateIso: "2026-05-10",
+    readTime: "2 min",
+    title: "Guia rápido para aproveitar melhor sua visita",
+    excerpt:
+      "Dicas de chegada, programação, circulação e pontos importantes para viver melhor a experiência do festival.",
+    href: "#",
+  },
+];
 
-const posts: BlogPost[] =
-  props.posts?.length
-    ? props.posts
-    : ([
-        {
-          id: 1,
-          category: 'Bastidores',
-          image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=70',
-          author: 'Equipe Festival',
-          date: '28 Mai 2026',
-          dateIso: '2026-05-28',
-          readTime: '5 min de leitura',
-          title: 'Como nasceu o Festival de Inverno de Pedro II: história e tradição',
-          excerpt: 'Há mais de três décadas, o frio da Serra dos Ventos abraça artistas e visitantes em uma celebração única da cultura piauiense. Conheça a história por trás do maior festival do Nordeste.',
-          href: '#',
-        },
-        {
-          id: 2,
-          category: 'Culinária',
-          image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70',
-          author: 'Maria Fernanda',
-          date: '22 Mai 2026',
-          dateIso: '2026-05-22',
-          readTime: '3 min',
-          title: 'Os sabores imperdíveis da gastronomia típica do festival',
-          excerpt: 'Do arroz de forno à rapadura com queijo, descubra os pratos que fazem parte da memória afetiva do evento.',
-          href: '#',
-        },
-        {
-          id: 3,
-          category: 'Atrações',
-          image: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=900&q=70',
-          author: 'Carlos Nogueira',
-          date: '15 Mai 2026',
-          dateIso: '2026-05-15',
-          readTime: '4 min',
-          title: 'Cinco shows que você não pode perder nesta edição',
-          excerpt: 'De artistas locais a nomes nacionais, a grade desta edição promete noites inesquecíveis na Praça da Matriz.',
-          href: '#',
-        },
-        {
-          id: 4,
-          category: 'Dicas',
-          image: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=900&q=70',
-          author: 'Júlia Soares',
-          date: '10 Mai 2026',
-          dateIso: '2026-05-10',
-          readTime: '2 min',
-          title: 'Guia completo: como aproveitar o festival sem perder nada',
-          excerpt: 'Hospedagem, transporte, programação e tudo o que você precisa saber para viver o melhor do Festival de Inverno.',
-          href: '#',
-        },
-      ] as BlogPost[])
+const allPosts = computed(() => {
+  return props.posts?.length ? props.posts : fallbackPosts;
+});
 
-const secondaryPosts = computed(() => posts.slice(1, 4))
+const viewAllHrefComputed = computed(() => {
+  return props.viewAllHref || "#";
+});
+
+const mainPost = computed(() => {
+  return allPosts.value[0] || null;
+});
+
+const secondaryPosts = computed(() => {
+  return allPosts.value.slice(1, 4);
+});
+
+const toast = ref("");
+let toastTimer: number | null = null;
 
 function initials(name: string) {
   return name
-    .split(' ')
+    .split(" ")
+    .filter(Boolean)
     .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 }
 
 function open(post: BlogPost) {
-  if (post.href && post.href !== '#') window.location.href = post.href
+  if (post.href && post.href !== "#") {
+    window.location.href = post.href;
+  }
+}
+
+function showToast(message: string) {
+  toast.value = message;
+
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+  }
+
+  toastTimer = window.setTimeout(() => {
+    toast.value = "";
+  }, 2300);
 }
 
 async function share(post: BlogPost) {
-  const url = post.shareUrl || post.href || window.location.href
-  const text = post.title
+  const url = post.shareUrl || post.href || window.location.href;
+  const title = post.title;
+
   if (navigator.share) {
-    try { await navigator.share({ title: text, text, url }); return } catch { /* fallback */ }
+    try {
+      await navigator.share({
+        title,
+        text: title,
+        url,
+      });
+
+      return;
+    } catch {
+      // fallback silencioso
+    }
   }
+
   try {
-    await navigator.clipboard.writeText(url)
-    alert('Link copiado!')
+    await navigator.clipboard.writeText(url);
+    showToast("Link copiado.");
   } catch {
-    alert('Não foi possível copiar o link.')
+    showToast("Não foi possível copiar o link.");
   }
 }
 
-const root = ref<HTMLElement | null>(null)
-const ioReady = ref(false)
-let io: IntersectionObserver | null = null
-
-onMounted(() => {
-  // Garantir que as fontes do DNA estão carregadas
-  if (!document.querySelector('link[data-hero-fonts]')) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.setAttribute("data-hero-fonts", "1");
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap";
-    document.head.appendChild(link);
+onBeforeUnmount(() => {
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = null;
   }
-
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-  if (reduceMotion) { ioReady.value = true; return }
-
-  io = new IntersectionObserver(
-    (entries) => {
-      if (!entries[0]?.isIntersecting) return
-      ioReady.value = true
-      io?.disconnect(); io = null
-    },
-    { threshold: 0.08 }
-  )
-  if (root.value) io.observe(root.value)
-})
-
-onBeforeUnmount(() => { io?.disconnect(); io = null })
+});
 </script>
 
 <style scoped>
-@import url('https://fonts.cdnfonts.com/css/rawline');
+@import url("https://fonts.cdnfonts.com/css/rawline");
 
-/* ── Design tokens (Baseado no DNA do Hero) ────────────────────────────── */
 .blog {
-  --blue-deep:       #01195a;
-  --blue:  #060e2a;
-  --gold:       #EDE53A;
-  --gold-dk:    #c8a830;
-  --white:      #ffffff;
-  --white-80:   rgba(255,255,255,0.80);
-  --white-50:   rgba(255,255,255,0.50);
-  --white-20:   rgba(255,255,255,0.20);
-  --white-08:   rgba(255,255,255,0.08);
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #ede53a;
+  --bg: #01195a;
+  --surface: #ffffff;
+  --text: #060e2a;
+  --muted: rgba(6, 14, 42, 0.65);
+  --line: rgba(6, 14, 42, 0.08);
+  --line-strong: rgba(1, 25, 90, 0.14);
+  --shadow-sm: 0 10px 24px rgba(1, 25, 90, 0.06);
+  --shadow-md: 0 18px 42px rgba(1, 25, 90, 0.12);
 
-  --font-display: 'Rawline', sans-serif;
-  --font-cond:    'Rawline', sans-serif;
-  --font-sans:    'Rawline', sans-serif;
-  box-shadow: 
-    0px -32px 40px -24px rgba(6, 14, 42, 0.745), 
-    0px 32px 40px -24px rgba(6, 14, 42, 0.745);  
+  --font-display: "Rawline", sans-serif;
+  --font-cond: "Rawline", sans-serif;
+  --font-sans: "Rawline", sans-serif;
+
   position: relative;
-  isolation: isolate;
-  padding: clamp(40px, 8vw, 80px) 0;
-  background: var(--blue-deep);
-  color: var(--white);
-}
-
-/* Ruído sutil no fundo para unir as seções */
-.blog__noise {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: -1;
+  overflow: hidden;
+  padding: 58px 0 64px;
+  background:
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+  color: var(--text);
+  box-shadow: inset 0 32px 42px -34px rgba(6, 14, 42, 0.55);
 }
 
 .blog__inner {
   width: min(1120px, calc(100% - 32px));
   margin-inline: auto;
-  position: relative;
-  z-index: 2;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.head {
+.blog__head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 14px;
-  margin-bottom: clamp(24px, 4vw, 36px);
+  gap: 18px;
+  margin-bottom: 26px;
 }
 
-.head__title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.blog__title-wrap {
+  max-width: 720px;
 }
 
-.head__eyebrow {
+.blog__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--white-50);
-  font: 600 clamp(0.72rem, 1.3vw, 0.90rem)/1 var(--font-cond);
-  letter-spacing: 0.35em;
+  margin-bottom: 10px;
+  color: var(--blue);
+  font-family: var(--font-cond);
+  font-size: clamp(0.72rem, 1.2vw, 0.85rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
-.head__eyebrow::before {
+.blog__eyebrow::before {
   content: "";
   width: 32px;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(237,229,58,0.8), transparent);
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gold);
 }
 
-.head__title {
+.blog__title {
   margin: 0;
+  color: var(--blue-deep);
   font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.02em;
-  line-height: 1.1;
-  font-size: clamp(28px, 3vw, 42px);
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
-/* Botão estilo Ghost adaptado do Hero */
-.btn-ghost {
+.blog__subtitle {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.35vw, 1rem);
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.blog__all {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(1, 25, 90, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--blue);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: transparent;
-  color: var(--white-80);
-  border: 1px solid var(--white-20);
+  text-decoration: none;
   font-family: var(--font-cond);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-size: 0.75rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 2px;
   white-space: nowrap;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
-.head__all-ic {
-  width: 16px;
-  height: 16px;
-  transition: transform 160ms ease;
+.blog__all:hover {
+  border-color: rgba(1, 25, 90, 0.28);
+  background: rgba(1, 25, 90, 0.04);
 }
 
-@media (hover: hover) {
-  .btn-ghost:hover {
-    border-color: var(--white-50);
-    color: var(--white);
-    transform: translateY(-2px);
-  }
-  .btn-ghost:hover .head__all-ic {
-    transform: translateX(4px);
-  }
+.blog__all:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
 
-/* ── Layout grid ─────────────────────────────────────────────────────────── */
-.grid {
+.blog__all-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.blog__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto;
-  gap: 24px;
-  align-items: start;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 18px;
+  align-items: stretch;
 }
 
-.side-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.blog__side {
+  display: grid;
+  gap: 14px;
 }
 
-/* ── Card base ───────────────────────────────────────────────────────────── */
-.card {
+.post-card {
+  min-width: 0;
+}
+
+.post-card__link {
   position: relative;
-}
-
-.card__link {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 4px;
-  border: 1px solid var(--white-08);
-  background: var(--blue);
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  transform: translateZ(0);
-  transition: transform 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
-}
-
-.card__bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 400ms ease;
-}
-
-@media (hover: hover) {
-  .card__link:hover {
-    transform: translateY(-6px);
-    border-color: var(--white-20);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  }
-  .card__link:hover .media__img {
-    transform: scale(1.05);
-  }
-  .card__link:hover .read-more__ic {
-    transform: translateX(4px);
-  }
-  .card__link:hover .card__bar {
-    transform: scaleX(1);
-  }
-}
-
-/* ── Hero post ───────────────────────────────────────────────────────────── */
-.hero-post .card__link {
   height: 100%;
-  min-height: 560px;
+  min-height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(6, 14, 42, 0.06);
+  border-radius: 18px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-rows: 270px 1fr;
 }
 
-.hero-post .media {
-  height: 280px;
+.post-card__link:hover {
+  border-color: rgba(1, 25, 90, 0.12);
+  box-shadow: var(--shadow-md);
 }
 
-/* ── Side card ───────────────────────────────────────────────────────────── */
-.side-card .card__link {
-  flex-direction: row;
-  height: auto;
-  min-height: 160px;
-  border-radius: 4px;
+.post-card__link:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
 
-.side-card .media--side {
-  width: 160px;
-  min-width: 160px;
-  height: auto;
-  align-self: stretch;
-  flex-shrink: 0;
+.post-card__link--side {
+  min-height: 176px;
+  grid-template-columns: 172px 1fr;
+  grid-template-rows: 1fr;
 }
 
-.side-card .body--side {
-  padding: 20px;
-  gap: 12px;
-  justify-content: flex-start;
+.post-card__media {
   position: relative;
-}
-
-.side-card .card__bar {
-  display: none;
-}
-
-.side-card .body--side::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 400ms ease;
-}
-
-@media (hover: hover) {
-  .side-card .card__link:hover .body--side::after {
-    transform: scaleX(1);
-  }
-}
-
-/* ── Media ───────────────────────────────────────────────────────────────── */
-.media {
-  position: relative;
+  min-width: 0;
   overflow: hidden;
   background: var(--blue-deep);
-  flex-shrink: 0;
 }
 
-.media__img {
+.post-card__media--side {
+  min-height: 176px;
+}
+
+.post-card__image {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
-  transform: scale(1.001);
-  transition: transform 700ms ease;
-  filter: brightness(0.9) saturate(1.1);
 }
 
-.media__overlay {
+.post-card__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, var(--blue) 0%, transparent 80%);
+  background:
+    linear-gradient(
+      to top,
+      rgba(6, 14, 42, 0.66),
+      rgba(6, 14, 42, 0.12) 58%,
+      transparent
+    );
   pointer-events: none;
 }
 
-.media__overlay--side {
-  background: linear-gradient(to right, var(--blue) 0%, transparent 60%);
-}
-
-/* Mantendo a textura de grão nas imagens */
-.media__grain {
+.post-card__badge {
   position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: 180px;
-  opacity: 0.3;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* ── Category badge (Estilo Hero Badge) ──────────────────────────────────── */
-.category {
-  position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 14px;
+  left: 14px;
   z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  min-height: 26px;
+  padding: 0 12px;
+  border-radius: 2px;
   background: var(--gold);
   color: #1a1200;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-cond);
-  font-size: clamp(0.60rem, 1.1vw, 0.70rem);
-  font-weight: 800;
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 2px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-.category-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.35);
-  flex-shrink: 0;
-}
-
-.category--sm {
+.post-card__badge--sm {
   top: 12px;
   left: 12px;
-  padding: 3px 10px;
-  font-size: 0.60rem;
+  min-height: 24px;
+  padding: 0 10px;
+  font-size: 0.6rem;
 }
 
-/* ── Share button ────────────────────────────────────────────────────────── */
-.share {
+.post-card__share {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   z-index: 2;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--white-20);
-  border-radius: 50%;
-  background: rgba(6, 14, 42, 0.4);
-  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(6, 14, 42, 0.42);
+  color: #ffffff;
   display: grid;
   place-items: center;
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
-.share .i { width: 16px; height: 16px; }
+.post-card__share:hover {
+  background: var(--gold);
+  color: #1a1200;
+  border-color: var(--gold);
+}
 
-.share--sm {
+.post-card__share:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.post-card__share--sm {
   width: 32px;
   height: 32px;
-  top: 12px;
-  right: 12px;
-}
-.share--sm .i { width: 14px; height: 14px; }
-
-@media (hover: hover) {
-  .share:hover {
-    transform: translateY(-2px);
-    background: var(--gold);
-    color: #1a1200;
-    border-color: var(--gold);
-  }
 }
 
-/* ── Body ────────────────────────────────────────────────────────────────── */
-.body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  flex: 1;
-  min-height: 0;
-  padding: 24px;
-  gap: 16px;
+.icon {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
-.body__top {
+.post-card__body {
+  min-width: 0;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.body__footer {
-  margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--white-08);
+.post-card__body--side {
+  padding: 16px;
 }
 
-/* ── Author row ──────────────────────────────────────────────────────────── */
-.author-row {
+.post-card__meta {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
-.author-row--sm {
+.post-card__meta--side {
   gap: 6px;
 }
 
 .author-avatar {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  border: 1px solid rgba(1, 25, 90, 0.12);
+  border-radius: 999px;
+  background: rgba(1, 25, 90, 0.05);
   overflow: hidden;
-  background: var(--white-08);
-  border: 1px solid var(--white-20);
   display: grid;
   place-items: center;
+  flex-shrink: 0;
 }
 
 .author-avatar--sm {
@@ -746,237 +733,224 @@ onBeforeUnmount(() => { io?.disconnect(); io = null })
 }
 
 .author-avatar__initials {
+  color: var(--blue);
   font-family: var(--font-cond);
-  font-size: 10px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.post-card__author,
+.post-card__date,
+.post-card__read-time {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
   font-weight: 700;
-  color: var(--gold);
-}
-
-.author-name {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--white-80);
-  white-space: nowrap;
-}
-
-.author-name--sm {
-  font-size: 12px;
-}
-
-.meta-sep {
-  color: var(--gold);
-  font-size: 8px;
-  opacity: 0.6;
-  user-select: none;
-}
-
-.post-date {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--white-50);
-}
-
-.post-date--sm {
-  font-size: 12px;
-}
-
-.read-time {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  color: var(--gold);
-  opacity: 0.9;
-}
-
-/* ── Post title ──────────────────────────────────────────────────────────── */
-.post-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0.01em;
   line-height: 1.2;
 }
 
-.post-title--hero {
-  font-size: clamp(22px, 2.2vw, 28px);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.post-card__read-time {
+  color: var(--blue);
 }
 
-.post-title--side {
-  font-size: 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.post-card__sep {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--gold);
+  flex-shrink: 0;
 }
 
-/* ── Excerpt ─────────────────────────────────────────────────────────────── */
-.excerpt {
+.post-card__title {
   margin: 0;
-  font-family: var(--font-sans);
-  color: var(--white-80);
-  line-height: 1.6;
-  font-size: 15px;
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
 }
 
-.excerpt--hero {
+.post-card__title--featured {
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.excerpt--side {
-  font-size: 14px;
-  display: none;
+.post-card__title--side {
+  font-size: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* ── Read more ───────────────────────────────────────────────────────────── */
-.read-more {
+.post-card__excerpt {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-card__excerpt--side {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+}
+
+.post-card__cta {
+  margin-top: auto;
+  padding-top: 4px;
+  color: var(--blue);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   font-family: var(--font-cond);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--gold);
 }
 
-.read-more--sm {
-  font-size: 0.75rem;
-  gap: 6px;
-  margin-top: auto;
+.post-card__cta--side {
+  font-size: 0.7rem;
 }
 
-.read-more__ic {
-  width: 16px;
-  height: 16px;
-  transition: transform 220ms ease;
+.post-card__cta-icon {
+  width: 15px;
+  height: 15px;
 }
 
-/* ── Scroll animation ────────────────────────────────────────────────────── */
-.grid .card {
-  opacity: 1;
+.post-card__bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
 }
 
-.grid:not(.grid--ready) .card__link {
-  opacity: 0;
-  transform: translateY(24px);
+.blog__toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 9999;
+  transform: translateX(-50%);
+  max-width: min(520px, calc(100% - 32px));
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-deep);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(6, 14, 42, 0.28);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
 }
 
-.grid.grid--ready .card__link {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 600ms ease var(--delay, 0ms),
-    transform 600ms ease var(--delay, 0ms),
-    box-shadow 300ms ease,
-    border-color 300ms ease;
-}
+@media (max-width: 980px) {
+  .blog {
+    padding: 48px 0 54px;
+  }
 
-/* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (max-width: 1040px) {
-  .grid {
+  .blog__grid {
     grid-template-columns: 1fr;
   }
 
-  .hero-post .card__link {
-    min-height: 0;
-    height: auto;
+  .blog__side {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .hero-post .media {
-    height: 320px;
+  .post-card__link--side {
+    grid-template-columns: 1fr;
+    grid-template-rows: 190px 1fr;
   }
 
-  .side-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
+  .post-card__media--side {
+    min-height: 190px;
   }
 
-  .side-card .card__link {
-    flex-direction: column;
-    height: auto;
-    min-height: 0;
-  }
-
-  .side-card .media--side {
-    width: 100%;
-    min-width: 0;
-    height: 200px;
-    align-self: auto;
-  }
-
-  .post-title--side {
-    -webkit-line-clamp: 2;
-  }
-
-  .excerpt--side {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  .post-card__excerpt--side {
+    display: none;
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
+  .blog__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .blog__all {
+    width: 100%;
+  }
+
+  .blog__side {
+    grid-template-columns: 1fr;
+  }
+
+  .post-card__link {
+    grid-template-rows: 230px 1fr;
+  }
+
+  .post-card__link--side {
+    grid-template-rows: 220px 1fr;
+  }
+
+  .post-card__media--side {
+    min-height: 220px;
+  }
+
+  .post-card__excerpt--side {
+    display: -webkit-box;
+  }
+}
+
+@media (max-width: 520px) {
   .blog {
-    padding: 40px 0;
+    padding: 42px 0 48px;
   }
 
   .blog__inner {
-    width: min(100%, calc(100% - 32px));
+    width: min(100%, calc(100% - 24px));
   }
 
-  .head {
-    margin-bottom: 24px;
+  .post-card__body {
+    padding: 16px;
   }
 
-  .hero-post .media {
-    height: 240px;
+  .post-card__link,
+  .post-card__link--side {
+    border-radius: 16px;
+    grid-template-rows: 205px 1fr;
   }
 
-  .body {
-    padding: 20px;
+  .post-card__media--side {
+    min-height: 205px;
   }
 
-  .side-grid {
-    grid-template-columns: 1fr;
+  .post-card__meta {
+    gap: 6px;
   }
 
-  .side-card .card__link {
-    flex-direction: column;
-  }
-
-  .side-card .media--side {
-    height: 220px;
-  }
-}
-
-/* ── Reduced motion ──────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .grid:not(.grid--ready) .card__link {
-    opacity: 1;
-    transform: none;
-  }
-
-  .card__link,
-  .media__img,
-  .share,
-  .read-more__ic,
-  .btn-ghost,
-  .head__all-ic,
-  .card__bar {
-    transition: none !important;
+  .post-card__author,
+  .post-card__date,
+  .post-card__read-time {
+    font-size: 0.72rem;
   }
 }
-
-.i { display: block; }
 </style>

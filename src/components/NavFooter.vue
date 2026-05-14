@@ -111,7 +111,7 @@
         <div class="brand">Festival de Inverno <span aria-hidden="true">◆</span> Pedro II</div>
         <div class="credit">
           Feito por 
-          <button type="button" @click="copy('feito por @kallebe', 'Crédito copiado')">@MaxSistemas</button>
+          <button type="button" @click="copy('feito por @kallebeMax', 'Crédito copiado')">@kallebeMax</button>
         </div>
       </div>
     </div>
