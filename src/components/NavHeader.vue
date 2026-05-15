@@ -1,14 +1,12 @@
 <template>
   <header
-    ref="headerEl"
     class="nav"
-    :class="[
-      { 'is-hidden': hidden, 'is-scrolled': scrolled },
-      `theme--${theme}`
-    ]"
+    :class="{
+      'is-hidden': hidden,
+      'is-scrolled': scrolled
+    }"
     role="banner"
   >
-    <!-- ── Barra de progresso de scroll ── -->
     <div class="nav__progress" aria-hidden="true">
       <span
         class="nav__progress-bar"
@@ -17,7 +15,6 @@
     </div>
 
     <div class="nav__inner">
-      <!-- Burger -->
       <button
         class="burger"
         type="button"
@@ -27,13 +24,12 @@
         aria-controls="fs-dialog"
       >
         <span class="burger__box" aria-hidden="true">
-          <span class="burger__line burger__line--top"></span>
-          <span class="burger__line burger__line--mid"></span>
-          <span class="burger__line burger__line--bot"></span>
+          <span class="burger__line"></span>
+          <span class="burger__line"></span>
+          <span class="burger__line burger__line--short"></span>
         </span>
       </button>
 
-      <!-- Logo / Marca -->
       <a
         class="brand"
         href="/"
@@ -45,9 +41,13 @@
           alt="Logo do Festival de Inverno de Pedro II"
           class="brand__img"
         />
+
+        <span class="brand__text">
+          <strong>Festival de Inverno</strong>
+          <small>Pedro II · Piauí</small>
+        </span>
       </a>
 
-      <!-- Busca -->
       <div class="search-wrap" ref="searchWrapEl">
         <v-text-field
           v-model="search"
@@ -57,126 +57,104 @@
           hide-details
           :placeholder="t.searchPlaceholder"
           prepend-inner-icon="mdi-magnify"
+          :aria-label="t.searchLabel"
+          autocomplete="off"
           @keydown.enter.prevent="onSearchEnter"
           @keydown.esc.stop.prevent="onSearchEsc"
           @keydown.arrow-down.prevent="focusSuggestion(0)"
           @focus="searchFocused = true"
           @blur="onSearchBlur"
-          :aria-label="t.searchLabel"
-          autocomplete="off"
         >
           <template #append-inner>
-            <Transition name="fade-btn">
-              <button
-                v-if="search.length > 0"
-                class="search-clear"
-                type="button"
-                @mousedown.prevent="clearSearch"
-                aria-label="Limpar busca"
-                tabindex="-1"
-              >
-                <v-icon icon="mdi-close" size="16" />
-              </button>
-            </Transition>
-
             <button
-              class="mic"
+              v-if="search.length > 0"
+              class="search-clear"
               type="button"
-              :class="{ 'is-on': listening && voiceTarget === 'header' }"
-              :aria-label="listening && voiceTarget === 'header' ? t.stopVoice : t.startVoice"
-              @click.stop.prevent="toggleVoice('header')"
+              @mousedown.prevent="clearSearch"
+              aria-label="Limpar busca"
+              tabindex="-1"
             >
-              <v-icon
-                :icon="listening && voiceTarget === 'header' ? 'mdi-microphone' : 'mdi-microphone-outline'"
-              />
+              <v-icon icon="mdi-close" size="16" />
             </button>
           </template>
         </v-text-field>
 
-        <!-- Dropdown de sugestões -->
-        <Transition name="suggestions">
-          <div
-            v-if="searchFocused && searchSuggestions.length > 0"
-            class="suggestions"
-            role="listbox"
-            :aria-label="t.searchLabel"
+        <div
+          v-if="searchFocused && searchSuggestions.length > 0"
+          class="suggestions"
+          role="listbox"
+          :aria-label="t.searchLabel"
+        >
+          <button
+            v-for="(item, idx) in searchSuggestions"
+            :key="item.id"
+            :ref="el => { if (el) suggestionEls[idx] = el }"
+            class="suggestions__item"
+            role="option"
+            :aria-selected="false"
+            @mousedown.prevent="selectSuggestion(item)"
+            @keydown.arrow-down.prevent="focusSuggestion(idx + 1)"
+            @keydown.arrow-up.prevent="idx === 0 ? focusSearch() : focusSuggestion(idx - 1)"
+            @keydown.enter.prevent="selectSuggestion(item)"
+            @keydown.esc.prevent="onSearchEsc"
           >
-            <button
-              v-for="(item, idx) in searchSuggestions"
-              :key="item.id"
-              :ref="el => { if (el) suggestionEls[idx] = el }"
-              class="suggestions__item"
-              role="option"
-              :aria-selected="false"
-              @mousedown.prevent="selectSuggestion(item)"
-              @keydown.arrow-down.prevent="focusSuggestion(idx + 1)"
-              @keydown.arrow-up.prevent="idx === 0 ? focusSearch() : focusSuggestion(idx - 1)"
-              @keydown.enter.prevent="selectSuggestion(item)"
-              @keydown.esc.prevent="onSearchEsc"
-            >
-              <span class="suggestions__icon">
-                <v-icon :icon="item.icon" size="18" />
-              </span>
-              <span class="suggestions__txt">
-                <strong>{{ item.label }}</strong>
-                <span>{{ item.desc }}</span>
-              </span>
-              <span class="suggestions__arrow">
-                <v-icon icon="mdi-arrow-top-right" size="14" />
-              </span>
-            </button>
-          </div>
-        </Transition>
+            <span class="suggestions__icon" aria-hidden="true">
+              <v-icon :icon="item.icon" size="18" />
+            </span>
+
+            <span class="suggestions__txt">
+              <strong>{{ item.label }}</strong>
+              <span>{{ item.desc }}</span>
+            </span>
+
+            <span class="suggestions__arrow" aria-hidden="true">
+              <v-icon icon="mdi-arrow-top-right" size="14" />
+            </span>
+          </button>
+        </div>
       </div>
 
-      <!-- Ações do canto direito -->
       <div class="nav-actions" aria-label="Preferências">
         <button
-          class="utilBtn utilBtn--lang"
+          class="lang-btn"
           type="button"
-          @click="toggleLanguage"
+          @click="onToggleLanguage"
           :aria-label="t.toggleLanguage"
           :title="t.toggleLanguage"
         >
-          <span class="utilBtn__icon" :class="{ 'is-animating': langAnimating }">
-            <v-icon icon="mdi-translate" size="18" />
-          </span>
-          <span class="utilBtn__label">{{ lang.toUpperCase() }}</span>
+          <v-icon icon="mdi-translate" size="18" />
+          <span>{{ lang.toUpperCase() }}</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ── Toast ── -->
-  <Transition name="toast">
-    <div
-      v-if="toast.show"
-      class="toast"
-      :class="`theme--${theme}`"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <span class="toast__pulse" aria-hidden="true"></span>
-      <span class="toast__text">{{ toast.text }}</span>
-      <button
-        class="toast__x"
-        type="button"
-        @click="hideToast"
-        :aria-label="t.close"
-      >
-        <v-icon icon="mdi-close" size="16" />
-      </button>
-    </div>
-  </Transition>
+  <div
+    v-if="toast.show"
+    class="toast"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <span class="toast__dot" aria-hidden="true"></span>
+    <span class="toast__text">{{ toast.text }}</span>
 
-  <!-- ── Menu fullscreen ── -->
+    <button
+      class="toast__close"
+      type="button"
+      @click="hideToast"
+      :aria-label="t.close"
+    >
+      <v-icon icon="mdi-close" size="16" />
+    </button>
+  </div>
+
   <v-dialog
     v-model="menuOpen"
     fullscreen
     scrollable
     attach="body"
-    transition="fs-transition"
+    :transition="false"
     content-class="fsDialog"
     @update:modelValue="onDialogToggle"
   >
@@ -184,13 +162,11 @@
       id="fs-dialog"
       ref="fsRoot"
       class="fs"
-      :class="`theme--${theme}`"
       role="dialog"
       aria-modal="true"
       :aria-label="t.menuDialog"
       @keydown.esc="closeMenu"
     >
-      <!-- Topo do menu -->
       <div class="fs__top">
         <button
           class="fs__brand"
@@ -198,11 +174,16 @@
           @click="jump('/')"
           :aria-label="t.goHome"
         >
-          <img src="/Logo/LogoOfM.png" alt="Logo do Festival" class="fs__logo" />
-          <div class="fs__brandTxt">
+          <img
+            src="/Logo/LogoOfM.png"
+            alt="Logo do Festival"
+            class="fs__logo"
+          />
+
+          <span class="fs__brandTxt">
             <strong>Festival de Inverno</strong>
-            <span>Pedro II · Piauí · 2026</span>
-          </div>
+            <small>Pedro II · Piauí · 2026</small>
+          </span>
         </button>
 
         <div class="fs__topRight">
@@ -215,128 +196,113 @@
               hide-details
               :placeholder="t.filterSections"
               prepend-inner-icon="mdi-magnify"
-              @keydown.enter.prevent="onMenuSearchEnter"
-              @keydown.esc="closeMenu"
               :aria-label="t.filterSections"
               autocomplete="off"
-            >
-              <template #append-inner>
-                <button
-                  class="mic"
-                  type="button"
-                  :class="{ 'is-on': listening && voiceTarget === 'menu' }"
-                  :aria-label="listening && voiceTarget === 'menu' ? t.stopVoice : t.startVoice"
-                  @click.stop.prevent="toggleVoice('menu')"
-                >
-                  <v-icon
-                    :icon="listening && voiceTarget === 'menu' ? 'mdi-microphone' : 'mdi-microphone-outline'"
-                  />
-                </button>
-              </template>
-            </v-text-field>
+              @keydown.enter.prevent="onMenuSearchEnter"
+              @keydown.esc="closeMenu"
+            />
           </div>
 
-          <div class="fs__topActions">
-            <button
-              class="topBtn"
-              type="button"
-              @click="toggleLanguage"
-              :aria-label="t.toggleLanguage"
-            >
-              <v-icon icon="mdi-translate" size="18" />
-              <span>{{ lang.toUpperCase() }}</span>
-            </button>
+          <button
+            class="topBtn"
+            type="button"
+            @click="onToggleLanguage"
+            :aria-label="t.toggleLanguage"
+          >
+            <v-icon icon="mdi-translate" size="18" />
+            <span>{{ lang.toUpperCase() }}</span>
+          </button>
 
-            <button
-              class="topBtn topBtn--close"
-              type="button"
-              @click="closeMenu"
-              :aria-label="t.closeMenu"
-            >
-              <v-icon icon="mdi-close" size="20" />
-            </button>
-          </div>
+          <button
+            class="topBtn topBtn--close"
+            type="button"
+            @click="closeMenu"
+            :aria-label="t.closeMenu"
+          >
+            <v-icon icon="mdi-close" size="20" />
+          </button>
         </div>
       </div>
 
-      <!-- Corpo do menu -->
       <div
         ref="fsScroll"
         class="fs__body"
         :aria-label="t.menuContent"
       >
         <div class="fs__wrap">
-
-          <!-- ── Coluna esquerda ── -->
           <aside class="fs__left">
             <div class="fs__leftHead">
               <p class="fs__kicker">
-                <span class="kicker-dot" aria-hidden="true"></span>
+                <span class="kicker-line" aria-hidden="true"></span>
                 {{ t.quickNavigation }}
               </p>
+
               <h2 class="fs__title">{{ t.whereToGo }}</h2>
-              <p class="fs__subtitle">{{ t.menuSubtitle }}</p>
+
+              <p class="fs__subtitle">
+                {{ t.menuSubtitle }}
+              </p>
             </div>
 
-            <!-- Chips -->
             <div class="fs__chips" :aria-label="t.shortcuts">
               <button class="chip" type="button" @click="jump('/programacao')">
                 <v-icon icon="mdi-calendar-clock-outline" size="16" />
                 {{ t.programming }}
               </button>
+
               <button class="chip" type="button" @click="jump('/mapa')">
                 <v-icon icon="mdi-map-marker-outline" size="16" />
                 {{ t.map }}
               </button>
+
               <button class="chip" type="button" @click="jump('/acessibilidade')">
                 <v-icon icon="mdi-wheelchair-accessibility" size="16" />
                 {{ t.accessibility }}
               </button>
             </div>
 
-            <!-- Preferências -->
-            <div class="fs__prefs" :aria-label="t.preferences">
-              <button class="prefCard" type="button" @click="toggleLanguage">
-                <div class="prefCard__icon" :class="{ 'is-animating': langAnimating }">
-                  <v-icon icon="mdi-translate" size="20" />
-                </div>
-                <div class="prefCard__txt">
-                  <strong>{{ t.language }}</strong>
-                  <span>{{ lang === 'pt' ? 'Português' : 'English' }}</span>
-                </div>
-                <span class="prefCard__badge">{{ lang.toUpperCase() }}</span>
-              </button>
-            </div>
+            <button class="prefCard" type="button" @click="onToggleLanguage">
+              <span class="prefCard__icon" aria-hidden="true">
+                <v-icon icon="mdi-translate" size="20" />
+              </span>
 
-            <!-- CTA -->
+              <span class="prefCard__txt">
+                <strong>{{ t.language }}</strong>
+                <small>{{ lang === 'pt' ? 'Português' : 'English' }}</small>
+              </span>
+
+              <span class="prefCard__badge">
+                {{ lang.toUpperCase() }}
+              </span>
+            </button>
+
             <div class="fs__cta">
-              <div class="fs__ctaInner">
-                <span class="fs__ctaEyebrow">{{ t.quickAccess }}</span>
-                <p class="fs__ctaText">{{ t.quickAccessText }}</p>
-                <button class="fs__ctaBtn" type="button" @click="jump('/programacao')">
-                  {{ t.seeProgramming }}
-                  <v-icon icon="mdi-arrow-top-right" size="16" class="ml-1" />
-                </button>
-              </div>
-              <p class="fs__esc">
-                <kbd>Esc</kbd> {{ t.tipEsc2 }}
+              <span class="fs__ctaEyebrow">{{ t.quickAccess }}</span>
+
+              <p class="fs__ctaText">
+                {{ t.quickAccessText }}
               </p>
+
+              <button class="fs__ctaBtn" type="button" @click="jump('/programacao')">
+                {{ t.seeProgramming }}
+                <v-icon icon="mdi-arrow-top-right" size="16" />
+              </button>
             </div>
           </aside>
 
-          <!-- ── Coluna direita: seções ── -->
           <main class="fs__right" :aria-label="t.sectionList">
             <div class="fs__rightHead">
               <span class="fs__sectionLabel">
-                <span class="labelDot" aria-hidden="true"></span>
+                <span class="label-line" aria-hidden="true"></span>
                 {{ t.siteSections }}
               </span>
+
               <span class="fs__count">
                 {{ filteredItems.length }}<span aria-hidden="true">/{{ items.length }}</span>
               </span>
             </div>
 
-            <TransitionGroup name="grid-item" tag="div" class="fs__grid">
+            <div class="fs__grid">
               <button
                 v-for="(item, idx) in filteredItems"
                 :key="item.id"
@@ -349,39 +315,60 @@
                 <span class="fs__card-num" aria-hidden="true">
                   {{ String(idx + 1).padStart(2, '0') }}
                 </span>
+
                 <span class="fs__card-icon" aria-hidden="true">
                   <v-icon :icon="item.icon" size="22" />
                 </span>
+
                 <span class="fs__card-txt">
                   <strong>{{ item.label }}</strong>
-                  <span>{{ item.desc }}</span>
+                  <small>{{ item.desc }}</small>
                 </span>
+
                 <span class="fs__card-arrow" aria-hidden="true">
                   <v-icon icon="mdi-arrow-top-right" size="16" />
                 </span>
               </button>
-            </TransitionGroup>
+            </div>
 
             <div v-if="filteredItems.length === 0" class="fs__empty">
-              <v-icon icon="mdi-magnify-remove-outline" size="36" />
+              <v-icon icon="mdi-magnify-remove-outline" size="34" />
               <p>{{ t.noResults }}</p>
             </div>
 
             <footer class="fs__footer">
               <div class="fs__social" :aria-label="t.social">
-                <button class="socialBtn" type="button" @click="openLink('https://instagram.com')" aria-label="Instagram">
+                <button
+                  class="socialBtn"
+                  type="button"
+                  @click="openLink('https://instagram.com')"
+                  aria-label="Instagram"
+                >
                   <v-icon icon="mdi-instagram" size="18" />
                   <span>Instagram</span>
                 </button>
-                <button class="socialBtn" type="button" @click="openLink('https://youtube.com')" aria-label="YouTube">
+
+                <button
+                  class="socialBtn"
+                  type="button"
+                  @click="openLink('https://youtube.com')"
+                  aria-label="YouTube"
+                >
                   <v-icon icon="mdi-youtube" size="18" />
                   <span>YouTube</span>
                 </button>
-                <button class="socialBtn" type="button" @click="jump('/mapa')" :aria-label="t.howToGet">
+
+                <button
+                  class="socialBtn"
+                  type="button"
+                  @click="jump('/mapa')"
+                  :aria-label="t.howToGet"
+                >
                   <v-icon icon="mdi-map-outline" size="18" />
                   <span>{{ t.howToGet }}</span>
                 </button>
               </div>
+
               <p class="fs__legal">
                 <span>{{ t.officialSite }}</span>
                 <span class="fs__sep" aria-hidden="true">◆</span>
@@ -389,7 +376,6 @@
               </p>
             </footer>
           </main>
-
         </div>
       </div>
     </div>
@@ -397,425 +383,491 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { inject } from 'vue'
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-const { t, lang, toggleLanguage } = inject('i18n')
+const { t, lang, toggleLanguage } = inject("i18n");
 
-const langAnimating = ref(false)
 const router = useRouter();
-const route  = useRoute();
+const route = useRoute();
 
-/* ── Header state ── */
-const headerEl       = ref(null);
-const hidden         = ref(false);
-const scrolled       = ref(false);
-const lastScrollTop  = ref(0);
-const scrollProgress = ref(0);
-const activeId       = ref("home");
-
-/* ── Search ── */
-const search        = ref("");
-const searchFocused = ref(false);
-const searchWrapEl  = ref(null);
-const suggestionEls = ref([]);
-const q             = ref("");
-
-/* ── Voice ── */
-const listening   = ref(false);
-const voiceTarget = ref("header");
-let recognition   = null;
-
-/* ── Theme ── */
-const theme          = ref("light");
-const themeAnimating = ref(false);
-
-/* ── Toast ── */
-const toast = ref({ show: false, text: "" });
-
-/* ── Menu ── */
 const menuOpen = ref(false);
-const fsRoot   = ref(null);
+const fsRoot = ref(null);
 const fsScroll = ref(null);
 
-/* ══════════════════════
-   ITEMS
-══════════════════════ */
+const search = ref("");
+const searchFocused = ref(false);
+const searchWrapEl = ref(null);
+const suggestionEls = ref([]);
+const q = ref("");
+
+const activeId = ref("home");
+
+const hidden = ref(false);
+const scrolled = ref(false);
+const scrollProgress = ref(0);
+const lastScrollTop = ref(0);
+
+const toast = ref({
+  show: false,
+  text: "",
+});
+
+let toastTimer = 0;
+
 const itemBase = [
-  { id: "home",           hash: "/",               icon: "mdi-home-outline",
-    pt: { label: "Início",         desc: "Destaques e atalhos rápidos." },
-    en: { label: "Home",           desc: "Highlights and quick shortcuts." } },
-  { id: "programacao",    hash: "/programacao",    icon: "mdi-calendar-clock-outline",
-    pt: { label: "Programação",    desc: "Dias, palcos e horários." },
-    en: { label: "Schedule",       desc: "Days, stages and times." } },
-  { id: "servicos",       hash: "/servicos",       icon: "mdi-compass-outline",
-    pt: { label: "Serviços",       desc: "Tudo pra curtir melhor o festival." },
-    en: { label: "Services",       desc: "Everything to enjoy the festival." } },
-  { id: "atracoes",       hash: "/atracoes",       icon: "mdi-microphone-variant",
-    pt: { label: "Atrações",       desc: "Artistas, shows e cultura." },
-    en: { label: "Attractions",    desc: "Artists, shows and culture." } },
-  { id: "mapa",           hash: "/mapa",           icon: "mdi-map-marker-outline",
-    pt: { label: "Mapa",           desc: "Locais, palcos e rotas." },
-    en: { label: "Map",            desc: "Locations, stages and routes." } },
-  { id: "fotos",          hash: "/fotos",          icon: "mdi-camera-outline",
-    pt: { label: "Galeria",        desc: "Fotos oficiais e registros." },
-    en: { label: "Gallery",        desc: "Official photos and records." } },
-  { id: "blog",           hash: "/blog",           icon: "mdi-newspaper-variant-outline",
-    pt: { label: "Blog",           desc: "Artigos, novidades e publicações." },
-    en: { label: "Blog",           desc: "Articles, news and publications." } },
-  { id: "acessibilidade", hash: "/acessibilidade", icon: "mdi-wheelchair-accessibility",
-    pt: { label: "Acessibilidade", desc: "Rotas e suporte PCD." },
-    en: { label: "Accessibility",  desc: "Routes and accessibility support." } },
-  { id: "faq",            hash: "/faq",            icon: "mdi-help-circle-outline",
-    pt: { label: "FAQ",            desc: "Dúvidas frequentes." },
-    en: { label: "FAQ",            desc: "Frequently asked questions." } }
+  {
+    id: "home",
+    hash: "/",
+    icon: "mdi-home-outline",
+    pt: {
+      label: "Início",
+      desc: "Destaques e atalhos rápidos.",
+    },
+    en: {
+      label: "Home",
+      desc: "Highlights and quick shortcuts.",
+    },
+  },
+  {
+    id: "programacao",
+    hash: "/programacao",
+    icon: "mdi-calendar-clock-outline",
+    pt: {
+      label: "Programação",
+      desc: "Dias, palcos e horários.",
+    },
+    en: {
+      label: "Schedule",
+      desc: "Days, stages and times.",
+    },
+  },
+  {
+    id: "servicos",
+    hash: "/servicos",
+    icon: "mdi-compass-outline",
+    pt: {
+      label: "Serviços",
+      desc: "Tudo para curtir melhor o festival.",
+    },
+    en: {
+      label: "Services",
+      desc: "Everything to enjoy the festival.",
+    },
+  },
+  {
+    id: "atracoes",
+    hash: "/atracoes",
+    icon: "mdi-microphone-variant",
+    pt: {
+      label: "Atrações",
+      desc: "Artistas, shows e cultura.",
+    },
+    en: {
+      label: "Attractions",
+      desc: "Artists, shows and culture.",
+    },
+  },
+  {
+    id: "mapa",
+    hash: "/mapa",
+    icon: "mdi-map-marker-outline",
+    pt: {
+      label: "Mapa",
+      desc: "Locais, palcos e rotas.",
+    },
+    en: {
+      label: "Map",
+      desc: "Locations, stages and routes.",
+    },
+  },
+  {
+    id: "fotos",
+    hash: "/fotos",
+    icon: "mdi-camera-outline",
+    pt: {
+      label: "Galeria",
+      desc: "Fotos oficiais e registros.",
+    },
+    en: {
+      label: "Gallery",
+      desc: "Official photos and records.",
+    },
+  },
+  {
+    id: "blog",
+    hash: "/blog",
+    icon: "mdi-newspaper-variant-outline",
+    pt: {
+      label: "Blog",
+      desc: "Artigos, novidades e publicações.",
+    },
+    en: {
+      label: "Blog",
+      desc: "Articles, news and publications.",
+    },
+  },
+  {
+    id: "acessibilidade",
+    hash: "/acessibilidade",
+    icon: "mdi-wheelchair-accessibility",
+    pt: {
+      label: "Acessibilidade",
+      desc: "Rotas e suporte PCD.",
+    },
+    en: {
+      label: "Accessibility",
+      desc: "Routes and accessibility support.",
+    },
+  },
+  {
+    id: "faq",
+    hash: "/faq",
+    icon: "mdi-help-circle-outline",
+    pt: {
+      label: "FAQ",
+      desc: "Dúvidas frequentes.",
+    },
+    en: {
+      label: "FAQ",
+      desc: "Frequently asked questions.",
+    },
+  },
 ];
 
-const items = computed(() =>
-  itemBase.map(item => ({
-    id:    item.id,
-    hash:  item.hash,
-    icon:  item.icon,
+const items = computed(() => {
+  return itemBase.map((item) => ({
+    id: item.id,
+    hash: item.hash,
+    icon: item.icon,
     label: item[lang.value].label,
-    desc:  item[lang.value].desc
-  }))
-);
+    desc: item[lang.value].desc,
+  }));
+});
 
 const filteredItems = computed(() => {
-  const term = (q.value || "").trim().toLowerCase();
+  const term = q.value.trim().toLowerCase();
+
   if (!term) return items.value;
-  return items.value.filter(i =>
-    `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term)
-  );
+
+  return items.value.filter((item) => {
+    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
+  });
 });
 
 const searchSuggestions = computed(() => {
-  const term = (search.value || "").trim().toLowerCase();
+  const term = search.value.trim().toLowerCase();
+
   if (!term) return [];
+
   return items.value
-    .filter(i => `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term))
+    .filter((item) => {
+      return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
+    })
     .slice(0, 5);
 });
 
-/* ══════════════════════
-   TOAST
-══════════════════════ */
-let toastTimer = 0;
-function showToast(text, autoMs = 1800) {
-  toast.value = { show: true, text };
-  if (toastTimer) window.clearTimeout(toastTimer);
-  if (autoMs > 0) toastTimer = window.setTimeout(hideToast, autoMs);
-}
-function hideToast() {
-  toast.value = { ...toast.value, show: false };
-  if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = 0; }
+function handleScroll() {
+  const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+  const doc = document.documentElement;
+  const maxScroll = Math.max(1, doc.scrollHeight - doc.clientHeight);
+
+  scrollProgress.value = Math.min(1, Math.max(0, currentScroll / maxScroll));
+  scrolled.value = currentScroll > 8;
+
+  const goingDown = currentScroll > lastScrollTop.value;
+
+  if (goingDown && currentScroll > 110 && !menuOpen.value) {
+    hidden.value = true;
+  } else {
+    hidden.value = false;
+  }
+
+  lastScrollTop.value = currentScroll <= 0 ? 0 : currentScroll;
 }
 
-/* ══════════════════════
-   THEME / LANGUAGE
-══════════════════════ */
-function applyTheme(next) {
-  theme.value = next;
-  localStorage.setItem("festival-theme", next);
-  document.documentElement.setAttribute("data-theme", next);
+function showToast(text, autoMs = 1800) {
+  toast.value = {
+    show: true,
+    text,
+  };
+
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+  }
+
+  if (autoMs > 0) {
+    toastTimer = window.setTimeout(hideToast, autoMs);
+  }
+}
+
+function hideToast() {
+  toast.value = {
+    ...toast.value,
+    show: false,
+  };
+
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = 0;
+  }
 }
 
 function onToggleLanguage() {
-  langAnimating.value = true;
   toggleLanguage();
-  showToast(lang.value === 'pt' ? t.value.langPt : t.value.langEn, 1400);
-  window.setTimeout(() => { langAnimating.value = false; }, 380);
+
+  const message = lang.value === "pt" ? t.value.langPt : t.value.langEn;
+  showToast(message, 1400);
 }
-
-/* ══════════════════════
-   SCROLL
-══════════════════════ */
-function handleScroll() {
-  const st  = window.pageYOffset || document.documentElement.scrollTop;
-  const doc = document.documentElement;
-  const max = Math.max(1, doc.scrollHeight - doc.clientHeight);
-
-  scrollProgress.value = Math.min(1, Math.max(0, st / max));
-  scrolled.value       = st > 8;
-
-  const goingDown = st > lastScrollTop.value;
-  if (goingDown && st > 100 && !menuOpen.value) hidden.value = true;
-  if (!goingDown) hidden.value = false;
-
-  lastScrollTop.value = st <= 0 ? 0 : st;
-}
-
-/* ══════════════════════
-   NAVIGATION
-══════════════════════ */
-function headerHeight() { return headerEl.value?.offsetHeight ?? 88; }
-function reduceMotion() { return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches; }
-function setActiveById(id) { if (id) activeId.value = id; }
 
 function syncActiveFromRoute() {
-  const found = itemBase.find(i => i.hash === route.path);
-  activeId.value = found?.id ?? (route.path === "/" ? "home" : activeId.value);
+  const found = itemBase.find((item) => item.hash === route.path);
+  activeId.value = found?.id || (route.path === "/" ? "home" : activeId.value);
 }
 
-function scrollToTarget(selector) {
-  const el = document.querySelector(selector);
-  if (!el) return;
-  const offset = headerHeight() + 10;
-  const top    = el.getBoundingClientRect().top + window.pageYOffset - offset;
-  window.scrollTo({ top, behavior: reduceMotion() ? "auto" : "smooth" });
+function openMenu() {
+  menuOpen.value = true;
+  hidden.value = false;
+}
+
+function closeMenu() {
+  menuOpen.value = false;
+  q.value = "";
+}
+
+function onDialogToggle(value) {
+  if (!value) return;
+
+  nextTick(() => {
+    fsScroll.value?.scrollTo?.({
+      top: 0,
+      behavior: "auto",
+    });
+  });
 }
 
 async function jump(target) {
   if (!target) return;
-  const found = itemBase.find(i => i.hash === target);
-  if (found) setActiveById(found.id);
+
+  const found = itemBase.find((item) => item.hash === target);
+
+  if (found) {
+    activeId.value = found.id;
+  }
+
   closeMenu();
   searchFocused.value = false;
+  search.value = "";
+
   if (target.startsWith("/")) {
-    if (route.path !== target) await router.push(target);
+    if (route.path !== target) {
+      await router.push(target);
+    }
+
     return;
   }
+
   if (!target.startsWith("#")) return;
-  if (route.path === "/") { await nextTick(); scrollToTarget(target); return; }
-  await router.push({ path: "/", hash: target });
-  await nextTick();
-  window.setTimeout(() => scrollToTarget(target), 150);
+
+  const el = document.querySelector(target);
+
+  if (el) {
+    el.scrollIntoView({
+      behavior: "auto",
+      block: "start",
+    });
+  }
 }
 
-/* ══════════════════════
-   MENU
-══════════════════════ */
-function openMenu()  { menuOpen.value = true; hidden.value = false; }
-function closeMenu() { menuOpen.value = false; q.value = ""; }
-
-function onDialogToggle(val) {
-  if (!val) return;
-  nextTick(() => fsScroll.value?.scrollTo?.({ top: 0, behavior: "auto" }));
+function onSearchBlur() {
+  window.setTimeout(() => {
+    searchFocused.value = false;
+  }, 120);
 }
 
-watch(menuOpen, val => {
-  document.documentElement.style.overflow = val ? "hidden" : "";
-  if (!val) stopVoice();
-});
+function onSearchEsc() {
+  search.value = "";
+  searchFocused.value = false;
+}
 
-watch([() => route.path, () => route.hash], () => syncActiveFromRoute(), { immediate: true });
+function clearSearch() {
+  search.value = "";
+  searchFocused.value = true;
+}
 
-/* ══════════════════════
-   SEARCH
-══════════════════════ */
-function onSearchBlur()  { window.setTimeout(() => { searchFocused.value = false; }, 160); }
-function onSearchEsc()   { search.value = ""; searchFocused.value = false; stopVoice(); }
-function clearSearch()   { search.value = ""; searchFocused.value = true; }
-function focusSuggestion(idx) { suggestionEls.value[idx]?.focus?.(); }
-function focusSearch()   { searchWrapEl.value?.querySelector("input")?.focus(); }
-function selectSuggestion(item) { search.value = ""; searchFocused.value = false; jump(item.hash); }
+function focusSuggestion(idx) {
+  suggestionEls.value[idx]?.focus?.();
+}
+
+function focusSearch() {
+  searchWrapEl.value?.querySelector("input")?.focus();
+}
+
+function selectSuggestion(item) {
+  search.value = "";
+  searchFocused.value = false;
+  jump(item.hash);
+}
+
 function onSearchEnter() {
   const term = search.value.trim().toLowerCase();
+
   if (!term) return;
-  const hit = items.value.find(i => `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term));
-  if (hit) selectSuggestion(hit);
+
+  const hit = items.value.find((item) => {
+    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
+  });
+
+  if (hit) {
+    selectSuggestion(hit);
+  }
 }
+
 function onMenuSearchEnter() {
   const term = q.value.trim().toLowerCase();
+
   if (!term) return;
-  const hit = items.value.find(i => `${i.label} ${i.desc} ${i.id}`.toLowerCase().includes(term));
-  if (hit) jump(hit.hash);
+
+  const hit = items.value.find((item) => {
+    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
+  });
+
+  if (hit) {
+    jump(hit.hash);
+  }
 }
 
-/* ══════════════════════
-   VOICE
-══════════════════════ */
-function getSpeechCtor() { return window.SpeechRecognition || window.webkitSpeechRecognition || null; }
+function openLink(url) {
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
-function createRecognition(target = "header") {
-  const SR = getSpeechCtor();
-  if (!SR) return null;
-  const r = new SR();
-  r.lang = lang.value === "pt" ? "pt-BR" : "en-US";
-  r.continuous = false;
-  r.interimResults = true;
-  r.maxAlternatives = 1;
-  r.onstart  = () => { listening.value = true; voiceTarget.value = target; showToast(t.value.heard, 0); };
-  r.onresult = event => {
-    let transcript = "";
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      transcript += event.results[i][0]?.transcript || "";
+watch(
+  menuOpen,
+  (value) => {
+    document.documentElement.style.overflow = value ? "hidden" : "";
+
+    if (value) {
+      hidden.value = false;
     }
-    const text = transcript.trim();
-    if (!text) return;
-    if (voiceTarget.value === "menu") q.value = text;
-    else { search.value = text; searchFocused.value = true; }
-    if (event.results[event.results.length - 1]?.isFinal) showToast(t.value.captured, 1200);
-  };
-  r.onerror = e => {
-    listening.value = false;
-    const map = { "not-allowed": t.value.micDenied, "service-not-allowed": t.value.micDenied, network: t.value.micNetwork, "no-speech": t.value.micNoSpeech };
-    showToast(map[e?.error] ?? t.value.micInitFail, 2200);
-  };
-  r.onend = () => { listening.value = false; voiceTarget.value = "header"; hideToast(); };
-  return r;
-}
+  }
+);
 
-function toggleVoice(target = "header") {
-  if (listening.value && voiceTarget.value === target) { stopVoice(); return; }
-  if (!window.isSecureContext && !["localhost","127.0.0.1"].includes(location.hostname)) { showToast(t.value.micHttps, 2600); return; }
-  const SR = getSpeechCtor();
-  if (!SR) { showToast(t.value.micUnsupported, 2600); return; }
-  recognition = createRecognition(target);
-  if (!recognition) { showToast(t.value.micInitFail, 2200); return; }
-  try { recognition.start(); }
-  catch { try { recognition.stop(); } catch {} recognition = createRecognition(target); try { recognition?.start?.(); } catch { showToast(t.value.micStartFail, 2200); } }
-}
+watch(
+  [() => route.path, () => route.hash],
+  () => syncActiveFromRoute(),
+  {
+    immediate: true,
+  }
+);
 
-function stopVoice() {
-  try { recognition?.stop?.(); } catch {}
-  recognition = null; listening.value = false; voiceTarget.value = "header"; hideToast();
-}
-
-function openLink(url) { window.open(url, "_blank", "noopener,noreferrer"); }
-
-/* ══════════════════════
-   LIFECYCLE
-══════════════════════ */
 onMounted(() => {
-  const savedTheme = localStorage.getItem("festival-theme");
-  applyTheme(savedTheme === "dark" ? "dark" : "light");
   window.addEventListener("scroll", handleScroll, { passive: true });
   handleScroll();
-  syncActiveFromRoute();
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
   document.documentElement.style.overflow = "";
-  stopVoice();
   hideToast();
 });
 </script>
 
 <style scoped>
-@import url('https://fonts.cdnfonts.com/css/rawline');
+@import url("https://fonts.cdnfonts.com/css/rawline");
 
-/* ══════════════════════════════════════════════════
-   TOKENS — light
-══════════════════════════════════════════════════ */
 .nav,
 .fs,
 .toast {
-  --bg:          #ffffff;
-  --bg-glass:    rgba(255, 255, 255, 0.92);
-  --surface:     rgba(1, 25, 90, 0.04);
-  --surface-2:   rgba(1, 25, 90, 0.08);
-  --text:        #01195a;
-  --text-muted:  rgba(1, 25, 90, 0.50);
-  --line:        rgba(1, 25, 90, 0.10);
-  --line-strong: rgba(1, 25, 90, 0.18);
-  --gold:        #EDE53A;
-  --gold-dk:     #a89800;
-  --gold-soft:   rgba(237, 229, 58, 0.16);
-  --shadow-sm:   0 2px 20px rgba(1, 25, 90, 0.07);
-  --shadow-lg:   0 16px 48px rgba(1, 25, 90, 0.13);
-  --radius:      12px;
+  --blue: #01195a;
+  --blue-deep: #060e2a;
+  --gold: #ede53a;
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --surface-soft: rgba(1, 25, 90, 0.04);
+  --surface-strong: rgba(1, 25, 90, 0.08);
+  --text: #060e2a;
+  --muted: rgba(6, 14, 42, 0.64);
+  --line: rgba(6, 14, 42, 0.08);
+  --line-strong: rgba(1, 25, 90, 0.14);
+  --shadow-sm: 0 10px 24px rgba(1, 25, 90, 0.06);
+  --shadow-md: 0 18px 42px rgba(1, 25, 90, 0.12);
 
-  /* Rawline em todas as camadas */
-  --font:        'Rawline', ui-sans-serif, sans-serif;
+  --font-display: "Rawline", sans-serif;
+  --font-cond: "Rawline", sans-serif;
+  --font-sans: "Rawline", sans-serif;
 }
 
-/* ══════════════════════════════════════════════════
-   TOKENS — dark
-══════════════════════════════════════════════════ */
-.nav.theme--dark,
-.fs.theme--dark,
-.toast.theme--dark {
-  --bg:          #060e2a;
-  --bg-glass:    rgba(6, 14, 42, 0.93);
-  --surface:     rgba(255, 255, 255, 0.04);
-  --surface-2:   rgba(255, 255, 255, 0.08);
-  --text:        #eef2ff;
-  --text-muted:  rgba(238, 242, 255, 0.52);
-  --line:        rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.15);
-  --gold:        #EDE53A;
-  --gold-dk:     #f5ef60;
-  --gold-soft:   rgba(237, 229, 58, 0.10);
-  --shadow-sm:   0 4px 24px rgba(0, 0, 0, 0.30);
-  --shadow-lg:   0 20px 60px rgba(0, 0, 0, 0.48);
-}
-
-/* ══════════════════════════════════════════════════
-   NAV
-══════════════════════════════════════════════════ */
+/* Header */
 .nav {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  inset: 0 0 auto;
   z-index: 2000;
-  backdrop-filter: blur(18px) saturate(1.5);
-  -webkit-backdrop-filter: blur(18px) saturate(1.5);
-  background: var(--bg-glass);
+  background: rgba(255, 255, 255, 0.94);
   border-bottom: 1px solid var(--line);
-  transition:
-    top .38s cubic-bezier(.22,.8,.22,1),
-    box-shadow .22s ease,
-    border-color .22s ease;
+  box-shadow: 0 8px 22px rgba(1, 25, 90, 0.05);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .nav.is-scrolled {
-  box-shadow: var(--shadow-sm);
   border-color: var(--line-strong);
+  box-shadow: 0 10px 28px rgba(1, 25, 90, 0.08);
 }
 
-.nav.is-hidden { top: -110px; }
+.nav.is-hidden {
+  top: -86px;
+}
 
-/* ── Progresso ── */
 .nav__progress {
-  height: 2px;
-  background: var(--surface);
+  width: 100%;
+  height: 3px;
+  background: rgba(1, 25, 90, 0.06);
   overflow: hidden;
 }
 
 .nav__progress-bar {
   display: block;
-  height: 100%;
   width: 100%;
+  height: 100%;
   transform-origin: left center;
-  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-dk) 100%);
-  transition: transform .08s linear;
+  background: linear-gradient(90deg, var(--blue), var(--gold));
 }
 
-/* ── Inner ── */
 .nav__inner {
+  width: min(1400px, calc(100% - 24px));
   height: 70px;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(12px, 2.5vw, 28px);
+  margin-inline: auto;
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto minmax(180px, 1fr) auto;
   align-items: center;
   gap: clamp(8px, 1.5vw, 18px);
 }
 
-/* ══════════════════════════════════════════════════
-   BURGER  — linhas manuais, sem border arredondado excessivo
-══════════════════════════════════════════════════ */
 .burger {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--blue-deep);
   cursor: pointer;
   display: grid;
   place-items: center;
-  color: var(--text);
-  transition: background .18s ease, border-color .18s ease;
-  flex-shrink: 0;
+}
+
+.burger:hover {
+  background: var(--surface-soft);
+  border-color: var(--line-strong);
+}
+
+.burger:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
 
 .burger__box {
   width: 20px;
   height: 14px;
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -823,36 +875,34 @@ onUnmounted(() => {
 
 .burger__line {
   display: block;
-  height: 1.5px;
-  border-radius: 0;          /* linhas retas — mais editorial */
+  height: 2px;
+  border-radius: 999px;
   background: currentColor;
-  transform-origin: center;
-  transition:
-    transform .28s cubic-bezier(.4,0,.2,1),
-    opacity   .28s ease,
-    width     .18s ease;
 }
 
-.burger__line--bot { width: 65%; }
+.burger__line--short {
+  width: 65%;
+}
 
-.burger[aria-expanded="true"] .burger__line--top { transform: translateY(6.25px) rotate(45deg); }
-.burger[aria-expanded="true"] .burger__line--mid { opacity: 0; transform: scaleX(0); }
-.burger[aria-expanded="true"] .burger__line--bot { width: 100%; transform: translateY(-6.25px) rotate(-45deg); }
-
-/* ══════════════════════════════════════════════════
-   BRAND — tipografia mais forte
-══════════════════════════════════════════════════ */
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  text-decoration: none;
-  color: var(--text);
-  border-radius: 8px;
+  min-width: 0;
   padding: 4px 6px;
-  transition: opacity .16s ease;
+  border-radius: 12px;
+  color: var(--blue-deep);
+  text-decoration: none;
 }
-.brand:hover { opacity: .75; }
+
+.brand:hover {
+  background: var(--surface-soft);
+}
+
+.brand:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
 
 .brand__img {
   width: 48px;
@@ -861,55 +911,65 @@ onUnmounted(() => {
   flex-shrink: 0;
 }
 
-.brand__info {
+.brand__text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  min-width: 0;
+  line-height: 1.1;
 }
 
-/* Nome do festival: peso forte, tracking apertado — mais dono do espaço */
-.brand__name {
-  font-family: var(--font);
-  font-size: .78rem;
-  font-weight: 800;
-  letter-spacing: .06em;
+.brand__text strong {
+  color: var(--blue-deep);
+  font-family: var(--font-cond);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--text);
 }
 
-/* Cidade: tom secundário, mais leve */
-.brand__city {
-  font-family: var(--font);
-  font-size: .65rem;
-  font-weight: 400;
-  letter-spacing: .12em;
+.brand__text small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
   white-space: nowrap;
-  margin-top: 1px;
 }
 
-/* ══════════════════════════════════════════════════
-   SEARCH
-══════════════════════════════════════════════════ */
-.search-wrap { position: relative; min-width: 0; }
+/* Search */
+.search-wrap {
+  position: relative;
+  min-width: 0;
+}
 
 .search :deep(.v-field) {
   min-height: 44px !important;
-  border-radius: 8px !important;
-  background: var(--surface) !important;
+  border-radius: 12px !important;
+  background: rgba(1, 25, 90, 0.04) !important;
 }
-.search :deep(.v-field__outline)         { color: var(--line-strong) !important; }
-.search :deep(.v-field--focused .v-field__outline) { color: var(--gold-dk) !important; }
-.search :deep(.v-icon)                   { color: var(--text-muted) !important; }
+
+.search :deep(.v-field__outline) {
+  color: rgba(1, 25, 90, 0.12) !important;
+}
+
+.search :deep(.v-field--focused .v-field__outline) {
+  color: var(--blue) !important;
+}
+
+.search :deep(.v-icon) {
+  color: var(--muted) !important;
+}
+
 .search :deep(input) {
-  color: var(--text) !important;
-  font-family: var(--font) !important;
-  font-weight: 500 !important;
-  font-size: .88rem !important;
-  letter-spacing: .01em !important;
+  color: var(--blue-deep) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
 }
+
 .search :deep(.v-field__input) {
   min-height: 44px !important;
   padding-top: 0 !important;
@@ -917,208 +977,192 @@ onUnmounted(() => {
 }
 
 .search-clear {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--line);
-  background: var(--surface-2);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
   display: grid;
   place-items: center;
   cursor: pointer;
-  color: var(--text-muted);
-  transition: color .14s ease;
-  margin-right: 4px;
-}
-.search-clear:hover { color: var(--text); }
-
-.mic {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: transparent;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: background .14s ease, color .14s ease, border-color .14s ease;
-}
-.mic.is-on {
-  border-color: var(--gold);
-  background: var(--gold-soft);
-  color: var(--gold-dk);
-  animation: micPulse 1.4s ease infinite;
 }
 
-@keyframes micPulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--gold-soft); }
-  50%       { box-shadow: 0 0 0 6px transparent; }
+.search-clear:hover {
+  color: var(--blue-deep);
+  border-color: var(--line-strong);
 }
 
-/* ── Sugestões ── */
+.search-clear:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
 .suggestions {
   position: absolute;
-  top: calc(100% + 5px);
-  left: 0; right: 0;
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 2100;
   overflow: hidden;
-  z-index: 100;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow-md);
 }
 
 .suggestions__item {
   width: 100%;
+  min-height: 58px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: var(--blue-deep);
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--text);
   text-align: left;
-  transition: background .12s ease;
 }
+
 .suggestions__item:hover,
 .suggestions__item:focus-visible {
-  background: var(--surface-2);
+  background: rgba(1, 25, 90, 0.05);
   outline: none;
 }
 
 .suggestions__icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  border-radius: 10px;
+  background: rgba(1, 25, 90, 0.04);
+  color: var(--blue);
   display: grid;
   place-items: center;
-  color: var(--gold-dk);
   flex-shrink: 0;
 }
 
-.suggestions__txt { flex: 1; min-width: 0; }
+.suggestions__txt {
+  flex: 1;
+  min-width: 0;
+}
+
 .suggestions__txt strong {
   display: block;
-  font-family: var(--font);
-  font-size: .86rem;
-  font-weight: 700;
-  letter-spacing: .02em;
+  color: var(--blue-deep);
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
+
 .suggestions__txt span {
   display: block;
-  font-family: var(--font);
-  font-size: .74rem;
-  font-weight: 400;
-  color: var(--text-muted);
-  white-space: nowrap;
+  margin-top: 2px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.suggestions__arrow { color: var(--text-muted); flex-shrink: 0; }
+.suggestions__arrow {
+  color: var(--muted);
+  flex-shrink: 0;
+}
 
-/* ══════════════════════════════════════════════════
-   NAV ACTIONS
-══════════════════════════════════════════════════ */
+/* Actions */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
 }
 
-.utilBtn {
+.lang-btn {
   height: 44px;
   padding: 0 14px;
-  border-radius: 8px;
   border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--blue);
   display: inline-flex;
   align-items: center;
   gap: 7px;
   cursor: pointer;
-  transition: background .16s ease, border-color .16s ease;
+  font-family: var(--font-cond);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.utilBtn__label {
-  font-family: var(--font);
-  font-size: .76rem;
-  font-weight: 700;
-  letter-spacing: .12em;
+.lang-btn:hover {
+  background: rgba(1, 25, 90, 0.04);
+  border-color: var(--line-strong);
 }
 
-.utilBtn__icon {
-  display: inline-grid;
-  place-items: center;
-  transition: transform .28s ease;
+.lang-btn:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
-.utilBtn__icon.is-animating { animation: utilSpin .38s ease; }
 
-/* ══════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════ */
+/* Toast */
 .toast {
   position: fixed;
-  top: 82px;
-  right: clamp(10px, 3vw, 20px);
+  top: 84px;
+  right: clamp(12px, 3vw, 24px);
   z-index: 2600;
+  max-width: min(360px, calc(100vw - 24px));
+  min-height: 44px;
+  padding: 8px 10px 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--blue-deep);
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(6, 14, 42, 0.28);
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px 10px 14px;
-  border-radius: var(--radius);
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--line-strong);
-  box-shadow: var(--shadow-lg);
-  color: var(--text);
-  max-width: min(340px, calc(100vw - 20px));
 }
 
-.toast__pulse {
-  width: 8px;
-  height: 8px;
+.toast__dot {
+  width: 7px;
+  height: 7px;
   border-radius: 999px;
   background: var(--gold);
   flex-shrink: 0;
-  animation: pulse 1.6s ease infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--gold-soft); }
-  50%       { box-shadow: 0 0 0 7px transparent; }
 }
 
 .toast__text {
-  font-family: var(--font);
-  font-size: .80rem;
-  font-weight: 600;
-  letter-spacing: .04em;
   flex: 1;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
-.toast__x {
+.toast__close {
   width: 30px;
   height: 30px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
   display: grid;
   place-items: center;
-  cursor: pointer;
-  transition: color .12s ease;
 }
-.toast__x:hover { color: var(--text); }
 
-/* ══════════════════════════════════════════════════
-   FULLSCREEN MENU
-══════════════════════════════════════════════════ */
+.toast__close:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Fullscreen menu */
 :deep(.fsDialog) {
   background: transparent !important;
   padding: 0 !important;
@@ -1128,314 +1172,395 @@ onUnmounted(() => {
 .fs {
   width: 100%;
   height: 100dvh;
-  background: #F7F7FA;
+  background:
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
   color: var(--text);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* ── Topo do fs ── */
 .fs__top {
   flex-shrink: 0;
-  min-height: 70px;
+  min-height: 72px;
   padding: 10px clamp(14px, 3vw, 28px);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.94);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  border-bottom: 1px solid var(--line);
-  background: #F7F7FA;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .fs__brand {
-  display: flex;
+  min-width: 0;
+  padding: 4px 6px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--blue-deep);
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
-  border: none;
-  background: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 8px;
   text-align: left;
-  transition: opacity .16s ease;
-}
-.fs__brand:hover { opacity: .75; }
-
-.fs__logo { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; }
-
-/* Nome dentro do menu fullscreen: muito mais denso e dono */
-.fs__brandTxt strong {
-  display: block;
-  font-family: var(--font);
-  font-size: .86rem;
-  font-weight: 800;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-.fs__brandTxt span {
-  display: block;
-  font-family: var(--font);
-  font-size: .64rem;
-  font-weight: 400;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-top: 2px;
 }
 
-.fs__topRight {
+.fs__brand:hover {
+  background: rgba(1, 25, 90, 0.04);
+}
+
+.fs__brand:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.fs__logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.fs__brandTxt {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  justify-content: flex-end;
+  flex-direction: column;
   min-width: 0;
 }
 
-.fs__searchWrap { flex: 1; max-width: 340px; min-width: 0; }
+.fs__brandTxt strong {
+  color: var(--blue-deep);
+  font-family: var(--font-cond);
+  font-size: 0.86rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-.fs__search :deep(.v-field) { min-height: 44px !important; border-radius: 8px !important; background: var(--surface) !important; }
-.fs__search :deep(input) { color: var(--text) !important; font-family: var(--font) !important; font-size: .88rem !important; }
-.fs__search :deep(.v-field__input) { min-height: 44px !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+.fs__brandTxt small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-.fs__topActions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.fs__topRight {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.fs__searchWrap {
+  width: min(360px, 100%);
+  min-width: 0;
+}
+
+.fs__search :deep(.v-field) {
+  min-height: 44px !important;
+  border-radius: 12px !important;
+  background: rgba(1, 25, 90, 0.04) !important;
+}
+
+.fs__search :deep(.v-field__outline) {
+  color: rgba(1, 25, 90, 0.12) !important;
+}
+
+.fs__search :deep(.v-field--focused .v-field__outline) {
+  color: var(--blue) !important;
+}
+
+.fs__search :deep(input) {
+  color: var(--blue-deep) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+}
+
+.fs__search :deep(.v-field__input) {
+  min-height: 44px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
 .topBtn {
   height: 42px;
   padding: 0 12px;
-  border-radius: 8px;
   border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--blue);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
-  cursor: pointer;
-  font-family: var(--font);
-  font-size: .74rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  transition: background .16s ease, border-color .16s ease;
+  font-family: var(--font-cond);
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.topBtn--close { width: 42px; padding: 0; justify-content: center; }
 
-/* ── Corpo ── */
-.fs__body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.topBtn:hover {
+  background: rgba(1, 25, 90, 0.04);
+  border-color: var(--line-strong);
+}
+
+.topBtn:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.topBtn--close {
+  width: 42px;
+  padding: 0;
+}
+
+.fs__body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
 
 .fs__wrap {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: clamp(16px, 3vw, 28px);
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: clamp(14px, 2.5vw, 24px);
+  width: min(1320px, calc(100% - 28px));
   min-height: 100%;
+  margin-inline: auto;
+  padding: clamp(16px, 3vw, 28px) 0;
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  gap: clamp(16px, 2.4vw, 26px);
 }
 
-/* ── Coluna esquerda ── */
-.fs__left { display: flex; flex-direction: column; gap: 16px; }
+.fs__left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-/* Kicker: muito espaçado, quase invisível — cria ritmo sem ruído */
-.fs__kicker {
+.fs__leftHead,
+.fs__right {
+  min-width: 0;
+}
+
+.fs__kicker,
+.fs__sectionLabel {
+  margin: 0;
+  color: var(--blue);
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font);
-  font-size: .64rem;
-  font-weight: 600;
-  letter-spacing: .28em;
+  font-family: var(--font-cond);
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--text-muted);
-  margin: 0 0 10px;
 }
 
-.kicker-dot {
-  width: 7px;
-  height: 7px;
+.kicker-line,
+.label-line {
+  width: 32px;
+  height: 2px;
   border-radius: 999px;
   background: var(--gold);
-  box-shadow: 0 0 0 4px var(--gold-soft);
   flex-shrink: 0;
 }
 
-/* Título: muito pesado, muito grande — ancora toda a coluna */
 .fs__title {
-  margin: 0 0 6px;
-  font-family: var(--font);
-  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  margin: 12px 0 0;
+  color: var(--blue-deep);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.7rem);
   font-weight: 900;
-  letter-spacing: -.03em;
-  line-height: 1.04;
-  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .fs__subtitle {
-  margin: 0;
-  font-family: var(--font);
-  font-size: .86rem;
-  font-weight: 400;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 500;
   line-height: 1.65;
-  color: var(--text-muted);
 }
 
-/* Chips */
-.fs__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.fs__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
 .chip {
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
-  border-radius: 4px;           /* menos pill, mais editorial */
-  padding: 7px 14px;
-  font-family: var(--font);
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .10em;
-  text-transform: uppercase;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(1, 25, 90, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--blue);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  cursor: pointer;
-  transition: border-color .16s ease, background .16s ease;
+  font-family: var(--font-cond);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.chip:hover { border-color: var(--gold); background: var(--gold-soft); }
 
-/* Pref card */
-.fs__prefs { display: flex; flex-direction: column; gap: 10px; }
+.chip:hover {
+  background: rgba(1, 25, 90, 0.04);
+  border-color: var(--line-strong);
+}
+
+.chip:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
 
 .prefCard {
   width: 100%;
+  padding: 14px;
   border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  display: grid;
-  grid-template-columns: 38px 1fr auto;
-  align-items: center;
-  gap: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--blue-deep);
   cursor: pointer;
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 12px;
+  align-items: center;
   text-align: left;
-  transition: border-color .16s ease, background .16s ease;
+  box-shadow: var(--shadow-sm);
 }
-.prefCard:hover { border-color: var(--line-strong); background: var(--surface); }
+
+.prefCard:hover {
+  border-color: var(--line-strong);
+}
+
+.prefCard:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
 
 .prefCard__icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  border-radius: 12px;
+  background: rgba(1, 25, 90, 0.04);
+  color: var(--blue);
   display: grid;
   place-items: center;
-  color: var(--gold-dk);
 }
-.prefCard__icon.is-animating { animation: utilSpin .38s ease; }
+
+.prefCard__txt {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
 
 .prefCard__txt strong {
-  display: block;
-  font-family: var(--font);
-  font-size: .86rem;
-  font-weight: 700;
-  letter-spacing: .02em;
+  color: var(--blue-deep);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 900;
+  line-height: 1.2;
 }
-.prefCard__txt span {
-  display: block;
-  font-family: var(--font);
-  font-size: .74rem;
-  font-weight: 400;
-  color: var(--text-muted);
-  margin-top: 2px;
+
+.prefCard__txt small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .prefCard__badge {
-  font-family: var(--font);
-  font-size: .68rem;
-  font-weight: 800;
-  letter-spacing: .12em;
-  color: var(--gold-dk);
-  padding: 4px 10px;
-  border-radius: 4px;
-  background: var(--gold-soft);
-  white-space: nowrap;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #1a1200;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-cond);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
 }
 
-/* CTA */
 .fs__cta {
-  border: 1px solid rgba(237, 229, 58, .22);
-  border-radius: var(--radius);
-  background: var(--gold-soft);
-  padding: 16px;
   margin-top: auto;
+  padding: 18px;
+  border: 1px solid rgba(237, 229, 58, 0.45);
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--blue), #0a2d7a);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
 }
 
 .fs__ctaEyebrow {
-  font-family: var(--font);
-  font-size: .64rem;
-  font-weight: 700;
-  letter-spacing: .22em;
+  color: var(--gold);
+  font-family: var(--font-cond);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-dk);
 }
 
 .fs__ctaText {
-  margin: 6px 0 12px;
-  font-family: var(--font);
-  font-size: .84rem;
-  font-weight: 400;
+  margin: 8px 0 14px;
+  color: rgba(255, 255, 255, 0.84);
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
   line-height: 1.55;
-  color: var(--text);
 }
 
 .fs__ctaBtn {
+  min-height: 42px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 12px;
+  background: var(--gold);
+  color: #1a1200;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 6px;
-  border: 1px solid var(--gold);
-  background: var(--gold);
-  color: #110c00;
-  font-family: var(--font);
-  font-size: .76rem;
-  font-weight: 800;
-  letter-spacing: .10em;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--font-cond);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  cursor: pointer;
-  transition: background .16s ease, box-shadow .16s ease;
 }
-.fs__ctaBtn:hover { background: #f5ee50; box-shadow: 0 4px 14px var(--gold-soft); }
 
-.fs__esc {
-  margin: 10px 0 0;
-  font-family: var(--font);
-  font-size: .72rem;
-  font-weight: 400;
-  color: var(--text-muted);
+.fs__ctaBtn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* Right */
+.fs__right {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column;
+  gap: 14px;
 }
-
-kbd {
-  display: inline-block;
-  padding: 2px 7px;
-  border-radius: 4px;
-  border: 1px solid var(--line-strong);
-  background: var(--surface-2);
-  font-family: var(--font);
-  font-size: .68rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-}
-
-/* ── Coluna direita ── */
-.fs__right { display: flex; flex-direction: column; gap: 14px; }
 
 .fs__rightHead {
   display: flex;
@@ -1444,273 +1569,322 @@ kbd {
   gap: 12px;
 }
 
-.fs__sectionLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font);
-  font-size: .64rem;
-  font-weight: 600;
-  letter-spacing: .26em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.labelDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: var(--gold);
-  box-shadow: 0 0 0 4px var(--gold-soft);
-}
-
 .fs__count {
-  font-family: var(--font);
-  font-size: .78rem;
-  font-weight: 700;
-  letter-spacing: .04em;
-  color: var(--text-muted);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
 }
 
-/* Grid de cards */
 .fs__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  gap: 10px;
 }
 
 .fs__card {
+  position: relative;
+  min-width: 0;
+  min-height: 92px;
+  padding: 14px 42px 14px 14px;
   border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
-  border-radius: var(--radius);
-  padding: 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--blue-deep);
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
   text-align: left;
-  position: relative;
-  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  box-shadow: 0 8px 20px rgba(1, 25, 90, 0.04);
 }
-.fs__card:hover { border-color: var(--line-strong); background: var(--surface); box-shadow: var(--shadow-sm); }
-.fs__card.is-active { border-color: var(--gold); background: var(--gold-soft); }
-.fs__card.is-active .fs__card-icon { border-color: var(--gold); color: var(--gold-dk); background: rgba(237,229,58,.18); }
+
+.fs__card:hover {
+  border-color: var(--line-strong);
+  background: rgba(1, 25, 90, 0.04);
+}
+
+.fs__card:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.fs__card.is-active {
+  border-color: rgba(237, 229, 58, 0.9);
+  background: rgba(237, 229, 58, 0.18);
+}
 
 .fs__card-num {
   position: absolute;
-  top: 9px;
-  right: 11px;
-  font-family: var(--font);
-  font-size: .60rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  color: var(--text-muted);
-  opacity: .45;
+  top: 10px;
+  right: 12px;
+  color: rgba(6, 14, 42, 0.28);
+  font-family: var(--font-cond);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
 }
 
 .fs__card-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  border-radius: 12px;
+  background: rgba(1, 25, 90, 0.04);
+  color: var(--blue);
   display: grid;
   place-items: center;
-  color: var(--text-muted);
   flex-shrink: 0;
-  transition: color .16s ease, border-color .16s ease, background .16s ease;
 }
 
-.fs__card-txt { flex: 1; min-width: 0; }
+.fs__card-txt {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-/* Label do card: forte, condensado — lê-se rápido */
 .fs__card-txt strong {
-  display: block;
-  font-family: var(--font);
-  font-size: .94rem;
-  font-weight: 800;
-  letter-spacing: .01em;
+  color: var(--blue-deep);
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  font-weight: 900;
   line-height: 1.2;
 }
-.fs__card-txt span {
-  display: block;
-  font-family: var(--font);
-  font-size: .74rem;
-  font-weight: 400;
-  color: var(--text-muted);
-  margin-top: 3px;
-  line-height: 1.4;
+
+.fs__card-txt small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .fs__card-arrow {
-  color: var(--text-muted);
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity .16s ease, transform .16s ease;
+  color: var(--muted);
   flex-shrink: 0;
 }
-.fs__card:hover .fs__card-arrow { opacity: 1; transform: translateX(0); }
 
-/* Empty state */
 .fs__empty {
-  padding: 48px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: .88rem;
-}
-
-/* Footer */
-.fs__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
-  margin-top: auto;
-}
-
-.fs__social { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.socialBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text-muted);
-  font-family: var(--font);
-  font-size: .72rem;
+  padding: 42px 0;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color .14s ease, border-color .14s ease;
+  text-align: center;
 }
-.socialBtn:hover { color: var(--text); border-color: var(--line-strong); }
 
-.fs__legal {
-  font-family: var(--font);
-  font-size: .70rem;
-  font-weight: 400;
-  letter-spacing: .06em;
-  color: var(--text-muted);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+.fs__empty p {
   margin: 0;
 }
 
-.fs__sep { font-size: .5em; color: var(--gold); }
-
-/* ══════════════════════════════════════════════════
-   ANIMAÇÕES
-══════════════════════════════════════════════════ */
-@keyframes utilSpin {
-  0%   { transform: rotate(0deg) scale(1); }
-  50%  { transform: rotate(16deg) scale(1.1); }
-  100% { transform: rotate(0deg) scale(1); }
+.fs__footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-.toast-enter-active, .toast-leave-active { transition: opacity .16s ease, transform .16s ease; }
-.toast-enter-from, .toast-leave-to       { opacity: 0; transform: translateY(-6px) scale(.96); }
-
-.suggestions-enter-active                { transition: opacity .12s ease, transform .12s ease; }
-.suggestions-leave-active                { transition: opacity .08s ease, transform .08s ease; }
-.suggestions-enter-from,
-.suggestions-leave-to                   { opacity: 0; transform: translateY(-5px) scaleY(.95); transform-origin: top center; }
-
-.fade-btn-enter-active, .fade-btn-leave-active { transition: opacity .10s ease; }
-.fade-btn-enter-from, .fade-btn-leave-to       { opacity: 0; }
-
-.grid-item-move,
-.grid-item-enter-active,
-.grid-item-leave-active { transition: opacity .18s ease, transform .18s ease; }
-.grid-item-enter-from,
-.grid-item-leave-to     { opacity: 0; transform: scale(.97); }
-
-/* ══════════════════════════════════════════════════
-   FOCUS
-══════════════════════════════════════════════════ */
-.burger:focus-visible,
-.brand:focus-visible,
-.search-clear:focus-visible,
-.mic:focus-visible,
-.utilBtn:focus-visible,
-.topBtn:focus-visible,
-.toast__x:focus-visible,
-.fs__brand:focus-visible,
-.chip:focus-visible,
-.prefCard:focus-visible,
-.fs__ctaBtn:focus-visible,
-.fs__card:focus-visible,
-.socialBtn:focus-visible,
-.suggestions__item:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
+.fs__social {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* ══════════════════════════════════════════════════
-   HOVER — pointer
-══════════════════════════════════════════════════ */
-@media (hover: hover) {
-  .burger:hover, .utilBtn:hover, .topBtn:hover { background: var(--surface-2); }
-  .mic:hover { background: var(--surface); }
+.socialBtn {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(1, 25, 90, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--blue);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-cond);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* ══════════════════════════════════════════════════
-   RESPONSIVO
-══════════════════════════════════════════════════ */
-@media (max-width: 1100px) { .fs__wrap { grid-template-columns: 290px 1fr; } }
-
-@media (max-width: 900px) {
-  .fs__wrap { grid-template-columns: 1fr; }
-  .fs__left { border-bottom: 1px solid var(--line); padding-bottom: 16px; }
-  .fs__grid { grid-template-columns: 1fr 1fr; }
-  .fs__searchWrap { max-width: 210px; }
+.socialBtn:hover {
+  background: rgba(1, 25, 90, 0.04);
+  border-color: var(--line-strong);
 }
 
-@media (max-width: 768px) {
-  .nav__inner { height: 64px; gap: 8px; }
-  .brand__info { display: none; }
-  .brand__img { width: 42px; height: 42px; }
-  .utilBtn--lang { display: none; }
-  .toast { top: 76px; }
+.socialBtn:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
 
-@media (max-width: 600px) {
-  .nav__inner { grid-template-columns: auto auto 1fr auto; height: 60px; padding: 0 10px; gap: 6px; }
-  .burger { width: 42px; height: 42px; }
-  .brand__img { width: 38px; height: 38px; }
-  .fs__top { padding: 8px 12px; min-height: 64px; }
-  .fs__logo { width: 42px; height: 42px; }
-  .fs__searchWrap { display: none; }
-  .fs__grid { grid-template-columns: 1fr; }
-  .fs__footer { flex-direction: column; align-items: flex-start; }
-  .fs__wrap { padding: 12px; }
+.fs__legal {
+  margin: 0;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
-@media (max-width: 400px) {
-  .fs__grid { grid-template-columns: 1fr; }
-  .fs__brandTxt span { display: none; }
+.fs__sep {
+  color: var(--gold);
+  font-size: 0.6em;
 }
 
-/* ══════════════════════════════════════════════════
-   REDUCED MOTION
-══════════════════════════════════════════════════ */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+/* Responsive */
+@media (max-width: 980px) {
+  .nav__inner {
+    height: 66px;
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+  }
+
+  .brand__text {
+    display: none;
+  }
+
+  .brand__img {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fs__wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .fs__left {
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fs__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fs__searchWrap {
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 720px) {
+  .nav.is-hidden {
+    top: -78px;
+  }
+
+  .nav__inner {
+    width: min(100%, calc(100% - 20px));
+    height: 62px;
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .nav-actions {
+    display: none;
+  }
+
+  .search-wrap {
+    min-width: 0;
+  }
+
+  .burger {
+    width: 42px;
+    height: 42px;
+  }
+
+  .brand__img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .toast {
+    top: 78px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+
+  .fs__top {
+    min-height: 66px;
+    padding: 8px 12px;
+  }
+
+  .fs__logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .fs__brandTxt small {
+    display: none;
+  }
+
+  .fs__searchWrap {
+    display: none;
+  }
+
+  .topBtn span {
+    display: none;
+  }
+
+  .fs__wrap {
+    width: min(100%, calc(100% - 24px));
+    padding: 16px 0 22px;
+  }
+
+  .fs__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fs__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav__inner {
+    gap: 6px;
+  }
+
+  .search :deep(input) {
+    font-size: 0.82rem !important;
+  }
+
+  .fs__chips {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .chip {
+    justify-content: center;
+  }
+
+  .prefCard {
+    grid-template-columns: 40px 1fr;
+  }
+
+  .prefCard__badge {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  .fs__card {
+    padding-right: 14px;
+  }
+
+  .fs__card-num {
+    display: none;
   }
 }
 </style>
