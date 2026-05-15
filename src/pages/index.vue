@@ -6,7 +6,7 @@
 <AtracoesP />
 <BlogP /> 
 <MapaP2 />
-<PatrocinioScrol />
+<ScrollP />
 </template>
 
 <script setup>

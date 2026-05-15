@@ -47,30 +47,25 @@
 <script setup>
 const sections = [
   {
-    label: "REALIZAÇÃO",
+    label: "PATROCÍNIO",
     items: [
-      { name: "Secretaria da Cultura", src: "/LOGOS/secultBranco.svg" },
-      { name: "Pedro II", src: "/LOGOS/pedroiiBranco.svg" },
-    ],
-  },
-  {
-    label: "ORGANIZAÇÃO E CURADORIA",
-    items: [
-      { name: "Fundação Quixote", src: "/LOGOS/quixoteBranco.svg" },
+      { name: "Grupo Equatorial Energia", src: "/Logo/scroll/pat1.svg" },
+      { name: "Caixa", src: "/Logo/scroll/pat2.svg" },
+      { name: "Cartões da Caixa", src: "/Logo/scroll/pat3.svg" },
+      { name: "Elo", src: "/Logo/scroll/pat4.svg" },
+      { name: "Banco do Nordeste", src: "/Logo/scroll/pat5.svg" },
     ],
   },
   {
     label: "APOIO",
     items: [
-      { name: "Secretaria de Educação", src: "/LOGOS/semedBranco.svg" },
-      { name: "Secretaria Municipal de Comercio e Desenvolvimento Economico", src: "/LOGOS/SEMCODEC.svg" },
-      { name: "APLA - ACADEMIA PEDRO - SEGUNDENSE DE LETRAS E ARTES", src: "/LOGOS/apla.svg" },
+      { name: "Online Telecom", src: "/Logo/scroll/ap1.svg" },
     ],
   },
   {
-    label: "EMENDA PARLAMENTAR",
+    label: "REALIZAÇÃO",
     items: [
-      { name: "Wilson Brandão", src: "/LOGOS/wilson2.svg" },
+      { name: "Online Telecom", src: "/Logo/scroll/rea1.svg" },
     ],
   },
 ]
@@ -86,8 +81,11 @@ const maskStyle = `
 
 /* ── Wrapper ─────────────────────────────────────── */
 .sponsors {
+
   overflow: hidden;
-  background: transparent; /* herda o fundo da página */
+ background:
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
+    linear-gradient(180deg, #ffffff 0%,  #f4f6fa 100%);
 }
 
 /* ── Viewport com máscara ────────────────────────── */
@@ -96,7 +94,7 @@ const maskStyle = `
   overflow: hidden;
 
   /* ALTURA FIXA — ajuste esse valor conforme seu design */
-  height: 178px;
+  height: 148px;
 }
 
 /* ── Trilha animada ──────────────────────────────── */
@@ -132,7 +130,7 @@ const maskStyle = `
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(0, 0, 0, 0.55);
   text-align: center;
   white-space: nowrap;
 }
@@ -141,7 +139,7 @@ const maskStyle = `
 .section-divider {
   width: 100%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(0, 0, 0);
   flex-shrink: 0;
 }
 
@@ -171,7 +169,7 @@ const maskStyle = `
 
 /* ── Imagem de logo — largura AUTO, altura fixa ──── */
 .logo-img {
-  height: 66px;   /* altura fixa → largura se ajusta automaticamente */
+  height: 36px;   /* altura fixa → largura se ajusta automaticamente */
   width: auto;    /* ← preserva proporção sem corte */
   max-width: 300px;
   object-fit: contain;

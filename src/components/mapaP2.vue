@@ -592,9 +592,7 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   padding: 58px 0 64px;
-  background:
-    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
-    linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+  background: #FAFBFD;
   color: var(--text);
   box-shadow: inset 0 32px 42px -34px rgba(6, 14, 42, 0.55);
 }
