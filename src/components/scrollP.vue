@@ -65,7 +65,14 @@ const sections = [
   {
     label: "REALIZAÇÃO",
     items: [
-      { name: "Online Telecom", src: "/Logo/scroll/rea1.svg" },
+      { name: "OITI PRODUÇÕES & SERVIÇOS", src: "/Logo/scroll/rea1.svg" },
+      { name: "SEBRAE", src: "/Logo/scroll/rea2.svg" },
+      { name: "Prefeitura de Pedro II", src: "/Logo/scroll/rea3.svg" },
+      { name: "PIAUI + CULTURA SIEC", src: "/Logo/scroll/rea4.svg" },
+      { name: "Secretaria da Cultura - Secult", src: "/Logo/scroll/rea5.svg" },
+      { name: "Secretaria do Turismo - Setur", src: "/Logo/scroll/rea6.svg" },
+      { name: "Governo do Piaui ", src: "/Logo/scroll/rea7.svg" },
+      { name: "Governo do Brasil ", src: "/Logo/scroll/rea8.svg" },
     ],
   },
 ]
