@@ -76,6 +76,19 @@
             >
               <v-icon icon="mdi-close" size="16" />
             </button>
+
+            <button
+              v-if="speechSupported"
+              class="search-mic"
+              :class="{ 'is-listening': navListening }"
+              type="button"
+              @mousedown.prevent="toggleVoice('nav')"
+              :aria-label="navListening ? 'Parar gravação' : 'Pesquisar por voz'"
+              tabindex="-1"
+            >
+              <span class="mic-ring" aria-hidden="true"></span>
+              <v-icon :icon="navListening ? 'mdi-microphone' : 'mdi-microphone-outline'" size="16" />
+            </button>
           </template>
         </v-text-field>
 
@@ -200,7 +213,33 @@
               autocomplete="off"
               @keydown.enter.prevent="onMenuSearchEnter"
               @keydown.esc="closeMenu"
-            />
+            >
+              <template #append-inner>
+                <button
+                  v-if="q.length > 0"
+                  class="search-clear"
+                  type="button"
+                  @mousedown.prevent="q = ''"
+                  aria-label="Limpar busca"
+                  tabindex="-1"
+                >
+                  <v-icon icon="mdi-close" size="16" />
+                </button>
+
+                <button
+                  v-if="speechSupported"
+                  class="search-mic"
+                  :class="{ 'is-listening': menuListening }"
+                  type="button"
+                  @mousedown.prevent="toggleVoice('menu')"
+                  :aria-label="menuListening ? 'Parar gravação' : 'Pesquisar por voz'"
+                  tabindex="-1"
+                >
+                  <span class="mic-ring" aria-hidden="true"></span>
+                  <v-icon :icon="menuListening ? 'mdi-microphone' : 'mdi-microphone-outline'" size="16" />
+                </button>
+              </template>
+            </v-text-field>
           </div>
 
           <button
@@ -415,157 +454,209 @@ const toast = ref({
 
 let toastTimer = 0;
 
+// ─── Voice Search ───────────────────────────────────────────────────────────
+
+const speechSupported = ref(false);
+const navListening = ref(false);
+const menuListening = ref(false);
+
+let recognition = null;
+let activeTarget = null; // 'nav' | 'menu'
+
+function initSpeech() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) return;
+
+  speechSupported.value = true;
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    if (activeTarget === "nav") navListening.value = true;
+    if (activeTarget === "menu") menuListening.value = true;
+  };
+
+  recognition.onresult = (event) => {
+    let transcript = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+
+    if (activeTarget === "nav") {
+      search.value = transcript;
+      searchFocused.value = true;
+    } else if (activeTarget === "menu") {
+      q.value = transcript;
+    }
+
+    // If final result, try to auto-navigate
+    if (event.results[event.results.length - 1].isFinal) {
+      if (activeTarget === "nav") {
+        const term = transcript.trim().toLowerCase();
+        const hit = items.value.find((item) =>
+          `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term)
+        );
+        if (hit) {
+          window.setTimeout(() => selectSuggestion(hit), 600);
+        }
+      }
+    }
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error === "not-allowed") {
+      showToast("Permissão de microfone negada.", 2400);
+    }
+    stopListening();
+  };
+
+  recognition.onend = () => {
+    stopListening();
+  };
+}
+
+function stopListening() {
+  navListening.value = false;
+  menuListening.value = false;
+  activeTarget = null;
+}
+
+function toggleVoice(target) {
+  if (!recognition) return;
+
+  // Already listening for this target → stop
+  if (
+    (target === "nav" && navListening.value) ||
+    (target === "menu" && menuListening.value)
+  ) {
+    recognition.stop();
+    stopListening();
+    return;
+  }
+
+  // Stop any active session first
+  if (navListening.value || menuListening.value) {
+    recognition.stop();
+    stopListening();
+  }
+
+  activeTarget = target;
+
+  // Set lang from current app language
+  recognition.lang = lang.value === "pt" ? "pt-BR" : "en-US";
+
+  try {
+    recognition.start();
+    showToast(
+      lang.value === "pt" ? "Ouvindo…" : "Listening…",
+      3000
+    );
+  } catch {
+    stopListening();
+  }
+}
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+
 const itemBase = [
   {
     id: "home",
     hash: "/",
     icon: "mdi-home-outline",
-    pt: {
-      label: "Início",
-      desc: "Destaques e atalhos rápidos.",
-    },
-    en: {
-      label: "Home",
-      desc: "Highlights and quick shortcuts.",
-    },
+    pt: { label: "Início", desc: "Destaques e atalhos rápidos." },
+    en: { label: "Home", desc: "Highlights and quick shortcuts." },
   },
   {
     id: "programacao",
     hash: "/programacao",
     icon: "mdi-calendar-clock-outline",
-    pt: {
-      label: "Programação",
-      desc: "Dias, palcos e horários.",
-    },
-    en: {
-      label: "Schedule",
-      desc: "Days, stages and times.",
-    },
+    pt: { label: "Programação", desc: "Dias, palcos e horários." },
+    en: { label: "Schedule", desc: "Days, stages and times." },
   },
   {
     id: "servicos",
     hash: "/servicos",
     icon: "mdi-compass-outline",
-    pt: {
-      label: "Serviços",
-      desc: "Tudo para curtir melhor o festival.",
-    },
-    en: {
-      label: "Services",
-      desc: "Everything to enjoy the festival.",
-    },
+    pt: { label: "Serviços", desc: "Tudo para curtir melhor o festival." },
+    en: { label: "Services", desc: "Everything to enjoy the festival." },
   },
   {
     id: "atracoes",
     hash: "/atracoes",
     icon: "mdi-microphone-variant",
-    pt: {
-      label: "Atrações",
-      desc: "Artistas, shows e cultura.",
-    },
-    en: {
-      label: "Attractions",
-      desc: "Artists, shows and culture.",
-    },
+    pt: { label: "Atrações", desc: "Artistas, shows e cultura." },
+    en: { label: "Attractions", desc: "Artists, shows and culture." },
   },
   {
     id: "mapa",
     hash: "/mapa",
     icon: "mdi-map-marker-outline",
-    pt: {
-      label: "Mapa",
-      desc: "Locais, palcos e rotas.",
-    },
-    en: {
-      label: "Map",
-      desc: "Locations, stages and routes.",
-    },
+    pt: { label: "Mapa", desc: "Locais, palcos e rotas." },
+    en: { label: "Map", desc: "Locations, stages and routes." },
   },
   {
     id: "fotos",
     hash: "/fotos",
     icon: "mdi-camera-outline",
-    pt: {
-      label: "Galeria",
-      desc: "Fotos oficiais e registros.",
-    },
-    en: {
-      label: "Gallery",
-      desc: "Official photos and records.",
-    },
+    pt: { label: "Galeria", desc: "Fotos oficiais e registros." },
+    en: { label: "Gallery", desc: "Official photos and records." },
   },
   {
     id: "blog",
     hash: "/blog",
     icon: "mdi-newspaper-variant-outline",
-    pt: {
-      label: "Blog",
-      desc: "Artigos, novidades e publicações.",
-    },
-    en: {
-      label: "Blog",
-      desc: "Articles, news and publications.",
-    },
+    pt: { label: "Blog", desc: "Artigos, novidades e publicações." },
+    en: { label: "Blog", desc: "Articles, news and publications." },
   },
   {
     id: "acessibilidade",
     hash: "/acessibilidade",
     icon: "mdi-wheelchair-accessibility",
-    pt: {
-      label: "Acessibilidade",
-      desc: "Rotas e suporte PCD.",
-    },
-    en: {
-      label: "Accessibility",
-      desc: "Routes and accessibility support.",
-    },
+    pt: { label: "Acessibilidade", desc: "Rotas e suporte PCD." },
+    en: { label: "Accessibility", desc: "Routes and accessibility support." },
   },
   {
     id: "faq",
     hash: "/faq",
     icon: "mdi-help-circle-outline",
-    pt: {
-      label: "FAQ",
-      desc: "Dúvidas frequentes.",
-    },
-    en: {
-      label: "FAQ",
-      desc: "Frequently asked questions.",
-    },
+    pt: { label: "FAQ", desc: "Dúvidas frequentes." },
+    en: { label: "FAQ", desc: "Frequently asked questions." },
   },
 ];
 
-const items = computed(() => {
-  return itemBase.map((item) => ({
+const items = computed(() =>
+  itemBase.map((item) => ({
     id: item.id,
     hash: item.hash,
     icon: item.icon,
     label: item[lang.value].label,
     desc: item[lang.value].desc,
-  }));
-});
+  }))
+);
 
 const filteredItems = computed(() => {
   const term = q.value.trim().toLowerCase();
-
   if (!term) return items.value;
-
-  return items.value.filter((item) => {
-    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
-  });
+  return items.value.filter((item) =>
+    `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term)
+  );
 });
 
 const searchSuggestions = computed(() => {
   const term = search.value.trim().toLowerCase();
-
   if (!term) return [];
-
   return items.value
-    .filter((item) => {
-      return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
-    })
+    .filter((item) =>
+      `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term)
+    )
     .slice(0, 5);
 });
+
+// ─── Scroll ──────────────────────────────────────────────────────────────────
 
 function handleScroll() {
   const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
@@ -586,36 +677,26 @@ function handleScroll() {
   lastScrollTop.value = currentScroll <= 0 ? 0 : currentScroll;
 }
 
+// ─── Toast ───────────────────────────────────────────────────────────────────
+
 function showToast(text, autoMs = 1800) {
-  toast.value = {
-    show: true,
-    text,
-  };
-
-  if (toastTimer) {
-    window.clearTimeout(toastTimer);
-  }
-
-  if (autoMs > 0) {
-    toastTimer = window.setTimeout(hideToast, autoMs);
-  }
+  toast.value = { show: true, text };
+  if (toastTimer) window.clearTimeout(toastTimer);
+  if (autoMs > 0) toastTimer = window.setTimeout(hideToast, autoMs);
 }
 
 function hideToast() {
-  toast.value = {
-    ...toast.value,
-    show: false,
-  };
-
+  toast.value = { ...toast.value, show: false };
   if (toastTimer) {
     window.clearTimeout(toastTimer);
     toastTimer = 0;
   }
 }
 
+// ─── Handlers ────────────────────────────────────────────────────────────────
+
 function onToggleLanguage() {
   toggleLanguage();
-
   const message = lang.value === "pt" ? t.value.langPt : t.value.langEn;
   showToast(message, 1400);
 }
@@ -633,16 +714,16 @@ function openMenu() {
 function closeMenu() {
   menuOpen.value = false;
   q.value = "";
+  if (navListening.value || menuListening.value) {
+    recognition?.stop();
+    stopListening();
+  }
 }
 
 function onDialogToggle(value) {
   if (!value) return;
-
   nextTick(() => {
-    fsScroll.value?.scrollTo?.({
-      top: 0,
-      behavior: "auto",
-    });
+    fsScroll.value?.scrollTo?.({ top: 0, behavior: "auto" });
   });
 }
 
@@ -650,33 +731,21 @@ async function jump(target) {
   if (!target) return;
 
   const found = itemBase.find((item) => item.hash === target);
-
-  if (found) {
-    activeId.value = found.id;
-  }
+  if (found) activeId.value = found.id;
 
   closeMenu();
   searchFocused.value = false;
   search.value = "";
 
   if (target.startsWith("/")) {
-    if (route.path !== target) {
-      await router.push(target);
-    }
-
+    if (route.path !== target) await router.push(target);
     return;
   }
 
   if (!target.startsWith("#")) return;
 
   const el = document.querySelector(target);
-
-  if (el) {
-    el.scrollIntoView({
-      behavior: "auto",
-      block: "start",
-    });
-  }
+  if (el) el.scrollIntoView({ behavior: "auto", block: "start" });
 }
 
 function onSearchBlur() {
@@ -711,64 +780,53 @@ function selectSuggestion(item) {
 
 function onSearchEnter() {
   const term = search.value.trim().toLowerCase();
-
   if (!term) return;
-
-  const hit = items.value.find((item) => {
-    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
-  });
-
-  if (hit) {
-    selectSuggestion(hit);
-  }
+  const hit = items.value.find((item) =>
+    `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term)
+  );
+  if (hit) selectSuggestion(hit);
 }
 
 function onMenuSearchEnter() {
   const term = q.value.trim().toLowerCase();
-
   if (!term) return;
-
-  const hit = items.value.find((item) => {
-    return `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term);
-  });
-
-  if (hit) {
-    jump(hit.hash);
-  }
+  const hit = items.value.find((item) =>
+    `${item.label} ${item.desc} ${item.id}`.toLowerCase().includes(term)
+  );
+  if (hit) jump(hit.hash);
 }
 
 function openLink(url) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
-watch(
-  menuOpen,
-  (value) => {
-    document.documentElement.style.overflow = value ? "hidden" : "";
+// ─── Lifecycle ───────────────────────────────────────────────────────────────
 
-    if (value) {
-      hidden.value = false;
-    }
-  }
-);
+watch(menuOpen, (value) => {
+  document.documentElement.style.overflow = value ? "hidden" : "";
+  if (value) hidden.value = false;
+});
 
 watch(
   [() => route.path, () => route.hash],
   () => syncActiveFromRoute(),
-  {
-    immediate: true,
-  }
+  { immediate: true }
 );
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll, { passive: true });
   handleScroll();
+  initSpeech();
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
   document.documentElement.style.overflow = "";
   hideToast();
+  if (recognition) {
+    recognition.stop();
+    recognition = null;
+  }
 });
 </script>
 
@@ -945,37 +1003,44 @@ onUnmounted(() => {
   min-width: 0;
 }
 
-.search :deep(.v-field) {
+.search :deep(.v-field),
+.fs__search :deep(.v-field) {
   min-height: 44px !important;
   border-radius: 12px !important;
   background: rgba(1, 25, 90, 0.04) !important;
 }
 
-.search :deep(.v-field__outline) {
+.search :deep(.v-field__outline),
+.fs__search :deep(.v-field__outline) {
   color: rgba(1, 25, 90, 0.12) !important;
 }
 
-.search :deep(.v-field--focused .v-field__outline) {
+.search :deep(.v-field--focused .v-field__outline),
+.fs__search :deep(.v-field--focused .v-field__outline) {
   color: var(--blue) !important;
 }
 
-.search :deep(.v-icon) {
+.search :deep(.v-icon),
+.fs__search :deep(.v-icon) {
   color: var(--muted) !important;
 }
 
-.search :deep(input) {
+.search :deep(input),
+.fs__search :deep(input) {
   color: var(--blue-deep) !important;
   font-family: var(--font-sans) !important;
   font-size: 0.9rem !important;
   font-weight: 600 !important;
 }
 
-.search :deep(.v-field__input) {
+.search :deep(.v-field__input),
+.fs__search :deep(.v-field__input) {
   min-height: 44px !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 
+/* Shared: clear + mic buttons inside search fields */
 .search-clear {
   width: 28px;
   height: 28px;
@@ -986,6 +1051,7 @@ onUnmounted(() => {
   display: grid;
   place-items: center;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .search-clear:hover {
@@ -996,6 +1062,68 @@ onUnmounted(() => {
 .search-clear:focus-visible {
   outline: 3px solid var(--gold);
   outline-offset: 2px;
+}
+
+/* Mic button */
+.search-mic {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: visible;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.search-mic:hover {
+  color: var(--blue);
+  border-color: var(--line-strong);
+}
+
+.search-mic:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Active listening state */
+.search-mic.is-listening {
+  color: #d62727;
+  border-color: rgba(214, 39, 39, 0.35);
+  background: rgba(214, 39, 39, 0.06);
+}
+
+/* Animated pulse ring shown when listening */
+.mic-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 2px solid rgba(214, 39, 39, 0.4);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-listening .mic-ring {
+  animation: mic-pulse 1.2s ease-out infinite;
+}
+
+@keyframes mic-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
 }
 
 .suggestions {
@@ -1262,33 +1390,6 @@ onUnmounted(() => {
 .fs__searchWrap {
   width: min(360px, 100%);
   min-width: 0;
-}
-
-.fs__search :deep(.v-field) {
-  min-height: 44px !important;
-  border-radius: 12px !important;
-  background: rgba(1, 25, 90, 0.04) !important;
-}
-
-.fs__search :deep(.v-field__outline) {
-  color: rgba(1, 25, 90, 0.12) !important;
-}
-
-.fs__search :deep(.v-field--focused .v-field__outline) {
-  color: var(--blue) !important;
-}
-
-.fs__search :deep(input) {
-  color: var(--blue-deep) !important;
-  font-family: var(--font-sans) !important;
-  font-size: 0.9rem !important;
-  font-weight: 600 !important;
-}
-
-.fs__search :deep(.v-field__input) {
-  min-height: 44px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
 }
 
 .topBtn {
