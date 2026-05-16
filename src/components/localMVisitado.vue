@@ -21,21 +21,10 @@
         </div>
 
         <div class="places__actions" aria-label="Navegação dos locais">
-          <button
-            class="nav"
-            type="button"
-            aria-label="Local anterior"
-            @click="slidePrev"
-          >
+          <button class="nav" type="button" aria-label="Local anterior" @click="slidePrev">
             <span aria-hidden="true">‹</span>
           </button>
-
-          <button
-            class="nav"
-            type="button"
-            aria-label="Próximo local"
-            @click="slideNext"
-          >
+          <button class="nav" type="button" aria-label="Próximo local" @click="slideNext">
             <span aria-hidden="true">›</span>
           </button>
         </div>
@@ -77,13 +66,9 @@
                   decoding="async"
                   draggable="false"
                 />
-
                 <div class="place-card__overlay" aria-hidden="true"></div>
                 <div class="place-card__glow" aria-hidden="true"></div>
-
-                <span class="place-card__badge">
-                  {{ place.category }}
-                </span>
+                <span class="place-card__badge">{{ place.category }}</span>
               </div>
 
               <div class="place-card__body">
@@ -93,9 +78,7 @@
                     <span>Pedro II · Piauí</span>
                   </div>
 
-                  <h3 class="place-card__title">
-                    {{ place.title }}
-                  </h3>
+                  <h3 class="place-card__title">{{ place.title }}</h3>
 
                   <p class="place-card__location">
                     <svg viewBox="0 0 24 24" class="icon" aria-hidden="true">
@@ -114,43 +97,38 @@
                         stroke-width="2"
                       />
                     </svg>
-
                     {{ place.location }}
                   </p>
                 </div>
 
-                <p class="place-card__about">
-                  {{ place.about }}
-                </p>
+                <p class="place-card__about">{{ place.about }}</p>
 
                 <div class="place-card__info">
                   <div class="info-block">
                     <span class="info-block__label">Horário</span>
                     <strong class="info-block__value">{{ place.bestTime }}</strong>
                   </div>
-
                   <div class="info-block">
                     <span class="info-block__label">Perfil</span>
                     <strong class="info-block__value">{{ place.profile }}</strong>
                   </div>
                 </div>
 
-                <div class="place-card__actions">
-                  <button
-                    class="btn btn--ghost"
-                    type="button"
-                    @click="seeDetails(place)"
-                  >
+                <div
+                  class="place-card__actions"
+                  :class="{ 'place-card__actions--solo': !place.hasGuide }"
+                >
+                  <button class="btn btn--ghost" type="button" @click="seeDetails(place)">
                     Ver detalhes
                   </button>
 
                   <button
+                    v-if="place.hasGuide"
                     class="btn btn--primary"
                     type="button"
                     @click="chooseGuide(place)"
                   >
                     Escolher guia
-
                     <svg viewBox="0 0 24 24" class="btn__icon" aria-hidden="true">
                       <path
                         d="M5 12h14M13 6l6 6-6 6"
@@ -182,12 +160,12 @@ import { Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import local1 from "/Local/ca1.jpeg";
+import local1 from "/Local/ca1W.webp";
 import local2 from "/Local/ca3.jpeg";
 import local3 from "/Local/ca1.jpeg";
-import local4 from "/Local/ca4.jpeg";
+import local4 from "/Local/buriti1W.webp";
 import local5 from "/Local/ca4.jpeg";
-import local6 from "/Local/ca1.jpeg";
+import local6 from "/Destaques/destaque2.png";
 
 type Place = {
   title: string;
@@ -197,91 +175,69 @@ type Place = {
   location: string;
   profile: string;
   bestTime: string;
+  hasGuide?: boolean;
 };
 
 const modules = [Pagination, A11y];
-
 const swiperRef = ref<any>(null);
 
 const breakpoints = {
-  520: {
-    slidesPerView: 1.15,
-    spaceBetween: 14,
-  },
-  700: {
-    slidesPerView: 1.7,
-    spaceBetween: 16,
-  },
-  920: {
-    slidesPerView: 2.35,
-    spaceBetween: 18,
-  },
-  1180: {
-    slidesPerView: 3,
-    spaceBetween: 18,
-  },
+  520: { slidesPerView: 1.15, spaceBetween: 14 },
+  700: { slidesPerView: 1.7, spaceBetween: 16 },
+  920: { slidesPerView: 2.35, spaceBetween: 18 },
+  1180: { slidesPerView: 3, spaceBetween: 18 },
 };
 
 const places: Place[] = [
   {
     title: "Mirante do Gritador",
-    about:
-      "Paisagem marcante da região, ideal para contemplação, fotos e uma experiência inesquecível em Pedro II.",
-    image: local1,
+    about: "Paisagem marcante da região, ideal para contemplação, fotos e uma experiência inesquecível em Pedro II.",
+    image: local6,
     category: "Natureza",
     location: "Pedro II · PI",
     profile: "Famílias e casais",
-    bestTime: "Manhã e pôr do sol",
+    bestTime: "Manhã e tarde",
+    hasGuide: true,
   },
   {
-    title: "Centro Histórico",
-    about:
-      "Perfeito para passeios leves, arquitetura local, cultura e o clima especial da cidade durante o festival.",
-    image: local2,
+    title: "Sítio Buritizinho",
+    about: "O visitante degusta o caldo de cana, rapadura e a tapioca, todos fresquinhos, além de poder interagir com o processo do engenho.",
+    image: local4,
     category: "Cultura",
-    location: "Centro de Pedro II",
+    location: "Interior de Pedro II",
     profile: "Visitantes e grupos",
-    bestTime: "Tarde e noite",
+    bestTime: "manhã e Tarde",
+    hasGuide: false,
   },
   {
-    title: "Cachoeira do Salto Liso",
-    about:
-      "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso.",
+    title: "Cachoeira do Urubu Rei",
+    about: "Ótima opção para quem busca natureza, trilhas leves e momentos de descanso.",
     image: local3,
     category: "Ecoturismo",
     location: "Zona rural",
     profile: "Aventureiros e grupos",
-    bestTime: "Manhã",
+    bestTime: "Manhã e tarde",
+    hasGuide: true,
   },
   {
     title: "Feira de Opala",
-    about:
-      "Um dos espaços mais procurados para conhecer artesanato, cultura local e a identidade única de Pedro II.",
+    about: "Um dos espaços mais procurados para conhecer artesanato, cultura local e a identidade única de Pedro II.",
     image: local4,
     category: "Artesanato",
     location: "Pedro II · PI",
     profile: "Turistas e compradores",
     bestTime: "Manhã e tarde",
+    hasGuide: false,
   },
   {
     title: "Praça de Eventos",
-    about:
-      "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
+    about: "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
     image: local5,
     category: "Festival",
     location: "Área do evento",
     profile: "Todos os públicos",
     bestTime: "Noite",
-  },
-  {
-    title: "Rota das Paisagens",
-    about:
-      "Um percurso guiado para conhecer diferentes cenários naturais e pontos especiais da região de Pedro II.",
-    image: local6,
-    category: "Passeio guiado",
-    location: "Região de Pedro II",
-    profile: "Excursões e visitantes",
-    bestTime: "Manhã",
+    hasGuide: false,
   },
 ];
 
@@ -300,12 +256,7 @@ function slideNext() {
 function chooseGuide(place: Place) {
   const phone = "5586999999999";
   const text = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
-
-  window.open(
-    `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
-    "_blank",
-    "noopener,noreferrer"
-  );
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 }
 
 function seeDetails(place: Place) {
@@ -360,7 +311,17 @@ function seeDetails(place: Place) {
 .places__title-wrap {
   max-width: 680px;
 }
+.place-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
 
+/* Quando não há guia: botão único ocupa 100% */
+.place-card__actions--solo {
+  grid-template-columns: 1fr;
+}
 .places__eyebrow {
   display: inline-flex;
   align-items: center;

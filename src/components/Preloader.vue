@@ -119,7 +119,7 @@ onMounted(() => {
   */
   background:
     linear-gradient(rgba(6, 14, 42, 0.45), rgba(6, 14, 42, 0.85)),
-    url('/bg/teste1.webp') center / cover no-repeat;
+    url('/bg/bgOfic.webp') center / cover no-repeat;
 
   opacity: 0;
   transform: scale(1.08);

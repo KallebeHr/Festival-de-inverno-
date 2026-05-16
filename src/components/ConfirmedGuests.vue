@@ -18,7 +18,7 @@
           Convidados
           <span class="confirmed__eyebrow-line" aria-hidden="true"></span>
         </p>
-        <h2 class="confirmed__title">Presença confirmada</h2>
+        <h2 class="confirmed__title">Artistas confirmados</h2>
         <p class="confirmed__subtitle">
           Conheça os artistas que já garantiram presença<br class="confirmed__br" />
           no Festival de Inverno Pedro II 2026
@@ -154,35 +154,78 @@ const breakpoints = {
 
 const guests = [
   {
-    name: "Erivaldo Oliveira",
-    work: "Édipo REC",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=900&auto=format&fit=crop",
-    accent: "#EDE53A",
+    name: "Raissa Raabe",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/raissaW.webp",
+    accent: "#ffc801",
   },
   {
-    name: "Herson Capri",
-    work: "A Sabedoria dos Pais",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=900&auto=format&fit=crop",
-    accent: "#6ee7d4",
+    name: "Tori",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/toriW.webp",
+    accent: "#ffc801",
   },
   {
-    name: "Malu Galli",
-    work: "Mulher em Fuga",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=900&auto=format&fit=crop",
-    accent: "#EDE53A",
+    name: "Puro Samba com Soraya Castelo Branco",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/SORAYAW.webp",
+    accent: "#ffc801",
   },
   {
-    name: "Miranda Lebrão",
-    work: "O Grande evento Combo Drag Week",
-    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=900&auto=format&fit=crop",
-    accent: "#6ee7d4",
+    name: "Marina Sena",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/marinaSenaW.webp",
+    accent: "#ffc801",
   },
   {
-    name: "Natália do Vale",
-    work: "Natália do Vale",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=900&auto=format&fit=crop",
-    accent: "#EDE53A",
+    name: "Ferrugem",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/ferrugemW.webp",
+    accent: "#ffc801",
   },
+  {
+    name: "Chico Chico",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/ChicoChicoW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Brigitte Bardot",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/brigitteW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Toni Garrido",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/tonigarridoW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "De Hermeto a Dominguinho",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/DEHERMETOADOMIGUINHOW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Alquimia",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/AlquinhaW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Nublin",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/NUBLINW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Titãs",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/titasW.webp",
+    accent: "#ffc801",
+  },
+
 ];
 </script>
 

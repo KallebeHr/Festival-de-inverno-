@@ -111,7 +111,7 @@
         <div class="brand">Festival de Inverno <span aria-hidden="true">◆</span> Pedro II</div>
         <div class="credit">
           Feito por 
-          <button type="button" @click="copy('feito por @kallebeMax', 'Crédito copiado')">@kallebeMax</button>
+          <button type="button" @click="copy('Desenvolvido por @kallebeMax', 'Crédito copiado')">@kallebeMax</button>
         </div>
       </div>
     </div>
@@ -145,7 +145,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "v
 
 const CONTACT = {
   whatsapp: "+55 86 9XXXX-XXXX",
-  supportEmail: "suporte@festivaldeinverno.com.br",
+  supportEmail: "ouvidoria@pedroii.pi.gov.br",
   city: "Pedro II, Piauí",
 } as const;
 

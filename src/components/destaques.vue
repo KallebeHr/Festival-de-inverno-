@@ -15,7 +15,6 @@
         </button>
       </div>
     </header>
-
     <div class="rail">
       <Swiper
         class="swiper"
@@ -339,34 +338,69 @@ type FeaturedItem = {
 
 // ── Dados brutos (pt + en) ───────────────────────────
 const rawItems: FeaturedItemRaw[] = [
+  
   {
-    id: 1,
+    id: 2,
     badge: { pt: "Destaque", en: "Featured" },
-    image: "/Destaques/destaque2.png",
-    org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "Show de Abertura", en: "Opening Show" },
+    image: "/acoesFestival/vilaE1W.webp",
+    org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
+    title: { pt: "VILA EMPREENDEDORA ", en: "Sem Informações" },
     subtitle: {
-      pt: "Uma noite inesquecível de música ao vivo",
-      en: "An unforgettable night of live music",
+      pt: "Reafirmando sua importância para a economia local e regional.",
+      en: "Sem Informações",
     },
-    date: { pt: "04 de Junho de 2026", en: "June 4th, 2026" },
-    time: "20h00 – 23h30",
-    place: { pt: "Pedro II – Praça da Matriz", en: "Pedro II – Main Square" },
+    date: { pt: "04 a 07/06/2026", en: "Sem informações" },
+    time: "De 08h00 às 03h00",
+    place: { pt: "Praça Domingos Mourão Filho (Matriz)", en: "Sem Informações" },
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
     description: {
-      pt: "O show de abertura do Festival de Inverno de Pedro II reúne os maiores nomes da música regional em uma noite mágica sob as estrelas do Piauí. Uma experiência única para toda a família.",
-      en: "The opening show of the Pedro II Winter Festival brings together the biggest names in regional music for a magical night under the Piauí stars. A unique experience for the whole family.",
+      pt: "Alimentação",
+      en: "Sem Informações",
     },
     ageRating: "L",
-    category: { pt: "Show Musical", en: "Music Show" },
-    duration: "3h30",
+    category: { pt: "Empreendedorismo", en: "Music Show" },
+    duration: "10h00",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-    lineup: [
-      { name: "Banda Raízes do Sertão", time: "20h00" },
-      { name: "Trio Nordestino", time: "21h15" },
-      { name: "Maria Forró e Convidados", time: "22h30" },
+    // lineup: [
+    //   { name: "Banda Raízes do Sertão", time: "20h00" },
+    //   { name: "Trio Nordestino", time: "21h15" },
+    //   { name: "Maria Forró e Convidados", time: "22h30" },
+    // ],
+    gallery: [
+      { src: "/acoesFestival/vilaE2W.webp", alt: "Show noturno" },
+      // { src: "/acoesFestival/VilaE3W.webp", alt: "Público festival" },
+      { src: "/acoesFestival/VilaE4.JPG", alt: "Palco iluminado" },
     ],
+  },
+  {
+    id: 1,
+    badge: { pt: "Alimentação", en: "Alimentação" },
+    image: "https://imgs.search.brave.com/1xnVdjNuNBGrI_YMOT30KoETN6rGQSjpGssTSMRI2u0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWFyaWFmYXJvZmEu/Y29tLmJyL2ltYWdl/bnMvaW1nMDIuanBn",
+    org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
+    title: { pt: "VILA GASTRONÔMICA", en: "Sem Informações" },
+    subtitle: {
+      pt: "10 Estandes, Infinitos sabores!!",
+      en: "Sem Informações",
+    },
+    date: { pt: "04 a 07/06/2026", en: "Sem informações" },
+    time: "De 18h00 às 03h00",
+    place: { pt: "Praça Manoel Nogueira Lima (Praça da Bonelle) ", en: "Sem Informações" },
+    address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
+    description: {
+      pt: "A Vila Gastronômica não apenas sacia a fome dos visitantes, mas conta a história de Pedro II através do paladar, fortalecendo a economia criativa e o orgulho do produtor local. Distribuídos em 10(dez) estandes, a Vila Gastronômica transformou o festival em uma experiência completa, provando que a gastronomia é ativo cultural tão potente quantos as joias de opala e o artesanato local.",
+      en: "Sem Informações",
+    },
+    ageRating: "L",
+    category: { pt: "Alimentação", en: "Sem informação" },
+    duration: "10h00",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    // lineup: [
+    //   { name: "Banda Raízes do Sertão", time: "20h00" },
+    //   { name: "Trio Nordestino", time: "21h15" },
+    //   { name: "Maria Forró e Convidados", time: "22h30" },
+    // ],
     gallery: [
       { src: "/Destaques/destaque1.png", alt: "Show noturno" },
       { src: "/Destaques/destaque1.png", alt: "Público festival" },
@@ -374,46 +408,78 @@ const rawItems: FeaturedItemRaw[] = [
     ],
   },
   {
-    id: 2,
-    badge: { pt: "Novidade", en: "New" },
-    image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1400&q=70",
+    id: 4,
+    badge: { pt: "Artesanato", en: "Family" },
+    image: "/acoesFestival/reduto1W.webp",
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "Mostra de Artesanato", en: "Crafts Exhibition" },
+    title: { pt: "REDUTO DAS ARTES – Exposição & Comercealização", en: "Forró Night" },
     subtitle: {
-      pt: "Cultura e tradição das mãos do povo piauiense",
-      en: "Culture and tradition from the hands of Piauí's people",
+      pt: "Criatividade que transforma: conheça nossos artistas.",
+      en: "Big names in traditional forró music",
     },
-    date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
-    time: "09h00 – 18h00",
-    place: { pt: "Centro Cultural de Pedro II", en: "Pedro II Cultural Center" },
-    address: { pt: "Rua Principal, 100, Pedro II – PI", en: "Main Street, 100, Pedro II – PI" },
+    date: { pt: "04 a 07/06/2026", en: "June 7th, 2026" },
+    time: "9h às 19h",
+    place: { pt: "Club 11 de Agosto – Centro Histórico", en: "Festival Arena" },
     description: {
-      pt: "Exposição com mais de 80 artesãos locais exibindo peças em couro, cerâmica, renda, bordado e muito mais. Compra direta com o artista.",
-      en: "Exhibition with over 80 local artisans showcasing leather, ceramics, lace, embroidery and much more. Buy directly from the artist.",
+      pt: "Se você busca entender a alma da “Suiça Piauiense”, o REDUTO DAS ARTES é um lugar onde a inspiração encontra a oportunidade. Muita conexão e network! O ambiente favorece uma intensa troca de ideias, onde o dialogo entre diferentes gerações de artistas cria uma rede de apoio e aprendizado mútuo. A nova geração da arte pedrossegundense espera por você!",
+      en: "The most anticipated night of the festival! Big names in forró in an unmissable show featuring accordion, bass drum and triangle.",
     },
     ageRating: "L",
-    category: { pt: "Cultura & Arte", en: "Culture & Art" },
-    duration: "4 dias / 4 days",
+    category: { pt: "Show Musical", en: "Music Show" },
+    duration: "10h",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
-      { src: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=70", alt: "Artesanato" },
-      { src: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=70", alt: "Feira de artesanato" },
+      { src: "/acoesFestival/reduto2W.webp", alt: "Artesanato" },
+      { src: "/acoesFestival/reduto3W.webp", alt: "Artesanato" },
     ],
+    // lineup: [
+    //   { name: "Rei do Baião", time: "19h00" },
+    //   { name: "Sanfoneiros do Nordeste", time: "21h00" },
+    //   { name: "Atração Surpresa / Surprise Act", time: "23h30" },
+    // ],
   },
+  // {
+  //   id: 2,
+  //   badge: { pt: "Novidade", en: "New" },
+  //   image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1400&q=70",
+  //   org: { pt: "Festival de Inverno", en: "Winter Festival" },
+  //   title: { pt: "Mostra de Artesanato", en: "Crafts Exhibition" },
+  //   subtitle: {
+  //     pt: "Cultura e tradição das mãos do povo piauiense",
+  //     en: "Culture and tradition from the hands of Piauí's people",
+  //   },
+  //   date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
+  //   time: "09h00 – 18h00",
+  //   place: { pt: "Centro Cultural de Pedro II", en: "Pedro II Cultural Center" },
+  //   address: { pt: "Rua Principal, 100, Pedro II – PI", en: "Main Street, 100, Pedro II – PI" },
+  //   description: {
+  //     pt: "Exposição com mais de 80 artesãos locais exibindo peças em couro, cerâmica, renda, bordado e muito mais. Compra direta com o artista.",
+  //     en: "Exhibition with over 80 local artisans showcasing leather, ceramics, lace, embroidery and much more. Buy directly from the artist.",
+  //   },
+  //   ageRating: "L",
+  //   category: { pt: "Cultura & Arte", en: "Culture & Art" },
+  //   duration: "4 dias / 4 days",
+  //   price: 0,
+  //   mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+  //   gallery: [
+  //     { src: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=70", alt: "Artesanato" },
+  //     { src: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=70", alt: "Feira de artesanato" },
+  //   ],
+  // },
   {
     id: 3,
     badge: { pt: "Destaque", en: "Featured" },
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=70",
+    image: "/acoesFestival/palcM1W.webp",
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "Festival Gastronômico", en: "Food Festival" },
+    title: { pt: "PALCO MIRANTE", en: "Food Festival" },
     subtitle: {
-      pt: "Sabores típicos do inverno serrano",
+      pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
       en: "Typical flavors of the highland winter",
     },
-    date: { pt: "05 e 06 de Junho de 2026", en: "June 5 & 6, 2026" },
+    date: { pt: "05 e 07 de Junho de 2026", en: "June 5 & 7, 2026" },
     time: "11h00 – 22h00",
-    place: { pt: "Parque Municipal", en: "Municipal Park" },
+    place: { pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM", en: "Municipal Park" },
     address: { pt: "Av. do Parque, s/n, Pedro II – PI", en: "Park Ave., s/n, Pedro II – PI" },
     description: {
       pt: "Deguste pratos típicos da culinária serrana: baião de dois, galinha caipira, pamonha, cuscuz e muito mais. Mais de 30 barracas de comida e bebidas regionais.",
@@ -429,59 +495,31 @@ const rawItems: FeaturedItemRaw[] = [
       { name: "Chefs Convidados – Demo ao Vivo", time: "15h00" },
     ],
   },
-  {
-    id: 4,
-    badge: { pt: "Família", en: "Family" },
-    image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1400&q=70",
-    org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "Noite do Forró", en: "Forró Night" },
-    subtitle: {
-      pt: "Grandes nomes do forró pé de serra",
-      en: "Big names in traditional forró music",
-    },
-    date: { pt: "07 de Junho de 2026", en: "June 7th, 2026" },
-    time: "19h00 – 02h00",
-    place: { pt: "Arena do Festival", en: "Festival Arena" },
-    address: { pt: "Av. Principal, Pedro II – PI", en: "Main Ave., Pedro II – PI" },
-    description: {
-      pt: "A noite mais esperada do festival! Grandes nomes do forró em um show imperdível com direito a muito sanfona, zabumba e triângulo.",
-      en: "The most anticipated night of the festival! Big names in forró in an unmissable show featuring accordion, bass drum and triangle.",
-    },
-    ageRating: "16",
-    category: { pt: "Show Musical", en: "Music Show" },
-    duration: "7h",
-    price: 0,
-    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-    lineup: [
-      { name: "Rei do Baião", time: "19h00" },
-      { name: "Sanfoneiros do Nordeste", time: "21h00" },
-      { name: "Atração Surpresa / Surprise Act", time: "23h30" },
-    ],
-  },
-  {
-    id: 5,
-    badge: { pt: "Família", en: "Family" },
-    image: "https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?auto=format&fit=crop&w=1400&q=70",
-    org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "Circo e Teatro de Rua", en: "Street Circus & Theatre" },
-    subtitle: {
-      pt: "Espetáculos gratuitos para toda a família",
-      en: "Free shows for the whole family",
-    },
-    date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
-    time: "16h00 e 18h00",
-    place: { pt: "Praça Central", en: "Central Square" },
-    address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
-    description: {
-      pt: "Malabaristas, palhaços, atores e contadores de histórias tomam conta das praças e ruas do município em apresentações gratuitas e encantadoras para crianças e adultos.",
-      en: "Jugglers, clowns, actors and storytellers take over the squares and streets of the town in free and enchanting performances for children and adults alike.",
-    },
-    ageRating: "L",
-    category: { pt: "Teatro & Circo", en: "Theatre & Circus" },
-    duration: "~1h",
-    price: 0,
-    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-  },
+  
+  // {
+  //   id: 5,
+  //   badge: { pt: "Família", en: "Family" },
+  //   image: "https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?auto=format&fit=crop&w=1400&q=70",
+  //   org: { pt: "Festival de Inverno", en: "Winter Festival" },
+  //   title: { pt: "Circo e Teatro de Rua", en: "Street Circus & Theatre" },
+  //   subtitle: {
+  //     pt: "Espetáculos gratuitos para toda a família",
+  //     en: "Free shows for the whole family",
+  //   },
+  //   date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
+  //   time: "16h00 e 18h00",
+  //   place: { pt: "Praça Central", en: "Central Square" },
+  //   address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
+  //   description: {
+  //     pt: "Malabaristas, palhaços, atores e contadores de histórias tomam conta das praças e ruas do município em apresentações gratuitas e encantadoras para crianças e adultos.",
+  //     en: "Jugglers, clowns, actors and storytellers take over the squares and streets of the town in free and enchanting performances for children and adults alike.",
+  //   },
+  //   ageRating: "L",
+  //   category: { pt: "Teatro & Circo", en: "Theatre & Circus" },
+  //   duration: "~1h",
+  //   price: 0,
+  //   mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+  // },
 ]
 
 // ── Computed: traduz os itens para o idioma ativo ────
@@ -638,7 +676,9 @@ onBeforeUnmount(() => {
 <style scoped>
 @import url('https://fonts.cdnfonts.com/css/rawline');
   
-
+*{
+  font-family: 'Rawline', sans-serif;
+}
 /* ── Tokens globais (precisam alcançar o Teleport fora do .featured) ── */
 :root,
 .featured {

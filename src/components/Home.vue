@@ -7,7 +7,7 @@
     <div class="hero__bg-wrap" aria-hidden="true">
       <img
         class="hero__bg-img"
-        src="/bg/teste1.webp"
+        src="/bg/bgOfic.webp"
         alt=""
         width="1920"
         height="1080"

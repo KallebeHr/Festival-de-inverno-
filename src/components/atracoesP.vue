@@ -3,9 +3,9 @@
     <header class="week-events__head">
       <div class="week-events__head-inner">
         <span class="week-events__eyebrow">Programação</span>
-        <h2 class="week-events__title">Destaques por dia</h2>
+        <h2 class="week-events__title">04/06 Quinta-Feira</h2>
         <p class="week-events__subtitle">
-          Confira os eventos principais de quinta a domingo. Passe o mouse ou toque
+          Confira os eventos principais deste dia. Passe o mouse ou toque
           no card para visualizar os detalhes.
         </p>
       </div>
@@ -65,11 +65,11 @@
               </div>
 
               <div class="event-card__overlay-base" aria-hidden="true"></div>
-
+<!-- 
               <div class="event-card__top">
                 <span class="event-card__badge">{{ item.day }}</span>
                 <span class="event-card__date-mini">{{ item.shortDate }}</span>
-              </div>
+              </div> -->
 
               <div class="event-card__bottom">
                 <p class="event-card__kicker">Festival de Inverno 2026</p>
@@ -87,12 +87,10 @@
                       <span class="event-card__meta-label">Data</span>
                       <strong>{{ item.date }}</strong>
                     </li>
-
                     <li class="event-card__meta-item">
                       <span class="event-card__meta-label">Início</span>
                       <strong>{{ item.time }}</strong>
                     </li>
-
                     <li class="event-card__meta-item">
                       <span class="event-card__meta-label">Local</span>
                       <strong>{{ item.location }}</strong>
@@ -127,16 +125,15 @@ import { Navigation, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-// Exemplo de imports (ajuste conforme seu projeto)
-const quintaImg = "/posts/1.png";
-const sextaImg = "/posts/2.png";
-const sabadoImg = "/posts/3.png";
-const domingoImg = "/posts/4.png";
+const quintaImg  = "/cardDiario/quinta1.jpg";
+const quintaImg2 = "/cardDiario/quinta2.jpg";
+const quintaImg3 = "/cardDiario/quinta3.jpg";
+const quintaImg4 = "/cardDiario/quinta4.jpg";
 
 const modules = [Navigation, A11y];
 
-const prevEl = ref(null);
-const nextEl = ref(null);
+const prevEl     = ref(null);
+const nextEl     = ref(null);
 const activeCard = ref(null);
 
 const onSwiper = async (swiper) => {
@@ -149,12 +146,17 @@ const onSwiper = async (swiper) => {
   swiper.navigation.update();
 };
 
+/*
+ * slidesPerView reduzido em telas grandes para que os cards
+ * tenham largura suficiente e respeitem o aspect-ratio 3/4
+ * sem ficarem baixos demais.
+ */
 const breakpoints = {
-  320: { slidesPerView: 1.08, spaceBetween: 12 },
-  560: { slidesPerView: 1.35, spaceBetween: 14 },
-  768: { slidesPerView: 2.08, spaceBetween: 16 },
-  1024: { slidesPerView: 3, spaceBetween: 18 },
-  1280: { slidesPerView: 4, spaceBetween: 18 },
+  320:  { slidesPerView: 1.05, spaceBetween: 12 },
+  560:  { slidesPerView: 1.3,  spaceBetween: 14 },
+  768:  { slidesPerView: 2.05, spaceBetween: 16 },
+  1024: { slidesPerView: 2.8,  spaceBetween: 18 },
+  1280: { slidesPerView: 3.5,  spaceBetween: 18 },
 };
 
 const toggleCard = (index) => {
@@ -166,46 +168,84 @@ const setActive = (index) => {
 };
 
 const clearActive = (index) => {
-  if (activeCard.value === index) {
-    activeCard.value = null;
-  }
+  if (activeCard.value === index) activeCard.value = null;
 };
 
 const events = [
-  { id: 1, day: "Quinta-feira", shortDate: "04 Jun", date: "04 de Junho de 2026", time: "18:00", location: "Praça Central", event: "Abertura Oficial", image: quintaImg, accent: "#EDE53A" },
-  { id: 2, day: "Sexta-feira", shortDate: "05 Jun", date: "05 de Junho de 2026", time: "19:30", location: "Palco Principal", event: "Noite Musical", image: sextaImg, accent: "#4E4EFE" },
-  { id: 3, day: "Sábado", shortDate: "06 Jun", date: "06 de Junho de 2026", time: "17:00", location: "Centro Histórico", event: "Feira & Gastronomia", image: sabadoImg, accent: "#ED4D93" },
-  { id: 4, day: "Domingo", shortDate: "07 Jun", date: "07 de Junho de 2026", time: "16:30", location: "Anfiteatro Municipal", event: "Encerramento Cultural", image: domingoImg, accent: "#22c7aa" },
+  {
+    id: 1,
+    day: "Quinta-feira",
+    shortDate: "04 Jun",
+    date: "04 de Junho de 2026",
+    time: "21:00",
+    location: "Palco Opala",
+    event: "DE HERMETO PARA DOMINGUINHOS",
+    image: quintaImg4,
+    accent: "#EDE53A",
+  },
+  {
+    id: 2,
+    day: "Quinta-feira",
+    shortDate: "04 Jun",
+    date: "04 de Junho de 2026",
+    time: "23:00",
+    location: "Palco Opala",
+    event: "TONI GARRIDO",
+    image: quintaImg,
+    accent: "#4E4EFE",
+  },
+  {
+    id: 3,
+    day: "Quinta-feira",
+    shortDate: "04 Jun",
+    date: "04 de Junho de 2026",
+    time: "01:00",
+    location: "Palco Opala",
+    event: "FERRUGEM",
+    image: quintaImg3,
+    accent: "#ED4D93",
+  },
+  {
+    id: 4,
+    day: "Quinta-feira",
+    shortDate: "04 Jun",
+    date: "04 de Junho de 2026",
+    time: "03:00",
+    location: "Palco Opala",
+    event: "PURO SAMBA COM SORAYA CASTELO BRANCO E BANDA",
+    image: quintaImg2,
+    accent: "#22c7aa",
+  },
 ];
 </script>
 
 <style scoped>
 @import url('https://fonts.cdnfonts.com/css/rawline');
 
+/* ─── TOKENS ─────────────────────────────────────────────── */
 .week-events {
-  --blue: #01195a;
-  --blue-deep: #060e2a;
-  --gold: #EDE53A;
+  --blue:       #01195a;
+  --blue-deep:  #060e2a;
+  --gold:       #EDE53A;
   --font-display: 'Rawline', sans-serif;
-  --font-cond: 'Rawline', sans-serif;
-  --font-sans: 'Rawline', sans-serif;
-  --shadow-sm: 0 14px 28px rgba(1, 25, 90, 0.05);
-  --shadow-md: 0 22px 48px rgba(1, 25, 90, 0.12);
+  --font-cond:    'Rawline', sans-serif;
+  --font-sans:    'Rawline', sans-serif;
+  --shadow-sm:  0 14px 28px rgba(1, 25, 90, 0.05);
+  --shadow-md:  0 22px 48px rgba(1, 25, 90, 0.12);
 
   width: 100%;
-  padding-bottom: 80px; /* Padding movido para baixo para o header encostar no topo */
+  padding-bottom: 80px;
   overflow: hidden;
   background: #f4f6fa;
   border-bottom: 10px solid #01195a;
 }
 
-/* HEADER FULL WIDTH */
+/* ─── HEADER ─────────────────────────────────────────────── */
 .week-events__head {
   width: 100%;
   background-color: var(--blue);
-  padding: 80px 0 60px;
-  margin-bottom: -100px; /* Puxa o conteúdo de baixo para cima do azul */
-  padding-bottom: 140px; /* Espaço extra para o efeito de sobreposição */
+  padding: 80px 0 140px;   /* padding-bottom extra → efeito sobreposição */
+  margin-bottom: -100px;
   text-align: center;
 }
 
@@ -222,7 +262,7 @@ const events = [
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  color: var(--gold); /* Dourado para destaque no azul */
+  color: var(--gold);
   font: 700 clamp(0.75rem, 1.2vw, 0.9rem)/1 var(--font-cond);
   letter-spacing: 0.25em;
   text-transform: uppercase;
@@ -238,7 +278,7 @@ const events = [
 
 .week-events__title {
   margin: 0;
-  color: #ffffff; /* Branco para contraste */
+  color: #ffffff;
   font-family: var(--font-display);
   font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 900;
@@ -252,9 +292,9 @@ const events = [
   font: 500 1.1rem/1.6 var(--font-sans);
 }
 
-/* CONTEÚDO DO SLIDER */
+/* ─── SLIDER WRAPPER ─────────────────────────────────────── */
 .week-events__inner {
-  width: min(1280px, calc(100% - 40px));
+  width: min(1380px, calc(100% - 40px));
   margin: 0 auto;
   position: relative;
   z-index: 10;
@@ -269,11 +309,25 @@ const events = [
   overflow: visible;
 }
 
-/* EVENT CARD */
+/* ─── SLIDE ──────────────────────────────────────────────── */
+/*
+ * O SwiperSlide precisa de height: auto para que o card
+ * controle sua própria altura via aspect-ratio.
+ */
+.week-events__slide {
+  height: auto;
+}
+
+/* ─── EVENT CARD ─────────────────────────────────────────── */
 .event-card {
   position: relative;
-  min-height: 560px;
-  height: 100%;
+  /*
+   * aspect-ratio 3/4 espelha exatamente a proporção das imagens
+   * 750×1000 px → o card cresce/encolhe junto com a largura do slide,
+   * nunca cortando o topo ou o fundo da foto.
+   */
+  aspect-ratio: 2.5 / 4;
+  width: 90%;
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
@@ -283,22 +337,40 @@ const events = [
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.event-card__image {
+/* ─── IMAGEM ─────────────────────────────────────────────── */
+.event-card__media {
   position: absolute;
   inset: 0;
+}
+
+.event-card__image {
   width: 100%;
   height: 100%;
+  /*
+   * cover + mesmo aspect-ratio do container = imagem exibida
+   * integralmente, sem cortes horizontais nem verticais.
+   * object-position: center top prioriza a parte superior
+   * (onde normalmente está o assunto principal das fotos portrait).
+   */
   object-fit: cover;
+  object-position: center top;
+  display: block;
   transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
+/* ─── OVERLAY ────────────────────────────────────────────── */
 .event-card__overlay-base {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to bottom, transparent 30%, rgba(6, 14, 42, 0.95) 100%);
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(6, 14, 42, 0.95) 100%
+  );
 }
 
+/* ─── TOP (badge + data) ─────────────────────────────────── */
 .event-card__top {
   position: absolute;
   top: 20px;
@@ -307,6 +379,7 @@ const events = [
   z-index: 3;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .event-card__badge {
@@ -326,20 +399,21 @@ const events = [
   opacity: 0.9;
 }
 
+/* ─── BOTTOM (título estático) ───────────────────────────── */
 .event-card__bottom {
   position: absolute;
   bottom: 30px;
   left: 24px;
   right: 24px;
   z-index: 3;
-  transition: 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .event-card__kicker {
   color: var(--gold);
   font: 700 0.75rem var(--font-cond);
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin: 0 0 8px;
 }
 
 .event-card__title {
@@ -347,9 +421,10 @@ const events = [
   font-family: var(--font-display);
   font-size: 1.6rem;
   margin: 0;
+  line-height: 1.2;
 }
 
-/* DETAILS OVERLAY */
+/* ─── DETAILS OVERLAY ────────────────────────────────────── */
 .event-card__details {
   position: absolute;
   inset: 0;
@@ -360,12 +435,12 @@ const events = [
   flex-direction: column;
   justify-content: center;
   opacity: 0;
-  transition: 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .event-card__details-inner {
   transform: translateY(20px);
-  transition: 0.4s ease;
+  transition: transform 0.4s ease;
 }
 
 .event-card__tag {
@@ -379,11 +454,13 @@ const events = [
   font-family: var(--font-display);
   font-size: 1.4rem;
   margin: 10px 0 20px;
+  line-height: 1.2;
 }
 
 .event-card__meta {
   list-style: none;
   padding: 0;
+  margin: 0;
   display: grid;
   gap: 10px;
 }
@@ -407,6 +484,7 @@ const events = [
   font-size: 0.9rem;
 }
 
+/* ─── BARRA COLORIDA ─────────────────────────────────────── */
 .event-card__bar {
   position: absolute;
   bottom: 0;
@@ -417,22 +495,24 @@ const events = [
   z-index: 5;
 }
 
-/* NAVIGATION */
+/* ─── NAVEGAÇÃO ──────────────────────────────────────────── */
 .week-events__nav {
   position: absolute;
   top: 50%;
+  transform: translateY(-50%);
   z-index: 20;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   border: none;
   background: #fff;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   display: grid;
   place-items: center;
   font-size: 1.8rem;
-  transition: 0.3s;
+  line-height: 1;
+  transition: background 0.3s, transform 0.3s;
 }
 
 .week-events__nav--prev { left: -25px; }
@@ -440,7 +520,7 @@ const events = [
 
 .week-events__nav:hover:not(.swiper-button-disabled) {
   background: var(--gold);
-  transform: scale(1.1);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .swiper-button-disabled {
@@ -448,30 +528,68 @@ const events = [
   pointer-events: none;
 }
 
-/* STATES */
+/* ─── HOVER / ACTIVE STATES ──────────────────────────────── */
 @media (hover: hover) {
   .event-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md);
   }
+
   .event-card:hover .event-card__image {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
+
   .event-card:hover .event-card__details {
     opacity: 1;
   }
+
   .event-card:hover .event-card__details-inner {
     transform: translateY(0);
   }
+
   .event-card:hover .event-card__bottom {
     opacity: 0;
   }
 }
 
-/* MOBILE RESPONSIVITY */
+/* Estado ativo para touch (mobile tap) */
+.event-card.is-active .event-card__details {
+  opacity: 1;
+}
+
+.event-card.is-active .event-card__details-inner {
+  transform: translateY(0);
+}
+
+.event-card.is-active .event-card__bottom {
+  opacity: 0;
+}
+
+/* ─── RESPONSIVO ─────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .week-events__head { padding-top: 60px; padding-bottom: 100px; margin-bottom: -60px; }
-  .event-card { min-height: 480px; }
-  .week-events__nav { display: none; }
-  .week-events__slider { padding: 0; }
+  .week-events__head {
+    padding-top: 60px;
+    padding-bottom: 100px;
+    margin-bottom: -60px;
+  }
+
+  /* sem min-height fixo — o aspect-ratio 3/4 controla tudo */
+  .week-events__nav {
+    display: none;
+  }
+
+  .week-events__slider {
+    padding: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-card__title {
+    font-size: 1.3rem;
+  }
+
+  .event-card__details-title {
+    font-size: 1.2rem;
+  }
 }
 </style>
