@@ -539,8 +539,8 @@ const iconByCategory: Record<string, string> = {
 
 const rawServices: RawService[] = [
   // Alimentação
-  { title: "Restaurante Mirante do Gritador", category: "Alimentação", type: "Restaurante", address: "Mirante do Gritador, Carnaúbas, Pedro II – PI", phone: "(86) 99566-6421", instagram: "@mirantedogritadoroficial", featured: true },
-  { title: "Appetito Restaurante", category: "Alimentação", type: "Restaurante", address: "Rua Domingos Mourão", phone: "(86) 99588-6286", instagram: "@appetito_p2", featured: true },
+  { title: "Restaurante Mirante do Gritador", category: "Alimentação", type: "Restaurante", address: "Mirante do Gritador, Carnaúbas, Pedro II – PI", phone: "(86) 99566-6421", instagram: "@mirantedogritadoroficial", },
+  { title: "Appetito Restaurante", category: "Alimentação", type: "Restaurante", address: "Rua Domingos Mourão", phone: "(86) 99588-6286", instagram: "@appetito_p2",},
   { title: "Restaurante Folha Verde", category: "Alimentação", type: "Restaurante", address: "Av. Cel. Cordeiro, 312A – Centro", phone: "(86) 99494-9424", instagram: "@folha_verde_express" },
   { title: "Restaurante Delícias do Cheff", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 11", phone: "(86) 99527-1095" },
   { title: "Restaurante Bom Sabor", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 03", phone: "(86) 99958-5687" },
@@ -554,6 +554,7 @@ const rawServices: RawService[] = [
   { title: "Churrascaria Montaninha Grill", category: "Alimentação", type: "Churrascaria", address: "Av. José Lourenço Mourão, 2100 – Vila Kolping", phone: "(86) 99494-8408", instagram: "@montannia__grill_pedroii" },
   { title: "Baião do Sertão", category: "Alimentação", type: "Restaurante", address: "Rua José Gomes Filho – Chapadinha", phone: "(86) 95266-6681", instagram: "@baiaodosertaop2" },
   { title: "Sabor Caseiro e Espetinho do Soares", category: "Alimentação", type: "Espetinho", address: "Av. José Lourenço Mourão, 920", phone: "(86) 99498-3307" },
+  { title: "Pizzaria Biggles", category: "Alimentação", type: "Pizzaria", address: "Rua Francisco Barros, 480", phone: "(86) 99508-9900", instagram: "@pizzaria.biggles" },
   { title: "Pizzaria Biggles", category: "Alimentação", type: "Pizzaria", address: "Rua Francisco Barros, 480", phone: "(86) 99508-9900", instagram: "@pizzaria.biggles" },
   { title: "Pizzaria Face Bar", category: "Alimentação", type: "Pizzaria", address: "Rua Corinto Andrade, 325", phone: "(86) 99466-9022", instagram: "@facebar2fornoalenha" },
   { title: "Pizzaria Melhor do Trigo", category: "Alimentação", type: "Pizzaria", address: "Rua José Gomes Filho, 64 – Chapadinha", phone: "(86) 99517-1500", instagram: "@melhordotrigo" },
@@ -595,7 +596,7 @@ const rawServices: RawService[] = [
   { title: "Espetinho da Villa", category: "Alimentação", type: "Espetinho", address: "Rua Olímpio Nogueira, 229 – Vila", phone: "(86) 99598-8975", instagram: "@espetinho_da_villa" },
 
   // Hospedagem
-  { title: "Condomínio Serra dos Matões", category: "Hospedagem", type: "Chalés", address: "Zona Rural – Serra dos Matões", phone: "(86) 98854-0398", instagram: "@chalesserradosmatoes", featured: true },
+  { title: "Condomínio Serra dos Matões", category: "Hospedagem", type: "Chalés", address: "Zona Rural – Serra dos Matões", phone: "(86) 98854-0398", instagram: "@chalesserradosmatoes" },
   { title: "Desejo Motel", category: "Hospedagem", type: "Motel", address: "Zona Rural", phone: "(86) 99957-2638" },
   { title: "Estação Vila Residence", category: "Hospedagem", type: "Pousada", address: "Rua Neném Galvão, 555 – Vila Operária", phone: "(86) 99919-1563", instagram: "@pousadaestacaopedroii" },
   { title: "Hotel Brisa da Ponte", category: "Hospedagem", type: "Hotel", address: "Av. José Lourenço Mourão, 106 – Chapadinha", phone: "(86) 99464-9227", instagram: "@brisadaponte-2026" },
@@ -621,7 +622,7 @@ const rawServices: RawService[] = [
   { title: "Chalé Casa Bruma", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99988-9667", instagram: "@casabruma_" },
   { title: "Chalé Neblina", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 98106-3363" },
   { title: "Chalé Vista da Serra", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 98106-3363" },
-  { title: "Central de Pousadas Domiciliares", category: "Hospedagem", type: "Hospedagem domiciliar", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3849", instagram: "@semturp2", featured: true },
+  { title: "Central de Pousadas Domiciliares", category: "Hospedagem", type: "Hospedagem domiciliar", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3849", instagram: "@semturp2", },
 
   // Artesanato e Opalas
   { title: "Ateliê Joias Pura", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão", phone: "(86) 99479-0172" },
@@ -633,7 +634,7 @@ const rawServices: RawService[] = [
   { title: "Dupi Joias", category: "Artesanato e Opalas", type: "Joias", address: "Rua Estrela Azul, 70 – Santa Fé", phone: "(86) 99530-7095", instagram: "@dupijoias" },
   { title: "Joias Prata", category: "Artesanato e Opalas", type: "Joias", address: "Rua Domingos Mourão", phone: "(86) 99553-6566", instagram: "@joiaspratap2" },
   { title: "P2 Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão Filho, 474 – Centro", phone: "(86) 99509-1520", instagram: "@p2joias" },
-  { title: "Opalas Pedro II", category: "Artesanato e Opalas", type: "Opalas", address: "Rua Tertuliano Brandão Filho, 256", phone: "(86) 98831-7190", instagram: "@opalaspedroiioficial", featured: true },
+  { title: "Opalas Pedro II", category: "Artesanato e Opalas", type: "Opalas", address: "Rua Tertuliano Brandão Filho, 256", phone: "(86) 98831-7190", instagram: "@opalaspedroiioficial", },
   { title: "Art’s Pedras", category: "Artesanato e Opalas", type: "Opalas", address: "Mercado do Artesão – Box 22", phone: "(86) 99560-2018", instagram: "@art.spedras" },
   { title: "Joias Criartes", category: "Artesanato e Opalas", type: "Joias", address: "Rua Raimundo Orsano", phone: "(86) 99408-6032", instagram: "@joias_criartes" },
   { title: "Impacto Joias Ribamar", category: "Artesanato e Opalas", type: "Joias", address: "Mercado do Artesão – Box 21", phone: "(86) 99517-8112", instagram: "@impactojoiasr" },
@@ -668,19 +669,19 @@ const rawServices: RawService[] = [
   { title: "Mami Artesanato", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 49", phone: "(86) 99446-4345" },
   { title: "Oficina de Artes e Arquitetura J. Batista", category: "Artesanato e Opalas", type: "Oficina de Arte", address: "Rua Des. Hamilton Mourão, 648 – Centro", phone: "(86) 3271-1563" },
   { title: "Centro de Formação Mandacarú", category: "Artesanato e Opalas", type: "Oficina / Formação", address: "Rua Monsenhor Uchôa, 270", phone: "(86) 3271-1473" },
-  { title: "Feira de Artesanato do SEBRAE", category: "Artesanato e Opalas", type: "Feira", address: "Rua Domingos Mourão Filho – Centro Histórico", schedule: "Durante o Festival: 08h às 22h", featured: true },
-  { title: "Mercado do Artesão", category: "Artesanato e Opalas", type: "Mercado", address: "Rua Manoel Nogueira Lima", schedule: "06h às 14h", featured: true },
+  { title: "Feira de Artesanato do SEBRAE", category: "Artesanato e Opalas", type: "Feira", address: "Rua Domingos Mourão Filho – Centro Histórico", schedule: "Durante o Festival: 08h às 22h", },
+  { title: "Mercado do Artesão", category: "Artesanato e Opalas", type: "Mercado", address: "Rua Manoel Nogueira Lima", schedule: "06h às 14h", },
 
   // Telefones úteis
-  { title: "Hospital Josefina Getirana Netta", category: "Saúde", type: "Hospital", phone: "(86) 99814-6624 / (86) 99942-8995", featured: true },
-  { title: "Hospital Santa Cruz", category: "Saúde", type: "Hospital", phone: "(86) 3279-1600 / (86) 99942-8995", featured: true },
+  { title: "Hospital Josefina Getirana Netta", category: "Saúde", type: "Hospital", phone: "(86) 99814-6624 / (86) 99942-8995", },
+  { title: "Hospital Santa Cruz", category: "Saúde", type: "Hospital", phone: "(86) 3279-1600 / (86) 99942-8995", },
   { title: "Drogaria Americanas", category: "Saúde", type: "Drogaria", phone: "(86) 98888-3321" },
   { title: "Farmácia Pague Menos", category: "Saúde", type: "Farmácia", phone: "(86) 99965-4600" },
   { title: "Drogaria Premium e Eugelina Cosméticos", category: "Saúde", type: "Drogaria", phone: "(86) 99432-0222" },
 
-  { title: "5º CIA de Polícia", category: "Segurança e Órgãos Públicos", type: "Polícia", phone: "(86) 99446-6164", featured: true },
+  { title: "5º CIA de Polícia", category: "Segurança e Órgãos Públicos", type: "Polícia", phone: "(86) 99446-6164", },
   { title: "Superintendência de Trânsito Municipal", category: "Segurança e Órgãos Públicos", type: "Trânsito", phone: "(86) 99865-0866" },
-  { title: "Delegacia", category: "Segurança e Órgãos Públicos", type: "Delegacia", phone: "(86) 99431-8215", featured: true },
+  { title: "Delegacia", category: "Segurança e Órgãos Públicos", type: "Delegacia", phone: "(86) 99431-8215", },
   { title: "Guarda Municipal", category: "Segurança e Órgãos Públicos", type: "Guarda Municipal", phone: "(86) 99493-1545" },
   { title: "Ministério Público", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "(86) 98159-2129" },
   { title: "Conselho Tutelar", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "(86) 99590-6700" },
@@ -689,12 +690,12 @@ const rawServices: RawService[] = [
   { title: "Ministério Público do Trabalho", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "4009-6400" },
   { title: "PROCON Piauí", category: "Segurança e Órgãos Públicos", type: "PROCON", phone: "(86) 3216-4550" },
 
-  { title: "Equatorial Piauí", category: "Serviços Essenciais", type: "Energia", phone: "(86) 3228-8000", featured: true },
-  { title: "Águas do Piauí", category: "Serviços Essenciais", type: "Água", phone: "(86) 98191-4787", featured: true },
+  { title: "Equatorial Piauí", category: "Serviços Essenciais", type: "Energia", phone: "(86) 3228-8000", },
+  { title: "Águas do Piauí", category: "Serviços Essenciais", type: "Água", phone: "(86) 98191-4787", },
 
   // Apoio ao turista
-  { title: "P2 Reboque 24 Horas", category: "Apoio ao Turista", type: "Reboque", phone: "(86) 99461-2554 / (86) 99506-7211", featured: true },
-  { title: "Pronto Farma 24 Horas", category: "Apoio ao Turista", type: "Farmácia 24h", phone: "(86) 98863-0281", featured: true },
+  { title: "P2 Reboque 24 Horas", category: "Apoio ao Turista", type: "Reboque", phone: "(86) 99461-2554 / (86) 99506-7211", },
+  { title: "Pronto Farma 24 Horas", category: "Apoio ao Turista", type: "Farmácia 24h", phone: "(86) 98863-0281", featured: true  },
   { title: "Lava Jato O Pardal", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99544-6502 / (86) 99493-1545" },
   { title: "Lava Jato 2 Irmãos", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99475-8612" },
   { title: "Lava Rápido Pedro II", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99556-8756" },
@@ -715,16 +716,16 @@ const rawServices: RawService[] = [
   { title: "Supermercado Sassami II", category: "Comércio e Conveniência", type: "Supermercado", phone: "(21) 97043-2045" },
   { title: "Conveniência Confiança", category: "Comércio e Conveniência", type: "Conveniência", phone: "(86) 98808-0987" },
 
-  { title: "Banco do Brasil", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
+  { title: "Banco do Brasil", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro", featured: true },
   { title: "Banco Bradesco", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
   { title: "Caixa Econômica Federal", category: "Bancos", type: "Banco", address: "Rua Domingos Mourão – Centro" },
   { title: "Banco Opala", category: "Bancos", type: "Banco", address: "Mercado do Artesão" },
 
-  { title: "ACONTUR - Associação de Guias de Turismo", category: "Guias de Turismo", type: "Associação de Guias", address: "Terminal Rodoviário, Av. Coronel Cordeiro, Box 09", phone: "(86) 99410-9118 / (86) 99919-6330", instagram: "@aconturpedroii", featured: true },
-  { title: "Agência Adventure P2 - Vinícius Europeu", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 98160-6645", instagram: "@guia_vinicius_europeu", featured: true },
-  { title: "Turistando Pedro II - Mazinho", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 99529-1724", instagram: "@mazinhoalmeida_", featured: true },
+  { title: "ACONTUR - Associação de Guias de Turismo", category: "Guias de Turismo", type: "Associação de Guias", address: "Terminal Rodoviário, Av. Coronel Cordeiro, Box 09", phone: "(86) 99410-9118 / (86) 99919-6330", instagram: "@aconturpedroii", },
+  { title: "Agência Adventure P2 - Vinícius Europeu", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 98160-6645", instagram: "@guia_vinicius_europeu", },
+  { title: "Turistando Pedro II - Mazinho", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 99529-1724", instagram: "@mazinhoalmeida_", },
 
-  { title: "Central de Atendimento ao Turista - CAT", category: "CAT", type: "Atendimento ao Turista", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3829", instagram: "@semturp2", featured: true },
+  { title: "Central de Atendimento ao Turista - CAT", category: "CAT", type: "Atendimento ao Turista", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3829", instagram: "@semturp2" , featured: true  },
 ];
 
 const services = ref<ServiceItem[]>(
