@@ -5,18 +5,18 @@
         <div class="visualizer">
           <div v-for="n in 5" :key="n" class="visualizer__bar"></div>
         </div>
-        <p class="music-loader__text">Sintonizando serviços...</p>
+        <p class="music-loader__text">Carregando serviços...</p>
       </div>
     </div>
   </Transition>
 
   <section
-    id="servicos"
-    ref="rootElement"
-    class="services"
-    :class="{ 'is-visible': isVisible && !isLoading, 'reduce-motion': reduceMotion }"
-    aria-label="Área de serviços do festival"
-  >
+  id="servicos"
+  ref="rootElement"
+  class="services"
+  :class="{ 'is-visible': true, 'reduce-motion': reduceMotion }"
+  aria-label="Guia turístico e serviços úteis de Pedro II"
+>
     <div class="services__bg" aria-hidden="true">
       <div class="services__bg-grid"></div>
       <div class="services__bg-glow services__bg-glow--a"></div>
@@ -25,29 +25,29 @@
     </div>
 
     <div class="services__container">
-      
       <header class="services__hero">
         <div class="services__hero-copy">
           <p class="services__eyebrow">
             <span class="services__dot" aria-hidden="true"></span>
-            Central de serviços
+            Guia do visitante
           </p>
 
           <h2 class="services__title">
-            Serviços úteis para visitantes,
-            <span>expositores e parceiros</span>
+            Serviços úteis em Pedro II
+            <span>para curtir o festival com tranquilidade</span>
           </h2>
 
           <p class="services__sub">
-            Encontre hospedagens, guias, espaços para vendas, cabanas, feiras
-            temáticas e outros apoios importantes para aproveitar o festival com
-            mais conforto, praticidade e organização.
+            Encontre restaurantes, bares, hospedagens, lojas de opala, artesanato,
+            telefones úteis, guias turísticos, bancos, serviços automotivos e apoio
+            ao turista em um só lugar.
           </p>
 
           <div class="services__hero-actions">
             <a href="#services-list" class="services__hero-btn services__hero-btn--primary">
               Ver serviços
             </a>
+
             <button
               v-if="hasActiveFilters"
               class="services__hero-btn services__hero-btn--ghost"
@@ -62,36 +62,40 @@
         <div class="services__hero-stats" aria-label="Resumo dos serviços">
           <article class="services__stat">
             <strong>{{ filteredServices.length }}</strong>
-            <span>Serviços disponíveis</span>
+            <span>Resultados</span>
           </article>
+
+          <article class="services__stat">
+            <strong>{{ services.length }}</strong>
+            <span>Cadastros</span>
+          </article>
+
           <article class="services__stat">
             <strong>{{ categories.length }}</strong>
             <span>Categorias</span>
           </article>
+
           <article class="services__stat">
             <strong>{{ favoriteIds.length }}</strong>
-            <span>Seus Favoritos</span>
-          </article>
-          <article class="services__stat">
-            <strong>{{ featuredServices.length }}</strong>
-            <span>Em Destaque</span>
+            <span>Favoritos</span>
           </article>
         </div>
       </header>
 
-      <section class="services__filters" aria-label="Filtros de serviços">
+      <section class="services__filters" aria-label="Filtros do guia">
         <div class="services__filters-head">
           <div>
             <p class="services__filters-kicker">Refinar resultados</p>
             <h3 class="services__filters-title">
-              Encontre o serviço ideal com mais facilidade
+              Busque por nome, categoria, região ou contato
             </h3>
           </div>
-          <button 
-            class="services__clear-btn" 
-            type="button" 
-            @click="resetFilters"
+
+          <button
+            class="services__clear-btn"
+            type="button"
             :disabled="!hasActiveFilters"
+            @click="resetFilters"
           >
             Limpar filtros
           </button>
@@ -100,24 +104,32 @@
         <div class="services__filters-grid">
           <div class="field field--search">
             <label class="field__label" for="services-search">Buscar serviço</label>
+
             <div class="field__control field__control--search">
               <span class="field__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="mdi-icon"><path :d="mdiMagnify" /></svg>
+                <svg viewBox="0 0 24 24" class="mdi-icon">
+                  <path :d="mdiMagnify" />
+                </svg>
               </span>
+
               <input
                 id="services-search"
                 v-model.trim="searchQuery"
                 class="field__input"
                 type="text"
-                placeholder="Ex.: guias, hotel, transporte..."
+                placeholder="Ex.: pousada, sushi, opala, hospital, guia..."
                 autocomplete="off"
               />
             </div>
-            <p class="field__hint">Busque por nome, descrição ou palavras-chave.</p>
+
+            <p class="field__hint">
+              A busca considera nome, endereço, telefone, Instagram e categoria.
+            </p>
           </div>
 
           <div class="field">
             <label class="field__label" for="services-category">Categoria</label>
+
             <div class="field__control field__control--select">
               <select id="services-category" v-model="selectedCategory" class="field__select">
                 <option value="all">Todas as categorias</option>
@@ -125,29 +137,18 @@
                   {{ category }}
                 </option>
               </select>
+
               <span class="field__arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="mdi-icon"><path :d="mdiChevronDown" /></svg>
+                <svg viewBox="0 0 24 24" class="mdi-icon">
+                  <path :d="mdiChevronDown" />
+                </svg>
               </span>
             </div>
           </div>
 
           <div class="field">
-            <label class="field__label" for="services-type">Tipo de Público</label>
-            <div class="field__control field__control--select">
-              <select id="services-type" v-model="selectedType" class="field__select">
-                <option value="all">Todos os públicos</option>
-                <option v-for="type in types" :key="type" :value="type">
-                  {{ type }}
-                </option>
-              </select>
-              <span class="field__arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="mdi-icon"><path :d="mdiChevronDown" /></svg>
-              </span>
-            </div>
-          </div>
+            <label class="field__label" for="services-region">Região</label>
 
-          <div class="field">
-            <label class="field__label" for="services-region">Localização (Região)</label>
             <div class="field__control field__control--select">
               <select id="services-region" v-model="selectedRegion" class="field__select">
                 <option value="all">Todas as regiões</option>
@@ -155,8 +156,29 @@
                   {{ region.name }}
                 </option>
               </select>
+
               <span class="field__arrow" aria-hidden="true">
-                <svg viewBox="0 0 24 24" class="mdi-icon"><path :d="mdiChevronDown" /></svg>
+                <svg viewBox="0 0 24 24" class="mdi-icon">
+                  <path :d="mdiChevronDown" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="services-contact">Contato</label>
+
+            <div class="field__control field__control--select">
+              <select id="services-contact" v-model="selectedContact" class="field__select">
+                <option value="all">Todos</option>
+                <option value="phone">Com telefone</option>
+                <option value="instagram">Com Instagram</option>
+              </select>
+
+              <span class="field__arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="mdi-icon">
+                  <path :d="mdiChevronDown" />
+                </svg>
               </span>
             </div>
           </div>
@@ -191,7 +213,8 @@
 
           <p class="services__result-text">
             <strong>{{ filteredServices.length }}</strong>
-            serviço<span v-if="filteredServices.length !== 1">s</span> encontrado<span v-if="filteredServices.length !== 1">s</span>.
+            serviço<span v-if="filteredServices.length !== 1">s</span>
+            encontrado<span v-if="filteredServices.length !== 1">s</span>.
           </p>
         </div>
       </section>
@@ -203,8 +226,8 @@
       >
         <div class="services__section-head">
           <div>
-            <p class="services__section-kicker">Recomendações</p>
-            <h3 class="services__section-title">Serviços mais procurados</h3>
+            <p class="services__section-kicker">Destaques</p>
+            <h3 class="services__section-title">Informações importantes para visitantes</h3>
           </div>
         </div>
 
@@ -221,31 +244,48 @@
                 </svg>
                 Destaque
               </span>
+
               <button
                 class="featured-card__fav"
                 type="button"
                 :aria-label="isFavorite(service.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                 @click="toggleFavorite(service.id)"
               >
-                <svg viewBox="0 0 24 24" class="mdi-icon" :class="{ 'icon-active': isFavorite(service.id) }">
+                <svg
+                  viewBox="0 0 24 24"
+                  class="mdi-icon"
+                  :class="{ 'icon-active': isFavorite(service.id) }"
+                >
                   <path :d="isFavorite(service.id) ? mdiHeart : mdiHeartOutline" />
                 </svg>
               </button>
             </div>
 
             <div class="featured-card__service-icon">
-              <svg viewBox="0 0 24 24" class="mdi-icon"><path :d="service.icon" /></svg>
+              <svg viewBox="0 0 24 24" class="mdi-icon">
+                <path :d="service.icon" />
+              </svg>
             </div>
 
             <h4 class="featured-card__title">{{ service.title }}</h4>
             <p class="featured-card__desc">{{ service.description }}</p>
 
             <div class="featured-card__actions">
-              <button class="featured-card__btn featured-card__btn--ghost" @click="selectRegion(service.regionId)">
-                Ver Região
+              <button
+                class="featured-card__btn featured-card__btn--ghost"
+                type="button"
+                @click="openMap(service)"
+              >
+                Ver mapa
               </button>
-              <button class="featured-card__btn featured-card__btn--primary" @click="openServiceContact(service)">
-                Solicitar
+
+              <button
+                v-if="service.phone"
+                class="featured-card__btn featured-card__btn--primary"
+                type="button"
+                @click="openContact(service)"
+              >
+                Contato
               </button>
             </div>
           </article>
@@ -256,6 +296,7 @@
         v-if="filteredServices.length > 0"
         id="services-list"
         class="services__list-wrap"
+        aria-label="Lista de serviços encontrados"
       >
         <div class="services__list">
           <article
@@ -266,42 +307,109 @@
           >
             <div class="service-card__side">
               <div class="service-card__icon-wrap">
-                <svg viewBox="0 0 24 24" class="service-card__icon"><path :d="service.icon" /></svg>
+                <svg viewBox="0 0 24 24" class="service-card__icon">
+                  <path :d="service.icon" />
+                </svg>
               </div>
+
               <div class="service-card__side-meta">
-                <span class="service-card__price">{{ service.priceLabel }}</span>
+                <span class="service-card__price">{{ service.category }}</span>
               </div>
             </div>
 
             <div class="service-card__content">
               <div class="service-card__top">
                 <div class="service-card__badges">
-                  <span class="service-card__badge service-card__badge--category">{{ service.category }}</span>
+                  <span class="service-card__badge service-card__badge--category">
+                    {{ service.type }}
+                  </span>
+
                   <span class="service-card__badge service-card__badge--region">
-                    <svg viewBox="0 0 24 24" class="badge-icon-small"><path :d="mdiMapMarker" /></svg>
+                    <svg viewBox="0 0 24 24" class="badge-icon-small" aria-hidden="true">
+                      <path :d="mdiMapMarker" />
+                    </svg>
                     {{ getRegionName(service.regionId) }}
                   </span>
+
+                  <span v-if="service.featured" class="service-card__badge service-card__badge--category">
+                    Destaque
+                  </span>
                 </div>
-                <button 
-                  class="service-card__fav" 
+
+                <button
+                  class="service-card__fav"
+                  type="button"
                   :aria-label="isFavorite(service.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
                   @click="toggleFavorite(service.id)"
                 >
-                  <svg viewBox="0 0 24 24" class="mdi-icon" :class="{ 'icon-active': isFavorite(service.id) }">
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="mdi-icon"
+                    :class="{ 'icon-active': isFavorite(service.id) }"
+                  >
                     <path :d="isFavorite(service.id) ? mdiHeart : mdiHeartOutline" />
                   </svg>
                 </button>
               </div>
 
               <h4 class="service-card__title">{{ service.title }}</h4>
-              <p class="service-card__desc">{{ service.description }}</p>
+
+              <p class="service-card__desc">
+                {{ service.description }}
+              </p>
+
+              <div class="service-card__info">
+                <p v-if="service.address">
+                  <strong>Endereço:</strong> {{ service.address }}
+                </p>
+
+                <p v-if="service.phone">
+                  <strong>Telefone:</strong> {{ service.phone }}
+                </p>
+
+                <p v-if="service.instagram">
+                  <strong>Instagram:</strong> {{ service.instagram }}
+                </p>
+
+                <p v-if="service.schedule">
+                  <strong>Funcionamento:</strong> {{ service.schedule }}
+                </p>
+              </div>
 
               <div class="service-card__actions">
-                <button class="service-card__btn service-card__btn--ghost" @click="selectCategory(service.category)">
-                  Ver Similares
+                <button
+                  class="service-card__btn service-card__btn--ghost"
+                  type="button"
+                  @click="selectCategory(service.category)"
+                >
+                  Ver similares
                 </button>
-                <button class="service-card__btn service-card__btn--primary" @click="openServiceContact(service)">
-                  Entrar em Contato
+
+                <button
+                  v-if="service.address"
+                  class="service-card__btn service-card__btn--ghost"
+                  type="button"
+                  @click="openMap(service)"
+                >
+                  Como chegar
+                </button>
+
+                <button
+                  v-if="service.instagram"
+                  class="service-card__btn service-card__btn--ghost"
+                  type="button"
+                  @click="openInstagram(service.instagram)"
+                >
+                  Instagram
+                </button>
+
+                <button
+                  v-if="service.phone"
+                  class="service-card__btn service-card__btn--primary"
+                  type="button"
+                  @click="openContact(service)"
+                >
+                  Entrar em contato
                 </button>
               </div>
             </div>
@@ -311,311 +419,580 @@
 
       <div v-else class="services__empty">
         <div class="services__empty-icon">
-          <svg viewBox="0 0 24 24"><path :d="mdiInformationOutline" /></svg>
+          <svg viewBox="0 0 24 24">
+            <path :d="mdiInformationOutline" />
+          </svg>
         </div>
+
         <h3>Nenhum serviço encontrado</h3>
-        <p>Não encontramos nada com os filtros atuais. Tente buscar por outros termos ou limpar os filtros.</p>
-        <button class="services__hero-btn services__hero-btn--primary" @click="resetFilters">
+
+        <p>
+          Não encontramos nada com os filtros atuais. Tente buscar por outro termo
+          ou limpar os filtros.
+        </p>
+
+        <button
+          class="services__hero-btn services__hero-btn--primary"
+          type="button"
+          @click="resetFilters"
+        >
           Limpar todos os filtros
         </button>
       </div>
-
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-// ==========================================
-// IMPORTS
-// ==========================================
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
-  mdiMagnify,
+  mdiBankOutline,
+  mdiBedKingOutline,
+  mdiCartOutline,
   mdiChevronDown,
   mdiHeart,
   mdiHeartOutline,
+  mdiHospitalBoxOutline,
+  mdiInformationOutline,
+  mdiMagnify,
+  mdiMapMarker,
+  mdiMapMarkerPath,
+  mdiPhoneOutline,
+  mdiShieldCheckOutline,
+  mdiSilverwareForkKnife,
   mdiStar,
   mdiStarOutline,
-  mdiMapMarker,
-  mdiAccountTieHat,
-  mdiHomeCity,
-  mdiSilverwareForkKnife,
-  mdiInformationOutline,
-  mdiBus,
-  mdiTent
+  mdiStorefrontOutline,
+  mdiWrenchOutline,
 } from "@mdi/js";
 
-// ==========================================
-// TIPAGENS (INTERFACES)
-// ==========================================
-interface Region { 
-  id: string; 
-  name: string; 
-  query: string; 
+interface Region {
+  id: string;
+  name: string;
 }
 
 interface ServiceItem {
-  id: string; 
-  title: string; 
-  description: string; 
-  category: string; 
+  id: string;
+  title: string;
+  description: string;
+  category: string;
   type: string;
-  audience: string; 
-  schedule: string; 
-  priceLabel: string; 
-  availability: string;
-  contactLabel: string; 
-  regionId: string; 
-  featured: boolean; 
+  address: string;
+  phone: string;
+  instagram: string;
+  schedule: string;
+  regionId: string;
+  featured: boolean;
   icon: string;
-  features: string[]; 
-  whatsappText: string;
 }
 
-// ==========================================
-// ESTADO DO COMPONENTE (REATIVIDADE)
-// ==========================================
+type RawService = {
+  title: string;
+  category: string;
+  type?: string;
+  address?: string;
+  phone?: string;
+  instagram?: string;
+  schedule?: string;
+  featured?: boolean;
+};
+
+const STORAGE_KEY = "pedro_ii_tourism_services_favorites_v1";
+
 const isLoading = ref(true);
 const rootElement = ref<HTMLElement | null>(null);
 const isVisible = ref(false);
 const reduceMotion = ref(false);
 
-// Estado dos Filtros
 const searchQuery = ref("");
 const selectedCategory = ref("all");
-const selectedType = ref("all");
 const selectedRegion = ref("all");
+const selectedContact = ref("all");
 const onlyFavorites = ref(false);
 const onlyFeatured = ref(false);
-
-// Estado dos Favoritos persistidos no LocalStorage
 const favoriteIds = ref<string[]>([]);
-const STORAGE_KEY = "festival_services_favorites_v2";
 
-// ==========================================
-// DADOS MOCKADOS (Exemplo Didático)
-// ==========================================
+let observer: IntersectionObserver | null = null;
+let loadingTimer: number | null = null;
+
 const regions: Region[] = [
-  { id: "centro", name: "Centro do Festival", query: "Centro" },
-  { id: "entorno-praca", name: "Praça Principal", query: "Praça" },
-  { id: "rota-mirante", name: "Rota do Mirante", query: "Mirante" },
-  { id: "area-comercial", name: "Área Comercial", query: "Comercial" },
-  { id: "zona-hospedagem", name: "Zona de Hospedagem", query: "Hotéis" }
+  { id: "centro", name: "Centro" },
+  { id: "vila-operaria", name: "Vila Operária / Vila Kolping" },
+  { id: "chapadinha", name: "Chapadinha" },
+  { id: "serra-zona-rural", name: "Serra / Zona Rural" },
+  { id: "mercado-artesao", name: "Mercado do Artesão" },
+  { id: "santa-fe", name: "Santa Fé" },
+  { id: "rodoviaria", name: "Terminal Rodoviário" },
+  { id: "outros", name: "Outras regiões" },
 ];
 
-const services = ref<ServiceItem[]>([
-  {
-    id: "srv01",
-    title: "Guias Locais Credenciados",
-    description: "Acompanhamento para visitantes que desejam conhecer melhor os atrativos culturais e naturais com segurança e informação.",
-    category: "Guias",
-    type: "Visitantes",
-    audience: "Geral",
-    schedule: "08h às 18h",
-    priceLabel: "Sob consulta",
-    availability: "Vagas diárias",
-    contactLabel: "WhatsApp",
-    regionId: "centro",
-    featured: true,
-    icon: mdiAccountTieHat,
-    features: ["roteiros culturais", "apoio a grupos"],
-    whatsappText: "Olá! Tenho interesse no serviço de Guias Locais."
-  },
-  {
-    id: "srv02",
-    title: "Casas e Hotéis para Alugar",
-    description: "Catálogo de hospedagens temporárias próximas ao circuito principal do evento. Opções para todos os bolsos.",
-    category: "Hospedagem",
-    type: "Visitantes",
-    audience: "Geral",
-    schedule: "Atendimento 24h",
-    priceLabel: "Diárias variadas",
-    availability: "Alta procura",
-    contactLabel: "Reserva",
-    regionId: "zona-hospedagem",
-    featured: true,
-    icon: mdiHomeCity,
-    features: ["casas mobiliadas", "pousadas"],
-    whatsappText: "Olá! Quero saber mais sobre hospedagem."
-  },
-  {
-    id: "srv03",
-    title: "Área de Camping Oficial",
-    description: "Aluguel de cabanas e espaço para barracas com estrutura de banheiros e segurança 24h.",
-    category: "Hospedagem",
-    type: "Visitantes",
-    audience: "Aventureiros",
-    schedule: "Check-in 24h",
-    priceLabel: "A partir de R$50/dia",
-    availability: "Vagas limitadas",
-    contactLabel: "Reserva",
-    regionId: "rota-mirante",
-    featured: false,
-    icon: mdiTent,
-    features: ["banheiro", "segurança"],
-    whatsappText: "Olá! Gostaria de reservar um espaço no camping."
-  },
-  {
-    id: "srv04",
-    title: "Transfer Aeroporto/Festival",
-    description: "Vans e ônibus fretados fazendo o trajeto do aeroporto mais próximo diretamente para o evento.",
-    category: "Transporte",
-    type: "Visitantes",
-    audience: "Geral",
-    schedule: "De 2 em 2 horas",
-    priceLabel: "R$ 45,00",
-    availability: "Compre antecipado",
-    contactLabel: "WhatsApp",
-    regionId: "zona-hospedagem",
-    featured: false,
-    icon: mdiBus,
-    features: ["ar condicionado", "pontualidade"],
-    whatsappText: "Olá! Preciso de transporte para o festival."
-  },
-  {
-    id: "srv10",
-    title: "Feira Gastronômica Regional",
-    description: "Área pensada para comercialização de comidas regionais e bebidas artesanais. Venha experimentar os sabores locais.",
-    category: "Feiras",
-    type: "Público geral",
-    audience: "Família",
-    schedule: "10h às 23h",
-    priceLabel: "Acesso Livre",
-    availability: "Alta demanda",
-    contactLabel: "Coordenação",
-    regionId: "area-comercial",
-    featured: true,
-    icon: mdiSilverwareForkKnife,
-    features: ["alto fluxo", "marcas locais"],
-    whatsappText: "Olá! Quero informações sobre a feira gastronômica."
-  }
-]);
+const iconByCategory: Record<string, string> = {
+  "Alimentação": mdiSilverwareForkKnife,
+  "Hospedagem": mdiBedKingOutline,
+  "Artesanato e Opalas": mdiStorefrontOutline,
+  "Saúde": mdiHospitalBoxOutline,
+  "Segurança e Órgãos Públicos": mdiShieldCheckOutline,
+  "Serviços Essenciais": mdiPhoneOutline,
+  "Apoio ao Turista": mdiWrenchOutline,
+  "Comércio e Conveniência": mdiCartOutline,
+  "Bancos": mdiBankOutline,
+  "Guias de Turismo": mdiMapMarkerPath,
+  "CAT": mdiInformationOutline,
+};
 
-// ==========================================
-// LÓGICA COMPUTADA (Filtros e Derivações)
-// ==========================================
+const rawServices: RawService[] = [
+  // Alimentação
+  { title: "Restaurante Mirante do Gritador", category: "Alimentação", type: "Restaurante", address: "Mirante do Gritador, Carnaúbas, Pedro II – PI", phone: "(86) 99566-6421", instagram: "@mirantedogritadoroficial", featured: true },
+  { title: "Appetito Restaurante", category: "Alimentação", type: "Restaurante", address: "Rua Domingos Mourão", phone: "(86) 99588-6286", instagram: "@appetito_p2", featured: true },
+  { title: "Restaurante Folha Verde", category: "Alimentação", type: "Restaurante", address: "Av. Cel. Cordeiro, 312A – Centro", phone: "(86) 99494-9424", instagram: "@folha_verde_express" },
+  { title: "Restaurante Delícias do Cheff", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 11", phone: "(86) 99527-1095" },
+  { title: "Restaurante Bom Sabor", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 03", phone: "(86) 99958-5687" },
+  { title: "Restaurante da Dona Maria", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 04", phone: "(86) 99422-6085" },
+  { title: "Restaurante Self Service da Loura", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 10", phone: "(86) 99543-3509" },
+  { title: "Beco da Picanha", category: "Alimentação", type: "Restaurante", address: "Rua Travessa João Mendes, 226", phone: "(86) 99816-4487" },
+  { title: "Serve Bem", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 15", phone: "(86) 99546-1214" },
+  { title: "Delícias da Lana", category: "Alimentação", type: "Restaurante", address: "Mercado do Artesão – Box 02", phone: "(86) 99509-6155" },
+  { title: "Churrascaria O Gaúcho", category: "Alimentação", type: "Churrascaria", address: "Av. Coronel Cordeiro, 274 – Centro", phone: "(86) 99566-4299", instagram: "@gauchopedroii" },
+  { title: "Churrascaria Melo", category: "Alimentação", type: "Churrascaria", address: "Av. Coronel Cordeiro – Centro", phone: "(86) 99438-8000" },
+  { title: "Churrascaria Montaninha Grill", category: "Alimentação", type: "Churrascaria", address: "Av. José Lourenço Mourão, 2100 – Vila Kolping", phone: "(86) 99494-8408", instagram: "@montannia__grill_pedroii" },
+  { title: "Baião do Sertão", category: "Alimentação", type: "Restaurante", address: "Rua José Gomes Filho – Chapadinha", phone: "(86) 95266-6681", instagram: "@baiaodosertaop2" },
+  { title: "Sabor Caseiro e Espetinho do Soares", category: "Alimentação", type: "Espetinho", address: "Av. José Lourenço Mourão, 920", phone: "(86) 99498-3307" },
+  { title: "Pizzaria Biggles", category: "Alimentação", type: "Pizzaria", address: "Rua Francisco Barros, 480", phone: "(86) 99508-9900", instagram: "@pizzaria.biggles" },
+  { title: "Pizzaria Face Bar", category: "Alimentação", type: "Pizzaria", address: "Rua Corinto Andrade, 325", phone: "(86) 99466-9022", instagram: "@facebar2fornoalenha" },
+  { title: "Pizzaria Melhor do Trigo", category: "Alimentação", type: "Pizzaria", address: "Rua José Gomes Filho, 64 – Chapadinha", phone: "(86) 99517-1500", instagram: "@melhordotrigo" },
+  { title: "Pizzaria Brasil", category: "Alimentação", type: "Pizzaria", address: "Rua Corinto Andrade, 868 – Centro", phone: "(86) 98163-0083", instagram: "@pizzariabrasilp2oficial" },
+  { title: "Pizzaria Bom Gosto", category: "Alimentação", type: "Pizzaria", address: "Av. José Lourenço Mourão, 627", phone: "(86) 99584-1655", instagram: "@pizzariabomgosto" },
+  { title: "Pizzaria e Espetinho O Gordinho", category: "Alimentação", type: "Pizzaria", address: "Av. José Lourenço Mourão, 403", phone: "(86) 99508-8165" },
+  { title: "Saborear Pizzaria e Lanchonete", category: "Alimentação", type: "Pizzaria", address: "Av. José Lourenço Mourão, 687 – Vila Operária", phone: "(86) 99506-0235", instagram: "@saborear_lanchesemassas" },
+  { title: "P2 Hamburgueria", category: "Alimentação", type: "Hamburgueria", address: "Av. José Lourenço Mourão, 956 – Vila Kolping", phone: "(86) 99510-3089", instagram: "@p2hamburgueria" },
+  { title: "Brasa Burger", category: "Alimentação", type: "Hamburgueria", address: "Rua Costa e Silva, 379 – Santa Fé", phone: "(86) 99958-1634", instagram: "@brasa.burgp2" },
+  { title: "Lanchonete da Dinha", category: "Alimentação", type: "Lanchonete", address: "Av. Coronel Cordeiro, 495A", phone: "(86) 98139-6334", instagram: "@lanchonetedadinhaa" },
+  { title: "E & N Lanches e Bar", category: "Alimentação", type: "Lanchonete", address: "Rua João Benício", phone: "(86) 99508-6162", instagram: "@e.n.lanches" },
+  { title: "Lanchonete na Cidade", category: "Alimentação", type: "Lanchonete", address: "Av. Irmãos Pereira, 380 – Centro", phone: "(86) 98843-7625" },
+  { title: "Central Lanches", category: "Alimentação", type: "Lanchonete", address: "Av. Cel. Cordeiro, 428 – Centro", phone: "(86) 99432-0961" },
+  { title: "Lanchonete Sabor Lanches", category: "Alimentação", type: "Lanchonete", address: "Rua Manoel Nogueira Lima, 136 – Centro", phone: "(86) 99421-1655" },
+  { title: "Bica Lanches", category: "Alimentação", type: "Lanchonete", address: "Av. Cel. Cordeiro, 25 – Centro", phone: "(86) 99803-2624", instagram: "@bicalanches" },
+  { title: "Temakeria P2", category: "Alimentação", type: "Sushi", address: "Av. Coronel Cordeiro, 133", phone: "(86) 98133-7741", instagram: "@temakeriap2" },
+  { title: "Sushi Flash", category: "Alimentação", type: "Sushi", address: "Rua Alexandrino de Moraes, 288 – Vila Kolping", phone: "(86) 98812-3224", instagram: "@sushiflashp2" },
+  { title: "Sushi Keen P2", category: "Alimentação", type: "Sushi", address: "Av. José Lourenço Mourão, 419", phone: "(86) 99566-6943", instagram: "@sushikeen_p2" },
+  { title: "Don Villas Café", category: "Alimentação", type: "Café", address: "Rua Francisco Sotero, 490 – Vila Kolping", phone: "(86) 99487-2674", instagram: "@donvillascafe" },
+  { title: "Opção Café e Cia", category: "Alimentação", type: "Café", address: "Av. Cel. Cordeiro – Centro", phone: "(86) 99457-1370", instagram: "@opcaocoffee" },
+  { title: "Dotô Açaí", category: "Alimentação", type: "Açaí", address: "Shopping Minervina – Centro", phone: "(86) 99501-3650", instagram: "@dotoacai" },
+  { title: "Padaria Pão Santo", category: "Alimentação", type: "Padaria", address: "Rua João Benício, 450", phone: "(86) 99489-8927", instagram: "@padariapaodosanto" },
+  { title: "Padaria Pão da Villa", category: "Alimentação", type: "Padaria", address: "Av. José Lourenço Mourão, Loja 04", phone: "(86) 99495-3249", instagram: "@padariapaodavilla" },
+  { title: "Atta Cozinha e Bar", category: "Alimentação", type: "Bar e Restaurante", address: "Rua Lauro Cordeiro, 835", phone: "(86) 98152-3497", instagram: "@attacozinhaebar" },
+  { title: "Blend Bar e Restaurante", category: "Alimentação", type: "Bar e Restaurante", address: "Rua Ernesto Campelo, 214B – São Francisco", phone: "(86) 99487-7829", instagram: "@blend-bar-restaurante" },
+  { title: "Bar da Bonelle", category: "Alimentação", type: "Bar", address: "Praça da Bonelle", phone: "(86) 99419-0795" },
+  { title: "Bar Barella Music", category: "Alimentação", type: "Bar", address: "Rua João Benício – Centro", phone: "(86) 99598-9001", instagram: "@barbarellawb" },
+  { title: "Bar La Konde", category: "Alimentação", type: "Bar", address: "Rua Corinto Andrade, 271", phone: "(86) 99575-1513", instagram: "@la_kondeshowbar" },
+  { title: "Casarão Bar", category: "Alimentação", type: "Bar", address: "Rua João Benício", phone: "(86) 99575-1513" },
+  { title: "Cristal Bar", category: "Alimentação", type: "Bar", address: "Rua João Benício da Silva, 223 – Centro", phone: "(86) 99587-8612" },
+  { title: "Skinos Bar", category: "Alimentação", type: "Bar", address: "Av. José Lourenço Mourão", phone: "(62) 98233-8053" },
+  { title: "Brisa do Morro Restaurante e Bar", category: "Alimentação", type: "Restaurante e Bar", address: "Localidade Morro do Meio", phone: "(11) 96085-3525", instagram: "@brisadomorrorestaurantee" },
+  { title: "Balneário das Serras e Sunset", category: "Alimentação", type: "Balneário", address: "Povoado Carnaúba", phone: "(86) 98164-2616", instagram: "@balneariodasserras" },
+  { title: "Oásis da Serra / Oásis do Mirante", category: "Alimentação", type: "Restaurante e Bar", address: "Carnaúbas, Zona Rural", phone: "(86) 98828-3334", instagram: "@oasisdomirante" },
+  { title: "Rancho do Dino", category: "Alimentação", type: "Restaurante", address: "Localidade Caranguejo", phone: "(86) 98825-1002", instagram: "@ranchododinopedroii" },
+  { title: "Espaço Taverna", category: "Alimentação", type: "Bar", address: "Rua Domingos da Silva Mourão, 236", phone: "(86) 99493-7608", instagram: "@taverna_p2" },
+  { title: "Boomerang Restaurante e Pizzaria", category: "Alimentação", type: "Restaurante e Pizzaria", address: "Av. José Lourenço Mourão, 693 – Vila Operária", phone: "(86) 99453-1099", instagram: "@boomerangmixxp2" },
+  { title: "Villa 86", category: "Alimentação", type: "Restaurante", address: "Rua Domingos da Silva Mourão, 8 – Vila das Flores", phone: "(86) 99434-7269", instagram: "@villa__086" },
+  { title: "Espetinho da Villa", category: "Alimentação", type: "Espetinho", address: "Rua Olímpio Nogueira, 229 – Vila", phone: "(86) 99598-8975", instagram: "@espetinho_da_villa" },
 
-// Extrai as categorias e tipos únicos dinamicamente dos dados
-const categories = computed(() => [...new Set(services.value.map(s => s.category))].sort());
-const types = computed(() => [...new Set(services.value.map(s => s.type))].sort());
+  // Hospedagem
+  { title: "Condomínio Serra dos Matões", category: "Hospedagem", type: "Chalés", address: "Zona Rural – Serra dos Matões", phone: "(86) 98854-0398", instagram: "@chalesserradosmatoes", featured: true },
+  { title: "Desejo Motel", category: "Hospedagem", type: "Motel", address: "Zona Rural", phone: "(86) 99957-2638" },
+  { title: "Estação Vila Residence", category: "Hospedagem", type: "Pousada", address: "Rua Neném Galvão, 555 – Vila Operária", phone: "(86) 99919-1563", instagram: "@pousadaestacaopedroii" },
+  { title: "Hotel Brisa da Ponte", category: "Hospedagem", type: "Hotel", address: "Av. José Lourenço Mourão, 106 – Chapadinha", phone: "(86) 99464-9227", instagram: "@brisadaponte-2026" },
+  { title: "Hotel Opala", category: "Hospedagem", type: "Hotel", address: "Av. José Lourenço Mourão, 813 – Vila Operária", phone: "(86) 99413-9752" },
+  { title: "Pousada Riacho", category: "Hospedagem", type: "Pousada", address: "Rua Lauro Cordeiro, 246 – Centro", phone: "(86) 98123-2220" },
+  { title: "Marzuk Hotel Flat", category: "Hospedagem", type: "Hotel Flat", address: "Av. Coronel Cordeiro, 331 – Centro", phone: "(86) 99557-6201" },
+  { title: "Pousada Vera Baião", category: "Hospedagem", type: "Pousada Familiar", address: "Rua Joaquim Braga, 322 – Bairro Caixa D’Água", phone: "(61) 98155-2246" },
+  { title: "Pousada Rústica", category: "Hospedagem", type: "Pousada", address: "Rua Pedro Ivo, 282", phone: "(86) 99421-4668", instagram: "@pousadarusticap2" },
+  { title: "Pousada e Lanchonete Bom Jesus", category: "Hospedagem", type: "Pousada", address: "Av. Coronel Cordeiro, 234 – Vila Operária", phone: "(86) 98853-2556", instagram: "@lpbomjesus" },
+  { title: "Pousada Neblina", category: "Hospedagem", type: "Pousada", address: "Av. Coronel Cordeiro, 325 – Centro", phone: "(86) 99954-6563" },
+  { title: "Pousada Imperial", category: "Hospedagem", type: "Pousada", address: "BR-404 – Povoado Santana", phone: "(86) 99411-4444" },
+  { title: "Pousada Vila Carnaúba", category: "Hospedagem", type: "Pousada", address: "Serra dos Matões" },
+  { title: "Chalés Fascino da Serra", category: "Hospedagem", type: "Chalé", address: "Carnaúbas – Zona Rural", phone: "(86) 98187-7128", instagram: "@fascinodaserra" },
+  { title: "Holambra da Serra", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99550-6915", instagram: "@holambra_daserra" },
+  { title: "Chácara Bella Vista", category: "Hospedagem", type: "Chácara", address: "Açude Joana", phone: "(86) 99867-0679", instagram: "@chacarabellavistapedroii" },
+  { title: "Chalé Refúgio da Serra", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 98440-3026", instagram: "@refugiodasserrasp2" },
+  { title: "Chalé Aruaque", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Próximo ao Condomínio Vila da Serra", phone: "(86) 98888-3321", instagram: "@chalearuaque" },
+  { title: "Serra Valle Chalé", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões", phone: "(86) 98172-7239", instagram: "@serravallechale" },
+  { title: "Recanto da Serra Eco Park", category: "Hospedagem", type: "Eco Park", address: "Rodovia 327", phone: "(86) 99942-3218", instagram: "@recantodaserraecopark" },
+  { title: "Chalé Serra Park", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99460-9073", instagram: "@serraparkchales" },
+  { title: "Chalé Carnobert Village", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99571-6027", instagram: "@carnobertvillage_" },
+  { title: "Chalé Jatobá da Serra", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99453-9837", instagram: "@jatobadaserrachale" },
+  { title: "Chalé Casa Bruma", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 99988-9667", instagram: "@casabruma_" },
+  { title: "Chalé Neblina", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 98106-3363" },
+  { title: "Chalé Vista da Serra", category: "Hospedagem", type: "Chalé", address: "Serra dos Matões – Zona Rural", phone: "(86) 98106-3363" },
+  { title: "Central de Pousadas Domiciliares", category: "Hospedagem", type: "Hospedagem domiciliar", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3849", instagram: "@semturp2", featured: true },
 
-// Verifica se existe algum filtro ativo (para habilitar o botão "Limpar")
-const hasActiveFilters = computed(() => {
-  return searchQuery.value !== "" || 
-         selectedCategory.value !== "all" || 
-         selectedRegion.value !== "all" || 
-         selectedType.value !== "all" ||
-         onlyFavorites.value || 
-         onlyFeatured.value;
+  // Artesanato e Opalas
+  { title: "Ateliê Joias Pura", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão", phone: "(86) 99479-0172" },
+  { title: "Adriana Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Agostinho Pinheiro, 388 – Centro", phone: "(86) 99401-2368", instagram: "@adrianajoias" },
+  { title: "Lino Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão Filho, 466", phone: "(86) 99924-9299", instagram: "@lojalinojoiasp2" },
+  { title: "Design Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão Filho, 483", phone: "(86) 99568-1685", instagram: "@designjoias" },
+  { title: "Estylus Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão", phone: "(86) 99484-9362" },
+  { title: "Yzza Joias e Relógios", category: "Artesanato e Opalas", type: "Joias", address: "Rua Domingos Mourão, 460 – Centro", phone: "(86) 99455-3933", instagram: "@yzzajoiaserelogios" },
+  { title: "Dupi Joias", category: "Artesanato e Opalas", type: "Joias", address: "Rua Estrela Azul, 70 – Santa Fé", phone: "(86) 99530-7095", instagram: "@dupijoias" },
+  { title: "Joias Prata", category: "Artesanato e Opalas", type: "Joias", address: "Rua Domingos Mourão", phone: "(86) 99553-6566", instagram: "@joiaspratap2" },
+  { title: "P2 Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Domingos Mourão Filho, 474 – Centro", phone: "(86) 99509-1520", instagram: "@p2joias" },
+  { title: "Opalas Pedro II", category: "Artesanato e Opalas", type: "Opalas", address: "Rua Tertuliano Brandão Filho, 256", phone: "(86) 98831-7190", instagram: "@opalaspedroiioficial", featured: true },
+  { title: "Art’s Pedras", category: "Artesanato e Opalas", type: "Opalas", address: "Mercado do Artesão – Box 22", phone: "(86) 99560-2018", instagram: "@art.spedras" },
+  { title: "Joias Criartes", category: "Artesanato e Opalas", type: "Joias", address: "Rua Raimundo Orsano", phone: "(86) 99408-6032", instagram: "@joias_criartes" },
+  { title: "Impacto Joias Ribamar", category: "Artesanato e Opalas", type: "Joias", address: "Mercado do Artesão – Box 21", phone: "(86) 99517-8112", instagram: "@impactojoiasr" },
+  { title: "Opalas Anilina", category: "Artesanato e Opalas", type: "Opalas", phone: "(86) 99536-6952", instagram: "@opalas_anilina" },
+  { title: "Opala Artes Gemas – Bené do Tucum", category: "Artesanato e Opalas", type: "Opalas", address: "Av. José Lourenço Mourão, 813 – Vila", phone: "(86) 99470-9413" },
+  { title: "Ideal Pratas", category: "Artesanato e Opalas", type: "Joias", address: "Rua Tertuliano Brandão Filho, 252", phone: "(86) 98902-6545", instagram: "@idealprataspi" },
+  { title: "SA Joias Artesanais", category: "Artesanato e Opalas", type: "Joias", address: "Rua Padre Vieira, 144", phone: "(86) 99941-3005", instagram: "@surlenealmeida" },
+  { title: "Oi Ti Joias", category: "Artesanato e Opalas", type: "Joias", address: "Av. Cel. Cordeiro – Centro", phone: "(86) 99569-6380" },
+  { title: "Studio Opala", category: "Artesanato e Opalas", type: "Opalas", address: "Rua Monsenhor Uchôa, 14", phone: "(86) 99516-2439" },
+  { title: "Ateliê Opala", category: "Artesanato e Opalas", type: "Opalas", address: "Mercado do Artesão – Box 28", phone: "(86) 98107-0562" },
+  { title: "Pedra Joia", category: "Artesanato e Opalas", type: "Joias", address: "Av. Cel. Cordeiro, 592 – Centro", phone: "(86) 99467-2441" },
+  { title: "Opala Joias Cores da Terra", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Rua Tertuliano Brandão Filho, 256", phone: "(86) 99540-5494" },
+  { title: "Garimpo Opala", category: "Artesanato e Opalas", type: "Opalas", address: "Mercado do Artesão – Box 29", phone: "(86) 99957-3466" },
+  { title: "Raríssima Opala Joias", category: "Artesanato e Opalas", type: "Joias de Opala", address: "Mercado do Artesão – Box 26", phone: "(86) 99583-4325" },
+  { title: "Nativa Joias", category: "Artesanato e Opalas", type: "Joias", address: "Mercado do Artesão – Box 27", phone: "(86) 99552-6047" },
+  { title: "Loja Artes de Amparo", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 31", phone: "(86) 99947-8701" },
+  { title: "G e G Artesanato", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão", phone: "(86) 99418-6831" },
+  { title: "Castro Variedades", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 01", phone: "(86) 99574-9809" },
+  { title: "Ceila Artesã", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 05", phone: "(86) 99573-8935" },
+  { title: "Loja da Maria do Alho", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 06" },
+  { title: "Maria Alves Artesã", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 09", phone: "(86) 99955-7364" },
+  { title: "R.F Artesanatos", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 17", phone: "(86) 99509-6425" },
+  { title: "Loja Xique-Xique", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 18", phone: "(86) 98136-9045" },
+  { title: "Associação das Artesãs de Pedro II", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 19", phone: "(86) 98183-5392" },
+  { title: "Teresa Artesanato", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 20", phone: "(86) 99456-9136" },
+  { title: "Isa Artesanato Variedades", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 27", phone: "(86) 99461-2389" },
+  { title: "Zenaide Artesanato", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 28", phone: "(86) 99956-1222" },
+  { title: "Loja de Artesanatos e Concertos", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 34", phone: "(86) 99597-8601" },
+  { title: "Loja de Artesanato Flor de Fitas", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 39", phone: "(86) 99930-6298" },
+  { title: "Artesanato Tapetes, Redes e Crochê", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 40", phone: "(86) 99948-2854" },
+  { title: "Depósito de Redes Confiança", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 41", phone: "(86) 98111-8156" },
+  { title: "Mami Artesanato", category: "Artesanato e Opalas", type: "Artesanato", address: "Mercado do Artesão – Box 49", phone: "(86) 99446-4345" },
+  { title: "Oficina de Artes e Arquitetura J. Batista", category: "Artesanato e Opalas", type: "Oficina de Arte", address: "Rua Des. Hamilton Mourão, 648 – Centro", phone: "(86) 3271-1563" },
+  { title: "Centro de Formação Mandacarú", category: "Artesanato e Opalas", type: "Oficina / Formação", address: "Rua Monsenhor Uchôa, 270", phone: "(86) 3271-1473" },
+  { title: "Feira de Artesanato do SEBRAE", category: "Artesanato e Opalas", type: "Feira", address: "Rua Domingos Mourão Filho – Centro Histórico", schedule: "Durante o Festival: 08h às 22h", featured: true },
+  { title: "Mercado do Artesão", category: "Artesanato e Opalas", type: "Mercado", address: "Rua Manoel Nogueira Lima", schedule: "06h às 14h", featured: true },
+
+  // Telefones úteis
+  { title: "Hospital Josefina Getirana Netta", category: "Saúde", type: "Hospital", phone: "(86) 99814-6624 / (86) 99942-8995", featured: true },
+  { title: "Hospital Santa Cruz", category: "Saúde", type: "Hospital", phone: "(86) 3279-1600 / (86) 99942-8995", featured: true },
+  { title: "Drogaria Americanas", category: "Saúde", type: "Drogaria", phone: "(86) 98888-3321" },
+  { title: "Farmácia Pague Menos", category: "Saúde", type: "Farmácia", phone: "(86) 99965-4600" },
+  { title: "Drogaria Premium e Eugelina Cosméticos", category: "Saúde", type: "Drogaria", phone: "(86) 99432-0222" },
+
+  { title: "5º CIA de Polícia", category: "Segurança e Órgãos Públicos", type: "Polícia", phone: "(86) 99446-6164", featured: true },
+  { title: "Superintendência de Trânsito Municipal", category: "Segurança e Órgãos Públicos", type: "Trânsito", phone: "(86) 99865-0866" },
+  { title: "Delegacia", category: "Segurança e Órgãos Públicos", type: "Delegacia", phone: "(86) 99431-8215", featured: true },
+  { title: "Guarda Municipal", category: "Segurança e Órgãos Públicos", type: "Guarda Municipal", phone: "(86) 99493-1545" },
+  { title: "Ministério Público", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "(86) 98159-2129" },
+  { title: "Conselho Tutelar", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "(86) 99590-6700" },
+  { title: "Prefeitura Municipal de Pedro II", category: "Segurança e Órgãos Públicos", type: "Prefeitura", phone: "(86) 3271-1402" },
+  { title: "Câmara de Vereadores", category: "Segurança e Órgãos Públicos", type: "Câmara", phone: "(86) 3271-1102" },
+  { title: "Ministério Público do Trabalho", category: "Segurança e Órgãos Públicos", type: "Órgão Público", phone: "4009-6400" },
+  { title: "PROCON Piauí", category: "Segurança e Órgãos Públicos", type: "PROCON", phone: "(86) 3216-4550" },
+
+  { title: "Equatorial Piauí", category: "Serviços Essenciais", type: "Energia", phone: "(86) 3228-8000", featured: true },
+  { title: "Águas do Piauí", category: "Serviços Essenciais", type: "Água", phone: "(86) 98191-4787", featured: true },
+
+  // Apoio ao turista
+  { title: "P2 Reboque 24 Horas", category: "Apoio ao Turista", type: "Reboque", phone: "(86) 99461-2554 / (86) 99506-7211", featured: true },
+  { title: "Pronto Farma 24 Horas", category: "Apoio ao Turista", type: "Farmácia 24h", phone: "(86) 98863-0281", featured: true },
+  { title: "Lava Jato O Pardal", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99544-6502 / (86) 99493-1545" },
+  { title: "Lava Jato 2 Irmãos", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99475-8612" },
+  { title: "Lava Rápido Pedro II", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99556-8756" },
+  { title: "Grad Motos", category: "Apoio ao Turista", type: "Moto Peças", phone: "(86) 98117-6881" },
+  { title: "DS Moto Peças", category: "Apoio ao Turista", type: "Moto Peças", phone: "(86) 99585-9563" },
+  { title: "CBS Moto Peças", category: "Apoio ao Turista", type: "Moto Peças", phone: "(86) 99973-2108" },
+  { title: "Ciclo Moto Peças", category: "Apoio ao Turista", type: "Moto Peças", phone: "(86) 99944-2288" },
+  { title: "D.F Motos", category: "Apoio ao Turista", type: "Moto Peças", phone: "(86) 99462-9110" },
+  { title: "Mecânica São Francisco", category: "Apoio ao Turista", type: "Mecânica", phone: "(86) 99519-1964" },
+  { title: "BW Estética Automotiva", category: "Apoio ao Turista", type: "Estética Automotiva", phone: "(86) 99510-8057" },
+  { title: "MJ Auto Car", category: "Apoio ao Turista", type: "Serviço Automotivo", phone: "(86) 99495-6206" },
+  { title: "Chaveiro Nunes", category: "Apoio ao Turista", type: "Chaveiro", phone: "(86) 98181-8241" },
+
+  // Comércio, bancos e guias
+  { title: "Mercantil Progresso", category: "Comércio e Conveniência", type: "Mercantil", phone: "(86) 99804-0000" },
+  { title: "Mercantil Destak", category: "Comércio e Conveniência", type: "Mercantil", phone: "(86) 99520-5543" },
+  { title: "Popy Supermercado", category: "Comércio e Conveniência", type: "Supermercado", phone: "(86) 99927-0066" },
+  { title: "Supermercado Sassami II", category: "Comércio e Conveniência", type: "Supermercado", phone: "(21) 97043-2045" },
+  { title: "Conveniência Confiança", category: "Comércio e Conveniência", type: "Conveniência", phone: "(86) 98808-0987" },
+
+  { title: "Banco do Brasil", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
+  { title: "Banco Bradesco", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
+  { title: "Caixa Econômica Federal", category: "Bancos", type: "Banco", address: "Rua Domingos Mourão – Centro" },
+  { title: "Banco Opala", category: "Bancos", type: "Banco", address: "Mercado do Artesão" },
+
+  { title: "ACONTUR - Associação de Guias de Turismo", category: "Guias de Turismo", type: "Associação de Guias", address: "Terminal Rodoviário, Av. Coronel Cordeiro, Box 09", phone: "(86) 99410-9118 / (86) 99919-6330", instagram: "@aconturpedroii", featured: true },
+  { title: "Agência Adventure P2 - Vinícius Europeu", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 98160-6645", instagram: "@guia_vinicius_europeu", featured: true },
+  { title: "Turistando Pedro II - Mazinho", category: "Guias de Turismo", type: "Guia de Turismo", phone: "(86) 99529-1724", instagram: "@mazinhoalmeida_", featured: true },
+
+  { title: "Central de Atendimento ao Turista - CAT", category: "CAT", type: "Atendimento ao Turista", address: "Rua Tertuliano Filho, 329 – Centro", phone: "(86) 99461-3829", instagram: "@semturp2", featured: true },
+];
+
+const services = ref<ServiceItem[]>(
+  rawServices.map((service, index) => ({
+    id: `pedroii-service-${String(index + 1).padStart(3, "0")}`,
+    title: service.title,
+    description: buildDescription(service),
+    category: service.category,
+    type: service.type || service.category,
+    address: service.address || "",
+    phone: service.phone || "",
+    instagram: service.instagram || "",
+    schedule: service.schedule || "",
+    regionId: inferRegion(service.address || "", service.title),
+    featured: Boolean(service.featured),
+    icon: iconByCategory[service.category] || mdiInformationOutline,
+  }))
+);
+
+const categories = computed(() => {
+  return [...new Set(services.value.map((service) => service.category))].sort();
 });
 
-// A lógica central que filtra o Array principal baseado nos inputs do usuário
+const hasActiveFilters = computed(() => {
+  return (
+    searchQuery.value !== "" ||
+    selectedCategory.value !== "all" ||
+    selectedRegion.value !== "all" ||
+    selectedContact.value !== "all" ||
+    onlyFavorites.value ||
+    onlyFeatured.value
+  );
+});
+
 const filteredServices = computed(() => {
-  return services.value.filter(service => {
+  const query = normalize(searchQuery.value);
+
+  return services.value.filter((service) => {
+    const searchableText = normalize([
+      service.title,
+      service.description,
+      service.category,
+      service.type,
+      service.address,
+      service.phone,
+      service.instagram,
+      service.schedule,
+      getRegionName(service.regionId),
+    ].join(" "));
+
+    const matchesSearch = !query || searchableText.includes(query);
     const matchesCategory = selectedCategory.value === "all" || service.category === selectedCategory.value;
-    const matchesType = selectedType.value === "all" || service.type === selectedType.value;
     const matchesRegion = selectedRegion.value === "all" || service.regionId === selectedRegion.value;
-    
-    // Busca textual flexível (nome ou descrição)
-    const normalizedSearch = searchQuery.value.toLowerCase();
-    const matchesSearch = !searchQuery.value || 
-      service.title.toLowerCase().includes(normalizedSearch) ||
-      service.description.toLowerCase().includes(normalizedSearch);
-      
+
+    const matchesContact =
+      selectedContact.value === "all" ||
+      (selectedContact.value === "phone" && Boolean(service.phone)) ||
+      (selectedContact.value === "instagram" && Boolean(service.instagram));
+
     const matchesFavorites = !onlyFavorites.value || favoriteIds.value.includes(service.id);
     const matchesFeatured = !onlyFeatured.value || service.featured;
-    
-    return matchesCategory && matchesType && matchesRegion && matchesSearch && matchesFavorites && matchesFeatured;
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesRegion &&
+      matchesContact &&
+      matchesFavorites &&
+      matchesFeatured
+    );
   });
 });
 
-// Listas derivadas para os "Destaques"
-const featuredServices = computed(() => services.value.filter(s => s.featured));
-const featuredServicesFiltered = computed(() => filteredServices.value.filter(s => s.featured));
+const featuredServicesFiltered = computed(() => {
+  return filteredServices.value.filter((service) => service.featured);
+});
 
-// ==========================================
-// MÉTODOS DE AÇÃO
-// ==========================================
+function buildDescription(service: RawService): string {
+  const parts: string[] = [];
 
-/** Busca o nome legível da região a partir do ID */
-const getRegionName = (id: string) => regions.find(r => r.id === id)?.name || "Região não informada";
+  if (service.type) parts.push(service.type);
+  if (service.address) parts.push(`localizado em ${service.address}`);
+  if (service.schedule) parts.push(`funcionamento: ${service.schedule}`);
 
-/** Verifica se um item específico é favorito */
-const isFavorite = (id: string) => favoriteIds.value.includes(id);
+  if (!parts.length) return `${service.category} disponível em Pedro II.`;
 
-/** Adiciona ou remove um item dos favoritos */
-const toggleFavorite = (id: string) => {
-  if (isFavorite(id)) {
-    favoriteIds.value = favoriteIds.value.filter(favId => favId !== id);
-  } else {
-    favoriteIds.value.push(id);
+  return `${parts.join(", ")}.`;
+}
+
+function inferRegion(address: string, title = ""): string {
+  const value = normalize(`${address} ${title}`);
+
+  if (value.includes("mercado do artesao")) return "mercado-artesao";
+  if (value.includes("terminal rodoviario")) return "rodoviaria";
+  if (value.includes("serra") || value.includes("zona rural") || value.includes("carnauba") || value.includes("mirante")) return "serra-zona-rural";
+  if (value.includes("vila operaria") || value.includes("vila kolping") || value.includes("vila")) return "vila-operaria";
+  if (value.includes("chapadinha")) return "chapadinha";
+  if (value.includes("santa fe")) return "santa-fe";
+  if (value.includes("centro") || value.includes("cel cordeiro") || value.includes("coronel cordeiro") || value.includes("domingos mourao")) return "centro";
+
+  return "outros";
+}
+
+function getRegionName(id: string): string {
+  return regions.find((region) => region.id === id)?.name || "Região não informada";
+}
+
+function normalize(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s@.-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getFirstPhone(phone: string): string {
+  return phone.split("/")[0]?.trim() || "";
+}
+
+function onlyDigits(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+function formatPhoneForWhatsApp(phone: string): string {
+  const digits = onlyDigits(getFirstPhone(phone));
+
+  if (!digits) return "";
+
+  if (digits.length === 11 || digits.length === 10) {
+    return `55${digits}`;
   }
-};
 
-/** Métodos atalhos acionados pelos botões nos Cards */
-const selectCategory = (cat: string) => {
-  selectedCategory.value = cat;
-  document.getElementById("services-list")?.scrollIntoView({ behavior: "smooth" });
-};
+  if (digits.startsWith("55")) return digits;
 
-const selectRegion = (id: string) => {
-  selectedRegion.value = id;
-  document.getElementById("services-list")?.scrollIntoView({ behavior: "smooth" });
-};
+  return digits;
+}
 
-/** Reseta todo o painel de filtros para o estado inicial */
-const resetFilters = () => {
-  searchQuery.value = ""; 
-  selectedCategory.value = "all"; 
-  selectedType.value = "all";
+function isFavorite(id: string): boolean {
+  return favoriteIds.value.includes(id);
+}
+
+function toggleFavorite(id: string): void {
+  if (isFavorite(id)) {
+    favoriteIds.value = favoriteIds.value.filter((favoriteId) => favoriteId !== id);
+    return;
+  }
+
+  favoriteIds.value.push(id);
+}
+
+function selectCategory(category: string): void {
+  selectedCategory.value = category;
+
+  requestAnimationFrame(() => {
+    document.getElementById("services-list")?.scrollIntoView({
+      behavior: reduceMotion.value ? "auto" : "smooth",
+      block: "start",
+    });
+  });
+}
+
+function resetFilters(): void {
+  searchQuery.value = "";
+  selectedCategory.value = "all";
   selectedRegion.value = "all";
-  onlyFavorites.value = false; 
+  selectedContact.value = "all";
+  onlyFavorites.value = false;
   onlyFeatured.value = false;
-};
+}
 
-/** Abre o WhatsApp do anunciante */
-const openServiceContact = (service: ServiceItem) => {
-  const url = `https://wa.me/5586999999999?text=${encodeURIComponent(service.whatsappText)}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-};
+function openContact(service: ServiceItem): void {
+  const whatsappPhone = formatPhoneForWhatsApp(service.phone);
 
-// ==========================================
-// CICLO DE VIDA E WATCHERS
-// ==========================================
+  if (whatsappPhone.length >= 12) {
+    const text = encodeURIComponent(
+      `Olá! Vi o contato de ${service.title} no guia turístico de Pedro II e gostaria de mais informações.`
+    );
 
-// Salva as mudanças nos favoritos direto no LocalStorage (Navegador)
-watch(favoriteIds, (newVal) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal));
-}, { deep: true });
+    window.open(`https://wa.me/${whatsappPhone}?text=${text}`, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  const tel = onlyDigits(getFirstPhone(service.phone));
+
+  if (tel) {
+    window.open(`tel:${tel}`, "_self");
+  }
+}
+
+function openMap(service: ServiceItem): void {
+  const query = encodeURIComponent(
+    `${service.title} ${service.address || ""} Pedro II Piauí`
+  );
+
+  window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank", "noopener,noreferrer");
+}
+
+function openInstagram(instagram: string): void {
+  const username = instagram.replace("@", "").trim();
+
+  if (!username) return;
+
+  window.open(`https://www.instagram.com/${username}/`, "_blank", "noopener,noreferrer");
+}
+
+watch(
+  favoriteIds,
+  (newValue) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newValue));
+  },
+  { deep: true }
+);
 
 onMounted(() => {
-  // Simulação de Loading Musical Didático (1.8s)
-  setTimeout(() => { isLoading.value = false; }, 1800);
+  reduceMotion.value = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches || false;
 
-  // Recupera favoritos do acesso anterior
+  loadingTimer = window.setTimeout(() => {
+    isLoading.value = false;
+  }, 900);
+
   const savedFavorites = localStorage.getItem(STORAGE_KEY);
+
   if (savedFavorites) {
     try {
-      favoriteIds.value = JSON.parse(savedFavorites);
-    } catch (e) {
-      console.error("Erro ao ler favoritos salvos", e);
+      const parsed = JSON.parse(savedFavorites);
+
+      if (Array.isArray(parsed)) {
+        favoriteIds.value = parsed.filter((id) => typeof id === "string");
+      }
+    } catch {
+      favoriteIds.value = [];
     }
   }
 
-  // Intersection Observer para animar o componente quando ele aparecer na tela
-  const observer = new IntersectionObserver(([entry]) => {
-    if (entry.isIntersecting) isVisible.value = true;
-  }, { threshold: 0.1 });
-  
-  if (rootElement.value) observer.observe(rootElement.value);
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting) {
+        isVisible.value = true;
+        observer?.disconnect();
+      }
+    },
+    { threshold: 0.1 }
+  );
+
+  if (rootElement.value) {
+    observer.observe(rootElement.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  if (loadingTimer) {
+    window.clearTimeout(loadingTimer);
+  }
+
+  observer?.disconnect();
 });
 </script>
 
 <style scoped>
 /* ── 1. Design Tokens (Variáveis CSS mantidas com mesmo visual) ────────── */
 .services {
-  --serif: "Playfair Display", serif;
-  --sans: "Barlow Condensed", sans-serif;
+  --serif: 'Rawline', sans-serif;
+  --sans: 'Rawline', sans-serif;
   --accent: #01195a; /* Azul principal */
   --gold: #ede53a;   /* Amarelo de destaque */
   --paper-soft: #f7f9fc;

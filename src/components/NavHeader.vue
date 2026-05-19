@@ -13,7 +13,6 @@
         :style="{ transform: `scaleX(${scrollProgress})` }"
       ></span>
     </div>
-
     <div class="nav__inner">
       <button
         class="burger"
@@ -29,7 +28,6 @@
           <span class="burger__line burger__line--short"></span>
         </span>
       </button>
-
       <a
         class="brand"
         href="/"
