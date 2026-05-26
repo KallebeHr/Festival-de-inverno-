@@ -370,7 +370,7 @@ const rawItems: FeaturedItemRaw[] = [
     gallery: [
       { src: "/acoesFestival/vilaE2W.webp", alt: "Show noturno" },
       // { src: "/acoesFestival/VilaE3W.webp", alt: "Público festival" },
-      { src: "/acoesFestival/VilaE4.JPG", alt: "Palco iluminado" },
+      { src: "/acoesFestival/VilaE4.webp", alt: "Palco iluminado" },
     ],
   },
   {
@@ -402,9 +402,9 @@ const rawItems: FeaturedItemRaw[] = [
     //   { name: "Maria Forró e Convidados", time: "22h30" },
     // ],
     gallery: [
-      { src: "/Destaques/destaque1.png", alt: "Show noturno" },
-      { src: "/Destaques/destaque1.png", alt: "Público festival" },
-      { src: "/Destaques/destaque1.png", alt: "Palco iluminado" },
+      { src: "/Destaques/destaque1.webp", alt: "Show noturno" },
+      { src: "/Destaques/destaque1.webp", alt: "Público festival" },
+      { src: "/Destaques/destaque1.webp", alt: "Palco iluminado" },
     ],
   },
   {

@@ -161,11 +161,11 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 import local1 from "/Local/ca1W.webp";
-import local2 from "/Local/ca3.jpeg";
-import local3 from "/Local/ca1.jpeg";
+import local2 from "/Local/ca3.webp";
+import local3 from "/Local/ca1.webp";
 import local4 from "/Local/buriti1W.webp";
-import local5 from "/Local/ca4.jpeg";
-import local6 from "/Destaques/destaque2.png";
+import local5 from "/Local/ca4.webp";
+import local6 from "/Local/destaque2.webp";
 
 type Place = {
   title: string;
