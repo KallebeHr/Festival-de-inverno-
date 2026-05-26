@@ -2,17 +2,17 @@
   <v-app>
     <VLibras position="right" />
 
-    <Transition name="preloader-fade" @after-leave="contentVisible = true">
+    <!-- <Transition name="preloader-fade" @after-leave="contentVisible = true">
       <Preloader v-if="showPreloader" />
-    </Transition>
+    </Transition> -->
 
-    <Transition name="content-rise">
-      <div v-if="contentVisible">
+    <!-- <Transition name="content-rise"> -->
+      <!-- <div v-if="contentVisible"> -->
         <NavHeader />
         <router-view />
         <NavFooter />
-      </div>
-    </Transition>
+      <!-- </div> -->
+    <!-- </Transition> -->
   </v-app>
 </template>
 
