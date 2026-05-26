@@ -202,7 +202,7 @@ const guests = [
     accent: "#ffc801",
   },
   {
-    name: "De Hermeto a Dominguinho",
+    name: "De Hermeto para Domiguinhos",
     work: "Palco Opala",
     image: "./artistasConfirmados/DEHERMETOADOMIGUINHOW.webp",
     accent: "#ffc801",
@@ -214,7 +214,7 @@ const guests = [
     accent: "#ffc801",
   },
   {
-    name: "Nublin",
+    name: "Banda Dublin",
     work: "Palco Opala",
     image: "./artistasConfirmados/NUBLINW.webp",
     accent: "#ffc801",

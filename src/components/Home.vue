@@ -25,7 +25,7 @@
 
       <h1 class="hero__title" aria-label="Festival de Inverno Pedro II">
         <img
-          src="/Logo/fip20.png"
+          src="/Logo/fip20.webp"
           alt="Logo Festival de Inverno Pedro II"
           class="hero__logo"
           width="480"

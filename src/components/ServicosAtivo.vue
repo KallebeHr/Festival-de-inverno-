@@ -673,13 +673,13 @@ const rawServices: RawService[] = [
   { title: "Mercado do Artesão", category: "Artesanato e Opalas", type: "Mercado", address: "Rua Manoel Nogueira Lima", schedule: "06h às 14h", },
 
   // Telefones úteis
-  { title: "Hospital Josefina Getirana Netta", category: "Saúde", type: "Hospital", phone: "(86) 99814-6624 / (86) 99942-8995", },
+  { title: "Hospital Josefina Getirana Netta", category: "Saúde", type: "Hospital", phone: "(86) 99814-6624 / (86) 99942-8995", featured: true },
   { title: "Hospital Santa Cruz", category: "Saúde", type: "Hospital", phone: "(86) 3279-1600 / (86) 99942-8995", },
   { title: "Drogaria Americanas", category: "Saúde", type: "Drogaria", phone: "(86) 98888-3321" },
   { title: "Farmácia Pague Menos", category: "Saúde", type: "Farmácia", phone: "(86) 99965-4600" },
   { title: "Drogaria Premium e Eugelina Cosméticos", category: "Saúde", type: "Drogaria", phone: "(86) 99432-0222" },
 
-  { title: "5º CIA de Polícia", category: "Segurança e Órgãos Públicos", type: "Polícia", phone: "(86) 99446-6164", },
+  { title: "5º CIA de Polícia", category: "Segurança e Órgãos Públicos", type: "Polícia", phone: "(86) 99446-6164", featured: true },
   { title: "Superintendência de Trânsito Municipal", category: "Segurança e Órgãos Públicos", type: "Trânsito", phone: "(86) 99865-0866" },
   { title: "Delegacia", category: "Segurança e Órgãos Públicos", type: "Delegacia", phone: "(86) 99431-8215", },
   { title: "Guarda Municipal", category: "Segurança e Órgãos Públicos", type: "Guarda Municipal", phone: "(86) 99493-1545" },
@@ -695,7 +695,7 @@ const rawServices: RawService[] = [
 
   // Apoio ao turista
   { title: "P2 Reboque 24 Horas", category: "Apoio ao Turista", type: "Reboque", phone: "(86) 99461-2554 / (86) 99506-7211", },
-  { title: "Pronto Farma 24 Horas", category: "Apoio ao Turista", type: "Farmácia 24h", phone: "(86) 98863-0281", featured: true  },
+  { title: "Pronto Farma 24 Horas", category: "Apoio ao Turista", type: "Farmácia 24h", phone: "(86) 98863-0281"  },
   { title: "Lava Jato O Pardal", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99544-6502 / (86) 99493-1545" },
   { title: "Lava Jato 2 Irmãos", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99475-8612" },
   { title: "Lava Rápido Pedro II", category: "Apoio ao Turista", type: "Lava Jato", phone: "(86) 99556-8756" },
@@ -716,7 +716,7 @@ const rawServices: RawService[] = [
   { title: "Supermercado Sassami II", category: "Comércio e Conveniência", type: "Supermercado", phone: "(21) 97043-2045" },
   { title: "Conveniência Confiança", category: "Comércio e Conveniência", type: "Conveniência", phone: "(86) 98808-0987" },
 
-  { title: "Banco do Brasil", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro", featured: true },
+  { title: "Banco do Brasil", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
   { title: "Banco Bradesco", category: "Bancos", type: "Banco", address: "Av. Coronel Cordeiro – Centro" },
   { title: "Caixa Econômica Federal", category: "Bancos", type: "Banco", address: "Rua Domingos Mourão – Centro" },
   { title: "Banco Opala", category: "Bancos", type: "Banco", address: "Mercado do Artesão" },
