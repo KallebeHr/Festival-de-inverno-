@@ -49,11 +49,11 @@ const sections = [
   {
     label: "PATROCÍNIO",
     items: [
-      { name: "Grupo Equatorial Energia", src: "/Logo/scroll/pat1.svg" },
+      { name: "Grupo Equatorial Energia", src: "/Logo/scroll/pat1.webp" },
       { name: "Caixa", src: "/Logo/scroll/pat2.svg" },
       { name: "Cartões da Caixa", src: "/Logo/scroll/pat3.svg" },
       { name: "Elo", src: "/Logo/scroll/pat4.svg" },
-      { name: "Banco do Nordeste", src: "/Logo/scroll/pat5.svg" },
+      { name: "Banco do Nordeste", src: "/Logo/scroll/pat5.webp" },
     ],
   },
   {
@@ -65,14 +65,14 @@ const sections = [
   {
     label: "REALIZAÇÃO",
     items: [
-      { name: "OITI PRODUÇÕES & SERVIÇOS", src: "/Logo/scroll/rea1.svg" },
-      { name: "SEBRAE", src: "/Logo/scroll/rea2.svg" },
-      { name: "Prefeitura de Pedro II", src: "/Logo/scroll/rea3.svg" },
-      { name: "PIAUI + CULTURA SIEC", src: "/Logo/scroll/rea4.svg" },
-      { name: "Secretaria da Cultura - Secult", src: "/Logo/scroll/rea5.svg" },
-      { name: "Secretaria do Turismo - Setur", src: "/Logo/scroll/rea6.svg" },
-      { name: "Governo do Piaui ", src: "/Logo/scroll/rea7.svg" },
-      { name: "Governo do Brasil ", src: "/Logo/scroll/rea8.svg" },
+      { name: "OITI PRODUÇÕES & SERVIÇOS", src: "/Logo/scroll/rea1.webp" },
+      { name: "SEBRAE", src: "/Logo/scroll/rea2.webp" },
+      { name: "Prefeitura de Pedro II", src: "/Logo/scroll/rea3.webp" },
+      { name: "PIAUI + CULTURA SIEC", src: "/Logo/scroll/rea4.webp" },
+      { name: "Secretaria da Cultura - Secult", src: "/Logo/scroll/rea5.webp" },
+      { name: "Secretaria do Turismo - Setur", src: "/Logo/scroll/rea6.webp" },
+      { name: "Governo do Piaui ", src: "/Logo/scroll/rea7.webp" },
+      { name: "Governo do Brasil ", src: "/Logo/scroll/rea8.webp" },
     ],
   },
 ]

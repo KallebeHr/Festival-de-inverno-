@@ -125,10 +125,10 @@ import { Navigation, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const quintaImg  = "/cardDiario/quinta1.jpg";
-const quintaImg2 = "/cardDiario/quinta2.jpg";
-const quintaImg3 = "/cardDiario/quinta3.jpg";
-const quintaImg4 = "/cardDiario/quinta4.jpg";
+const quintaImg  = "/cardDiario/quinta1.webp";
+const quintaImg2 = "/cardDiario/quinta2.webp";
+const quintaImg3 = "/cardDiario/quinta3.webp";
+const quintaImg4 = "/cardDiario/quinta4.webp";
 
 const modules = [Navigation, A11y];
 
