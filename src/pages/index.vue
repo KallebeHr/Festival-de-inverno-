@@ -1,12 +1,12 @@
 <template>
 <Home/>
 <!-- <destaques /> -->
-<ConfirmedGuests />
-<!-- <LocalMVisitado />
+<!-- <ConfirmedGuests />
+<LocalMVisitado />
 <AtracoesP />
 <BlogP /> 
-<MapaP2 />
-<ScrollP /> -->
+<MapaP2 /> -->
+<!-- <ScrollP /> -->
 </template>
 
 <script setup>
