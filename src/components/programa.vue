@@ -422,6 +422,7 @@
         Limpar
       </button>
     </div>
+    <scrollP />
   </section>
 </template>
 
@@ -484,279 +485,489 @@ const days: Day[] = [
 ];
 
 const locations: Location[] = [
-  { id: "praca-eventos", name: "Praça de Eventos", query: "Praça de Eventos Pedro II PI" },
-  { id: "mirante-gritador", name: "Mirante do Gritador", query: "Mirante do Gritador Pedro II PI" },
-  { id: "centro-historico", name: "Centro Histórico", query: "Centro Histórico Pedro II PI" },
-  { id: "feira-opala", name: "Feira da Opala", query: "Feira da Opala Pedro II PI" },
-  { id: "teatro-cultura", name: "Teatro da Cultura", query: "Teatro da Cultura Pedro II PI" },
-  { id: "pracinha-gastronomica", name: "Vila Gastronômica", query: "Vila Gastronômica Pedro II PI" },
-  { id: "largo-matriz", name: "Largo da Matriz", query: "Largo da Matriz Pedro II PI" },
-  { id: "polo-oficinas", name: "Polo de Oficinas", query: "Polo de Oficinas Pedro II PI" },
-  { id: "galeria-artes", name: "Galeria de Artes", query: "Galeria de Artes Pedro II PI" },
-  { id: "rota-paisagens", name: "Rota das Paisagens", query: "Rota das Paisagens Pedro II PI" }
+  { id: "palco-opala", name: "Palco Opala • Praça da Bonelle", query: "Praça Manoel Nogueira Lima Pedro II PI" },
+  { id: "palco-gritador", name: "Palco Gritador • Matriz", query: "Praça Domingos Mourão Filho Pedro II PI" },
+  { id: "palco-carlos-cordeiro", name: "Palco Carlos Cordeiro", query: "Praça Domingos Mourão Filho Pedro II PI" },
+  { id: "praca-jazz", name: "Praça do Jazz", query: "Praça Dep. Milton Brandão Pedro II PI" },
+  { id: "mirante", name: "Mirante do Gritador", query: "Mirante do Gritador Pedro II PI" },
+  { id: "palco-forro", name: "Palco do Forró", query: "Mercado do Artesão Pedro II PI" },
+  { id: "vila-gastronomica", name: "Vila Gastronômica", query: "Praça Manoel Nogueira Lima Pedro II PI" },
+  { id: "vila-empreendedora", name: "Vila Empreendedora", query: "Praça Domingos Mourão Filho Pedro II PI" },
+  { id: "espaco-crianca", name: "Espaço Criança", query: "Espaço Cultural 11 de Agosto Pedro II PI" },
+  { id: "reduto-artes", name: "Reduto das Artes", query: "Club 11 de Agosto Pedro II PI" },
+  { id: "bosque-turista", name: "Bosque do Turista", query: "Serra dos Matões Pedro II PI" },
+  { id: "agricultor", name: "Espaço do Agricultor", query: "Praça Domingos Mourão Pedro II PI" }
 ];
 
 const events: FestivalEvent[] = [
   {
-    id: "ev01",
+    id: "fip01",
     dayId: "2026-06-04",
     time: "09:00",
-    title: "Abertura da Feira de Artesanato e Design Local",
-    description:
-      "Início oficial do circuito criativo com expositores, peças autorais, opalas, moda artesanal e experiências ligadas à identidade cultural de Pedro II.",
-    category: "Feira",
-    host: "Coletivo Criativo de Pedro II",
-    audience: "Livre",
-    duration: "3h",
-    locationId: "feira-opala"
-  },
-  {
-    id: "ev02",
-    dayId: "2026-06-04",
-    time: "10:30",
-    title: "Oficina de Fotografia de Paisagem",
-    description:
-      "Encontro prático para visitantes e criadores que desejam aprender composição, luz e enquadramento em cenários naturais da região.",
-    category: "Oficina",
-    host: "Lara Vasconcelos",
-    audience: "Jovens e adultos",
-    duration: "2h",
-    locationId: "polo-oficinas"
-  },
-  {
-    id: "ev03",
-    dayId: "2026-06-04",
-    time: "14:00",
-    title: "Roda de Conversa sobre Turismo Cultural",
-    description:
-      "Debate sobre economia criativa, turismo responsável e valorização dos territórios culturais durante grandes eventos regionais.",
-    category: "Debate",
-    host: "Instituto Caminhos do Norte",
-    audience: "Livre",
-    duration: "1h30",
-    locationId: "teatro-cultura"
-  },
-  {
-    id: "ev04",
-    dayId: "2026-06-04",
-    time: "17:00",
-    title: "Pôr do Sol no Mirante com Música Instrumental",
-    description:
-      "Sessão especial ao ar livre com repertório instrumental e contemplação da paisagem, ideal para quem busca uma experiência sensorial mais calma.",
-    category: "Experiência",
-    host: "Quarteto Serra Azul",
-    audience: "Livre",
-    duration: "1h30",
-    locationId: "mirante-gritador"
-  },
-  {
-    id: "ev05",
-    dayId: "2026-06-04",
-    time: "20:00",
-    title: "Show de Abertura — Noite das Montanhas",
-    description:
-      "Grande abertura do festival com um espetáculo musical que mistura canções nordestinas, elementos contemporâneos e identidade visual marcante.",
+    title: "Ivo Namastê",
+    description: "Apresentação cultural abrindo o Palco Carlos Cordeiro com música e arte regional.",
     category: "Show",
-    host: "Banda Ventos do Norte",
-    audience: "Livre",
-    duration: "2h",
-    locationId: "praca-eventos"
-  },
-  {
-    id: "ev06",
-    dayId: "2026-06-05",
-    time: "08:30",
-    title: "Caminhada Guiada pelo Centro Histórico",
-    description:
-      "Percurso comentado por pontos tradicionais da cidade, destacando arquitetura, memória local e curiosidades históricas para visitantes.",
-    category: "Passeio",
-    host: "Guia João Matos",
-    audience: "Livre",
-    duration: "2h",
-    locationId: "centro-historico"
-  },
-  {
-    id: "ev07",
-    dayId: "2026-06-05",
-    time: "10:00",
-    title: "Laboratório de Gastronomia Regional",
-    description:
-      "Atividade prática com sabores típicos, ingredientes regionais e uma leitura contemporânea da culinária local.",
-    category: "Gastronomia",
-    host: "Chef Marina Luz",
-    audience: "Jovens e adultos",
-    duration: "2h",
-    locationId: "pracinha-gastronomica"
-  },
-  {
-    id: "ev08",
-    dayId: "2026-06-05",
-    time: "11:30",
-    title: "Mostra de Arte e Opala Contemporânea",
-    description:
-      "Exposição comentada com foco na pedra símbolo de Pedro II, design autoral e processos criativos conectados ao artesanato local.",
-    category: "Exposição",
-    host: "Curadoria Opala Viva",
-    audience: "Livre",
-    duration: "2h30",
-    locationId: "galeria-artes"
-  },
-  {
-    id: "ev09",
-    dayId: "2026-06-05",
-    time: "15:00",
-    title: "Oficina de Ilustração para Cartazes de Festival",
-    description:
-      "Oficina criativa voltada para linguagem visual, composições gráficas e produção de peças inspiradas no Festival de Inverno.",
-    category: "Oficina",
-    host: "Rita Nogueira",
-    audience: "Jovens e adultos",
-    duration: "2h",
-    locationId: "polo-oficinas"
-  },
-  {
-    id: "ev10",
-    dayId: "2026-06-05",
-    time: "18:30",
-    title: "Concerto na Matriz com Corais da Serra",
-    description:
-      "Apresentação especial com repertório coral e arranjos que dialogam com a atmosfera histórica e afetiva do centro da cidade.",
-    category: "Concerto",
-    host: "Corais da Serra",
-    audience: "Livre",
-    duration: "1h15",
-    locationId: "largo-matriz"
-  },
-  {
-    id: "ev11",
-    dayId: "2026-06-05",
-    time: "21:00",
-    title: "Noite Pop Nordeste",
-    description:
-      "Show com sonoridade festiva, repertório dançante e presença de artistas convidados para uma noite de grande circulação.",
-    category: "Show",
-    host: "Coletivo Solar Elétrico",
-    audience: "Livre",
-    duration: "2h30",
-    locationId: "praca-eventos"
-  },
-  {
-    id: "ev12",
-    dayId: "2026-06-06",
-    time: "07:30",
-    title: "Saída Fotográfica — Rota das Paisagens",
-    description:
-      "Experiência guiada para observação das paisagens naturais da região, com foco em fotografia, contemplação e leitura do território.",
-    category: "Passeio",
-    host: "Expedição Serra Branda",
-    audience: "Livre",
-    duration: "3h",
-    locationId: "rota-paisagens"
-  },
-  {
-    id: "ev13",
-    dayId: "2026-06-06",
-    time: "10:00",
-    title: "Feira Gastronômica dos Sabores da Serra",
-    description:
-      "Circuito com pratos regionais, cafés especiais, doces artesanais e espaços de convivência para visitantes e moradores.",
-    category: "Gastronomia",
-    host: "Rede Sabores da Serra",
-    audience: "Livre",
-    duration: "4h",
-    locationId: "pracinha-gastronomica"
-  },
-  {
-    id: "ev14",
-    dayId: "2026-06-06",
-    time: "14:30",
-    title: "Painel Criativo — Música, Cidade e Território",
-    description:
-      "Conversa com produtores, artistas e agentes culturais sobre programação de festivais, circulação e impacto territorial.",
-    category: "Debate",
-    host: "Fórum Cultural do Festival",
-    audience: "Livre",
-    duration: "1h45",
-    locationId: "teatro-cultura"
-  },
-  {
-    id: "ev15",
-    dayId: "2026-06-06",
-    time: "16:30",
-    title: "Performance Visual na Galeria",
-    description:
-      "Intervenção artística com pintura expandida, projeção e música ambiente em diálogo com o público presente.",
-    category: "Arte",
-    host: "Ateliê Horizonte",
+    host: "Palco Carlos Cordeiro",
     audience: "Livre",
     duration: "1h",
-    locationId: "galeria-artes"
+    locationId: "palco-carlos-cordeiro"
   },
   {
-    id: "ev16",
-    dayId: "2026-06-06",
-    time: "19:00",
-    title: "Encontro de Danças Urbanas e Regionais",
-    description:
-      "Apresentação híbrida reunindo grupos convidados, performances coreográficas e integração entre linguagens populares e contemporâneas.",
-    category: "Dança",
-    host: "Núcleo Movimento Livre",
-    audience: "Livre",
-    duration: "1h30",
-    locationId: "praca-eventos"
-  },
-  {
-    id: "ev17",
-    dayId: "2026-06-06",
-    time: "22:00",
-    title: "Show Principal — Sons da Neblina",
-    description:
-      "Atração central da noite com identidade visual imersiva, palco expandido e repertório preparado para o ápice do festival.",
+    id: "fip02",
+    dayId: "2026-06-04",
+    time: "17:00",
+    title: "Besouros da Silva",
+    description: "Show regional abrindo as apresentações do Palco Gritador na Praça da Matriz.",
     category: "Show",
-    host: "Aurora Atlântica",
+    host: "Palco Gritador",
     audience: "Livre",
-    duration: "2h",
-    locationId: "praca-eventos"
+    duration: "1h",
+    locationId: "palco-gritador"
   },
   {
-    id: "ev18",
-    dayId: "2026-06-07",
-    time: "09:00",
-    title: "Vivência de Bem-estar ao Ar Livre",
-    description:
-      "Atividade voltada ao relaxamento, respiração, alongamento e conexão com a paisagem serrana em um ambiente mais silencioso.",
-    category: "Experiência",
-    host: "Coletivo Respira Serra",
+    id: "fip03",
+    dayId: "2026-06-04",
+    time: "18:00",
+    title: "Cerimônia Oficial de Abertura",
+    description: "Momento institucional celebrando a 20ª edição do Festival de Inverno de Pedro II.",
+    category: "Cerimônia",
+    host: "Prefeitura de Pedro II",
+    audience: "Livre",
+    duration: "1h",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip04",
+    dayId: "2026-06-04",
+    time: "19:00",
+    title: "Elder Luiz",
+    description: "Apresentação musical no Palco Gritador com repertório regional e contemporâneo.",
+    category: "Show",
+    host: "Palco Gritador",
     audience: "Livre",
     duration: "1h30",
-    locationId: "mirante-gritador"
+    locationId: "palco-gritador"
   },
   {
-    id: "ev19",
-    dayId: "2026-06-07",
+    id: "fip05",
+    dayId: "2026-06-04",
     time: "11:00",
-    title: "Circuito de Visitação Guiada à Opala",
-    description:
-      "Roteiro mediado para visitantes conhecerem melhor a simbologia da opala, o mercado local e os processos de valorização cultural.",
-    category: "Passeio",
-    host: "Associação da Opala de Pedro II",
+    title: "Gil do Arcodeon",
+    description: "Forró tradicional animando o Mercado do Artesão durante o festival.",
+    category: "Forró",
+    host: "Palco do Forró",
     audience: "Livre",
     duration: "2h",
-    locationId: "feira-opala"
+    locationId: "palco-forro"
   },
   {
-    id: "ev20",
-    dayId: "2026-06-07",
-    time: "18:00",
-    title: "Encerramento — Celebração das Luzes",
-    description:
-      "Apresentação final do festival com música, projeções, agradecimentos e uma despedida pensada para reunir moradores e visitantes.",
-    category: "Encerramento",
-    host: "Orquestra Festival de Inverno",
+    id: "fip06",
+    dayId: "2026-06-05",
+    time: "11:00",
+    title: "Júnior Pegada",
+    description: "Show de forró e piseiro no Palco do Forró no Mercado do Artesão.",
+    category: "Forró",
+    host: "Palco do Forró",
     audience: "Livre",
-    duration: "1h45",
-    locationId: "praca-eventos"
-  }
+    duration: "2h",
+    locationId: "palco-forro"
+  },
+  {
+    id: "fip07",
+    dayId: "2026-06-05",
+    time: "17:00",
+    title: "Banda Back Times",
+    description: "Banda regional iniciando as atrações da sexta-feira no Palco Gritador.",
+    category: "Show",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "1h",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip08",
+    dayId: "2026-06-05",
+    time: "20:00",
+    title: "Banda Lostalgia",
+    description: "Encerramento da noite de sexta no Palco Gritador com sucessos nostálgicos.",
+    category: "Show",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip09",
+    dayId: "2026-06-05",
+    time: "18:30",
+    title: "Luizinho Calixto & Anderson Nóbrega",
+    description: "Espetáculo instrumental na Praça do Jazz com participação de músicos convidados.",
+    category: "Jazz",
+    host: "Praça do Jazz",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-jazz"
+  },
+  {
+    id: "fip10",
+    dayId: "2026-06-05",
+    time: "20:30",
+    title: "Adelson Viana & Jazz no Fole",
+    description: "Grande encontro de jazz e música nordestina com convidados especiais.",
+    category: "Jazz",
+    host: "Praça do Jazz",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-jazz"
+  },
+  {
+    id: "fip11",
+    dayId: "2026-06-05",
+    time: "16:00",
+    title: "Zé Roraima",
+    description: "Show especial ao pôr do sol no Mirante do Gritador.",
+    category: "Show",
+    host: "Palco Mirante",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "mirante"
+  },
+  {
+    id: "fip12",
+    dayId: "2026-06-05",
+    time: "18:00",
+    title: "Vila Gastronômica",
+    description: "Experiência gastronômica com 10 estandes e sabores típicos de Pedro II.",
+    category: "Gastronomia",
+    host: "SEBRAE",
+    audience: "Livre",
+    duration: "Até 03h",
+    locationId: "vila-gastronomica"
+  },
+  {
+    id: "fip13",
+    dayId: "2026-06-05",
+    time: "08:00",
+    title: "Vila Empreendedora",
+    description: "Feira com 74 estandes destacando empreendedorismo, opala e economia criativa.",
+    category: "Feira",
+    host: "SEBRAE",
+    audience: "Livre",
+    duration: "Até 22h",
+    locationId: "vila-empreendedora"
+  },
+  {
+    id: "fip14",
+    dayId: "2026-06-06",
+    time: "10:00",
+    title: "Manu Silva",
+    description: "Show de forró e música regional no Mercado do Artesão.",
+    category: "Forró",
+    host: "Palco do Forró",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "palco-forro"
+  },
+  {
+    id: "fip15",
+    dayId: "2026-06-06",
+    time: "17:00",
+    title: "Flávio Moura – Estação 90",
+    description: "Apresentação musical no Palco Gritador com clássicos e hits dos anos 90.",
+    category: "Show",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "1h",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip16",
+    dayId: "2026-06-06",
+    time: "20:00",
+    title: "Bloco Nós Vamos Invadir Sua Praia",
+    description: "Encerramento da noite de sábado com energia carnavalesca e muita animação.",
+    category: "Bloco",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip17",
+    dayId: "2026-06-06",
+    time: "18:30",
+    title: "Ferdinand Melo, Geraldo Brito & Carlinhos Moreira",
+    description: "Noite instrumental na Praça do Jazz reunindo grandes músicos piauienses.",
+    category: "Jazz",
+    host: "Praça do Jazz",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-jazz"
+  },
+  {
+    id: "fip18",
+    dayId: "2026-06-06",
+    time: "20:30",
+    title: "Big Band Paulo Dantas",
+    description: "Grande concerto de jazz com participações especiais na Praça do Recanto.",
+    category: "Jazz",
+    host: "Praça do Jazz",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "praca-jazz"
+  },
+  {
+    id: "fip19",
+    dayId: "2026-06-06",
+    time: "16:00",
+    title: "Haynna",
+    description: "Show sunset no Mirante do Gritador com clima eletrônico e alternativo.",
+    category: "Show",
+    host: "Palco Mirante",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "mirante"
+  },
+  {
+    id: "fip20",
+    dayId: "2026-06-07",
+    time: "12:00",
+    title: "Primos do Piseiro",
+    description: "Domingo animado no Palco do Forró com muito piseiro e música popular.",
+    category: "Forró",
+    host: "Palco do Forró",
+    audience: "Livre",
+    duration: "2h",
+    locationId: "palco-forro"
+  },
+  {
+    id: "fip21",
+    dayId: "2026-06-07",
+    time: "17:00",
+    title: "Stonesalt",
+    description: "Show de rock alternativo encerrando as apresentações do Palco Gritador.",
+    category: "Show",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "1h",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip22",
+    dayId: "2026-06-07",
+    time: "19:00",
+    title: "Dom Quixote",
+    description: "Apresentação final da programação do Palco Gritador.",
+    category: "Show",
+    host: "Palco Gritador",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "palco-gritador"
+  },
+  {
+    id: "fip23",
+    dayId: "2026-06-07",
+    time: "16:00",
+    title: "Deepmoon",
+    description: "Experiência musical ao pôr do sol no Mirante do Gritador.",
+    category: "Show",
+    host: "Palco Mirante",
+    audience: "Livre",
+    duration: "1h30",
+    locationId: "mirante"
+  },
+  {
+    id: "fip24",
+    dayId: "2026-06-04",
+    time: "16:00",
+    title: "Espaço Criança • Pequenos Astronautas",
+    description: "Sessões imersivas com astronomia, observação do céu e experiências educativas para crianças e famílias.",
+    category: "Experiência",
+    host: "Secretaria Municipal de Educação",
+    audience: "Famílias",
+    duration: "5h",
+    locationId: "espaco-crianca"
+  },
+  {
+    id: "fip25",
+    dayId: "2026-06-04",
+    time: "09:00",
+    title: "Reduto das Artes",
+    description: "Exposição e comercialização de arte local com networking e valorização dos artistas de Pedro II.",
+    category: "Exposição",
+    host: "Secretaria Municipal da Juventude",
+    audience: "Livre",
+    duration: "Até 19h",
+    locationId: "reduto-artes"
+  },
+  {
+    id: "fip26",
+    dayId: "2026-06-04",
+    time: "07:00",
+    title: "Bosque do Turista e Trilhas",
+    description: "Ação ambiental com reflorestamento, trilhas ecológicas e visita às cachoeiras da Serra dos Matões.",
+    category: "Ecoturismo",
+    host: "SEMARH",
+    audience: "Livre",
+    duration: "3h",
+    locationId: "bosque-turista"
+  },
+  {
+    id: "fip27",
+    dayId: "2026-06-04",
+    time: "07:00",
+    title: "Espaço do Agricultor",
+    description: "Feira da agricultura familiar com mel, frutas, doces regionais e gastronomia rural.",
+    category: "Feira",
+    host: "Secretaria Municipal de Agricultura",
+    audience: "Livre",
+    duration: "Até 14h",
+    locationId: "agricultor"
+  },
+  {
+  id: "opala01",
+  dayId: "2026-06-04",
+  time: "19:30",
+  title: "De Hermeto pra Dominguinhos",
+  description: "Show especial no Palco Opala celebrando grandes nomes da música instrumental nordestina.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala02",
+  dayId: "2026-06-04",
+  time: "21:00",
+  title: "Soraya Castelo Branco e Puro Samba",
+  description: "Roda de samba e música brasileira animando a noite de quinta-feira.",
+  category: "Samba",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala03",
+  dayId: "2026-06-04",
+  time: "22:30",
+  title: "Toni Garrido",
+  description: "Grande show nacional no Palco Opala durante o Festival de Inverno de Pedro II.",
+  category: "Show Nacional",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala04",
+  dayId: "2026-06-05",
+  time: "19:30",
+  title: "Tori",
+  description: "Apresentação musical abrindo a programação da sexta-feira no Palco Opala.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala05",
+  dayId: "2026-06-05",
+  time: "20:30",
+  title: "Marina Sena",
+  description: "Show nacional com repertório pop e alternativo no Festival de Inverno de Pedro II.",
+  category: "Show Nacional",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala06",
+  dayId: "2026-06-05",
+  time: "23:00",
+  title: "Raissa Raabe",
+  description: "Apresentação especial trazendo repertório contemporâneo e regional.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala07",
+  dayId: "2026-06-06",
+  time: "19:30",
+  title: "Alquimia",
+  description: "Show musical abrindo a programação do sábado no Palco Opala.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala08",
+  dayId: "2026-06-06",
+  time: "21:00",
+  title: "Chico Chico",
+  description: "Apresentação nacional misturando MPB, rock alternativo e música brasileira.",
+  category: "Show Nacional",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala09",
+  dayId: "2026-06-06",
+  time: "22:30",
+  title: "Titãs",
+  description: "Grande atração nacional do rock brasileiro no Palco Opala.",
+  category: "Rock",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "2h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala10",
+  dayId: "2026-06-07",
+  time: "19:30",
+  title: "Vavá Ribeiro & Zé Quaresma",
+  description: "Show regional encerrando o início da noite de domingo.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala11",
+  dayId: "2026-06-07",
+  time: "21:00",
+  title: "Roupa Nova",
+  description: "Show nacional com clássicos da música brasileira no encerramento do festival.",
+  category: "Show Nacional",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "2h",
+  locationId: "palco-opala"
+},
+{
+  id: "opala12",
+  dayId: "2026-06-07",
+  time: "23:00",
+  title: "Brigitte Bardot",
+  description: "Encerramento musical da 20ª edição do Festival de Inverno de Pedro II.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+}
 ];
 
 const categories = computed(() => {
@@ -1048,8 +1259,8 @@ onBeforeUnmount(() => {
 /* ── Design Tokens do DNA ──────────────────────────────────────────────── */
 .schedule {
   /* Tipografia */
-  --serif: "Playfair Display", Georgia, serif;
-  --sans: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --serif: 'Rawline', sans-serif;
+  --sans: 'Rawline', sans-serif;
 
   /* Cores Base */
   --accent: #01195a;

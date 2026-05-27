@@ -1,7 +1,6 @@
 <template>
   <div class='container'>
     <programa />
-<PatrocinioScrol />
 
     
   </div>
