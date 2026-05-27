@@ -154,12 +154,6 @@ const breakpoints = {
 
 const guests = [
   {
-    name: "Raissa Raabe",
-    work: "Palco Opala",
-    image: "./artistasConfirmados/raissaW.webp",
-    accent: "#ffc801",
-  },
-  {
     name: "Tori",
     work: "Palco Opala",
     image: "./artistasConfirmados/toriW.webp",
@@ -199,6 +193,18 @@ const guests = [
     name: "Toni Garrido",
     work: "Palco Opala",
     image: "./artistasConfirmados/tonigarridoW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Raissa Raabe",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/raissaW.webp",
+    accent: "#ffc801",
+  },
+  {
+    name: "Os Originais do Samba",
+    work: "Palco Opala",
+    image: "./artistasConfirmados/fotoOriginais.webp",
     accent: "#ffc801",
   },
   {

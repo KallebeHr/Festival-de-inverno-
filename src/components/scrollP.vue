@@ -91,8 +91,8 @@ const maskStyle = `
 
   overflow: hidden;
  background:
-    radial-gradient(circle at top left, rgba(1, 25, 90, 0.05), transparent 35%),
-    linear-gradient(180deg, #ffffff 0%,  #f4f6fa 100%);
+    radial-gradient(circle at top left, rgba(1, 25, 90, 0), transparent 35%),
+    linear-gradient(180deg, #ffffff00 0%,  #f4f6fa00 100%);
 }
 
 /* ── Viewport com máscara ────────────────────────── */

@@ -289,7 +289,7 @@ const fallbackPosts: BlogPost[] = [
     title: "Prefeitura de Pedro II regulamenta Festival de Inverno com foco na organização, segurança e sustentabilidade",
     excerpt:
       "A Prefeitura de Pedro II publicou, no Diário Oficial dos Municípios, o Decreto nº 197/2025, que estabelece normas para a realização da 19ª edição do Festival de Inverno, agendada para ocorrer entre os dias 19 e 22 de junho. O regulamento busca garantir a segurança, a ordem urbana e a preservação ambiental durante o evento, um dos maiores do calendário cultural do Piauí. Dentre as principais medidas adotadas, está a proibição da instalação de barracas em ruas e praças centrais, como a Praça Domingos Mourão Filho e a Praça Deputado Milton Brandão, além da vedação ao comércio ambulante no entorno dos palcos principais. O decreto também impede o uso de recipientes de vidro, a emissão de sons automotivos e shows particulares nas imediações do evento, promovendo o controle da poluição sonora. A circulação de veículos será restrita nas áreas de maior fluxo, com horários específicos para carga e descarga. Também ficam proibidas obras ou intervenções em imóveis no quadrilátero histórico da cidade durante o festival. Já nos pontos turísticos, como a Cachoeira do Salto Liso e o Mirante do Gritador, o acesso será limitado e condicionado a autorizações da Prefeitura, visando preservar o meio ambiente. Outro destaque é a regulamentação do uso de publicidade: apenas marcas e instituições patrocinadoras poderão expor logomarcas nos espaços públicos do evento. O uso de drones e outras tecnologias de captação aérea também está autorizado exclusivamente para fins jornalísticos ou culturais, mediante prévia solicitação. A prefeita Betinha Brandão reforça que o decreto visa garantir uma experiência segura, organizada e acessível a todos. A fiscalização será intensificada por agentes municipais, com apoio da Guarda Civil e da Procuradoria Geral do Município. O Festival de Inverno de Pedro II é reconhecido por lei como patrimônio cultural do município e está inserido no calendário turístico do Estado.",
-    href: "#",
+    href: "/blog",
   },
   {
     id: 2,
@@ -303,7 +303,7 @@ const fallbackPosts: BlogPost[] = [
     title: "Pedro II promove ecoturismo com trilhas, cachoeiras e ação ambiental durante o Festival de Inverno",
     excerpt:
       "Natureza que encanta, memórias que permanecem! Com esse lema, a Prefeitura de Pedro II convida turistas e moradores a participarem de uma experiência única de ecoturismo durante o Festival de Inverno 2025. Entre os dias 19 e 22 de junho, sempre das 7h às 10h, será realizada a ação “Trilhas, Cachoeiras e Bosque do Turista”, na Serra dos Matões, com ponto de partida na entrada da trilha para a Cachoeira do Salto Liso. A iniciativa é coordenada pelas Secretarias Municipais de Meio Ambiente e Turismo, em parceria com a Secretaria Estadual de Meio Ambiente e Recursos Hídricos (SEMARH), e propõe uma vivência que une contemplação da natureza, atividade física e educação ambiental. Durante o percurso ecológico, guiado por profissionais capacitados, os participantes irão explorar cenários naturais de tirar o fôlego até chegar à cachoeira do Salto Liso, uma das mais belas da região. Além disso, o projeto inclui uma ação simbólica e sustentável: cada visitante será convidado a plantar uma muda de árvore nativa no Bosque do Turista, espaço que representa o vínculo entre quem visita Pedro II e o compromisso com a preservação ambiental. “A proposta é proporcionar uma experiência inesquecível de contato com a natureza, valorizando o nosso patrimônio ambiental e incentivando práticas de sustentabilidade entre os participantes”, destaca a prefeita Betinha Brandão. A atividade é gratuita e faz parte da programação oficial do Festival de Inverno, um dos eventos culturais e turísticos mais importantes do Piauí. Para participar, recomenda-se o uso de roupas leves, calçados adequados para trilha e levar água para hidratação. SERVIÇO ECOTURISMO – TRILHAS, CACHOEIRAS E BOSQUE DO TURISTA Dias: 19 a 22/06/2025, de 7h às 10h Local: Serra dos Matões - Entrada da trilha para a Cachoeira do Salto Liso Coordenado pelas Secretarias Municipal de Meio Ambiente, Secretaria de Turismo e Secretaria Estadual de Meio Ambiente e Recursos Hídricos - SEMARH Durante o Festival de Inverno, o projeto Bosque do Turista convida para uma trilha ecológica guiada por profissionais experientes, passando por paisagens deslumbrantes até a Cachoeira do Salto Liso. Ao longo do percurso, os participantes terão a oportunidade de plantar uma árvore nativa em um bosque criado para simbolizar a conexão entre o visitante e a natureza.",
-    href: "#",
+    href: "/blog",
   },
   {
     id: 3,
@@ -317,7 +317,8 @@ const fallbackPosts: BlogPost[] = [
     title: "FIP2: Prefeitura divulga resultado final da seleção de bandas do Palco Mirante",
     excerpt:
       "A Prefeitura de Pedro II divulgou o resultado final do Edital nº 003/2026, referente à seleção de bandas que irão compor a programação do Palco Mirante durante a 20ª edição do Festival de Inverno de Pedro II que acontecerá de 4 a 7 de junho. Ao todo, foram recebidas 42 propostas de bandas interessadas em participar do processo seletivo. Após a análise documental e avaliação técnica, 6 propostas foram aprovadas para integrar a programação oficial do festival. A seleção foi conduzida conforme os critérios estabelecidos no edital, assegurando lisura, transparência e reconhecimento aos artistas que farão parte da programação de um dos mais importantes eventos culturais do estado..",
-    href: "#",
+    href: "/blog",
+
   },
   {
     id: 4,
@@ -331,7 +332,8 @@ const fallbackPosts: BlogPost[] = [
     title: "Festival de Inverno de Pedro II é incluído no Calendário de Eventos Turísticos do Piauí",
     excerpt:
       "O Festival de Inverno de Pedro II, considerado um dos maiores eventos culturais do estado, foi oficialmente incluído no primeiro Calendário de Eventos Turísticos do Piauí, lançado pelo Governo do Estado por meio da Secretaria de Turismo (Setur). O festival faz parte de uma seleta lista de 234 eventos escolhidos entre mais de 300 inscrições, reforçando a relevância do município como um dos principais destinos turísticos do Piauí. A inclusão do Festival de Inverno no calendário é um reconhecimento ao impacto positivo que o evento gera para o estado. Realizado anualmente, o festival atrai grandes nomes da música regional e nacional, promovendo também o artesanato, a gastronomia e as riquezas naturais de Pedro II, como o Morro do Gritador e as minas de opala. O Calendário de Eventos Turísticos faz parte do programa “Piauí, Aqui Tem Turismo” e estará disponível no site oficial da Setur a partir de 29 de janeiro. Com um layout oficial e informações detalhadas sobre cada festividade. A iniciativa tem como objetivo fortalecer o turismo no estado, promovendo eventos culturais, esportivos e gastronômicos que movimentam as economias locais e atraem visitantes de diferentes regiões do Brasil e até do exterior. A prefeita Betinha Brandão ressaltou que a inclusão do Festival de Inverno no calendário estadual é mais um passo para consolidar o evento como referência no circuito cultural brasileiro. “Estamos muito felizes em ver o Festival de Inverno mais uma vez reconhecido pela sua relevância. Este é um evento que impulsiona o turismo, movimenta a economia local e celebra a riqueza cultural da nossa cidade”, afirmou.",
-    href: "#",
+    href: "/blog",
+
   },
 ];
 

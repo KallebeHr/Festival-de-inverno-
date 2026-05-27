@@ -282,7 +282,7 @@
         </div>
       </div>
     </transition>
-    <patrocinio-scrol />
+    <scrollP />
   </div>
 </template>
 
@@ -310,240 +310,90 @@ type BlogPost = {
 
 /* ─────────────────────────────────────────── Data (16 Posts) ── */
 const allPosts: BlogPost[] = [
-  {
+ 
+    {
     id: 1,
-    category: 'Bastidores',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-    author: 'Equipe Festival',
-    date: '28 Mai 2026',
-    dateIso: '2026-05-28',
-    readTime: '5 min',
+    category: "Cultura",
+    image:
+      "https://pedroii.pi.gov.br/imagens/conteudo/314-0_090620251519334.jpg",
+    author: "Prefeitura de Pedro II",
+    date: "09/06/2025 às 15h21",
+    dateIso: "2025-06-09",
+    readTime: "5 min de leitura",
     readTimeMinutes: 5,
-    title: 'Como nasceu o Festival de Inverno de Pedro II: história e tradição',
-    excerpt: 'Há mais de três décadas, o frio da Serra dos Ventos abraça artistas e visitantes em uma celebração única da cultura piauiense. Conheça a história por trás do maior festival do Nordeste.',
-    href: '#',
-    featured: true,
+    title: "Prefeitura de Pedro II regulamenta Festival de Inverno com foco na organização, segurança e sustentabilidade",
+    excerpt:
+      "A Prefeitura de Pedro II publicou, no Diário Oficial dos Municípios, o Decreto nº 197/2025, que estabelece normas para a realização da 19ª edição do Festival de Inverno, agendada para ocorrer entre os dias 19 e 22 de junho. O regulamento busca garantir a segurança, a ordem urbana e a preservação ambiental durante o evento, um dos maiores do calendário cultural do Piauí. Dentre as principais medidas adotadas, está a proibição da instalação de barracas em ruas e praças centrais, como a Praça Domingos Mourão Filho e a Praça Deputado Milton Brandão, além da vedação ao comércio ambulante no entorno dos palcos principais. O decreto também impede o uso de recipientes de vidro, a emissão de sons automotivos e shows particulares nas imediações do evento, promovendo o controle da poluição sonora. A circulação de veículos será restrita nas áreas de maior fluxo, com horários específicos para carga e descarga. Também ficam proibidas obras ou intervenções em imóveis no quadrilátero histórico da cidade durante o festival. Já nos pontos turísticos, como a Cachoeira do Salto Liso e o Mirante do Gritador, o acesso será limitado e condicionado a autorizações da Prefeitura, visando preservar o meio ambiente. Outro destaque é a regulamentação do uso de publicidade: apenas marcas e instituições patrocinadoras poderão expor logomarcas nos espaços públicos do evento. O uso de drones e outras tecnologias de captação aérea também está autorizado exclusivamente para fins jornalísticos ou culturais, mediante prévia solicitação. A prefeita Betinha Brandão reforça que o decreto visa garantir uma experiência segura, organizada e acessível a todos. A fiscalização será intensificada por agentes municipais, com apoio da Guarda Civil e da Procuradoria Geral do Município. O Festival de Inverno de Pedro II é reconhecido por lei como patrimônio cultural do município e está inserido no calendário turístico do Estado.",
+    href: "#",
   },
   {
     id: 2,
-    category: 'Atrações',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Marcos Viana',
-    date: '25 Mai 2026',
-    dateIso: '2026-05-25',
-    readTime: '4 min',
-    readTimeMinutes: 4,
-    title: 'O Palco Opala: onde o jazz e o blues se encontram na serra',
-    excerpt: 'A fusão perfeita entre os ritmos afro-americanos e a brisa fria da praça matriz. Confira as atrações internacionais confirmadas para este ano.',
-    href: '#',
+    category: "Ecoturismo",
+    image:
+      "https://pedroii.pi.gov.br/imagens/conteudo/311-0_11062025084250.jpeg",
+    author: "Prefeitura de Pedro II",
+    date: "11/06/2025 às 8h42",
+    dateIso: "2025-06-11",
+    readTime: "3 min",
+    readTimeMinutes: 2,
+    title: "Pedro II promove ecoturismo com trilhas, cachoeiras e ação ambiental durante o Festival de Inverno",
+    excerpt:
+      "Natureza que encanta, memórias que permanecem! Com esse lema, a Prefeitura de Pedro II convida turistas e moradores a participarem de uma experiência única de ecoturismo durante o Festival de Inverno 2025. Entre os dias 19 e 22 de junho, sempre das 7h às 10h, será realizada a ação “Trilhas, Cachoeiras e Bosque do Turista”, na Serra dos Matões, com ponto de partida na entrada da trilha para a Cachoeira do Salto Liso. A iniciativa é coordenada pelas Secretarias Municipais de Meio Ambiente e Turismo, em parceria com a Secretaria Estadual de Meio Ambiente e Recursos Hídricos (SEMARH), e propõe uma vivência que une contemplação da natureza, atividade física e educação ambiental. Durante o percurso ecológico, guiado por profissionais capacitados, os participantes irão explorar cenários naturais de tirar o fôlego até chegar à cachoeira do Salto Liso, uma das mais belas da região. Além disso, o projeto inclui uma ação simbólica e sustentável: cada visitante será convidado a plantar uma muda de árvore nativa no Bosque do Turista, espaço que representa o vínculo entre quem visita Pedro II e o compromisso com a preservação ambiental. “A proposta é proporcionar uma experiência inesquecível de contato com a natureza, valorizando o nosso patrimônio ambiental e incentivando práticas de sustentabilidade entre os participantes”, destaca a prefeita Betinha Brandão. A atividade é gratuita e faz parte da programação oficial do Festival de Inverno, um dos eventos culturais e turísticos mais importantes do Piauí. Para participar, recomenda-se o uso de roupas leves, calçados adequados para trilha e levar água para hidratação. SERVIÇO ECOTURISMO – TRILHAS, CACHOEIRAS E BOSQUE DO TURISTA Dias: 19 a 22/06/2025, de 7h às 10h Local: Serra dos Matões - Entrada da trilha para a Cachoeira do Salto Liso Coordenado pelas Secretarias Municipal de Meio Ambiente, Secretaria de Turismo e Secretaria Estadual de Meio Ambiente e Recursos Hídricos - SEMARH Durante o Festival de Inverno, o projeto Bosque do Turista convida para uma trilha ecológica guiada por profissionais experientes, passando por paisagens deslumbrantes até a Cachoeira do Salto Liso. Ao longo do percurso, os participantes terão a oportunidade de plantar uma árvore nativa em um bosque criado para simbolizar a conexão entre o visitante e a natureza.",
+    href: "#",
   },
   {
     id: 3,
-    category: 'Culinária',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Maria Fernanda',
-    date: '22 Mai 2026',
-    dateIso: '2026-05-22',
-    readTime: '3 min',
-    readTimeMinutes: 3,
-    title: 'Os sabores imperdíveis da gastronomia típica do festival',
-    excerpt: 'Do arroz de forno à rapadura com queijo, descubra os pratos que fazem parte da memória afetiva do Festival de Inverno.',
-    href: '#',
+    category: "Atrações",
+    image:
+      "https://ecrie.com.br/sistema/conteudos/imagem/m_274_0_1_07052026195648.png",
+    author: "Carlos Nogueira",
+    date: "07/05/2026 às 16h00",
+    dateIso: "2026-05-07",
+    readTime: "4 min",
+    readTimeMinutes: 4,
+    title: "FIP2: Prefeitura divulga resultado final da seleção de bandas do Palco Mirante",
+    excerpt:
+      "A Prefeitura de Pedro II divulgou o resultado final do Edital nº 003/2026, referente à seleção de bandas que irão compor a programação do Palco Mirante durante a 20ª edição do Festival de Inverno de Pedro II que acontecerá de 4 a 7 de junho. Ao todo, foram recebidas 42 propostas de bandas interessadas em participar do processo seletivo. Após a análise documental e avaliação técnica, 6 propostas foram aprovadas para integrar a programação oficial do festival. A seleção foi conduzida conforme os critérios estabelecidos no edital, assegurando lisura, transparência e reconhecimento aos artistas que farão parte da programação de um dos mais importantes eventos culturais do estado..",
+    href: "#",
   },
   {
     id: 4,
-    category: 'Dicas',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Carla Mendes',
-    date: '20 Mai 2026',
-    dateIso: '2026-05-20',
-    readTime: '2 min',
-    readTimeMinutes: 2,
-    title: 'O que vestir no Festival: dicas para enfrentar o frio com estilo',
-    excerpt: 'Esqueça que você está no Piauí! À noite, os termômetros caem bastante. Veja como montar looks em camadas sem perder a elegância.',
-    href: '#',
-  },
-  {
-    id: 5,
-    category: 'Cultura',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Renata Alves',
-    date: '18 Mai 2026',
-    dateIso: '2026-05-18',
-    readTime: '6 min',
-    readTimeMinutes: 6,
-    title: 'O garimpo de opala: conheça as minas preciosas de Pedro II',
-    excerpt: 'Único lugar do Brasil onde se encontra a Opala nobre. Saiba como o turismo de joias se mistura com a energia artística do festival.',
-    href: '#',
-  },
-  {
-    id: 6,
-    category: 'Atrações',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Carlos Nogueira',
-    date: '15 Mai 2026',
-    dateIso: '2026-05-15',
-    readTime: '4 min',
+    category: "Turismo",
+    image:
+      "https://pedroii.pi.gov.br/imagens/conteudo/326-0_27012025081106.jpeg",
+    author: "Prefeitura de Pedro II",
+    date: "26/01/2025 às 8h21",
+    dateIso: "2025-01-26",
+    readTime: "4 min",
     readTimeMinutes: 4,
-    title: 'Cinco shows que você não pode perder nesta edição',
-    excerpt: 'De artistas locais a nomes nacionais, a grade desta edição promete noites inesquecíveis na Praça da Matriz com palcos ao ar livre.',
-    href: '#',
+    title: "Festival de Inverno de Pedro II é incluído no Calendário de Eventos Turísticos do Piauí",
+    excerpt:
+      "O Festival de Inverno de Pedro II, considerado um dos maiores eventos culturais do estado, foi oficialmente incluído no primeiro Calendário de Eventos Turísticos do Piauí, lançado pelo Governo do Estado por meio da Secretaria de Turismo (Setur). O festival faz parte de uma seleta lista de 234 eventos escolhidos entre mais de 300 inscrições, reforçando a relevância do município como um dos principais destinos turísticos do Piauí. A inclusão do Festival de Inverno no calendário é um reconhecimento ao impacto positivo que o evento gera para o estado. Realizado anualmente, o festival atrai grandes nomes da música regional e nacional, promovendo também o artesanato, a gastronomia e as riquezas naturais de Pedro II, como o Morro do Gritador e as minas de opala. O Calendário de Eventos Turísticos faz parte do programa “Piauí, Aqui Tem Turismo” e estará disponível no site oficial da Setur a partir de 29 de janeiro. Com um layout oficial e informações detalhadas sobre cada festividade. A iniciativa tem como objetivo fortalecer o turismo no estado, promovendo eventos culturais, esportivos e gastronômicos que movimentam as economias locais e atraem visitantes de diferentes regiões do Brasil e até do exterior. A prefeita Betinha Brandão ressaltou que a inclusão do Festival de Inverno no calendário estadual é mais um passo para consolidar o evento como referência no circuito cultural brasileiro. “Estamos muito felizes em ver o Festival de Inverno mais uma vez reconhecido pela sua relevância. Este é um evento que impulsiona o turismo, movimenta a economia local e celebra a riqueza cultural da nossa cidade”, afirmou.",
+    href: "#",
   },
-  {
-    id: 7,
-    category: 'Culinária',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
 
-    author: 'Júlia Soares',
-    date: '12 Mai 2026',
-    dateIso: '2026-05-12',
-    readTime: '3 min',
-    readTimeMinutes: 3,
-    title: 'Café com bolo frito: a tradição matinal dos pedros-segundenses',
-    excerpt: 'A melhor forma de curar a ressaca dos shows é acordar cedo e provar a especiaria local nas feirinhas ao redor da igreja.',
-    href: '#',
-  },
-  {
-    id: 8,
-    category: 'Dicas',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Júlia Soares',
-    date: '10 Mai 2026',
-    dateIso: '2026-05-10',
-    readTime: '2 min',
-    readTimeMinutes: 2,
-    title: 'Guia completo: como aproveitar o festival sem perder nada',
-    excerpt: 'Hospedagem, transporte, programação e tudo o que você precisa saber para viver o melhor do Festival de Inverno de Pedro II.',
-    href: '#',
-  },
-  {
-    id: 9,
-    category: 'Bastidores',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Paulo Menezes',
-    date: '08 Mai 2026',
-    dateIso: '2026-05-08',
-    readTime: '5 min',
-    readTimeMinutes: 5,
-    title: 'Segurança e logística: a cidade preparada para 40 mil pessoas',
-    excerpt: 'Um plano de ação detalhado transforma a pacata cidade serrana em um polo seguro de entretenimento 24 horas por dia.',
-    href: '#',
-  },
-  {
-    id: 10,
-    category: 'Atrações',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Thiago Bezerra',
-    date: '05 Mai 2026',
-    dateIso: '2026-05-05',
-    readTime: '3 min',
-    readTimeMinutes: 3,
-    title: 'Artistas regionais ganham destaque no Palco Tenda',
-    excerpt: 'Um espaço totalmente dedicado à música autoral piauiense, revelando talentos que misturam rock, baião e MPB.',
-    href: '#',
-  },
-  {
-    id: 11,
-    category: 'Dicas',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Rafael Costa',
-    date: '03 Mai 2026',
-    dateIso: '2026-05-03',
-    readTime: '4 min',
-    readTimeMinutes: 4,
-    title: 'Rotas alternativas: como chegar a Pedro II fugindo do trânsito',
-    excerpt: 'Com a BR-343 lotada, moradores revelam caminhos e horários estratégicos para garantir uma viagem tranquila até a serra.',
-    href: '#',
-  },
-  {
-    id: 12,
-    category: 'Cultura',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Renata Alves',
-    date: '01 Mai 2026',
-    dateIso: '2026-05-01',
-    readTime: '6 min',
-    readTimeMinutes: 6,
-    title: 'Artesanato local: os mestres que guardam a alma do Piauí',
-    excerpt: 'Bordados, cerâmica e trançados contam histórias de gerações. Conheça os artesãos que expõem no festival.',
-    href: '#',
-  },
-  {
-    id: 13,
-    category: 'Bastidores',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Paulo Menezes',
-    date: '29 Abr 2026',
-    dateIso: '2026-04-29',
-    readTime: '4 min',
-    readTimeMinutes: 4,
-    title: 'A montagem dos palcos: 72 horas antes do festival começar',
-    excerpt: 'Mais de 200 técnicos e voluntários trabalham incessantemente para transformar a cidade em um grande palco.',
-    href: '#',
-  },
-  {
-    id: 14,
-    category: 'Cultura',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Viviane Nunes',
-    date: '25 Abr 2026',
-    dateIso: '2026-04-25',
-    readTime: '5 min',
-    readTimeMinutes: 5,
-    title: 'A arquitetura colonial preservada no centro histórico',
-    excerpt: 'Passear pelas ruas de paralelepípedo de Pedro II é fazer uma viagem no tempo admirando casarões seculares.',
-    href: '#',
-  },
-  {
-    id: 15,
-    category: 'Culinária',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Isabela Ramos',
-    date: '20 Abr 2026',
-    dateIso: '2026-04-20',
-    readTime: '3 min',
-    readTimeMinutes: 3,
-    title: 'Festival de Cervejas Artesanais: as novidades desta edição',
-    excerpt: 'Mestres cervejeiros de todo o Nordeste trazem estilos exclusivos, incluindo a famosa IPA com toque de caju.',
-    href: '#',
-  },
-  {
-    id: 16,
-    category: 'Bastidores',
-    image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1400&q=80',
-
-    author: 'Equipe Festival',
-    date: '15 Abr 2026',
-    dateIso: '2026-04-15',
-    readTime: '2 min',
-    readTimeMinutes: 2,
-    title: 'A cobertura fotográfica: o festival pelas lentes locais',
-    excerpt: 'Conheça o coletivo de fotógrafos de Pedro II que vira a noite capturando a magia dos shows e do público.',
-    href: '#',
-  }
 ]
 
 /* ─────────────────────────────────────────── Categories ── */
 const categoryMap: Record<string, { icon: string; label: string }> = {
-  all:        { icon: '✦', label: 'Todos' },
-  Bastidores: { icon: '🎬', label: 'Bastidores' },
-  Culinária:  { icon: '🍽️', label: 'Culinária' },
-  Atrações:   { icon: '🎶', label: 'Atrações' },
-  Dicas:      { icon: '🗺️', label: 'Dicas' },
-  Cultura:    { icon: '🎨', label: 'Cultura' },
+  all:         { icon: '✦', label: 'Todos' },
+
+  Cultura:     { icon: '🎨', label: 'Cultura' },
+  Ecoturismo:  { icon: '🌿', label: 'Ecoturismo' },
+  Atrações:    { icon: '🎶', label: 'Atrações' },
+  Turismo:     { icon: '🧳', label: 'Turismo' },
+
+  Gastronomia: { icon: '🍽️', label: 'Gastronomia' },
+  Eventos:     { icon: '🎉', label: 'Eventos' },
+  Notícias:    { icon: '📰', label: 'Notícias' },
+  MeioAmbiente:{ icon: '🌱', label: 'Meio Ambiente' },
+  História:    { icon: '🏛️', label: 'História' },
+  Música:      { icon: '🎵', label: 'Música' },
+  Artesanato:  { icon: '💎', label: 'Artesanato' },
+  Opala:       { icon: '💠', label: 'Opala' },
+  Trilhas:     { icon: '🥾', label: 'Trilhas' },
+  Cachoeiras:  { icon: '💦', label: 'Cachoeiras' },
+  Sustentabilidade: { icon: '♻️', label: 'Sustentabilidade' },
 }
 
 const categories = computed(() => {
@@ -660,8 +510,8 @@ async function share(post: BlogPost) {
 <style scoped>
 /* ── Design tokens ─────────────────────────────────────────────────────── */
 .blog-page {
-  --serif:  "Playfair Display", Georgia, serif;
-  --sans:   "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --serif:  'Rawline', sans-serif;
+  --sans:   'Rawline', sans-serif;
 
   --ink:          rgba(12, 14, 18, 0.95);
   --muted:        rgba(12, 14, 18, 0.55);
