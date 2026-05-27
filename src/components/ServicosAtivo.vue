@@ -968,8 +968,6 @@ onBeforeUnmount(() => {
   if (loadingTimer) {
     window.clearTimeout(loadingTimer);
   }
-
-  observer?.disconnect();
 });
 </script>
 
