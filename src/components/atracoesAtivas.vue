@@ -561,17 +561,31 @@ import {
   mdiStar,
   mdiStarOutline,
   mdiClose,
+
+  // Música / Shows
+  mdiMicrophone,
   mdiMicrophoneVariant,
-  mdiGuitarElectric,
-  mdiTheater,
-  mdiPaletteOutline,
-  mdiMovieOpenOutline,
-  mdiImageFilterHdr,
+  mdiMusic,
+  mdiMusicBoxMultiple,
+  mdiMusicCircle,
   mdiMusicNoteOutline,
+  mdiGuitarElectric,
+  mdiGuitarAcoustic,
+  mdiDisc,
+  mdiDiscPlayer,
+  mdiSaxophone,
+
+  // Cultura / experiências
   mdiAccountGroupOutline,
   mdiMapMarkerOutline,
   mdiForest,
-  mdiBookOpenVariant
+  mdiBookOpenVariant,
+
+  // Extras caso ainda utilize em outras seções
+  mdiTheater,
+  mdiPaletteOutline,
+  mdiMovieOpenOutline,
+  mdiImageFilterHdr
 } from "@mdi/js";
 
 /**
@@ -611,8 +625,10 @@ type Attraction = {
  * Estado visual
  */
 const root = ref<HTMLElement | null>(null);
+const isVisible = ref(false); // FIX: declarado — usado no :class do template
 const reduceMotion = ref(false);
 
+let observer: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
 let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
 
@@ -658,315 +674,466 @@ const locations: Location[] = [
     query: "Mirante do Gritador Pedro II PI"
   },
   {
+    id: "mercado-artesao",
+    name: "Mercado do Artesão",
+    query: "Mercado do Artesão Pedro II PI"
+  },
+  {
     id: "centro-historico",
     name: "Centro Histórico",
     query: "Centro Histórico Pedro II PI"
   },
   {
-    id: "teatro-cultura",
-    name: "Teatro da Cultura",
-    query: "Teatro da Cultura Pedro II PI"
+    id: "praca-matriz",
+    name: "Praça Domingos Mourão Filho",
+    query: "Praça Domingos Mourão Filho Pedro II PI"
   },
   {
-    id: "galeria-artes",
-    name: "Galeria de Artes",
-    query: "Galeria de Artes Pedro II PI"
+    id: "praca-bonelle",
+    name: "Praça Manoel Nogueira Lima",
+    query: "Praça Manoel Nogueira Lima Pedro II PI"
   },
   {
-    id: "vila-gastronomica",
-    name: "Vila Gastronômica",
-    query: "Vila Gastronômica Pedro II PI"
+    id: "espaco-cultural",
+    name: "Espaço Cultural 11 de Agosto",
+    query: "Espaço Cultural 11 de Agosto Pedro II PI"
   },
   {
-    id: "largo-matriz",
-    name: "Largo da Matriz",
-    query: "Largo da Matriz Pedro II PI"
+    id: "club-11-agosto",
+    name: "Club 11 de Agosto",
+    query: "Club 11 de Agosto Pedro II PI"
   },
   {
-    id: "rota-paisagens",
-    name: "Rota das Paisagens",
-    query: "Rota das Paisagens Pedro II PI"
+    id: "serra-matoes",
+    name: "Serra dos Matões",
+    query: "Serra dos Matões Pedro II PI"
+  },
+  {
+    id: "sitio-buritizinho",
+    name: "Sítio Buritizinho",
+    query: "Sítio Buritizinho Pedro II PI"
   }
 ];
 
 /**
- * Atrações fictícias / exemplo de produção
+ * Atrações oficiais FIP2 2026
  */
 const attractions = ref<Attraction[]>([
   {
     id: "at01",
     dayId: "2026-06-04",
-    time: "18:00",
-    title: "Abertura Instrumental da Serra",
-    artist: "Quarteto Horizonte Azul",
+    time: "17:00",
+    title: "Besouros da Silva",
+    artist: "Besouros da Silva",
     description:
-      "Uma apresentação de abertura marcada por arranjos instrumentais sensíveis, atmosfera contemplativa e leitura sonora inspirada na paisagem serrana e na identidade cultural da região.",
-    category: "Música",
-    mood: "Contemplativo",
+      "Show regional abrindo as apresentações culturais do Festival de Inverno de Pedro II.",
+    category: "Show",
+    mood: "Regional",
     audience: "Livre",
-    duration: "1h10",
+    duration: "1h",
     entry: "Gratuita",
-    locationId: "mirante-gritador",
+    locationId: "praca-matriz",
     featured: true,
     icon: mdiMusicNoteOutline,
     highlights: [
-      "paisagem e música integradas",
-      "clima de abertura do festival",
-      "repertório instrumental autoral",
-      "experiência ideal para contemplação"
+      "abertura cultural",
+      "show regional",
+      "palco ao ar livre",
+      "festival de inverno"
     ]
   },
   {
     id: "at02",
     dayId: "2026-06-04",
-    time: "20:30",
-    title: "Show de Abertura — Noite das Montanhas",
-    artist: "Coletivo Ventos do Norte",
+    time: "18:00",
+    title: "Cerimônia Oficial de Abertura",
+    artist: "Festival de Inverno de Pedro II",
     description:
-      "Grande show de abertura com repertório que mistura sonoridades nordestinas, arranjos contemporâneos, presença de palco forte e identidade visual imersiva.",
-    category: "Show",
-    mood: "Grandioso",
+      "Cerimônia institucional celebrando os 20 anos do Festival de Inverno de Pedro II.",
+    category: "Cerimônia",
+    mood: "Institucional",
     audience: "Livre",
-    duration: "2h",
+    duration: "1h",
     entry: "Gratuita",
-    locationId: "praca-eventos",
+    locationId: "praca-matriz",
     featured: true,
     icon: mdiMicrophoneVariant,
     highlights: [
-      "show principal da abertura",
-      "visual cênico marcante",
-      "mistura de tradição e contemporâneo",
-      "alto envolvimento do público"
+      "abertura oficial",
+      "festival 20 anos",
+      "momento institucional",
+      "evento principal"
     ]
   },
   {
     id: "at03",
-    dayId: "2026-06-05",
-    time: "09:00",
-    title: "Caminho Cantado pelo Centro Histórico",
-    artist: "Roteiro Coral Caminhos do Tempo",
+    dayId: "2026-06-04",
+    time: "19:00",
+    title: "Elder Luiz",
+    artist: "Elder Luiz",
     description:
-      "Experiência híbrida entre visita guiada e intervenção musical em pontos históricos da cidade, conectando memória, arquitetura e pequenas performances.",
-    category: "Experiência",
-    mood: "Afetivo",
+      "Apresentação musical com repertório regional e contemporâneo.",
+    category: "Show",
+    mood: "Vibrante",
     audience: "Livre",
     duration: "1h30",
     entry: "Gratuita",
-    locationId: "centro-historico",
-    featured: false,
-    icon: mdiMapMarkerOutline,
+    locationId: "praca-matriz",
+    featured: true,
+    icon: mdiGuitarElectric,
     highlights: [
-      "passeio com narrativa cultural",
-      "intervenções musicais leves",
-      "ótimo para visitantes",
-      "experiência de imersão local"
+      "show noturno",
+      "música regional",
+      "festival cultural",
+      "palco principal"
     ]
   },
   {
     id: "at04",
-    dayId: "2026-06-05",
-    time: "15:00",
-    title: "Mostra Visual — Cor, Pedra e Cidade",
-    artist: "Ateliê Horizonte",
+    dayId: "2026-06-04",
+    time: "23:00",
+    title: "Toni Garrido",
+    artist: "Toni Garrido",
     description:
-      "Intervenção visual com pintura expandida, projeções, texturas inspiradas na opala e ambientação artística que convida o público à contemplação e circulação.",
-    category: "Arte",
-    mood: "Imersivo",
+      "Grande atração nacional da noite de abertura do Festival de Inverno de Pedro II.",
+    category: "Show Nacional",
+    mood: "Grandioso",
     audience: "Livre",
-    duration: "2h",
+    duration: "1h30",
     entry: "Gratuita",
-    locationId: "galeria-artes",
-    featured: false,
-    icon: mdiPaletteOutline,
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiMicrophone,
     highlights: [
-      "instalação visual contemporânea",
-      "circulação livre do público",
-      "identidade conectada ao território",
-      "ótima para fotos e contemplação"
+      "atração nacional",
+      "show principal",
+      "grande público",
+      "palco opala"
     ]
   },
   {
     id: "at05",
     dayId: "2026-06-05",
-    time: "19:30",
-    title: "Corais da Serra na Matriz",
-    artist: "Encontro Coral da Serra",
+    time: "16:00",
+    title: "Zé Roraima",
+    artist: "Zé Roraima",
     description:
-      "Apresentação coral com repertório sensível e arranjos que dialogam com o espaço histórico, criando um momento de grande beleza acústica e emoção coletiva.",
-    category: "Concerto",
-    mood: "Solenemente emocionante",
+      "Show sunset no Mirante do Gritador com repertório regional.",
+    category: "Show",
+    mood: "Contemplativo",
     audience: "Livre",
-    duration: "1h15",
+    duration: "1h30",
     entry: "Gratuita",
-    locationId: "largo-matriz",
-    featured: true,
-    icon: mdiAccountGroupOutline,
+    locationId: "mirante-gritador",
+    featured: false,
+    icon: mdiMusic,
     highlights: [
-      "excelente acústica",
-      "repertório coral selecionado",
-      "clima emocional e histórico",
-      "atração ideal para final de tarde/noite"
+      "show sunset",
+      "mirante do gritador",
+      "música regional",
+      "vista panorâmica"
     ]
   },
   {
     id: "at06",
     dayId: "2026-06-05",
-    time: "21:30",
-    title: "Noite Pop Nordeste",
-    artist: "Solar Elétrico + convidados",
+    time: "17:30",
+    title: "DJ Bossa",
+    artist: "DJ Bossa",
     description:
-      "Show dançante com energia alta, repertório acessível, identidade nordestina pop e participação de artistas convidados em uma noite de grande circulação.",
-    category: "Show",
-    mood: "Vibrante",
-    audience: "Jovens e adultos",
-    duration: "2h20",
+      "Set eletrônico sunset no Mirante do Gritador durante o festival.",
+    category: "DJ Set",
+    mood: "Animado",
+    audience: "Livre",
+    duration: "1h30",
     entry: "Gratuita",
-    locationId: "praca-eventos",
-    featured: true,
-    icon: mdiGuitarElectric,
+    locationId: "mirante-gritador",
+    featured: false,
+    icon: mdiDisc,
     highlights: [
-      "show de alta energia",
-      "repertório popular e atual",
-      "ótimo para grande público",
-      "presença forte de palco"
+      "sunset eletrônico",
+      "dj set",
+      "festival ao ar livre",
+      "vista da serra"
     ]
   },
   {
     id: "at07",
-    dayId: "2026-06-06",
-    time: "07:00",
-    title: "Vivência do Amanhecer na Serra",
-    artist: "Coletivo Respira Serra",
+    dayId: "2026-06-05",
+    time: "20:30",
+    title: "Marina Sena",
+    artist: "Marina Sena",
     description:
-      "Experiência ao ar livre com respiração guiada, contemplação, silêncio ativo e conexão com a paisagem natural em um momento mais íntimo do festival.",
-    category: "Vivência",
-    mood: "Calmo",
+      "Show nacional com repertório pop e alternativo no Palco Opala.",
+    category: "Show Nacional",
+    mood: "Vibrante",
     audience: "Livre",
-    duration: "1h20",
+    duration: "1h30",
     entry: "Gratuita",
-    locationId: "rota-paisagens",
-    featured: false,
-    icon: mdiForest,
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiMicrophoneVariant,
     highlights: [
-      "contato com a natureza",
-      "ambiente silencioso e leve",
-      "ótima experiência matinal",
-      "bem-estar e contemplação"
+      "atração nacional",
+      "show pop",
+      "festival de inverno",
+      "palco opala"
     ]
   },
   {
     id: "at08",
-    dayId: "2026-06-06",
-    time: "14:30",
-    title: "Cine Encontro — Memórias do Norte",
-    artist: "Mostra Audiovisual do Festival",
+    dayId: "2026-06-05",
+    time: "20:30",
+    title: "Adelson Viana & Jazz no Fole",
+    artist: "Adelson Viana",
     description:
-      "Sessão comentada com filmes curtos, registros poéticos e material audiovisual que valoriza cultura, território e identidade visual do norte do estado.",
-    category: "Cinema",
-    mood: "Reflexivo",
+      "Encontro especial de jazz e música nordestina com convidados.",
+    category: "Jazz",
+    mood: "Imersivo",
     audience: "Livre",
-    duration: "1h40",
+    duration: "2h",
     entry: "Gratuita",
-    locationId: "teatro-cultura",
-    featured: false,
-    icon: mdiMovieOpenOutline,
+    locationId: "centro-historico",
+    featured: true,
+    icon: mdiSaxophone,
     highlights: [
-      "mostra comentada",
-      "conteúdo cultural e poético",
-      "ótima opção em horário de tarde",
-      "experiência de pausa e reflexão"
+      "jazz nordestino",
+      "música instrumental",
+      "praça do jazz",
+      "festival cultural"
     ]
   },
   {
     id: "at09",
     dayId: "2026-06-06",
-    time: "18:30",
-    title: "Encontro de Danças Urbanas e Regionais",
-    artist: "Núcleo Movimento Livre",
+    time: "16:00",
+    title: "Haynna",
+    artist: "Haynna",
     description:
-      "Apresentação híbrida reunindo linguagens coreográficas populares e contemporâneas, com grupos convidados, interação visual e forte presença corporal.",
-    category: "Dança",
-    mood: "Expressivo",
+      "Show musical ao pôr do sol no Mirante do Gritador.",
+    category: "Show",
+    mood: "Pop",
     audience: "Livre",
     duration: "1h30",
     entry: "Gratuita",
-    locationId: "praca-eventos",
+    locationId: "mirante-gritador",
     featured: false,
-    icon: mdiTheater,
+    icon: mdiMicrophone,
     highlights: [
-      "mistura de linguagens",
-      "dinâmica visual forte",
-      "ótimo ritmo de palco",
-      "atração envolvente para várias idades"
+      "show sunset",
+      "música ao vivo",
+      "palco mirante",
+      "festival cultural"
     ]
   },
   {
     id: "at10",
     dayId: "2026-06-06",
-    time: "22:00",
-    title: "Show Principal — Sons da Neblina",
-    artist: "Aurora Atlântica",
+    time: "17:30",
+    title: "DJ Pirão e Lakraya",
+    artist: "DJ Pirão e Lakraya",
     description:
-      "Atração central da noite com proposta imersiva, visual de palco expandido, repertório intenso e atmosfera desenhada para o ápice do festival.",
-    category: "Show",
-    mood: "Épico",
+      "Set colaborativo com música eletrônica e atmosfera vibrante.",
+    category: "DJ Set",
+    mood: "Vibrante",
     audience: "Livre",
     duration: "2h",
     entry: "Gratuita",
-    locationId: "praca-eventos",
-    featured: true,
-    icon: mdiMicrophoneVariant,
+    locationId: "mirante-gritador",
+    featured: false,
+    icon: mdiDiscPlayer,
     highlights: [
-      "atração principal do sábado",
-      "palco e luz com grande impacto",
-      "repertório preparado para ápice",
-      "momento de alta concentração de público"
+      "música eletrônica",
+      "sunset festival",
+      "energia alta",
+      "show colaborativo"
     ]
   },
   {
     id: "at11",
-    dayId: "2026-06-07",
-    time: "10:00",
-    title: "Contação Encantada para Famílias",
-    artist: "Coletivo Palavra Viva",
+    dayId: "2026-06-06",
+    time: "18:30",
+    title: "Big Band Paulo Dantas",
+    artist: "Big Band Paulo Dantas",
     description:
-      "Momento voltado para crianças e famílias com contação de histórias, mediação lúdica, musicalidade leve e valorização do imaginário regional.",
-    category: "Família",
-    mood: "Acolhedor",
-    audience: "Famílias e crianças",
-    duration: "55min",
+      "Grande concerto instrumental reunindo jazz e música brasileira.",
+    category: "Jazz",
+    mood: "Épico",
+    audience: "Livre",
+    duration: "2h",
     entry: "Gratuita",
     locationId: "centro-historico",
-    featured: false,
-    icon: mdiBookOpenVariant,
+    featured: true,
+    icon: mdiMusicCircle,
     highlights: [
-      "atração ideal para famílias",
-      "linguagem acessível",
-      "ambiente acolhedor",
-      "forte apelo educativo e cultural"
+      "concerto instrumental",
+      "praça do jazz",
+      "big band",
+      "festival cultural"
     ]
   },
   {
     id: "at12",
-    dayId: "2026-06-07",
-    time: "17:30",
-    title: "Celebração Visual do Entardecer",
-    artist: "Laboratório de Luz e Paisagem",
+    dayId: "2026-06-06",
+    time: "22:30",
+    title: "Titãs",
+    artist: "Titãs",
     description:
-      "Intervenção de encerramento de tarde com luz, cor, ambientação sonora e leitura estética da paisagem, preparando o público para os momentos finais do festival.",
-    category: "Experiência",
-    mood: "Poético",
+      "Grande show nacional de rock brasileiro no Festival de Inverno de Pedro II.",
+    category: "Rock",
+    mood: "Épico",
     audience: "Livre",
-    duration: "1h",
+    duration: "2h",
+    entry: "Gratuita",
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiGuitarAcoustic,
+    highlights: [
+      "rock nacional",
+      "show principal",
+      "atração histórica",
+      "palco opala"
+    ]
+  },
+  {
+    id: "at13",
+    dayId: "2026-06-07",
+    time: "16:00",
+    title: "Deepmoon",
+    artist: "Deepmoon",
+    description:
+      "Experiência musical sunset no Mirante do Gritador.",
+    category: "Show",
+    mood: "Atmosférico",
+    audience: "Livre",
+    duration: "1h30",
     entry: "Gratuita",
     locationId: "mirante-gritador",
     featured: false,
-    icon: mdiImageFilterHdr,
+    icon: mdiMusicCircle,
     highlights: [
-      "ótimo momento para contemplação",
-      "visual delicado e bonito",
-      "clima de despedida do festival",
-      "integração entre arte e paisagem"
+      "show sunset",
+      "clima contemplativo",
+      "paisagem natural",
+      "festival cultural"
+    ]
+  },
+  {
+    id: "at14",
+    dayId: "2026-06-07",
+    time: "17:30",
+    title: "Banda Spacial",
+    artist: "Banda Spacial",
+    description:
+      "Encerramento musical da programação do Mirante do Gritador.",
+    category: "Show",
+    mood: "Grandioso",
+    audience: "Livre",
+    duration: "2h",
+    entry: "Gratuita",
+    locationId: "mirante-gritador",
+    featured: true,
+    icon: mdiMusicBoxMultiple,
+    highlights: [
+      "encerramento",
+      "show ao vivo",
+      "festival de inverno",
+      "palco mirante"
+    ]
+  },
+  {
+    id: "at15",
+    dayId: "2026-06-07",
+    time: "21:00",
+    title: "Roupa Nova",
+    artist: "Roupa Nova",
+    description:
+      "Grande show nacional encerrando o Festival de Inverno de Pedro II 2026.",
+    category: "Show Nacional",
+    mood: "Emocionante",
+    audience: "Livre",
+    duration: "2h",
+    entry: "Gratuita",
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiMicrophoneVariant,
+    highlights: [
+      "encerramento oficial",
+      "show nacional",
+      "clássicos da música brasileira",
+      "grande público"
+    ]
+  },
+
+  {
+    id: "at16",
+    dayId: "2026-06-04",
+    time: "21:00",
+    title: "De Hermeto para Dominguinhos",
+    artist: "De Hermeto para Dominguinhos",
+    description:
+      "Espetáculo musical em homenagem a dois gigantes da música brasileira, reunindo o universo sonoro de Hermeto Pascoal e Dominguinhos.",
+    category: "Show",
+    mood: "Contemplativo",
+    audience: "Livre",
+    duration: "1h30",
+    entry: "Gratuita",
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiMusicCircle,
+    highlights: [
+      "homenagem a Hermeto e Dominguinhos",
+      "música instrumental brasileira",
+      "palco opala",
+      "noite de abertura"
+    ]
+  },
+
+  {
+    id: "at17",
+    dayId: "2026-06-04",
+    time: "01:00",
+    title: "Ferrugem",
+    artist: "Ferrugem",
+    description:
+      "Show de pagode e samba com um dos maiores nomes do gênero na atualidade.",
+    category: "Show Nacional",
+    mood: "Vibrante",
+    audience: "Livre",
+    duration: "1h30",
+    entry: "Gratuita",
+    locationId: "praca-bonelle",
+    featured: true,
+    icon: mdiMicrophone,
+    highlights: [
+      "pagode ao vivo",
+      "show nacional",
+      "palco opala",
+      "madrugada do festival"
+    ]
+  },
+
+  {
+    id: "at18",
+    dayId: "2026-06-04",
+    time: "03:00",
+    title: "Puro Samba",
+    artist: "Soraya Castelo Branco e Banda",
+    description:
+      "Encerramento da madrugada de abertura com muito samba e energia no Palco Opala.",
+    category: "Show",
+    mood: "Animado",
+    audience: "Livre",
+    duration: "1h30",
+    entry: "Gratuita",
+    locationId: "praca-bonelle",
+    featured: false,
+    icon: mdiMusicNoteOutline,
+    highlights: [
+      "puro samba",
+      "Soraya Castelo Branco",
+      "palco opala",
+      "encerramento da madrugada"
     ]
   }
 ]);
@@ -1131,6 +1298,15 @@ onMounted(() => {
     }
   }
 
+  // FIX: IntersectionObserver para isVisible
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      isVisible.value = entry.isIntersecting;
+    },
+    { threshold: 0.05 }
+  );
+  if (root.value) observer.observe(root.value);
+
   mq = window.matchMedia("(prefers-reduced-motion: reduce)");
   reduceMotion.value = mq.matches;
 
@@ -1140,13 +1316,12 @@ onMounted(() => {
 
   mq.addEventListener?.("change", onMqChange);
 
-
-
   window.addEventListener("keydown", onEscape);
 });
 
 onBeforeUnmount(() => {
-
+  // FIX: desconectar o observer
+  observer?.disconnect();
 
   if (mq && onMqChange) {
     mq.removeEventListener?.("change", onMqChange);
@@ -1167,13 +1342,13 @@ const onEscape = (event: KeyboardEvent) => {
 /* ── Design Tokens do DNA ──────────────────────────────────────────────── */
 .attractions {
   /* Tipografia */
-  --serif: "Playfair Display", Georgia, serif;
-  --sans: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --serif: 'Rawline', sans-serif;
+  --sans: 'Rawline', sans-serif;
 
   /* Cores Base */
   --accent: #01195a;
   --accent-strong: #01195a;
-  --accent-soft: rgba(49, 110, 185, 0.08);
+  --accent-soft: rgba(1, 25, 90, 0.08); /* FIX: RGB correto de #01195a */
   --gold: #ede53a;
 
   /* Neutros e Superfícies */
@@ -1186,11 +1361,12 @@ const onEscape = (event: KeyboardEvent) => {
   /* Sombras */
   --shadow-sm: 0 8px 22px rgba(12, 14, 18, 0.05);
   --shadow-md: 0 18px 42px rgba(12, 14, 18, 0.10);
+  --shadow-modal: 0 32px 80px rgba(12, 14, 18, 0.22), 0 8px 24px rgba(12, 14, 18, 0.10); /* FIX: token faltante */
 
   position: relative;
   overflow: clip;
   padding: 40px 0 110px;
-  background: var(--paper-soft); /* Fundo geral da página */
+  background: var(--paper-soft);
   font-family: var(--sans);
   color: var(--ink);
   min-height: 100vh;
@@ -1221,7 +1397,7 @@ const onEscape = (event: KeyboardEvent) => {
   margin: 0 auto;
 }
 
-/* ── HERO / HEADER (O DNA Azul Marinho) ─────────────────────────────────── */
+/* ── HERO ───────────────────────────────────────────────────────────────── */
 .attractions__hero {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -1229,7 +1405,6 @@ const onEscape = (event: KeyboardEvent) => {
   align-items: center;
   margin-top: 3rem;
   margin-bottom: 32px;
-  
   background: var(--accent);
   padding: 48px;
   border-radius: 24px;
@@ -1239,7 +1414,6 @@ const onEscape = (event: KeyboardEvent) => {
   overflow: hidden;
 }
 
-/* Textura sutil no fundo do hero */
 .attractions__hero::before {
   content: "";
   position: absolute;
@@ -1278,7 +1452,7 @@ const onEscape = (event: KeyboardEvent) => {
 
 @keyframes pulse-dot {
   0%, 100% { transform: scale(1);    opacity: 1; }
-  50%      { transform: scale(1.4);  opacity: 0.7; }
+  50%       { transform: scale(1.4); opacity: 0.7; }
 }
 
 .attractions__title {
@@ -1329,9 +1503,7 @@ const onEscape = (event: KeyboardEvent) => {
   border: 1px solid transparent;
 }
 
-.attractions__hero-btn:hover {
-  transform: translateY(-2px);
-}
+.attractions__hero-btn:hover { transform: translateY(-2px); }
 
 .attractions__hero-btn--primary {
   background: var(--gold);
@@ -1347,11 +1519,8 @@ const onEscape = (event: KeyboardEvent) => {
   -webkit-backdrop-filter: blur(8px);
 }
 
-.attractions__hero-btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+.attractions__hero-btn--ghost:hover { background: rgba(255, 255, 255, 0.2); }
 
-/* Glassmorphism Stats */
 .attractions__hero-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1446,7 +1615,7 @@ const onEscape = (event: KeyboardEvent) => {
 
 .attractions__clear-btn:hover {
   transform: translateY(-1px);
-  background: rgba(49, 110, 185, 0.12);
+  background: rgba(1, 25, 90, 0.12);
 }
 
 .attractions__filters-grid {
@@ -1456,6 +1625,7 @@ const onEscape = (event: KeyboardEvent) => {
 }
 
 .field { min-width: 0; }
+
 .field__label {
   display: inline-block;
   margin-bottom: 8px;
@@ -1466,7 +1636,9 @@ const onEscape = (event: KeyboardEvent) => {
 }
 
 .field__control { position: relative; }
-.field__control--search, .field__control--select {
+
+.field__control--search,
+.field__control--select {
   min-height: 48px;
   border-radius: 12px;
   border: 1px solid var(--line);
@@ -1474,7 +1646,8 @@ const onEscape = (event: KeyboardEvent) => {
   transition: 180ms ease;
 }
 
-.field__control--search:focus-within, .field__control--select:focus-within {
+.field__control--search:focus-within,
+.field__control--select:focus-within {
   border-color: var(--accent);
   background: var(--paper);
   box-shadow: 0 0 0 3px rgba(1, 25, 90, 0.08);
@@ -1484,102 +1657,216 @@ const onEscape = (event: KeyboardEvent) => {
 .field__icon, .field__arrow { display: inline-flex; align-items: center; justify-content: center; color: var(--muted); }
 .field__icon { margin-right: 10px; }
 
-.field__input, .field__select {
-  width: 100%; min-height: 48px; border: 0; background: transparent;
-  color: var(--ink); font-family: var(--sans); font-size: 15px; font-weight: 600; outline: none;
+.field__input,
+.field__select {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
 }
+
 .field__input::placeholder { color: rgba(17, 17, 17, 0.42); }
 .field__select { appearance: none; padding: 0 42px 0 14px; cursor: pointer; }
 .field__arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 .field__hint { margin: 8px 0 0; color: var(--muted); font-family: var(--sans); font-size: 13px; }
 
 .attractions__filters-bottom {
-  display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  margin-top: 20px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
 }
 
 .attractions__chips { display: flex; gap: 10px; flex-wrap: wrap; }
+
 .attractions__chip {
-  min-height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line);
-  background: var(--paper-soft); color: var(--muted); display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: 180ms ease;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper-soft);
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 180ms ease;
 }
-.attractions__chip:hover { transform: translateY(-2px); border-color: rgba(49, 110, 185, 0.2); }
+
+.attractions__chip:hover { transform: translateY(-2px); border-color: rgba(1, 25, 90, 0.2); }
 .attractions__chip.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .chip__icon { width: 16px; height: 16px; fill: currentColor; }
 
-.attractions__result-text, .attractions__section-sub {
-  margin: 0; color: var(--muted); font-family: var(--sans); font-size: 15px;
+.attractions__result-text,
+.attractions__section-sub {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 15px;
 }
+
 .attractions__result-text strong { color: var(--ink); font-weight: 800; }
 
-/* ── FEATURED E LISTAS GERAIS ───────────────────────────────────────────── */
-.attractions__featured, .attractions__groups { display: grid; gap: 18px; margin-bottom: 32px; }
-.attractions__section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
+/* ── FEATURED ───────────────────────────────────────────────────────────── */
+.attractions__featured,
+.attractions__groups { display: grid; gap: 18px; margin-bottom: 32px; }
 
+.attractions__section-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
 .attractions__featured-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 
-/* CARDS: DNA Profundidade */
 .featured-card {
-  min-height: 100%; padding: 20px; border-radius: 20px; border: 1px solid var(--line);
-  background: linear-gradient(180deg, #fff, #f7f9fc); box-shadow: var(--shadow-sm);
-  display: flex; flex-direction: column; transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  min-height: 100%;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #fff, #f7f9fc);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
 @media (hover: hover) {
-  .featured-card:hover, .attraction-card:hover {
-    transform: translateY(-4px); border-color: rgba(49, 110, 185, 0.18); box-shadow: var(--shadow-md);
+  .featured-card:hover,
+  .attraction-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(1, 25, 90, 0.18);
+    box-shadow: var(--shadow-md);
   }
 }
 
 .featured-card__top { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
 
 .featured-card__badge {
-  min-height: 28px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(237, 229, 58, 0.2); color: #1a1a00; font-family: var(--sans); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(237, 229, 58, 0.2);
+  color: #1a1a00;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.featured-card__fav, .attraction-card__fav {
-  width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper);
-  color: var(--gold); display: grid; place-items: center; cursor: pointer; transition: 150ms;
+.featured-card__fav,
+.attraction-card__fav {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--gold);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 150ms;
 }
-.featured-card__fav:hover, .attraction-card__fav:hover { background: var(--paper-soft); transform: scale(1.05); }
+
+.featured-card__fav:hover,
+.attraction-card__fav:hover { background: var(--paper-soft); transform: scale(1.05); }
 
 .featured-card__icon-wrap {
-  width: 54px; height: 54px; margin-top: 16px; border-radius: 16px;
-  background: var(--accent-soft); border: 1px solid rgba(49, 110, 185, 0.1); display: grid; place-items: center; color: var(--accent);
+  width: 54px;
+  height: 54px;
+  margin-top: 16px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
 }
+
 .featured-card__icon { width: 28px; height: 28px; fill: currentColor; }
 
-.featured-card__title, .attraction-card__title {
-  margin: 14px 0 0; color: var(--ink); font-family: var(--serif); font-size: 22px; line-height: 1.25; font-weight: 800; letter-spacing: -0.02em;
+.featured-card__title,
+.attraction-card__title {
+  margin: 14px 0 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .attraction-card__artist {
-  margin: 4px 0 0; color: var(--muted); font-family: var(--sans); font-size: 14px; font-weight: 700;
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.featured-card__desc, .attraction-card__desc {
-  margin: 10px 0 0; color: var(--muted); font-family: var(--sans); font-size: 15px; line-height: 1.6; flex: 1;
+.featured-card__desc,
+.attraction-card__desc {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  flex: 1;
 }
 
 .featured-card__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
 .featured-card__meta span {
-  min-height: 28px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
-  background: var(--line); color: var(--muted); font-family: var(--sans); font-size: 12px; font-weight: 800; text-transform: uppercase;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--line);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.featured-card__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; border-top: 1px solid var(--line); padding-top: 16px; }
+.featured-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
 
-/* GROUPS E LISTAS GERAIS */
+/* ── GROUPS ─────────────────────────────────────────────────────────────── */
 .attractions__group {
-  border-radius: 24px; border: 1px solid var(--line); background: var(--paper);
-  box-shadow: var(--shadow-sm); padding: 24px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
 }
 
 .attractions__group-head {
-  display: flex; align-items: end; justify-content: space-between; gap: 14px;
-  margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
 }
 
 .attractions__group-title { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 28px; font-weight: 800; }
@@ -1589,13 +1876,20 @@ const onEscape = (event: KeyboardEvent) => {
 .attractions__list { display: grid; gap: 16px; }
 
 .attraction-card {
-  display: grid; grid-template-columns: 100px 1fr; gap: 20px; padding: 20px;
-  border-radius: 20px; border: 1px solid var(--line); background: linear-gradient(180deg, #fff, #f7f9fc);
-  box-shadow: var(--shadow-sm); transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, #fff, #f7f9fc);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
 .attraction-card.is-favorite {
-  border-color: rgba(237, 229, 58, 0.6); box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.15);
+  border-color: rgba(237, 229, 58, 0.6);
+  box-shadow: 0 0 0 3px rgba(237, 229, 58, 0.15);
 }
 
 .attraction-card.is-featured {
@@ -1603,19 +1897,35 @@ const onEscape = (event: KeyboardEvent) => {
 }
 
 .attraction-card__time {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border-radius: 16px; background: var(--accent-soft); border: 1px solid rgba(49, 110, 185, 0.1); padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  padding: 16px 10px;
 }
+
 .attraction-card__hour { color: var(--ink); font-family: var(--sans); font-size: 22px; font-weight: 800; line-height: 1; }
 .attraction-card__day { margin-top: 6px; color: var(--accent); font-family: var(--sans); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-
 .attraction-card__content { min-width: 0; display: flex; flex-direction: column; }
 .attraction-card__top { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
 .attraction-card__meta { display: flex; flex-wrap: wrap; gap: 8px; }
 
-.attraction-card__category, .attraction-card__location, .attraction-card__featured-tag {
-  min-height: 28px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
-  font-family: var(--sans); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+.attraction-card__category,
+.attraction-card__location,
+.attraction-card__featured-tag {
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .attraction-card__category { background: var(--accent); color: #fff; }
@@ -1623,104 +1933,282 @@ const onEscape = (event: KeyboardEvent) => {
 .attraction-card__featured-tag { background: rgba(237, 229, 58, 0.2); color: #1a1a00; }
 
 .attraction-card__heading { display: flex; gap: 16px; align-items: flex-start; margin-top: 14px; }
+
 .attraction-card__icon-wrap {
-  width: 56px; height: 56px; border-radius: 14px; background: var(--paper);
-  border: 1px solid var(--line); display: grid; place-items: center; color: var(--accent); flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  flex: 0 0 auto;
 }
+
 .attraction-card__icon { width: 28px; height: 28px; fill: currentColor; }
 .attraction-card__heading-copy { min-width: 0; }
 
 .attraction-card__info { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
 .attraction-card__pill {
-  min-height: 32px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
-  background: var(--paper); border: 1px solid var(--line); color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 600;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
 }
+
 .attraction-card__pill strong { color: var(--ink); margin-right: 4px; }
 
-.attraction-card__features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 16px 0 0; padding: 0; list-style: none; }
-.attraction-card__features li { position: relative; padding-left: 16px; color: var(--muted); font-family: var(--sans); font-size: 14px; line-height: 1.5; }
-.attraction-card__features li::before { content: ""; position: absolute; left: 0; top: 0.45rem; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-
-.attraction-card__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--line); }
-
-/* EMPTY STATE */
-.attractions__empty {
-  padding: 60px 20px; border-radius: 24px; border: 1px solid var(--line);
-  background: var(--paper); text-align: center; box-shadow: var(--shadow-sm);
+.attraction-card__features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
 }
+
+.attraction-card__features li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.attraction-card__features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.attraction-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────────────────────── */
+.attractions__empty {
+  padding: 60px 20px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
 .attractions__empty h3 { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 24px; font-weight: 800; }
 .attractions__empty p { margin: 8px 0 0; color: var(--muted); font-family: var(--sans); font-size: 15px; }
 
-/* BUTTONS GERAIS */
-.featured-card__btn, .attraction-card__btn, .attraction-modal__btn {
-  min-height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
-  font-family: var(--sans); font-size: 13px; font-weight: 700; transition: 150ms ease;
+/* ── BUTTONS ─────────────────────────────────────────────────────────────── */
+.featured-card__btn,
+.attraction-card__btn,
+.attraction-modal__btn {
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  transition: 150ms ease;
 }
-.featured-card__btn:hover, .attraction-card__btn:hover, .attraction-modal__btn:hover { transform: translateY(-1px); }
 
-.featured-card__btn--ghost, .attraction-card__btn--ghost, .attraction-modal__btn--ghost {
-  background: var(--paper-soft); border-color: var(--line); color: var(--ink);
-}
-.featured-card__btn--ghost:hover, .attraction-card__btn--ghost:hover, .attraction-modal__btn--ghost:hover { background: var(--line); }
+.featured-card__btn:hover,
+.attraction-card__btn:hover,
+.attraction-modal__btn:hover { transform: translateY(-1px); }
 
-.featured-card__btn--primary, .attraction-card__btn--primary, .attraction-modal__btn--primary {
-  background: var(--accent); color: #fff; border-color: var(--accent);
+.featured-card__btn--ghost,
+.attraction-card__btn--ghost,
+.attraction-modal__btn--ghost {
+  background: var(--paper-soft);
+  border-color: var(--line);
+  color: var(--ink);
 }
-.featured-card__btn--primary:hover, .attraction-card__btn--primary:hover, .attraction-modal__btn--primary:hover { background: #022480; }
+
+.featured-card__btn--ghost:hover,
+.attraction-card__btn--ghost:hover,
+.attraction-modal__btn--ghost:hover { background: var(--line); }
+
+.featured-card__btn--primary,
+.attraction-card__btn--primary,
+.attraction-modal__btn--primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.featured-card__btn--primary:hover,
+.attraction-card__btn--primary:hover,
+.attraction-modal__btn--primary:hover { background: #022480; }
 
 /* ── MODAL ──────────────────────────────────────────────────────────────── */
 .attraction-modal {
-  position: fixed; inset: 0; z-index: 1000; padding: 24px;
-  background: rgba(12, 14, 18, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  display: grid; place-items: center;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: 24px;
+  background: rgba(12, 14, 18, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
 }
 
 .attraction-modal__dialog {
-  position: relative; width: min(760px, 100%); max-height: min(90vh, 920px); overflow: auto;
-  padding: 32px; border-radius: 24px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-modal);
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(90vh, 920px);
+  overflow: auto;
+  padding: 32px;
+  border-radius: 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-modal); /* FIX: token agora definido */
 }
 
 .attraction-modal__close {
-  position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--line); background: var(--paper-soft); color: var(--accent); display: grid; place-items: center; cursor: pointer; transition: 150ms;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--paper-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 150ms;
 }
+
 .attraction-modal__close:hover { background: var(--line); transform: scale(1.05); }
 
 .attraction-modal__icon-wrap {
-  width: 66px; height: 66px; border-radius: 18px; background: var(--accent-soft); border: 1px solid rgba(49, 110, 185, 0.1);
-  display: grid; place-items: center; color: var(--accent);
+  width: 66px;
+  height: 66px;
+  border-radius: 18px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(1, 25, 90, 0.1);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
 }
+
 .attraction-modal__icon { width: 32px; height: 32px; fill: currentColor; }
 
 .attraction-modal__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+
 .attraction-modal__meta span {
-  min-height: 28px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
-  background: var(--line); color: var(--muted); font-family: var(--sans); font-size: 12px; font-weight: 800; text-transform: uppercase;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--line);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .attraction-modal__title {
-  margin: 20px 0 0; color: var(--ink); font-family: var(--serif); font-size: clamp(28px, 4vw, 36px); line-height: 1.1; font-weight: 800; letter-spacing: -0.02em;
+  margin: 20px 0 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 36px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .attraction-modal__artist { margin: 8px 0 0; color: var(--muted); font-family: var(--sans); font-size: 16px; font-weight: 700; }
 .attraction-modal__desc { margin: 16px 0 0; color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.7; }
 
-.attraction-modal__info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
-.attraction-modal__info-item { padding: 16px; border-radius: 16px; background: var(--paper-soft); border: 1px solid var(--line); }
+.attraction-modal__info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.attraction-modal__info-item {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+}
+
 .attraction-modal__info-item strong { display: block; color: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 800; }
 .attraction-modal__info-item span { display: block; margin-top: 6px; color: var(--muted); font-family: var(--sans); font-size: 15px; }
 
-.attraction-modal__features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin: 24px 0 0; padding: 0; list-style: none; }
-.attraction-modal__features li { position: relative; padding-left: 16px; color: var(--muted); font-family: var(--sans); font-size: 15px; line-height: 1.6; }
-.attraction-modal__features li::before { content: ""; position: absolute; left: 0; top: 0.64rem; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.attraction-modal__features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
 
-.attraction-modal__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+.attraction-modal__features li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+}
 
-/* ICONS E TRANSITIONS */
+.attraction-modal__features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.64rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.attraction-modal__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+/* ── ICONS E TRANSITIONS ─────────────────────────────────────────────────── */
 .mdi-icon { width: 20px; height: 20px; fill: currentColor; }
 .badge__icon { width: 16px; height: 16px; fill: currentColor; }
-.fade-enter-active, .fade-leave-active { transition: opacity 180ms ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.fade-enter-active,
+.fade-leave-active { transition: opacity 180ms ease; }
+.fade-enter-from,
+.fade-leave-to { opacity: 0; }
 
 /* ── RESPONSIVO ─────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
@@ -1735,21 +2223,27 @@ const onEscape = (event: KeyboardEvent) => {
   .attractions__hero-stats { grid-template-columns: 1fr; }
   .attractions__filters-grid { grid-template-columns: 1fr; }
   .attractions__featured-grid { grid-template-columns: 1fr; }
-  
   .attractions__section-head { flex-direction: column; align-items: start; }
-  
   .attraction-card { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
   .attraction-card__time { flex-direction: row; justify-content: space-between; min-height: 52px; padding: 0 16px; }
-  .attraction-card__features, .attraction-modal__features, .attraction-modal__info { grid-template-columns: 1fr; }
-  
-  .attraction-card__actions, .featured-card__actions, .attraction-modal__actions { flex-direction: column; }
-  .attraction-card__btn, .featured-card__btn, .attraction-modal__btn { width: 100%; }
-  
+  .attraction-card__features,
+  .attraction-modal__features,
+  .attraction-modal__info { grid-template-columns: 1fr; }
+  .attraction-card__actions,
+  .featured-card__actions,
+  .attraction-modal__actions { flex-direction: column; }
+  .attraction-card__btn,
+  .featured-card__btn,
+  .attraction-modal__btn { width: 100%; }
   .attraction-modal { padding: 16px; }
   .attraction-modal__dialog { padding: 20px; border-radius: 20px; }
 }
 
-.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
-  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }
 </style>

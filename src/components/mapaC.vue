@@ -823,8 +823,8 @@ const places = ref<Place[]>([
     schedule: "Manhã e tarde",
     highlight: "Vista panorâmica e pôr do sol",
     reference: "Comunidade Serra dos Matões, 14 km do centro",
-    lat: -4.3995,
-    lng: -41.4465,
+    lat: -4.331238707824653,
+    lng: -41.447838665740726,
     accessible: true,
     familyFriendly: true,
     nightFriendly: false,
@@ -844,8 +844,8 @@ const places = ref<Place[]>([
     schedule: "Fim de tarde (crepúsculo)",
     highlight: "Crepúsculo e serenidade",
     reference: "Acesso por trilha de 15 min",
-    lat: -4.4010,
-    lng: -41.4490,
+    lat: -4.339337211228101,
+    lng: -41.455194646132135,
     accessible: false,
     familyFriendly: true,
     nightFriendly: false,
@@ -970,8 +970,8 @@ const places = ref<Place[]>([
     schedule: "Todos os dias",
     highlight: "Artesanato, opala e gastronomia típica",
     reference: "Região central com grande fluxo",
-    lat: -4.4248,
-    lng: -41.4572,
+    lat: -4.427802027397924,
+    lng: -41.45798211982069,
     accessible: true,
     familyFriendly: true,
     nightFriendly: true,
@@ -991,8 +991,8 @@ const places = ref<Place[]>([
     schedule: "Manhã (percurso 1-2h)",
     highlight: "76 m de queda — maior cachoeira do Piauí",
     reference: "Acesso por trilha do Mirante ou 4x4",
-    lat: -4.3960,
-    lng: -41.4420,
+    lat: -4.327157334395634,
+    lng: -41.46293344472729,
     accessible: false,
     familyFriendly: false,
     nightFriendly: false,
@@ -1012,8 +1012,8 @@ const places = ref<Place[]>([
     schedule: "Manhã e tarde",
     highlight: "Banho e lazer em cachoeira de 26 m",
     reference: "Carro + trilha, dificuldade média",
-    lat: -4.3980,
-    lng: -41.4450,
+    lat: -4.353094127344681,
+    lng: -41.47267357563946,
     accessible: false,
     familyFriendly: true,
     nightFriendly: false,
@@ -1033,8 +1033,8 @@ const places = ref<Place[]>([
     schedule: "Manhã e tarde",
     highlight: "Passeio tranquilo com banho natural",
     reference: "Trilha leve, acesso facilitado",
-    lat: -4.4050,
-    lng: -41.4530,
+    lat: -4.542604653831156,
+    lng: -41.695426190983085,
     accessible: false,
     familyFriendly: true,
     nightFriendly: false,
@@ -1054,8 +1054,8 @@ const places = ref<Place[]>([
     schedule: "Manhã (percurso ~5 km)",
     highlight: "Três cachoeiras em uma única trilha",
     reference: "Nível moderado, percurso 5 km",
-    lat: -4.4080,
-    lng: -41.4480,
+    lat: -4.328234364417344,
+    lng: -41.464439852695236,
     accessible: false,
     familyFriendly: false,
     nightFriendly: false,
@@ -1096,8 +1096,8 @@ const places = ref<Place[]>([
     schedule: "Manhã e tarde",
     highlight: "Inscrições rupestres de 12 mil anos",
     reference: "Estrada + trilha, 8 km do centro",
-    lat: -4.4320,
-    lng: -41.4650,
+    lat: -4.468746333303523,
+    lng: -41.399207846801744,
     accessible: false,
     familyFriendly: true,
     nightFriendly: false,
@@ -1117,8 +1117,8 @@ const places = ref<Place[]>([
     schedule: "Manhã e tarde",
     highlight: "Pinturas rupestres e piscina natural",
     reference: "Trilha leve a moderada",
-    lat: -4.4350,
-    lng: -41.4680,
+    lat: -4.440994072872045,
+    lng: -41.63347367385742,
     accessible: false,
     familyFriendly: true,
     nightFriendly: false,
@@ -1316,7 +1316,7 @@ function contactGuide(place: Place) {
     `Olá! Gostaria de contratar um guia credenciado para visitar o local "${place.name}" durante o Festival de Inverno de Pedro II. Poderia me passar mais informações?`
   );
   // Tenta abrir WhatsApp Web; substitua pelo número real do serviço de guias
-  const whatsappNumber = "5586999999999"; // número fictício — substituir pelo real
+  const whatsappNumber = "558695355952"; // número fictício — substituir pelo real
   window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, "_blank", "noopener,noreferrer");
 }
 
@@ -1567,8 +1567,8 @@ onBeforeUnmount(() => {
 
 .places {
   /* Tipografia */
-  --serif: "Playfair Display", Georgia, serif;
-  --sans: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --serif: 'Rawline', sans-serif;
+  --sans: 'Rawline', sans-serif;
 
   /* Cores Base */
   --accent: #01195a;

@@ -1158,8 +1158,8 @@ onBeforeUnmount(() => {
 
 .gallery {
   /* Tipografia */
-  --serif: "Playfair Display", Georgia, serif;
-  --sans: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  --serif: 'Rawline', sans-serif;
+  --sans: 'Rawline', sans-serif;
 
   /* Cores Base */
   --accent: #01195a;
