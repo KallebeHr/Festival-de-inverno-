@@ -344,7 +344,7 @@ const IMG = {
   vilaEmpreendedora_galeria2: "/acoesFestival/VilaE4.webp",
 
   // VILA GASTRONÔMICA
-  vilaGastronomica_capa:     "/acoesFestival/vilaGastronomica1.webp",
+  vilaGastronomica_capa:     "/acoesFestival/pratos.webp",
   vilaGastronomica_galeria1: "/acoesFestival/destaque1.webp",
   vilaGastronomica_galeria2: "/acoesFestival/destaque2.webp",
   vilaGastronomica_galeria3: "/acoesFestival/destaque3.webp",
@@ -421,7 +421,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Sem Informações",
     },
     date: { pt: "04 a 07/06/2026", en: "Sem informações" },
-    time: "De 08h00 às 03h00",
+    time: "08h00 às 22h00",
     place: { pt: "Praça Domingos Mourão Filho (Matriz)", en: "Sem Informações" },
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
     description: {
@@ -447,11 +447,11 @@ const rawItems: FeaturedItemRaw[] = [
     org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
     title: { pt: "VILA GASTRONÔMICA", en: "Sem Informações" },
     subtitle: {
-      pt: "10 Estandes, Infinitos sabores!!",
+      pt: "Varios Estandes, Infinitos sabores!!",
       en: "Sem Informações",
     },
     date: { pt: "04 a 07/06/2026", en: "Sem informações" },
-    time: "De 18h00 às 03h00",
+    time: "18h00 às 03h00",
     place: { pt: "Praça Manoel Nogueira Lima (Praça da Bonelle)", en: "Sem Informações" },
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
     description: {
@@ -514,17 +514,24 @@ const rawItems: FeaturedItemRaw[] = [
     place: { pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM", en: "Municipal Park" },
     address: { pt: "Av. do Parque, s/n, Pedro II – PI", en: "Park Ave., s/n, Pedro II – PI" },
     description: {
-      pt: "Deguste pratos típicos da culinária serrana: baião de dois, galinha caipira, pamonha, cuscuz e muito mais. Mais de 30 barracas de comida e bebidas regionais.",
-      en: "Taste typical highland dishes: baião de dois, free-range chicken, pamonha, couscous and much more. Over 30 food and drink stalls.",
+      pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
+      en: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
     },
     ageRating: "L",
-    category: { pt: "Gastronomia", en: "Gastronomy" },
-    duration: "2 dias / 2 days",
+    category: { pt: "SHOW", en: "Gastronomy" },
+    duration: "3 dias",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     lineup: [
-      { name: "Cozinha do Sertão", time: "11h00" },
-      { name: "Chefs Convidados – Demo ao Vivo", time: "15h00" },
+      { name: "SEXTA", time: "SEXTA" },
+      { name: "Zé Roraima", time: "16h00" },
+      { name: "DJ Bossa", time: "17h30" },
+      { name: "SÁBADO", time: "SÁBADO" },
+      { name: "Haynna", time: "16h00" },
+      { name: "DJ Pirão e Lakraya", time: "17h30" },
+      { name: "DOMINGO", time: "DOMINGO" },
+      { name: "Deepmoon", time: "16h00" },
+      { name: "Banda Spacial", time: "17h30" },
     ],
   },
 
@@ -570,7 +577,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Historic and architectural heritage of Pedro II.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "09h00 – 18h00",
+    time: "08h00 – 18h00",
     place: { pt: "Centro Histórico de Pedro II – PI", en: "Historic Center of Pedro II – PI" },
     address: { pt: "Centro, Pedro II – PI", en: "Downtown, Pedro II – PI" },
     description: {
@@ -599,7 +606,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Fun and learning for the little ones at the festival.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "10h00 – 20h00",
+    time: "16h00 – 21h00",
     place: { pt: "Área Kids – Pedro II – PI", en: "Kids Area – Pedro II – PI" },
     address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
     description: {
@@ -628,7 +635,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Valuing those who feed and sustain our region.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "08h00 – 18h00",
+    time: "07h00 – 14h00",
     place: { pt: "Área Rural – Pedro II – PI", en: "Rural Area – Pedro II – PI" },
     address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
     description: {
@@ -657,7 +664,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "A breathtaking view in the heart of Serra dos Matões.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "08h00 – 18h00",
+    time: "07h00 – 18h00",
     place: { pt: "Serra dos Matões – 12km de Pedro II – PI", en: "Serra dos Matões – 12km from Pedro II – PI" },
     address: { pt: "Serra dos Matões, Pedro II – PI", en: "Serra dos Matões, Pedro II – PI" },
     description: {
@@ -686,7 +693,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Major musical attractions on the festival's main stage.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "19h00 – 02h00",
+    time: "09h00 – 16h00",
     place: { pt: "Praça Central – Pedro II – PI", en: "Central Square – Pedro II – PI" },
     address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
     description: {
@@ -715,7 +722,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Sounds and rhythms that echo through the mountains.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "18h00 – 23h00",
+    time: "16h00 – 17h30",
     place: { pt: "Mirante do Gritador – Serra dos Matões", en: "Gritador Viewpoint – Serra dos Matões" },
     address: { pt: "Serra dos Matões, Pedro II – PI", en: "Serra dos Matões, Pedro II – PI" },
     description: {
@@ -724,7 +731,7 @@ const rawItems: FeaturedItemRaw[] = [
     },
     ageRating: "L",
     category: { pt: "Show Musical", en: "Music Show" },
-    duration: "4 noites",
+    duration: "3 tardes",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Mirante+do+Gritador+Pedro+II+Piauí",
     gallery: [

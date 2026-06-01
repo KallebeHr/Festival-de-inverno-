@@ -1,5 +1,5 @@
-<template>
-  <section class="week-events" aria-label="Programação de quinta a domingo">
+<template id="atracoesP">
+  <section class="week-events" id="atracoesP" aria-label="Programação de quinta a domingo">
     <header class="week-events__head">
       <div class="week-events__head-inner">
         <span class="week-events__eyebrow">Programação</span>

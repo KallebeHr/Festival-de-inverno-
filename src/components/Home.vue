@@ -84,7 +84,7 @@ import { inject } from "vue";
 
 const { t } = inject("i18n") as any;
 
-const onPrimary   = () => document.querySelector("#programacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
+const onPrimary   = () => document.querySelector("#atracoesP")?.scrollIntoView({ behavior: "smooth", block: "start" });
 const onSecondary = () => document.querySelector("#como-chegar")?.scrollIntoView({ behavior: "smooth", block: "start" });
 </script>
 
