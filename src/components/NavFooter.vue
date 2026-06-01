@@ -92,7 +92,7 @@
             <li><span class="label">Edição</span> <span class="value">2026</span></li>
             <li><span class="label">Cidade</span> <span class="value">Pedro II • PI</span></li>
             <li><span class="label">Horários</span> <span class="value">Consulte a programação</span></li>
-            <li><span class="label">Avisos</span> <span class="value">Área de comunicados</span></li>
+            <li><span class="label">Avisos</span> <span class="value">Área de programação</span></li>
           </ul>
 
           <div class="disclaimer">
@@ -111,7 +111,7 @@
         <div class="brand">Festival de Inverno <span aria-hidden="true">◆</span> Pedro II</div>
         <div class="credit">
           Feito por 
-          <button type="button" @click="copy('Desenvolvido por @kallebeMax', 'Crédito copiado')">@kallebeMax</button>
+          <button type="button" @click="copy('Desenvolvido por @kallebeMax', 'Crédito copiado')">@kallebeMax_</button>
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
               Este site pode armazenar preferências locais, como favoritos e escolhas de navegação, para melhorar sua experiência.
             </p>
             <p v-else>
-              Este conteúdo é informativo e pode ser atualizado a qualquer momento. Para informações oficiais, consulte a área de comunicados.
+              Este conteúdo é informativo e pode ser atualizado a qualquer momento. Para informações oficiais, consulte a área de programação.
             </p>
           </div>
           <footer class="modal-actions">

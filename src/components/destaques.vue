@@ -430,7 +430,7 @@ const rawItems: FeaturedItemRaw[] = [
     },
     ageRating: "L",
     category: { pt: "Empreendedorismo", en: "Music Show" },
-    duration: "10h00",
+    duration: "Dia todo.",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
@@ -439,6 +439,58 @@ const rawItems: FeaturedItemRaw[] = [
     ],
   },
 
+  // ── PALCO OPALA ──────────────────────────────────────
+  {
+    id: 15,
+    badge: { pt: "Show", en: "Show" },
+    image: IMG.palcoOpala_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO OPALA", en: "Opal Stage" },
+    subtitle: {
+      pt: "Brilho e música como as opalas da nossa terra.",
+      en: "Brightness and music like the opals of our land.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "19h00 – 02h00",
+    place: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Palco Opala é um tributo à riqueza mineral que fez Pedro II famosa no mundo. Assim como as opalas da região, este palco brilha com apresentações deslumbrantes que refletem toda a energia e identidade cultural da cidade.",
+      en: "The Opal Stage is a tribute to the mineral wealth that made Pedro II famous in the world. Like the opals of the region, this stage shines with dazzling performances that reflect all the energy and cultural identity of the city.",
+    },
+    ageRating: "L",
+    category: { pt: "Show Musical", en: "Music Show" },
+    duration: "4 noites",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.palcoOpala_galeria1, alt: "Palco Opala" },
+    ],
+    lineup: [
+  { name: "QUINTA", time: "QUINTA" },
+  { name: "De Hermeto pra Dominguinhos", time: "19h30" },
+  { name: "Soraya Castelo Branco e Puro Samba", time: "21h00" },
+  { name: "Toni Garrido", time: "22h30" },
+  { name: "Ferrugem", time: "00h30" },
+
+  { name: "SEXTA", time: "SEXTA" },
+  { name: "Tori", time: "19h30" },
+  { name: "Marina Sena", time: "20h30" },
+  { name: "Raissa Raabe", time: "23h00" },
+  { name: "Os Originais do Samba", time: "00h30" },
+
+  { name: "SÁBADO", time: "SÁBADO" },
+  { name: "Alquimia", time: "19h30" },
+  { name: "Chico Chico", time: "21h00" },
+  { name: "Titãs", time: "22h30" },
+  { name: "Banda Dublin", time: "00h30" },
+
+  { name: "DOMINGO", time: "DOMINGO" },
+  { name: "Vavá Ribeiro & Zé Quaresma", time: "19h30" },
+  { name: "Roupa Nova", time: "21h00" },
+  { name: "Brigitte Bardot", time: "23h00" },
+],
+  },
   // ── VILA GASTRONÔMICA ────────────────────────────────
   {
     id: 1,
@@ -547,7 +599,7 @@ const rawItems: FeaturedItemRaw[] = [
       en: "Dive into the natural beauty of the region's waterfalls.",
     },
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "08h00 – 18h00",
+    time: "06h00 – 18h00",
     place: { pt: "Entorno de Pedro II – PI", en: "Surroundings of Pedro II – PI" },
     address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
     description: {
@@ -621,6 +673,13 @@ const rawItems: FeaturedItemRaw[] = [
     gallery: [
       // { src: IMG.espacoCrianca_galeria1, alt: "Espaço criança" },
     ],
+    lineup: [
+  { name: "Educação Infantil", time: "16h00" },
+  { name: "Ensino Fundamental", time: "17h00" },
+  { name: "Ensino Médio", time: "18h00" },
+  { name: "Famílias e Visitantes", time: "19h00" },
+  { name: "Momento de Observação com Telescópio", time: "20h00" },
+],
   },
 
   // ── ESPAÇO DO AGRICULTOR ─────────────────────────────
@@ -708,6 +767,42 @@ const rawItems: FeaturedItemRaw[] = [
     gallery: [
       // { src: IMG.palcoCarlosCordeiro_galeria1, alt: "Palco Carlos Cordeiro" },
     ],
+lineup: [
+  { name: "QUINTA", time: "QUINTA" },
+  { name: "Ivo Namastê", time: "09h00" },
+  { name: "Star Royal", time: "10h00" },
+  { name: "Oliveira Santos", time: "10h30" },
+  { name: "Junina Bag Dance", time: "11h30" },
+  { name: "DJ - Alquimista", time: "12h00" },
+  { name: "Uchoa Sanfoneiro", time: "14h00" },
+  { name: "Kel Milanez", time: "15h00" },
+  { name: "Saúde da Mulher", time: "16h00" },
+
+  { name: "SEXTA", time: "SEXTA" },
+  { name: "Companhia de Dança Flowers", time: "09h00" },
+  { name: "Aristides Benício", time: "09h30" },
+  { name: "P2P Records", time: "10h30" },
+  { name: "Oliveira Santos", time: "11h30" },
+  { name: "Banda Vento Leste", time: "12h30" },
+  { name: "Geranildo dos Teclados", time: "13h30" },
+  { name: "Vibe Tekylla", time: "14h30" },
+  { name: "Associação Ana Maria", time: "15h30" },
+  { name: "Coral de Vaqueiros - Inhuma", time: "16h00" },
+
+  { name: "SÁBADO", time: "SÁBADO" },
+  { name: "Possora", time: "09h00" },
+  { name: "Junina Kana Kaiana", time: "10h00" },
+  { name: "Ballet da Casa de Compadre", time: "10h30" },
+  { name: "Banda RP3 das Paixões", time: "11h00" },
+  { name: "DJ - Alquimista", time: "12h00" },
+  { name: "Rodrigo Mais", time: "14h00" },
+  { name: "Paulinho Mangabeira", time: "15h00" },
+  { name: "Reizado do Cipó", time: "16h00" },
+
+  { name: "DOMINGO", time: "DOMINGO" },
+  { name: "Banda Vento Leste", time: "09h00" },
+  { name: "Coletiva de Teatro Urutal", time: "10h00" },
+],
   },
 
   // ── PALCO GRITADOR ───────────────────────────────────
@@ -736,6 +831,27 @@ const rawItems: FeaturedItemRaw[] = [
     mapUrl: "https://maps.google.com/?q=Mirante+do+Gritador+Pedro+II+Piauí",
     gallery: [
       // { src: IMG.palcoGritador_galeria1, alt: "Palco Gritador" },
+    ],
+
+    lineup: [
+      { name: "QUINTA", time: "QUINTA" },
+      { name: "Besouros da Silva", time: "17h" },
+      { name: "Cerimonia de Abertura", time: "18h" },
+      { name: "Elder Luiz", time: "19h" },
+      { name: "SEXTA", time: "SEXTA" },
+      { name: "Banda Back Times", time: "17h00" },
+      { name: "Raiza & Cris", time: "18h00" },
+      { name: "Sonayra", time: "19h00" },
+      { name: "Banda Lostalgia", time: "20h00" },
+      { name: "SÁBADO", time: "SÁBADO" },
+      { name: "Flavio Moura – Estação 90", time: "17h00" },
+      { name: "Danilo Rudah", time: "18h00" },
+      { name: "Audiopoema", time: "19h00" },
+      { name: "Bloco Nós Vamos Invadir sua Praia", time: "20h00" },
+      { name: "DOMINGO", time: "DOMINGO" },
+      { name: "Stonesalt", time: "17h00" },
+      { name: "Jardel de Castro", time: "18h00" },
+      { name: "Dom Quixote", time: "19h00" },
     ],
   },
 
@@ -766,6 +882,29 @@ const rawItems: FeaturedItemRaw[] = [
     gallery: [
       // { src: IMG.palcoJazzBlues_galeria1, alt: "Palco Jazz e Blues" },
     ],
+    lineup: [
+  { name: "SEXTA", time: "SEXTA" },
+  {
+    name: "Luizinho Calixto & Anderson Nóbrega - Participação: Inácio Botelho, Marcel Régis e Gilson Fernandes",
+    time: "18h30",
+  },
+  {
+    name: "Adelson Viana & Jazz no Fole - Participação especial: Sandro Haick, Jota P, Myriam Eduardo e Beto Moreno",
+    time: "20h30",
+  },
+  { name: "Jam com os convidados", time: "22h00" },
+
+  { name: "SÁBADO", time: "SÁBADO" },
+  {
+    name: "Ferdinand Melo, Geraldo Brito & Carlinhos Moreira",
+    time: "18h30",
+  },
+  {
+    name: "Big Band Paulo Dantas com Felipe Anderson, Valdemilson Dias, Lívio Nascimento, Micael Fidelis, Humberto e Fernando. Participação especial: Otávio Augusto & Milena Soares",
+    time: "20h30",
+  },
+  { name: "Jam com os convidados", time: "22h00" },
+],
   },
 
   // ── PALCO MERCADO DO ARTESÃO ─────────────────────────
@@ -795,36 +934,22 @@ const rawItems: FeaturedItemRaw[] = [
     gallery: [
       // { src: IMG.palcoMercadoArtesao_galeria1, alt: "Mercado do Artesão" },
     ],
+    lineup: [
+  { name: "QUINTA", time: "QUINTA" },
+  { name: "Gil do Arcodeon", time: "11h00" },
+
+  { name: "SEXTA", time: "SEXTA" },
+  { name: "Júnior Pegada", time: "11h00" },
+
+  { name: "SÁBADO", time: "SÁBADO" },
+  { name: "Manu Silva", time: "10h00" },
+  { name: "Baré Brito", time: "12h00" },
+
+  { name: "DOMINGO", time: "DOMINGO" },
+  { name: "Primos do Piseiro", time: "12h00" },
+],
   },
 
-  // ── PALCO OPALA ──────────────────────────────────────
-  {
-    id: 15,
-    badge: { pt: "Show", en: "Show" },
-    image: IMG.palcoOpala_capa,
-    org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "PALCO OPALA", en: "Opal Stage" },
-    subtitle: {
-      pt: "Brilho e música como as opalas da nossa terra.",
-      en: "Brightness and music like the opals of our land.",
-    },
-    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
-    time: "19h00 – 02h00",
-    place: { pt: "Pedro II – PI", en: "Pedro II – PI" },
-    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
-    description: {
-      pt: "O Palco Opala é um tributo à riqueza mineral que fez Pedro II famosa no mundo. Assim como as opalas da região, este palco brilha com apresentações deslumbrantes que refletem toda a energia e identidade cultural da cidade.",
-      en: "The Opal Stage is a tribute to the mineral wealth that made Pedro II famous in the world. Like the opals of the region, this stage shines with dazzling performances that reflect all the energy and cultural identity of the city.",
-    },
-    ageRating: "L",
-    category: { pt: "Show Musical", en: "Music Show" },
-    duration: "4 noites",
-    price: 0,
-    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-    gallery: [
-      // { src: IMG.palcoOpala_galeria1, alt: "Palco Opala" },
-    ],
-  },
 
   // ── PINACOTECA ───────────────────────────────────────
   {
