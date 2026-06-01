@@ -795,20 +795,20 @@ const markers = new Map<string, any>();
 
 // Imagens do Unsplash por categoria/tema
 const imgMirante = "/acoesFestival/miranteGritador1.webp";
-const imgCrepusculo = "/public/Local/arara.webp";
-const imgPedra = "/public/Local/pedraLua.webp";
-const imgTrilha = "/public/Local/bucolico.webp";
-const imgMinas = "/public/Local/opala.webp";
+const imgCrepusculo = "/Local/arara.webp";
+const imgPedra = "/Local/pedraLua.webp";
+const imgTrilha = "/Local/bucolico.webp";
+const imgMinas = "/Local/opala.webp";
 const imgCentro = "/acoesFestival/casario1.webp";
 const imgPinacoteca = "/acoesFestival/pinacoteca1.webp";
-const imgMercado = "/public/Local/mercado.webp";
+const imgMercado = "/Local/mercado.webp";
 const imgCachoeira = "/acoesFestival/cachoeiraUrubu.webp";
 const imgCachoeiraSalto = "/acoesFestival/saltoLiso.webp";
-const imgCachoeiraT = "/public/Local/cachoeiraTombador.webp";
-const imgTrilhaCach = "/public/Local/trilha.webp";
+const imgCachoeiraT = "/Local/cachoeiraTombador.webp";
+const imgTrilhaCach = "/Local/trilha.webp";
 const imgSitioBurit = "/acoesFestival/sitioBuritizinho1.webp";
-const imgSitioArq =  "/public/Local/sitiotorre.webp";
-const imgSitioArq2 = "/public/Local/cavalos.webp";
+const imgSitioArq =  "/Local/sitiotorre.webp";
+const imgSitioArq2 = "/Local/cavalos.webp";
 
 const places = ref<Place[]>([
   {
