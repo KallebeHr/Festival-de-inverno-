@@ -967,7 +967,43 @@ const events: FestivalEvent[] = [
   audience: "Livre",
   duration: "1h30",
   locationId: "palco-opala"
-}
+},
+{
+  id: "opala13",
+  dayId: "2026-06-04",
+  time: "00:30",
+  title: "Ferrugem",
+  description: "Show nacional de samba e pagode encerrando a programação da quinta-feira no Palco Opala.",
+  category: "Show Nacional",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala14",
+  dayId: "2026-06-05",
+  time: "00:30",
+  title: "Os Originais do Samba",
+  description: "Show tradicional de samba encerrando a programação da sexta-feira.",
+  category: "Samba",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
+{
+  id: "opala15",
+  dayId: "2026-06-06",
+  time: "00:30",
+  title: "Banda Dublin",
+  description: "Show musical encerrando a programação de sábado do Palco Opala.",
+  category: "Show",
+  host: "Palco Opala",
+  audience: "Livre",
+  duration: "1h30",
+  locationId: "palco-opala"
+},
 ];
 
 const categories = computed(() => {
