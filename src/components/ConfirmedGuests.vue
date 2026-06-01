@@ -18,7 +18,7 @@
           Convidados
           <span class="confirmed__eyebrow-line" aria-hidden="true"></span>
         </p>
-        <h2 class="confirmed__title">Artistas confirmados</h2>
+        <h2 class="confirmed__title">Artistas Confirmados</h2>
         <p class="confirmed__subtitle">
           Conheça os artistas que já garantiram presença<br class="confirmed__br" />
           no Festival de Inverno Pedro II 2026

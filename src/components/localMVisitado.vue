@@ -160,12 +160,12 @@ import { Pagination, A11y } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-import local1 from "/Local/ca1W.webp";
-import local2 from "/Local/ca3.webp";
-import local3 from "/Local/ca1.webp";
-import local4 from "/Local/buriti1W.webp";
-import local5 from "/Local/ca4.webp";
-import local6 from "/Local/destaque2.webp";
+import local1 from "/Local/miranteGritador1.webp";
+import local2 from "/Local/sitioBuritizinho1.webp";
+import local3 from "/Local/cachoeiraUrubu.webp";
+import local4 from "/Local/palcoOpala1.webp";
+import local5 from "/Local/saltoLiso.webp";
+import local6 from "/Local/casario1.webp";
 
 type Place = {
   title: string;
@@ -192,7 +192,7 @@ const places: Place[] = [
   {
     title: "Mirante do Gritador",
     about: "Paisagem marcante da região, ideal para contemplação, fotos e uma experiência inesquecível em Pedro II.",
-    image: local6,
+    image: local1,
     category: "Natureza",
     location: "Pedro II · PI",
     profile: "Famílias e casais",
@@ -202,7 +202,7 @@ const places: Place[] = [
   {
     title: "Sítio Buritizinho",
     about: "O visitante degusta o caldo de cana, rapadura e a tapioca, todos fresquinhos, além de poder interagir com o processo do engenho.",
-    image: local4,
+    image: local2,
     category: "Cultura",
     location: "Interior de Pedro II",
     profile: "Visitantes e grupos",
@@ -220,24 +220,34 @@ const places: Place[] = [
     hasGuide: true,
   },
   {
-    title: "Feira de Opala",
-    about: "Um dos espaços mais procurados para conhecer artesanato, cultura local e a identidade única de Pedro II.",
+    title: "Palco Opala",
+    about: "O Palco Opala é um tributo à riqueza mineral que fez Pedro II famosa no mundo.",
     image: local4,
-    category: "Artesanato",
-    location: "Pedro II · PI",
-    profile: "Turistas e compradores",
+    category: "SHOW",
+    location: "Praça da Bonele",
+    profile: "Brilho e música como as opalas da nossa terra.",
     bestTime: "Manhã e tarde",
     hasGuide: false,
   },
   {
-    title: "Praça de Eventos",
-    about: "Ponto central da programação do festival, com shows, gastronomia e a energia vibrante do evento.",
-    image: local5,
-    category: "Festival",
-    location: "Área do evento",
-    profile: "Todos os públicos",
-    bestTime: "Noite",
+    title: "Centro Historico",
+    about: "Casarios coloniais de estilo português, Memorial e Igreja Nossa Senhora da Conceição. Lojas de opalas e espaços culturais.",
+    image: local6,
+    category: "Ecoturismo",
+    location: "Zona rural",
+    profile:  "Aventureiros e grupos",
+    bestTime: "Manhã e tarde",
     hasGuide: false,
+  },
+  {
+    title: "Cachoeira do Salto Liso",
+    about: "26 metros de altura no Povoado Mangabeira. Acesso combina carro e trilha a pé. Ótima para banho.",
+    image: local5,
+    category: "Ecoturismo",
+    location: "Zona rural",
+    profile:  "Aventureiros e grupos",
+    bestTime: "Manhã e tarde",
+    hasGuide: true,
   },
 ];
 
@@ -254,13 +264,21 @@ function slideNext() {
 }
 
 function chooseGuide(place: Place) {
-  const phone = "5586999999999";
+  const phone = "558695355952";
   const text = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 }
 
 function seeDetails(place: Place) {
-  console.log("Ver detalhes:", place.title);
+  const phone = "558695355952";
+
+  const text = `Olá! Quero mais detalhes sobre "${place.title}" durante o Festival de Inverno. Poderia me enviar mais informações?`;
+
+  window.open(
+    `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+    "_blank",
+    "noopener,noreferrer"
+  );
 }
 </script>
 

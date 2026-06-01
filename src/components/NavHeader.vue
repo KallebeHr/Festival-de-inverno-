@@ -378,21 +378,11 @@
                 <button
                   class="socialBtn"
                   type="button"
-                  @click="openLink('https://instagram.com')"
+                  @click="openLink('https://www.instagram.com/festivaldeinverno.p2?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==')"
                   aria-label="Instagram"
                 >
                   <v-icon icon="mdi-instagram" size="18" />
                   <span>Instagram</span>
-                </button>
-
-                <button
-                  class="socialBtn"
-                  type="button"
-                  @click="openLink('https://youtube.com')"
-                  aria-label="YouTube"
-                >
-                  <v-icon icon="mdi-youtube" size="18" />
-                  <span>YouTube</span>
                 </button>
 
                 <button

@@ -23,9 +23,13 @@
         <div class="preloader__core" aria-hidden="true">
           <div class="orbit orbit-1"></div>
           <div class="orbit orbit-2"></div>
-          <div class="gemstone">
-            <div class="gemstone-inner"></div>
-          </div>
+
+          <!-- Logo do evento no lugar do ícone de diamante -->
+          <img
+            src="/Logo/fip2s.webp"
+            alt="Logo Festival de Inverno Pedro II 2026"
+            class="preloader__logo"
+          />
         </div>
 
         <div class="preloader__text-group">
@@ -112,11 +116,6 @@ onMounted(() => {
   inset: 0;
   z-index: -1;
 
-  /*
-    Troque o caminho abaixo pela sua imagem.
-    Exemplo:
-    url('/images/preloader-bg.webp')
-  */
   background:
     linear-gradient(rgba(6, 14, 42, 0.45), rgba(6, 14, 42, 0.85)),
     url('/bg/bgOfic.webp') center / cover no-repeat;
@@ -202,10 +201,11 @@ onMounted(() => {
 }
 
 /* ── Núcleo Animado ── */
+/* 👉 PERSONALIZE: altere width/height para mudar o tamanho do círculo de órbitas */
 .preloader__core {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 280px;   /* ← tamanho do núcleo (órbitas giram dentro desse espaço) */
+  height: 280px;  /* ← mantenha igual ao width para manter circular */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,23 +232,17 @@ onMounted(() => {
   border-bottom-color: var(--gold);
 }
 
-.gemstone {
-  width: 28px;
-  height: 28px;
-  background: rgba(237, 229, 58, 0.2);
-  border: 2px solid var(--gold);
-  transform: rotate(45deg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ── Logo central ── */
+/* 👉 PERSONALIZE: altere width/height para mudar o tamanho da logo */
+.preloader__logo {
+  width: 310px;   /* ← largura da logo                          */
+  height: auto;  /* ← altura da logo (use "auto" se quiser manter proporção) */
+  object-fit: contain;
   animation: levitate 3s ease-in-out infinite;
-  box-shadow: 0 0 20px rgba(237, 229, 58, 0.4);
-}
-
-.gemstone-inner {
-  width: 12px;
-  height: 12px;
-  background: var(--gold);
+  /* 👉 PERSONALIZE: ajuste o brilho dourado ao redor da logo */
+  filter: drop-shadow(0 0 14px rgba(237, 229, 58, 0.55));
+  /* Se a logo for escura sobre fundo escuro, descomente para clarear: */
+  /* filter: drop-shadow(0 0 14px rgba(237, 229, 58, 0.55)) brightness(1.15); */
 }
 
 /* ── Textos ── */
@@ -373,11 +367,11 @@ onMounted(() => {
 @keyframes levitate {
   0%,
   100% {
-    transform: rotate(45deg) translateY(0);
+    transform: translateY(0);
   }
 
   50% {
-    transform: rotate(45deg) translateY(-8px);
+    transform: translateY(-8px);
   }
 }
 

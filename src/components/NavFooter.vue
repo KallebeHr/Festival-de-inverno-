@@ -144,7 +144,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 
 const CONTACT = {
-  whatsapp: "+55 86 9XXXX-XXXX",
+  whatsapp: "+55 86 99461-3849",
   supportEmail: "ouvidoria@pedroii.pi.gov.br",
   city: "Pedro II, Piauí",
 } as const;

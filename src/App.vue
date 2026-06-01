@@ -50,7 +50,7 @@ onMounted(() => {
     // Preloader curto apenas para UX visual
     setTimeout(() => {
       showPreloader.value = false
-    }, 650)
+    }, 2050)
   })
 })
 </script>

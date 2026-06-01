@@ -336,15 +336,86 @@ type FeaturedItem = {
   lineup?: LineupAct[]
 }
 
+// ── URLs das imagens (edite aqui para atualizar as fotos) ─────────────────
+const IMG = {
+  // VILA EMPREENDEDORA
+  vilaEmpreendedora_capa:    "/acoesFestival/vilaE1W.webp",
+  vilaEmpreendedora_galeria1: "/acoesFestival/vilaE2W.webp",
+  vilaEmpreendedora_galeria2: "/acoesFestival/VilaE4.webp",
+
+  // VILA GASTRONÔMICA
+  vilaGastronomica_capa:     "/acoesFestival/vilaGastronomica1.webp",
+  vilaGastronomica_galeria1: "/acoesFestival/destaque1.webp",
+  vilaGastronomica_galeria2: "/acoesFestival/destaque2.webp",
+  vilaGastronomica_galeria3: "/acoesFestival/destaque3.webp",
+
+  // REDUTO DAS ARTES
+  redutoDasArtes_capa:       "/acoesFestival/reduto1W.webp",
+  redutoDasArtes_galeria1:   "/acoesFestival/reduto2W.webp",
+
+  // PALCO MIRANTE
+  palcoMirante_capa:         "/acoesFestival/palcM1W.webp",
+
+  // CACHOEIRAS
+  cachoeiras_capa:           "/acoesFestival/cachoeiraUrubu.webp",
+  cachoeiras_galeria1:       "/acoesFestival/cachoeiras2.webp",
+  cachoeiras_galeria2:       "/acoesFestival/cachoeiras3.webp",
+
+  // CASARIO
+  casario_capa:              "/acoesFestival/casario1.webp",
+  casario_galeria1:          "/acoesFestival/casario2.webp",
+
+  // ESPAÇO CRIANÇA
+  espacoCrianca_capa:        "/acoesFestival/espacoCrianca1.webp",
+  espacoCrianca_galeria1:    "https://SEU_DOMINIO.com/acoesFestival/espacoCrianca2.webp",
+
+  // ESPAÇO DO AGRICULTOR
+  espacoAgricultor_capa:     "/acoesFestival/espacoAgricultor2.webp",
+  espacoAgricultor_galeria1: "https://SEU_DOMINIO.com/acoesFestival/espacoAgricultor2.webp",
+
+  // MIRANTE DO GRITADOR
+  miranteGritador_capa:      "/acoesFestival/miranteGritador1.webp",
+  miranteGritador_galeria1:  "https://SEU_DOMINIO.com/acoesFestival/miranteGritador2.webp",
+
+  // PALCO CARLOS CORDEIRO
+  palcoCarlosCordeiro_capa:  "/acoesFestival/palcoCarlosCordeiro1.webp",
+  palcoCarlosCordeiro_galeria1: "https://SEU_DOMINIO.com/acoesFestival/palcoCarlosCordeiro2.webp",
+
+  // PALCO GRITADOR
+  palcoGritador_capa:        "/acoesFestival/palcoGritador1.webp",
+  palcoGritador_galeria1:    "https://SEU_DOMINIO.com/acoesFestival/palcoGritador2.webp",
+
+  // PALCO JAZZ E BLUES
+  palcoJazzBlues_capa:       "/acoesFestival/palcoJazzBlues1.webp",
+  palcoJazzBlues_galeria1:   "https://SEU_DOMINIO.com/acoesFestival/palcoJazzBlues2.webp",
+
+  // PALCO MERCADO DO ARTESÃO
+  palcoMercadoArtesao_capa:  "/acoesFestival/palcoMercadoArtesao1.webp",
+  palcoMercadoArtesao_galeria1: "https://SEU_DOMINIO.com/acoesFestival/palcoMercadoArtesao2.webp",
+
+  // PALCO OPALA
+  palcoOpala_capa:           "/acoesFestival/palcoOpala1.webp",
+  palcoOpala_galeria1:       "https://SEU_DOMINIO.com/acoesFestival/palcoOpala2.webp",
+
+  // PINACOTECA
+  pinacoteca_capa:           "/acoesFestival/pinacoteca1.webp",
+  pinacoteca_galeria1:       "https://SEU_DOMINIO.com/acoesFestival/pinacoteca2.webp",
+
+  // SÍTIO BURITIZINHO
+  sitioBuritizinho_capa:     "/acoesFestival/sitioBuritizinho1.webp",
+  sitioBuritizinho_galeria1: "https://SEU_DOMINIO.com/acoesFestival/sitioBuritizinho2.webp",
+} as const
+
 // ── Dados brutos (pt + en) ───────────────────────────
 const rawItems: FeaturedItemRaw[] = [
-  
+
+  // ── VILA EMPREENDEDORA ───────────────────────────────
   {
     id: 2,
     badge: { pt: "Destaque", en: "Featured" },
-    image: "/acoesFestival/vilaE1W.webp",
+    image: IMG.vilaEmpreendedora_capa,
     org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
-    title: { pt: "VILA EMPREENDEDORA ", en: "Sem Informações" },
+    title: { pt: "VILA EMPREENDEDORA", en: "Sem Informações" },
     subtitle: {
       pt: "Reafirmando sua importância para a economia local e regional.",
       en: "Sem Informações",
@@ -362,21 +433,17 @@ const rawItems: FeaturedItemRaw[] = [
     duration: "10h00",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-    // lineup: [
-    //   { name: "Banda Raízes do Sertão", time: "20h00" },
-    //   { name: "Trio Nordestino", time: "21h15" },
-    //   { name: "Maria Forró e Convidados", time: "22h30" },
-    // ],
     gallery: [
-      { src: "/acoesFestival/vilaE2W.webp", alt: "Show noturno" },
-      // { src: "/acoesFestival/VilaE3W.webp", alt: "Público festival" },
-      { src: "/acoesFestival/VilaE4.webp", alt: "Palco iluminado" },
+      // { src: IMG.vilaEmpreendedora_galeria1, alt: "Show noturno" },
+      // { src: IMG.vilaEmpreendedora_galeria2, alt: "Palco iluminado" },
     ],
   },
+
+  // ── VILA GASTRONÔMICA ────────────────────────────────
   {
     id: 1,
     badge: { pt: "Alimentação", en: "Alimentação" },
-    image: "https://imgs.search.brave.com/1xnVdjNuNBGrI_YMOT30KoETN6rGQSjpGssTSMRI2u0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWFyaWFmYXJvZmEu/Y29tLmJyL2ltYWdl/bnMvaW1nMDIuanBn",
+    image: IMG.vilaGastronomica_capa,
     org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
     title: { pt: "VILA GASTRONÔMICA", en: "Sem Informações" },
     subtitle: {
@@ -385,7 +452,7 @@ const rawItems: FeaturedItemRaw[] = [
     },
     date: { pt: "04 a 07/06/2026", en: "Sem informações" },
     time: "De 18h00 às 03h00",
-    place: { pt: "Praça Manoel Nogueira Lima (Praça da Bonelle) ", en: "Sem Informações" },
+    place: { pt: "Praça Manoel Nogueira Lima (Praça da Bonelle)", en: "Sem Informações" },
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
     description: {
       pt: "A Vila Gastronômica não apenas sacia a fome dos visitantes, mas conta a história de Pedro II através do paladar, fortalecendo a economia criativa e o orgulho do produtor local. Distribuídos em 10(dez) estandes, a Vila Gastronômica transformou o festival em uma experiência completa, provando que a gastronomia é ativo cultural tão potente quantos as joias de opala e o artesanato local.",
@@ -396,21 +463,18 @@ const rawItems: FeaturedItemRaw[] = [
     duration: "10h00",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-    // lineup: [
-    //   { name: "Banda Raízes do Sertão", time: "20h00" },
-    //   { name: "Trio Nordestino", time: "21h15" },
-    //   { name: "Maria Forró e Convidados", time: "22h30" },
-    // ],
     gallery: [
-      { src: "/Destaques/destaque1.webp", alt: "Show noturno" },
-      { src: "/Destaques/destaque1.webp", alt: "Público festival" },
-      { src: "/Destaques/destaque1.webp", alt: "Palco iluminado" },
+      // { src: IMG.vilaGastronomica_galeria1, alt: "Show noturno" },
+      // { src: IMG.vilaGastronomica_galeria2, alt: "Público festival" },
+      // { src: IMG.vilaGastronomica_galeria3, alt: "Palco iluminado" },
     ],
   },
+
+  // ── REDUTO DAS ARTES ─────────────────────────────────
   {
     id: 4,
     badge: { pt: "Artesanato", en: "Family" },
-    image: "/acoesFestival/reduto1W.webp",
+    image: IMG.redutoDasArtes_capa,
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
     title: { pt: "REDUTO DAS ARTES – Exposição & Comercealização", en: "Forró Night" },
     subtitle: {
@@ -421,7 +485,7 @@ const rawItems: FeaturedItemRaw[] = [
     time: "9h às 19h",
     place: { pt: "Club 11 de Agosto – Centro Histórico", en: "Festival Arena" },
     description: {
-      pt: "Se você busca entender a alma da “Suiça Piauiense”, o REDUTO DAS ARTES é um lugar onde a inspiração encontra a oportunidade. Muita conexão e network! O ambiente favorece uma intensa troca de ideias, onde o dialogo entre diferentes gerações de artistas cria uma rede de apoio e aprendizado mútuo. A nova geração da arte pedrossegundense espera por você!",
+      pt: "Se você busca entender a alma da 'Suiça Piauiense' , o REDUTO DAS ARTES é um lugar onde a inspiração encontra a oportunidade. Muita conexão e network! O ambiente favorece uma intensa troca de ideias, onde o dialogo entre diferentes gerações de artistas cria uma rede de apoio e aprendizado mútuo. A nova geração da arte pedrossegundense espera por você!",
       en: "The most anticipated night of the festival! Big names in forró in an unmissable show featuring accordion, bass drum and triangle.",
     },
     ageRating: "L",
@@ -430,47 +494,15 @@ const rawItems: FeaturedItemRaw[] = [
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
-      { src: "/acoesFestival/reduto2W.webp", alt: "Artesanato" },
-      { src: "/acoesFestival/reduto3W.webp", alt: "Artesanato" },
+      // { src: IMG.redutoDasArtes_galeria1, alt: "Artesanato" },
     ],
-    // lineup: [
-    //   { name: "Rei do Baião", time: "19h00" },
-    //   { name: "Sanfoneiros do Nordeste", time: "21h00" },
-    //   { name: "Atração Surpresa / Surprise Act", time: "23h30" },
-    // ],
   },
-  // {
-  //   id: 2,
-  //   badge: { pt: "Novidade", en: "New" },
-  //   image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=1400&q=70",
-  //   org: { pt: "Festival de Inverno", en: "Winter Festival" },
-  //   title: { pt: "Mostra de Artesanato", en: "Crafts Exhibition" },
-  //   subtitle: {
-  //     pt: "Cultura e tradição das mãos do povo piauiense",
-  //     en: "Culture and tradition from the hands of Piauí's people",
-  //   },
-  //   date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
-  //   time: "09h00 – 18h00",
-  //   place: { pt: "Centro Cultural de Pedro II", en: "Pedro II Cultural Center" },
-  //   address: { pt: "Rua Principal, 100, Pedro II – PI", en: "Main Street, 100, Pedro II – PI" },
-  //   description: {
-  //     pt: "Exposição com mais de 80 artesãos locais exibindo peças em couro, cerâmica, renda, bordado e muito mais. Compra direta com o artista.",
-  //     en: "Exhibition with over 80 local artisans showcasing leather, ceramics, lace, embroidery and much more. Buy directly from the artist.",
-  //   },
-  //   ageRating: "L",
-  //   category: { pt: "Cultura & Arte", en: "Culture & Art" },
-  //   duration: "4 dias / 4 days",
-  //   price: 0,
-  //   mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-  //   gallery: [
-  //     { src: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=70", alt: "Artesanato" },
-  //     { src: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=70", alt: "Feira de artesanato" },
-  //   ],
-  // },
+
+  // ── PALCO MIRANTE ────────────────────────────────────
   {
     id: 3,
     badge: { pt: "Destaque", en: "Featured" },
-    image: "/acoesFestival/palcM1W.webp",
+    image: IMG.palcoMirante_capa,
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
     title: { pt: "PALCO MIRANTE", en: "Food Festival" },
     subtitle: {
@@ -495,31 +527,355 @@ const rawItems: FeaturedItemRaw[] = [
       { name: "Chefs Convidados – Demo ao Vivo", time: "15h00" },
     ],
   },
-  
-  // {
-  //   id: 5,
-  //   badge: { pt: "Família", en: "Family" },
-  //   image: "https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?auto=format&fit=crop&w=1400&q=70",
-  //   org: { pt: "Festival de Inverno", en: "Winter Festival" },
-  //   title: { pt: "Circo e Teatro de Rua", en: "Street Circus & Theatre" },
-  //   subtitle: {
-  //     pt: "Espetáculos gratuitos para toda a família",
-  //     en: "Free shows for the whole family",
-  //   },
-  //   date: { pt: "04 a 07 de Junho de 2026", en: "June 4–7, 2026" },
-  //   time: "16h00 e 18h00",
-  //   place: { pt: "Praça Central", en: "Central Square" },
-  //   address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
-  //   description: {
-  //     pt: "Malabaristas, palhaços, atores e contadores de histórias tomam conta das praças e ruas do município em apresentações gratuitas e encantadoras para crianças e adultos.",
-  //     en: "Jugglers, clowns, actors and storytellers take over the squares and streets of the town in free and enchanting performances for children and adults alike.",
-  //   },
-  //   ageRating: "L",
-  //   category: { pt: "Teatro & Circo", en: "Theatre & Circus" },
-  //   duration: "~1h",
-  //   price: 0,
-  //   mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
-  // },
+
+  // ── CACHOEIRAS ───────────────────────────────────────
+  {
+    id: 5,
+    badge: { pt: "Natureza", en: "Nature" },
+    image: IMG.cachoeiras_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "CACHOEIRAS", en: "Waterfalls" },
+    subtitle: {
+      pt: "Mergulhe na beleza natural das cachoeiras da região.",
+      en: "Dive into the natural beauty of the region's waterfalls.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "08h00 – 18h00",
+    place: { pt: "Entorno de Pedro II – PI", en: "Surroundings of Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "Uma das atrações mais aguardadas do festival, as cachoeiras da região de Pedro II oferecem um espetáculo natural único com suas águas cristalinas e paisagens exuberantes.",
+      en: "One of the most anticipated attractions of the festival, the waterfalls in the Pedro II region offer a unique natural spectacle with crystal-clear waters and lush landscapes.",
+    },
+    ageRating: "L",
+    category: { pt: "Natureza & Ecoturismo", en: "Nature & Ecotourism" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.cachoeiras_galeria1, alt: "Cachoeira da região" },
+      // { src: IMG.cachoeiras_galeria2, alt: "Paisagem natural" },
+    ],
+  },
+
+  // ── CASARIO ──────────────────────────────────────────
+  {
+    id: 6,
+    badge: { pt: "Cultura", en: "Culture" },
+    image: IMG.casario_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "CASARIO", en: "Historic Houses" },
+    subtitle: {
+      pt: "Patrimônio histórico e arquitetônico de Pedro II.",
+      en: "Historic and architectural heritage of Pedro II.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "09h00 – 18h00",
+    place: { pt: "Centro Histórico de Pedro II – PI", en: "Historic Center of Pedro II – PI" },
+    address: { pt: "Centro, Pedro II – PI", en: "Downtown, Pedro II – PI" },
+    description: {
+      pt: "O Casario histórico de Pedro II é um dos grandes atrativos culturais do festival. Suas fachadas coloridas e arquitetura colonial contam séculos de história e tradição da cidade, tornando cada esquina uma fotografia viva.",
+      en: "The historic Casario of Pedro II is one of the great cultural attractions of the festival. Its colorful facades and colonial architecture tell centuries of history and tradition of the city.",
+    },
+    ageRating: "L",
+    category: { pt: "Cultura & Patrimônio", en: "Culture & Heritage" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.casario_galeria1, alt: "Casario histórico" },
+    ],
+  },
+
+  // ── ESPAÇO CRIANÇA ───────────────────────────────────
+  {
+    id: 8,
+    badge: { pt: "Família", en: "Family" },
+    image: IMG.espacoCrianca_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "ESPAÇO CRIANÇA", en: "Kids Space" },
+    subtitle: {
+      pt: "Diversão e aprendizado para os pequenos do festival.",
+      en: "Fun and learning for the little ones at the festival.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "10h00 – 20h00",
+    place: { pt: "Área Kids – Pedro II – PI", en: "Kids Area – Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Espaço Criança é um local especialmente preparado para receber as famílias com crianças durante o festival. Com atividades lúdicas, oficinas criativas e entretenimento para todas as idades, garantindo diversão e segurança para os pequenos.",
+      en: "The Kids Space is a specially prepared area to welcome families with children during the festival. With playful activities, creative workshops and entertainment for all ages, ensuring fun and safety for little ones.",
+    },
+    ageRating: "L",
+    category: { pt: "Infantil & Família", en: "Kids & Family" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.espacoCrianca_galeria1, alt: "Espaço criança" },
+    ],
+  },
+
+  // ── ESPAÇO DO AGRICULTOR ─────────────────────────────
+  {
+    id: 9,
+    badge: { pt: "Agro", en: "Agro" },
+    image: IMG.espacoAgricultor_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "ESPAÇO DO AGRICULTOR", en: "Farmer's Space" },
+    subtitle: {
+      pt: "Valorizando quem alimenta e sustenta a nossa região.",
+      en: "Valuing those who feed and sustain our region.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "08h00 – 18h00",
+    place: { pt: "Área Rural – Pedro II – PI", en: "Rural Area – Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Espaço do Agricultor é uma celebração da força do campo. Produtores locais expõem e comercializam seus produtos, valorizando a agricultura familiar e os sabores autênticos da região serrana do Piauí.",
+      en: "The Farmer's Space is a celebration of the strength of the countryside. Local producers display and sell their products, valuing family farming and the authentic flavors of the mountain region of Piauí.",
+    },
+    ageRating: "L",
+    category: { pt: "Agricultura & Campo", en: "Agriculture & Rural" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.espacoAgricultor_galeria1, alt: "Espaço do agricultor" },
+    ],
+  },
+
+  // ── MIRANTE DO GRITADOR ──────────────────────────────
+  {
+    id: 10,
+    badge: { pt: "Ecoturismo", en: "Ecotourism" },
+    image: IMG.miranteGritador_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "MIRANTE DO GRITADOR", en: "Gritador Viewpoint" },
+    subtitle: {
+      pt: "Uma vista de tirar o fôlego no coração da Serra dos Matões.",
+      en: "A breathtaking view in the heart of Serra dos Matões.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "08h00 – 18h00",
+    place: { pt: "Serra dos Matões – 12km de Pedro II – PI", en: "Serra dos Matões – 12km from Pedro II – PI" },
+    address: { pt: "Serra dos Matões, Pedro II – PI", en: "Serra dos Matões, Pedro II – PI" },
+    description: {
+      pt: "O Mirante do Gritador é um dos pontos turísticos mais icônicos de Pedro II. Com uma visão panorâmica privilegiada da Serra dos Matões, o local encanta turistas e moradores com suas paisagens deslumbrantes e clima agradável.",
+      en: "The Gritador Viewpoint is one of the most iconic tourist spots in Pedro II. With a privileged panoramic view of Serra dos Matões, the location enchants tourists and residents with its stunning landscapes and pleasant climate.",
+    },
+    ageRating: "L",
+    category: { pt: "Ecoturismo & Natureza", en: "Ecotourism & Nature" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Mirante+do+Gritador+Pedro+II+Piauí",
+    gallery: [
+      // { src: IMG.miranteGritador_galeria1, alt: "Vista do Mirante do Gritador" },
+    ],
+  },
+
+  // ── PALCO CARLOS CORDEIRO ────────────────────────────
+  {
+    id: 11,
+    badge: { pt: "Show", en: "Show" },
+    image: IMG.palcoCarlosCordeiro_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO CARLOS CORDEIRO", en: "Carlos Cordeiro Stage" },
+    subtitle: {
+      pt: "Grandes atrações musicais no palco principal do festival.",
+      en: "Major musical attractions on the festival's main stage.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "19h00 – 02h00",
+    place: { pt: "Praça Central – Pedro II – PI", en: "Central Square – Pedro II – PI" },
+    address: { pt: "Praça Central, s/n, Pedro II – PI", en: "Central Square, s/n, Pedro II – PI" },
+    description: {
+      pt: "O Palco Carlos Cordeiro é o coração musical do Festival de Inverno de Pedro II. Grandes nomes da música regional e nacional se apresentam neste palco icônico, que leva o nome de um dos grandes apoiadores da cultura local.",
+      en: "The Carlos Cordeiro Stage is the musical heart of the Pedro II Winter Festival. Big names in regional and national music perform on this iconic stage, which bears the name of one of the great supporters of local culture.",
+    },
+    ageRating: "L",
+    category: { pt: "Show Musical", en: "Music Show" },
+    duration: "4 noites",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.palcoCarlosCordeiro_galeria1, alt: "Palco Carlos Cordeiro" },
+    ],
+  },
+
+  // ── PALCO GRITADOR ───────────────────────────────────
+  {
+    id: 12,
+    badge: { pt: "Show", en: "Show" },
+    image: IMG.palcoGritador_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO GRITADOR", en: "Gritador Stage" },
+    subtitle: {
+      pt: "Sons e ritmos que ecoam pela serra.",
+      en: "Sounds and rhythms that echo through the mountains.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "18h00 – 23h00",
+    place: { pt: "Mirante do Gritador – Serra dos Matões", en: "Gritador Viewpoint – Serra dos Matões" },
+    address: { pt: "Serra dos Matões, Pedro II – PI", en: "Serra dos Matões, Pedro II – PI" },
+    description: {
+      pt: "O Palco Gritador oferece uma experiência musical única em plena natureza. Com o pôr do sol da Serra dos Matões como cenário, os shows neste palco se tornam momentos mágicos e inesquecíveis para todos os presentes.",
+      en: "The Gritador Stage offers a unique musical experience in the midst of nature. With the sunset over Serra dos Matões as a backdrop, the shows on this stage become magical and unforgettable moments for all present.",
+    },
+    ageRating: "L",
+    category: { pt: "Show Musical", en: "Music Show" },
+    duration: "4 noites",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Mirante+do+Gritador+Pedro+II+Piauí",
+    gallery: [
+      // { src: IMG.palcoGritador_galeria1, alt: "Palco Gritador" },
+    ],
+  },
+
+  // ── PALCO JAZZ E BLUES ───────────────────────────────
+  {
+    id: 13,
+    badge: { pt: "Jazz & Blues", en: "Jazz & Blues" },
+    image: IMG.palcoJazzBlues_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO JAZZ E BLUES", en: "Jazz & Blues Stage" },
+    subtitle: {
+      pt: "A sofisticação do Jazz e do Blues no coração da Serra.",
+      en: "The sophistication of Jazz and Blues in the heart of the mountains.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "19h00 – 23h00",
+    place: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Palco Jazz e Blues traz para o Festival de Inverno a sofisticação e a emoção desses gêneros musicais que conquistam gerações. Uma noite especial com artistas locais e convidados que prometem encantar todos os presentes.",
+      en: "The Jazz and Blues Stage brings to the Winter Festival the sophistication and emotion of these musical genres that conquer generations. A special night with local artists and guests.",
+    },
+    ageRating: "L",
+    category: { pt: "Jazz & Blues", en: "Jazz & Blues" },
+    duration: "4 noites",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.palcoJazzBlues_galeria1, alt: "Palco Jazz e Blues" },
+    ],
+  },
+
+  // ── PALCO MERCADO DO ARTESÃO ─────────────────────────
+  {
+    id: 14,
+    badge: { pt: "Show", en: "Show" },
+    image: IMG.palcoMercadoArtesao_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO DO FORRÓ - MERCADO DO ARTESÃO", en: "Artisan Market Stage" },
+    subtitle: {
+      pt: "Arte, cultura e música no coração do mercado artesanal.",
+      en: "Art, culture and music at the heart of the artisan market.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "10h00 – 22h00",
+    place: { pt: "Mercado do Artesão – Pedro II – PI", en: "Artisan Market – Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Palco Mercado do Artesão une a tradição do artesanato piauiense com apresentações musicais ao vivo. Um espaço onde é possível admirar e adquirir peças únicas feitas à mão por artistas locais enquanto aprecia a música regional.",
+      en: "The Artisan Market Stage combines the tradition of Piauí craftsmanship with live musical performances. A space where you can admire and purchase unique handmade pieces by local artists while enjoying regional music.",
+    },
+    ageRating: "L",
+    category: { pt: "Artesanato & Música", en: "Crafts & Music" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.palcoMercadoArtesao_galeria1, alt: "Mercado do Artesão" },
+    ],
+  },
+
+  // ── PALCO OPALA ──────────────────────────────────────
+  {
+    id: 15,
+    badge: { pt: "Show", en: "Show" },
+    image: IMG.palcoOpala_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PALCO OPALA", en: "Opal Stage" },
+    subtitle: {
+      pt: "Brilho e música como as opalas da nossa terra.",
+      en: "Brightness and music like the opals of our land.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "19h00 – 02h00",
+    place: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "O Palco Opala é um tributo à riqueza mineral que fez Pedro II famosa no mundo. Assim como as opalas da região, este palco brilha com apresentações deslumbrantes que refletem toda a energia e identidade cultural da cidade.",
+      en: "The Opal Stage is a tribute to the mineral wealth that made Pedro II famous in the world. Like the opals of the region, this stage shines with dazzling performances that reflect all the energy and cultural identity of the city.",
+    },
+    ageRating: "L",
+    category: { pt: "Show Musical", en: "Music Show" },
+    duration: "4 noites",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.palcoOpala_galeria1, alt: "Palco Opala" },
+    ],
+  },
+
+  // ── PINACOTECA ───────────────────────────────────────
+  {
+    id: 16,
+    badge: { pt: "Arte", en: "Art" },
+    image: IMG.pinacoteca_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "PINACOTECA", en: "Pinacoteca" },
+    subtitle: {
+      pt: "Exposição de artes visuais celebrando talentos locais e regionais.",
+      en: "Visual arts exhibition celebrating local and regional talents.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "09h00 – 19h00",
+    place: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    address: { pt: "Pedro II – PI", en: "Pedro II – PI" },
+    description: {
+      pt: "A Pinacoteca do Festival de Inverno reúne obras de artistas visuais locais e regionais em uma exposição que celebra a criatividade e o talento do povo piauiense. Pinturas, esculturas, fotografias e instalações convivem em harmonia.",
+      en: "The Festival's Pinacoteca brings together works by local and regional visual artists in an exhibition that celebrates the creativity and talent of the people of Piauí. Paintings, sculptures, photographs and installations coexist in harmony.",
+    },
+    ageRating: "L",
+    category: { pt: "Artes Visuais", en: "Visual Arts" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.pinacoteca_galeria1, alt: "Pinacoteca" },
+    ],
+  },
+
+  // ── SÍTIO BURITIZINHO ────────────────────────────────
+  {
+    id: 17,
+    badge: { pt: "Rural", en: "Rural" },
+    image: IMG.sitioBuritizinho_capa,
+    org: { pt: "Festival de Inverno", en: "Winter Festival" },
+    title: { pt: "SÍTIO BURITIZINHO", en: "Buritizinho Farm" },
+    subtitle: {
+      pt: "Conexão com a natureza e as raízes do campo piauiense.",
+      en: "Connection with nature and the roots of Piauí's countryside.",
+    },
+    date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
+    time: "08h00 – 18h00",
+    place: { pt: "Sítio Buritizinho – Pedro II – PI", en: "Buritizinho Farm – Pedro II – PI" },
+    address: { pt: "Zona Rural, Pedro II – PI", en: "Rural Area, Pedro II – PI" },
+    description: {
+      pt: "O Sítio Buritizinho é uma experiência de imersão na cultura e natureza rural piauiense. Visitantes podem conhecer de perto o modo de vida do campo, participar de atividades rurais e desfrutar da gastronomia típica em meio à paisagem serrana.",
+      en: "The Buritizinho Farm is an immersive experience in rural culture and nature in Piauí. Visitors can get up close to country life, participate in rural activities and enjoy typical gastronomy amid mountain scenery.",
+    },
+    ageRating: "L",
+    category: { pt: "Turismo Rural", en: "Rural Tourism" },
+    duration: "4 dias",
+    price: 0,
+    mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
+    gallery: [
+      // { src: IMG.sitioBuritizinho_galeria1, alt: "Sítio Buritizinho" },
+    ],
+  },
 ]
 
 // ── Computed: traduz os itens para o idioma ativo ────
@@ -899,111 +1255,112 @@ onBeforeUnmount(() => {
 }
 .subtitle {
   margin: 0;
-  font-size: 12px; line-height: 1.4;
+  font-size: 13px; font-weight: 400; line-height: 1.5;
   color: var(--text-muted);
+  font-family: var(--font-sans);
   display: -webkit-box;
-  -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.meta { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
-.row { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: start; }
-.row__ic { width: 16px; height: 16px; color: var(--blue); opacity: .8; transform: translateY(1px); }
-.row__ic .i { width: 100%; height: 100%; }
-.row__tx {
-  font: 500 12px/1.4 var(--font-sans); color: var(--text-muted);
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+
+/* ── Meta ────────────────────────────────────────────── */
+.meta { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+.row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; line-height: 1.2;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
 }
+.row__ic { display: flex; flex-shrink: 0; color: var(--blue); }
+.row__ic .i { width: 13px; height: 13px; }
+.row__tx { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── CTA ─────────────────────────────────────────────── */
 .card__cta {
-  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
-  margin-top: auto;
-  font: 700 12px/1 var(--font-cond);
-  letter-spacing: .08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
   color: var(--blue);
-  opacity: 0;
-  transition: opacity 200ms ease;
+  font: 700 12px/1 var(--font-sans);
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
-.card__cta .cta-icon { width: 14px; height: 14px; }
-
+.cta-icon { width: 14px; height: 14px; transition: transform 200ms ease; }
 .card__bar {
-  position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
-  background: linear-gradient(90deg, var(--blue), var(--gold));
-  opacity: .8;
-  transition: opacity 220ms ease;
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), rgba(237,229,58,0.3));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 280ms ease;
 }
-
 @media (hover:hover) {
-  .card__link:hover { transform: translateY(-6px); border-color: rgba(1,25,90,0.1); box-shadow: var(--shadow-md); }
-  .card__link:hover .media__img { transform: scale(1.05); }
-  .card__link:hover .card__bar { opacity: 1; }
-  .card__link:hover .card__cta { opacity: 1; }
+  .card__link:hover { transform: translateY(-4px); border-color: rgba(1,25,90,0.1); box-shadow: var(--shadow-md); }
+  .card__link:hover .media__img { transform: scale(1.06); }
+  .card__link:hover .cta-icon { transform: translateX(3px); }
+  .card__link:hover .card__bar { transform: scaleX(1); }
 }
 
-/* ── Card animation ──────────────────────────────────── */
-.card[data-io="0"] .card__link { opacity: 0; transform: translateY(20px); }
+/* ── Card reveal animation ───────────────────────────── */
+.card[data-io="0"] .card__link {
+  opacity: 0; transform: translateY(14px);
+}
 .card[data-io="1"] .card__link {
   opacity: 1; transform: translateY(0);
-  transition: opacity 600ms ease, transform 600ms ease, box-shadow 220ms ease, border-color 220ms ease;
-  transition-delay: var(--stagger-delay, 0ms);
+  transition:
+    opacity 480ms ease var(--stagger-delay, 0ms),
+    transform 480ms cubic-bezier(0.22,1,0.36,1) var(--stagger-delay, 0ms),
+    box-shadow 220ms ease,
+    border-color 220ms ease;
 }
 
 /* ── Modal backdrop ──────────────────────────────────── */
 .modal-backdrop {
-  position: fixed; inset: 0; z-index: 9999;
-  background: rgba(6,14,42,0.75);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex; align-items: flex-end;
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(6,14,42,0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex; align-items: flex-end; justify-content: center;
   padding: 0;
-  overscroll-behavior: contain;
-  touch-action: none;
 }
 @media (min-width: 640px) {
-  .modal-backdrop { align-items: center; justify-content: center; padding: 24px; }
+  .modal-backdrop { align-items: center; padding: 24px; }
 }
 
-/* ── Modal panel ─────────────────────────────────────── */
+/* ── Modal box ───────────────────────────────────────── */
 .modal {
   position: relative;
-  width: 100%;
-  max-width: 600px;
+  width: 100%; max-width: 520px;
   max-height: 92dvh;
-  max-height: 92vh;
-  background: #ffffff;
-  border-radius: 24px 24px 0 0;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
   overflow: hidden;
   display: flex; flex-direction: column;
   outline: none;
-  color: #060e2a;
-  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
 }
 @media (min-width: 640px) {
-  .modal { border-radius: 20px; max-height: 88dvh; max-height: 88vh; }
+  .modal { border-radius: 20px; max-height: 88dvh; }
 }
 
 /* ── Modal hero ──────────────────────────────────────── */
 .modal__hero {
   position: relative;
-  flex-shrink: 0;
-  height: 240px;
+  height: 220px; flex-shrink: 0;
+  background: var(--blue-deep);
   overflow: hidden;
-  background: #060e2a;
 }
-@media (min-width: 640px) { .modal__hero { height: 260px; } }
-.modal__hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal__hero-img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
 .modal__hero-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(6,14,42,0.88) 0%, rgba(6,14,42,0.22) 55%, transparent 100%);
+  background: linear-gradient(to top, rgba(6,14,42,0.82) 0%, rgba(6,14,42,0.2) 50%, transparent 100%);
 }
-.modal__hero-foot {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  padding: 20px 22px 18px;
-}
-.modal__badge { position: absolute; top: 16px; left: 16px; }
 .modal__close {
-  position: absolute; top: 14px; right: 14px; z-index: 10;
-  width: 38px; height: 38px;
+  position: absolute; top: 14px; right: 14px; z-index: 3;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(255,255,255,0.22);
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(6,14,42,0.5);
+  background: rgba(6,14,42,0.4);
   color: #fff;
   display: grid; place-items: center;
   cursor: pointer;
@@ -1012,85 +1369,85 @@ onBeforeUnmount(() => {
   transition: background 160ms ease;
 }
 .modal__close .i { width: 18px; height: 18px; }
-@media (hover:hover) { .modal__close:hover { background: rgba(6,14,42,0.82); } }
-
-.org--hero { display: inline-flex; align-items: center; gap: 8px; }
-.org--hero .org__name { color: rgba(255,255,255,0.82); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-family: "Barlow", ui-sans-serif, system-ui, sans-serif; }
-.org--hero .org__mark { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: #EDE53A; box-shadow: 0 0 0 3px rgba(237,229,58,0.25); }
+@media (hover:hover) { .modal__close:hover { background: rgba(6,14,42,0.7); } }
+.modal__badge { position: absolute; top: 14px; left: 14px; z-index: 3; }
+.modal__hero-foot {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+  padding: 16px 20px;
+}
+.org--hero { margin-bottom: 6px; }
+.org--hero .org__name { color: rgba(255,255,255,0.75); }
 .modal__title {
-  margin: 6px 0 0;
-  font-family: "Playfair Display", Georgia, serif;
-  font-weight: 900; font-size: clamp(20px,4vw,26px);
-  line-height: 1.15; color: #ffffff;
+  margin: 0;
+  font-family: var(--fiv-font-display);
+  font-weight: 800;
+  font-size: 20px; line-height: 1.15;
+  color: #fff;
   letter-spacing: -0.01em;
 }
 .modal__subtitle {
-  margin: 5px 0 0;
-  font-size: 13px; line-height: 1.4;
-  color: rgba(255,255,255,0.78);
-  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  margin: 4px 0 0;
+  font-size: 13px; font-weight: 400; line-height: 1.4;
+  font-family: var(--fiv-font-sans);
+  color: rgba(255,255,255,0.7);
 }
 
-/* ── Modal body scroll ───────────────────────────────── */
+/* ── Modal body ──────────────────────────────────────── */
 .modal__body {
   flex: 1; overflow-y: auto;
-  overflow-x: hidden;
-  padding: 20px 22px 34px;
+  padding: 20px 20px 24px;
   display: flex; flex-direction: column; gap: 20px;
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(1,25,90,0.2) transparent;
-  background: #ffffff;
-  color: #060e2a;
 }
+.modal__body::-webkit-scrollbar { width: 4px; }
+.modal__body::-webkit-scrollbar-track { background: transparent; }
+.modal__body::-webkit-scrollbar-thumb { background: rgba(6,14,42,0.15); border-radius: 99px; }
 
 /* ── Chips ───────────────────────────────────────────── */
 .modal__chips {
   display: flex; flex-wrap: wrap; gap: 8px;
 }
 .chip {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
   border: 1px solid rgba(1,25,90,0.12);
-  background: rgba(1,25,90,0.05);
+  background: rgba(1,25,90,0.04);
   font-size: 12px; font-weight: 600; line-height: 1;
-  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--fiv-font-sans);
   color: #01195a;
 }
 .chip__ic { width: 14px; height: 14px; flex-shrink: 0; }
 .age-badge {
   width: 22px; height: 22px;
-  border-radius: 4px;
+  border-radius: 3px;
   display: grid; place-items: center;
-  font-size: 10px; font-weight: 900; line-height: 1;
-  font-family: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
+  font: 900 11px/1 var(--fiv-font-cond);
 }
 .age-badge[data-rating="L"]  { background:#006633; color:#fff; }
 .age-badge[data-rating="10"] { background:#00529b; color:#fff; }
 .age-badge[data-rating="12"] { background:#f6a800; color:#000; }
 .age-badge[data-rating="14"] { background:#f48024; color:#fff; }
 .age-badge[data-rating="16"] { background:#e2001a; color:#fff; }
-.age-badge[data-rating="18"] { background:#000000; color:#fff; }
+.age-badge[data-rating="18"] { background:#000; color:#fff; }
 
 /* ── Info grid ───────────────────────────────────────── */
 .modal__info-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
 }
-@media (max-width: 440px) { .modal__info-grid { grid-template-columns: 1fr; } }
 .info-block {
-  padding: 14px;
+  padding: 14px 16px;
+  background: rgba(1,25,90,0.03);
+  border: 1px solid rgba(1,25,90,0.07);
   border-radius: 12px;
-  background: rgba(1,25,90,0.04);
-  border: 1px solid rgba(1,25,90,0.08);
 }
 .info-block__label {
   display: flex; align-items: center; gap: 6px;
   font-size: 11px; font-weight: 700; line-height: 1;
-  font-family: "Barlow Condensed", "Barlow", ui-sans-serif, sans-serif;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: #01195a; opacity: .85; margin-bottom: 8px;
+  font-family: var(--fiv-font-sans);
+  color: rgba(6,14,42,0.45);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 8px;
 }
 .info-block__label .i { width: 14px; height: 14px; }
 .info-block__value {

@@ -2067,8 +2067,8 @@ const onEscape = (event: KeyboardEvent) => {
   inset: 0;
   z-index: 1000;
   padding: 24px;
-  background: rgba(12, 14, 18, 0.75);
   backdrop-filter: blur(8px);
+  color: #1a1a00;
   -webkit-backdrop-filter: blur(8px);
   display: grid;
   place-items: center;
@@ -2081,7 +2081,7 @@ const onEscape = (event: KeyboardEvent) => {
   overflow: auto;
   padding: 32px;
   border-radius: 24px;
-  background: var(--paper);
+  background: #ffff;
   border: 1px solid var(--line);
   box-shadow: var(--shadow-modal); /* FIX: token agora definido */
 }

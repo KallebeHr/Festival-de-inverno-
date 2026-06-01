@@ -794,21 +794,21 @@ let io: IntersectionObserver | null = null;
 const markers = new Map<string, any>();
 
 // Imagens do Unsplash por categoria/tema
-const imgMirante = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80";
-const imgCrepusculo = "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&q=80";
-const imgPedra = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80";
-const imgTrilha = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80";
-const imgMinas = "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=600&q=80";
-const imgCentro = "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&q=80";
-const imgPinacoteca = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=600&q=80";
-const imgMercado = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80";
-const imgCachoeira = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80";
-const imgCachoeiraSalto = "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80";
-const imgCachoeiraT = "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80";
-const imgTrilhaCach = "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=600&q=80";
-const imgSitioBurit = "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=600&q=80";
-const imgSitioArq = "https://images.unsplash.com/photo-1543373014-cfe4f4bc1cdf?w=600&q=80";
-const imgSitioArq2 = "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=600&q=80";
+const imgMirante = "/acoesFestival/miranteGritador1.webp";
+const imgCrepusculo = "/public/Local/arara.webp";
+const imgPedra = "/public/Local/pedraLua.webp";
+const imgTrilha = "/public/Local/bucolico.webp";
+const imgMinas = "/public/Local/opala.webp";
+const imgCentro = "/acoesFestival/casario1.webp";
+const imgPinacoteca = "/acoesFestival/pinacoteca1.webp";
+const imgMercado = "/public/Local/mercado.webp";
+const imgCachoeira = "/acoesFestival/cachoeiraUrubu.webp";
+const imgCachoeiraSalto = "/acoesFestival/saltoLiso.webp";
+const imgCachoeiraT = "/public/Local/cachoeiraTombador.webp";
+const imgTrilhaCach = "/public/Local/trilha.webp";
+const imgSitioBurit = "/acoesFestival/sitioBuritizinho1.webp";
+const imgSitioArq =  "/public/Local/sitiotorre.webp";
+const imgSitioArq2 = "/public/Local/cavalos.webp";
 
 const places = ref<Place[]>([
   {
