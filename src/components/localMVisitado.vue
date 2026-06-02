@@ -1,41 +1,44 @@
 <template>
-  <section
-    class="places"
-    id="locais-visitados"
-    aria-label="Locais mais visitados em Pedro II"
-  >
+<section
+  class="places"
+  id="locais-visitados"
+  :aria-label="t('places.sectionLabel')"
+>
     <div class="places__container">
       <header class="places__head">
         <div class="places__title-wrap">
-          <span class="places__eyebrow">Descubra Pedro II</span>
+          <span class="places__eyebrow">
+  {{ t('places.eyebrow') }}
+</span>
 
-          <h2 class="places__title">
-            Locais mais visitados
-            <span>durante o festival</span>
-          </h2>
-
+<h2 class="places__title">
+  {{ t('places.title') }}
+  <span>{{ t('places.titleHighlight') }}</span>
+</h2>
           <p class="places__subtitle">
-            Conheça cenários, experiências e pontos especiais para tornar sua
-            visita a Pedro II ainda mais inesquecível.
-          </p>
+  {{ t('places.subtitle') }}
+</p>
         </div>
 
-        <div class="places__actions" aria-label="Navegação dos locais">
-          <button class="nav" type="button" aria-label="Local anterior" @click="slidePrev">
+       <div
+  class="places__actions"
+  :aria-label="t('places.navLabel')"
+>
+          <button class="nav" type="button" :aria-label="t('places.prevPlace')" @click="slidePrev">
             <span aria-hidden="true">‹</span>
           </button>
-          <button class="nav" type="button" aria-label="Próximo local" @click="slideNext">
+          <button class="nav" type="button" :aria-label="t('places.nextPlace')" @click="slideNext">
             <span aria-hidden="true">›</span>
           </button>
         </div>
       </header>
 
-      <ul class="places__tags" aria-label="Destaques dos locais">
-        <li class="places__tag">Paisagens marcantes</li>
-        <li class="places__tag">Turismo cultural</li>
-        <li class="places__tag">Passeios guiados</li>
-        <li class="places__tag">Experiências locais</li>
-      </ul>
+<ul class="places__tags">
+  <li class="places__tag">{{ t('places.tag1') }}</li>
+  <li class="places__tag">{{ t('places.tag2') }}</li>
+  <li class="places__tag">{{ t('places.tag3') }}</li>
+  <li class="places__tag">{{ t('places.tag4') }}</li>
+</ul>
 
       <div class="places__rail">
         <Swiper
@@ -75,7 +78,7 @@
                 <div class="place-card__top">
                   <div class="place-card__org">
                     <span class="place-card__mark" aria-hidden="true"></span>
-                    <span>Pedro II · Piauí</span>
+                    <span>{{ t('places.city') }}</span>
                   </div>
 
                   <h3 class="place-card__title">{{ place.title }}</h3>
@@ -105,11 +108,15 @@
 
                 <div class="place-card__info">
                   <div class="info-block">
-                    <span class="info-block__label">Horário</span>
+                    <span class="info-block__label">
+  {{ t('places.schedule') }}
+</span>
                     <strong class="info-block__value">{{ place.bestTime }}</strong>
                   </div>
                   <div class="info-block">
-                    <span class="info-block__label">Perfil</span>
+                    <span class="info-block__label">
+  {{ t('places.schedule') }}
+</span>
                     <strong class="info-block__value">{{ place.profile }}</strong>
                   </div>
                 </div>
@@ -119,7 +126,7 @@
                   :class="{ 'place-card__actions--solo': !place.hasGuide }"
                 >
                   <button class="btn btn--ghost" type="button" @click="seeDetails(place)">
-                    Ver detalhes
+                  {{ t('places.details') }}
                   </button>
 
                   <button
@@ -128,7 +135,7 @@
                     type="button"
                     @click="chooseGuide(place)"
                   >
-                    Escolher guia
+                    {{ t('places.chooseGuide') }}
                     <svg viewBox="0 0 24 24" class="btn__icon" aria-hidden="true">
                       <path
                         d="M5 12h14M13 6l6 6-6 6"
@@ -153,10 +160,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref,computed } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, A11y } from "swiper/modules";
+import { useI18n } from "vue-i18n";
 
+const { t, locale } = useI18n();
+const lang = computed(() => locale.value);
 import "swiper/css";
 import "swiper/css/pagination";
 
@@ -272,7 +282,9 @@ function chooseGuide(place: Place) {
 function seeDetails(place: Place) {
   const phone = "558694613849";
 
-  const text = `Olá! Quero mais detalhes sobre "${place.title}" durante o Festival de Inverno. Poderia me enviar mais informações?`;
+  const text = t("places.detailsMessage", {
+    place: place.title,
+  });
 
   window.open(
     `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,

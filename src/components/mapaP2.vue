@@ -1,28 +1,29 @@
 <template>
-  <section
-    id="como-chegar"
-    class="arrival"
-    aria-label="Como chegar a Pedro II"
-  >
+<section
+  id="como-chegar"
+  class="arrival"
+  :aria-label="t('arrival.sectionAriaLabel')"
+>
     <div class="arrival__container">
       <header class="arrival__head">
         <div class="arrival__head-content">
-          <span class="arrival__eyebrow">Como chegar</span>
+<span class="arrival__eyebrow">
+  {{ t("arrival.eyebrow") }}
+</span>
 
-          <h2 class="arrival__title">
-            Visite Pedro II
-            <span>no Festival de Inverno</span>
-          </h2>
+<h2 class="arrival__title">
+  {{ t("arrival.title") }}
+  <span>{{ t("arrival.titleHighlight") }}</span>
+</h2>
 
-          <p class="arrival__subtitle">
-            Pedro II, no Piauí, espera por você. Veja a localização da cidade,
-            calcule a distância aproximada e abra a rota no Google Maps ou Waze.
-          </p>
         </div>
       </header>
 
       <div class="arrival__layout">
-        <aside class="arrival__panel" aria-label="Informações de localização">
+        <aside
+  class="arrival__panel"
+  :aria-label="t('arrival.locationInfo')"
+>
           <div class="arrival__dest-card">
             <div class="arrival__dest-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" class="icon">
@@ -44,25 +45,35 @@
             </div>
 
             <div>
-              <p class="arrival__dest-label">Localização oficial</p>
-              <h3 class="arrival__dest-name">{{ destination.name }}</h3>
-              <p class="arrival__dest-address">{{ destination.address }}</p>
+<p class="arrival__dest-label">
+  {{ t("arrival.officialLocation") }}
+</p>
+<h3 class="arrival__dest-name">{{ destination.name }}</h3>
+<p class="arrival__dest-address">{{ destination.address }}</p>
             </div>
           </div>
 
           <div class="arrival__quick-info">
             <div class="info-card">
-              <span class="info-card__label">Cidade</span>
-              <strong class="info-card__value">Pedro II</strong>
+              <span class="info-card__label">
+                {{ t("arrival.city") }}
+              </span>
+<strong class="info-card__value">
+  Pedro II
+</strong>
             </div>
 
             <div class="info-card">
-              <span class="info-card__label">Estado</span>
+<span class="info-card__label">
+  {{ t("arrival.state") }}
+</span>
               <strong class="info-card__value">Piauí</strong>
             </div>
 
             <div class="info-card info-card--wide">
-              <span class="info-card__label">Distância aproximada</span>
+<span class="info-card__label">
+  {{ t("arrival.approxDistance") }}
+</span>
               <strong class="info-card__value">
                 {{ distanceText }}
               </strong>
@@ -92,7 +103,7 @@
                   stroke-width="2"
                 />
               </svg>
-              Usar minha localização
+             {{ t("arrival.useMyLocation") }}
             </button>
 
             <div class="arrival__app-row">
@@ -101,7 +112,7 @@
                 type="button"
                 @click="openGoogleMaps"
               >
-                Google Maps
+               {{ t("arrival.googleMaps") }}
               </button>
 
               <button
@@ -109,7 +120,7 @@
                 type="button"
                 @click="openWaze"
               >
-                Waze
+                {{ t("arrival.waze") }}
               </button>
 
               <button
@@ -117,7 +128,7 @@
                 type="button"
                 @click="copyDestination"
               >
-                Copiar
+              {{ t("arrival.copy") }}
               </button>
             </div>
 
@@ -127,7 +138,7 @@
                 type="button"
                 @click="focusDestination"
               >
-                Ver Pedro II
+                {{ t("arrival.viewPedroII") }}
               </button>
 
               <button
@@ -135,7 +146,7 @@
                 type="button"
                 @click="fitMap"
               >
-                Ajustar mapa
+                {{ t("arrival.fitMap") }}
               </button>
 
               <button
@@ -143,7 +154,7 @@
                 type="button"
                 @click="clearUserLocation"
               >
-                Limpar
+                {{ t("arrival.clear") }}
               </button>
             </div>
           </div>
@@ -160,13 +171,15 @@
             </span>
           </div>
 
-          <div class="arrival__tips">
-            <h4 class="arrival__tips-title">Informações úteis</h4>
+<div class="arrival__tips">
+  <h4 class="arrival__tips-title">
+    {{ t("arrival.usefulInfo") }}
+  </h4>
 
             <ul class="arrival__tips-list">
-              <li>O mapa mostra a localização da cidade de Pedro II.</li>
-              <li>Use Google Maps ou Waze para navegação em tempo real.</li>
-              <li>A distância exibida é aproximada, calculada em linha reta.</li>
+              <li>{{ t("arrival.tip1") }}</li>
+              <li>{{ t("arrival.tip2") }}</li>
+              <li>{{ t("arrival.tip3") }}</li>
             </ul>
           </div>
         </aside>
@@ -174,8 +187,12 @@
         <div class="arrival__map-card">
           <div class="arrival__map-head">
             <div>
-              <p class="arrival__map-kicker">Mapa interativo</p>
-              <h3 class="arrival__map-title">Pedro II · Piauí</h3>
+              <p class="arrival__map-kicker">
+  {{ t("arrival.interactiveMap") }}
+</p>
+              <h3 class="arrival__map-title">
+  {{ t("arrival.mapTitle") }}
+</h3>
             </div>
 
             <button
@@ -183,20 +200,20 @@
               type="button"
               @click="copyCoordinates"
             >
-              Copiar coordenadas
+             {{ t("arrival.copyCoordinates") }}
             </button>
           </div>
 
           <div
             ref="mapEl"
             class="arrival__map"
-            aria-label="Mapa com localização de Pedro II no Piauí"
+            :aria-label="t('arrival.mapAriaLabel')"
           ></div>
 
           <div class="arrival__map-footer">
             <span class="arrival__pill arrival__pill--dest">
               <span class="arrival__pill-dot" aria-hidden="true"></span>
-              Pedro II marcado no mapa
+              {{ t("arrival.destinationPinned") }}
             </span>
 
             <span
@@ -204,7 +221,11 @@
               :class="hasUserLocation ? 'arrival__pill--user' : 'arrival__pill--idle'"
             >
               <span class="arrival__pill-dot" aria-hidden="true"></span>
-              {{ hasUserLocation ? "Sua localização ativa" : "Localização não ativada" }}
+              {{
+  hasUserLocation
+    ? t("arrival.locationActive")
+    : t("arrival.locationInactive")
+}}
             </span>
           </div>
         </div>
@@ -226,6 +247,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 type UserLocation = {
   lat: number;
@@ -234,12 +258,12 @@ type UserLocation = {
 
 const mapEl = ref<HTMLElement | null>(null);
 
-const destination = {
-  name: "Pedro II",
-  address: "Pedro II, Piauí, Brasil",
+const destination = computed(() => ({
+  name: t("arrival.destinationName"),
+  address: t("arrival.destinationAddress"),
   lat: -4.4247,
   lng: -41.4581,
-};
+}));
 
 const userLocation = ref<UserLocation | null>(null);
 const toast = ref("");
@@ -253,13 +277,15 @@ let toastTimer: number | null = null;
 const hasUserLocation = computed(() => Boolean(userLocation.value));
 
 const distanceText = computed(() => {
-  if (!userLocation.value) return "Ative sua localização";
+  if (!userLocation.value) {
+    return t("arrival.enableLocation");
+  }
 
   const distance = getDistanceInKm(
     userLocation.value.lat,
     userLocation.value.lng,
-    destination.lat,
-    destination.lng
+    destination.value.lat,
+    destination.value.lng
   );
 
   if (distance < 1) {
@@ -271,10 +297,12 @@ const distanceText = computed(() => {
 
 const statusText = computed(() => {
   if (hasUserLocation.value) {
-    return `Localização ativa · distância aproximada até Pedro II: ${distanceText.value}`;
+    return t("arrival.locationActiveDistance", {
+      distance: distanceText.value,
+    });
   }
 
-  return "Ative sua localização para calcular a distância aproximada até Pedro II.";
+  return t("arrival.locationInactiveDistance");
 });
 
 function createDestinationIcon() {
@@ -322,7 +350,7 @@ function initMap() {
     zoomControl: false,
     scrollWheelZoom: false,
     preferCanvas: true,
-  }).setView([destination.lat, destination.lng], 13);
+  }).setView([destination.value.lat, destination.value.lng], 13);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -344,17 +372,17 @@ function renderDestinationMarker() {
   if (!map) return;
 
   if (destinationMarker) {
-    destinationMarker.setLatLng([destination.lat, destination.lng]);
+    destinationMarker.setLatLng([destination.value.lat, destination.value.lng]);
     destinationMarker.setPopupContent(
-      `<strong>${destination.name}</strong><br>${destination.address}`
+      `<strong>${destination.value.name}</strong><br>${destination.value.address}`
     );
   } else {
-    destinationMarker = L.marker([destination.lat, destination.lng], {
+    destinationMarker = L.marker([destination.value.lat, destination.value.lng], {
       icon: createDestinationIcon(),
     }).addTo(map);
 
     destinationMarker.bindPopup(
-      `<strong>${destination.name}</strong><br>${destination.address}`
+      `<strong>${destination.value.name}</strong><br>${destination.value.address}`
     );
   }
 
@@ -373,7 +401,7 @@ function renderUserMarker() {
       icon: createUserIcon(),
     }).addTo(map);
 
-    userMarker.bindPopup("<strong>Sua localização</strong>");
+    userMarker.bindPopup(`<strong>${t("arrival.yourLocation")}</strong>`);
   }
 }
 
@@ -390,7 +418,7 @@ function renderLine() {
   lineLayer = L.polyline(
     [
       [userLocation.value.lat, userLocation.value.lng],
-      [destination.lat, destination.lng],
+      [destination.value.lat, destination.value.lng],
     ],
     {
       color: "#01195a",
@@ -404,7 +432,7 @@ function renderLine() {
 function focusDestination() {
   if (!map) return;
 
-  map.setView([destination.lat, destination.lng], 13);
+  map.setView([destination.value.lat, destination.value.lng], 13);
   renderDestinationMarker();
   renderLine();
   destinationMarker?.openPopup();
@@ -414,14 +442,14 @@ function fitMap() {
   if (!map) return;
 
   if (!userLocation.value) {
-    map.setView([destination.lat, destination.lng], 13);
+    map.setView([destination.value.lat, destination.value.lng], 13);
     destinationMarker?.openPopup();
     return;
   }
 
   const bounds = L.latLngBounds([
     [userLocation.value.lat, userLocation.value.lng],
-    [destination.lat, destination.lng],
+    [destination.value.lat, destination.value.lng],
   ]);
 
   map.fitBounds(bounds, {
@@ -432,11 +460,11 @@ function fitMap() {
 
 function locateUser() {
   if (!navigator.geolocation) {
-    showToast("Seu navegador não suporta geolocalização.");
+showToast(t("arrival.toastNoGeolocation"));
     return;
   }
 
-  showToast("Buscando sua localização...");
+showToast(t("arrival.toastSearchingLocation"));
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -449,10 +477,10 @@ function locateUser() {
       renderLine();
       fitMap();
 
-      showToast("Localização encontrada.");
+showToast(t("arrival.toastLocationFound"));
     },
     () => {
-      showToast("Não foi possível acessar sua localização.");
+     showToast(t("arrival.toastLocationError"));
     },
     {
       enableHighAccuracy: true,
@@ -478,11 +506,11 @@ function clearUserLocation() {
   }
 
   focusDestination();
-  showToast("Localização removida.");
+  showToast(t("arrival.toastLocationRemoved"));
 }
 
 function openGoogleMaps() {
-  let url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}&travelmode=driving`;
+  let url = `https://www.google.com/maps/dir/?api=1&destination=${destination.value.lat},${destination.value.lng}&travelmode=driving`;
 
   if (userLocation.value) {
     url += `&origin=${userLocation.value.lat},${userLocation.value.lng}`;
@@ -492,30 +520,30 @@ function openGoogleMaps() {
 }
 
 function openWaze() {
-  const url = `https://www.waze.com/ul?ll=${destination.lat}%2C${destination.lng}&navigate=yes`;
+  const url = `https://www.waze.com/ul?ll=${destination.value.lat}%2C${destination.value.lng}&navigate=yes`;
 
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
 async function copyDestination() {
-  const text = `${destination.name} - ${destination.address}`;
+  const text = `${destination.value.name} - ${destination.value.address}`;
 
   try {
     await navigator.clipboard.writeText(text);
-    showToast("Destino copiado.");
+   showToast(t("arrival.toastDestinationCopied"));
   } catch {
-    showToast("Não foi possível copiar o destino.");
+    showToast(t("arrival.toastDestinationCopyError"));
   }
 }
 
 async function copyCoordinates() {
-  const text = `${destination.lat}, ${destination.lng}`;
+  const text = `${destination.value.lat}, ${destination.value.lng}`;
 
   try {
     await navigator.clipboard.writeText(text);
-    showToast("Coordenadas copiadas.");
+    showToast(t("arrival.toastCoordinatesCopied"));
   } catch {
-    showToast("Não foi possível copiar as coordenadas.");
+    showToast(t("arrival.toastCoordinatesCopyError"));
   }
 }
 

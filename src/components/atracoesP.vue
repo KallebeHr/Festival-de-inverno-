@@ -1,12 +1,21 @@
-<template id="atracoesP">
-  <section class="week-events" id="atracoesP" aria-label="Programação de quinta a domingo">
+<template>
+  <section
+    class="week-events"
+    id="atracoesP"
+    :aria-label="t('thursdayEvents.sectionAriaLabel')"
+  >
     <header class="week-events__head">
       <div class="week-events__head-inner">
-        <span class="week-events__eyebrow">Programação</span>
-        <h2 class="week-events__title">04/06 Quinta-Feira</h2>
+        <span class="week-events__eyebrow">
+          {{ t("thursdayEvents.eyebrow") }}
+        </span>
+
+        <h2 class="week-events__title">
+          {{ t("thursdayEvents.title") }}
+        </h2>
+
         <p class="week-events__subtitle">
-          Confira os eventos principais deste dia. Passe o mouse ou toque
-          no card para visualizar os detalhes.
+          {{ t("thursdayEvents.subtitle") }}
         </p>
       </div>
     </header>
@@ -17,7 +26,7 @@
           ref="prevEl"
           class="week-events__nav week-events__nav--prev"
           type="button"
-          aria-label="Voltar"
+          :aria-label="t('thursdayEvents.previous')"
         >
           <span>‹</span>
         </button>
@@ -44,7 +53,7 @@
               :style="{ '--card-accent': item.accent }"
               tabindex="0"
               role="button"
-              :aria-label="`Ver detalhes de ${item.day}`"
+              :aria-label="`${t('thursdayEvents.viewDetails')} ${item.day}`"
               @click="toggleCard(index)"
               @mouseenter="setActive(index)"
               @mouseleave="clearActive(index)"
@@ -56,7 +65,7 @@
               <div class="event-card__media">
                 <img
                   :src="item.image"
-                  :alt="`Imagem do evento de ${item.day}`"
+                  :alt="`${t('thursdayEvents.eventImage')} ${item.day}`"
                   class="event-card__image"
                   loading="lazy"
                   decoding="async"
@@ -64,42 +73,66 @@
                 />
               </div>
 
-              <div class="event-card__overlay-base" aria-hidden="true"></div>
-<!-- 
-              <div class="event-card__top">
-                <span class="event-card__badge">{{ item.day }}</span>
-                <span class="event-card__date-mini">{{ item.shortDate }}</span>
-              </div> -->
+              <div
+                class="event-card__overlay-base"
+                aria-hidden="true"
+              ></div>
 
               <div class="event-card__bottom">
-                <p class="event-card__kicker">Festival de Inverno 2026</p>
-                <h3 class="event-card__title">{{ item.event }}</h3>
+                <p class="event-card__kicker">
+                  {{ t("thursdayEvents.festivalName") }}
+                </p>
+
+                <h3 class="event-card__title">
+                  {{ item.event }}
+                </h3>
               </div>
 
               <div class="event-card__details">
                 <div class="event-card__details-inner">
-                  <span class="event-card__tag">Informações do evento</span>
+                  <span class="event-card__tag">
+                    {{ t("thursdayEvents.eventInfo") }}
+                  </span>
 
-                  <h3 class="event-card__details-title">{{ item.event }}</h3>
+                  <h3 class="event-card__details-title">
+                    {{ item.event }}
+                  </h3>
 
-                  <ul class="event-card__meta" aria-label="Detalhes do evento">
+                  <ul
+                    class="event-card__meta"
+                    :aria-label="t('thursdayEvents.eventDetails')"
+                  >
                     <li class="event-card__meta-item">
-                      <span class="event-card__meta-label">Data</span>
+                      <span class="event-card__meta-label">
+                        {{ t("thursdayEvents.date") }}
+                      </span>
+
                       <strong>{{ item.date }}</strong>
                     </li>
+
                     <li class="event-card__meta-item">
-                      <span class="event-card__meta-label">Início</span>
+                      <span class="event-card__meta-label">
+                        {{ t("thursdayEvents.start") }}
+                      </span>
+
                       <strong>{{ item.time }}</strong>
                     </li>
+
                     <li class="event-card__meta-item">
-                      <span class="event-card__meta-label">Local</span>
+                      <span class="event-card__meta-label">
+                        {{ t("thursdayEvents.location") }}
+                      </span>
+
                       <strong>{{ item.location }}</strong>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              <span class="event-card__bar" aria-hidden="true"></span>
+              <span
+                class="event-card__bar"
+                aria-hidden="true"
+              ></span>
             </article>
           </SwiperSlide>
         </Swiper>
@@ -108,7 +141,7 @@
           ref="nextEl"
           class="week-events__nav week-events__nav--next"
           type="button"
-          aria-label="Avançar"
+          :aria-label="t('thursdayEvents.next')"
         >
           <span>›</span>
         </button>
@@ -116,47 +149,50 @@
     </div>
   </section>
 </template>
-
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, computed, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
+
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, A11y } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
 
-const quintaImg  = "/cardDiario/quinta1.webp";
+const { t, tm, locale } = useI18n();
+
+const lang = computed(() => locale.value);
+
+const quintaImg = "/cardDiario/quinta1.webp";
 const quintaImg2 = "/cardDiario/quinta2.webp";
 const quintaImg3 = "/cardDiario/quinta3.webp";
 const quintaImg4 = "/cardDiario/quinta4.webp";
 
 const modules = [Navigation, A11y];
 
-const prevEl     = ref(null);
-const nextEl     = ref(null);
+const prevEl = ref(null);
+const nextEl = ref(null);
 const activeCard = ref(null);
 
 const onSwiper = async (swiper) => {
   await nextTick();
+
   if (!prevEl.value || !nextEl.value) return;
+
   swiper.params.navigation.prevEl = prevEl.value;
   swiper.params.navigation.nextEl = nextEl.value;
+
   swiper.navigation.destroy();
   swiper.navigation.init();
   swiper.navigation.update();
 };
 
-/*
- * slidesPerView reduzido em telas grandes para que os cards
- * tenham largura suficiente e respeitem o aspect-ratio 3/4
- * sem ficarem baixos demais.
- */
 const breakpoints = {
-  320:  { slidesPerView: 1.05, spaceBetween: 12 },
-  560:  { slidesPerView: 1.3,  spaceBetween: 14 },
-  768:  { slidesPerView: 2.05, spaceBetween: 16 },
-  1024: { slidesPerView: 2.8,  spaceBetween: 18 },
-  1280: { slidesPerView: 3.5,  spaceBetween: 18 },
+  320: { slidesPerView: 1.05, spaceBetween: 12 },
+  560: { slidesPerView: 1.3, spaceBetween: 14 },
+  768: { slidesPerView: 2.05, spaceBetween: 16 },
+  1024: { slidesPerView: 2.8, spaceBetween: 18 },
+  1280: { slidesPerView: 3.5, spaceBetween: 18 },
 };
 
 const toggleCard = (index) => {
@@ -168,56 +204,43 @@ const setActive = (index) => {
 };
 
 const clearActive = (index) => {
-  if (activeCard.value === index) activeCard.value = null;
+  if (activeCard.value === index) {
+    activeCard.value = null;
+  }
 };
 
-const events = [
-  {
-    id: 1,
-    day: "Quinta-feira",
-    shortDate: "04 Jun",
-    date: "04 de Junho de 2026",
-    time: "19:30",
-    location: "Palco Opala",
-    event: "DE HERMETO PARA DOMINGUINHOS",
-    image: quintaImg4,
-    accent: "#EDE53A",
-  },
-    {
-    id: 2,
-    day: "Quinta-feira",
-    shortDate: "04 Jun",
-    date: "04 de Junho de 2026",
-    time: "21:00",
-    location: "Palco Opala",
-    event: "PURO SAMBA COM SORAYA CASTELO BRANCO E BANDA",
-    image: quintaImg2,
-    accent: "#22c7aa",
-  },
-  {
-    id: 3,
-    day: "Quinta-feira",
-    shortDate: "04 Jun",
-    date: "04 de Junho de 2026",
-    time: "22:30",
-    location: "Palco Opala",
-    event: "TONI GARRIDO",
-    image: quintaImg,
-    accent: "#4E4EFE",
-  },
-  {
-    id: 4,
-    day: "Quinta-feira",
-    shortDate: "04 Jun",
-    date: "04 de Junho de 2026",
-    time: "00:30",
-    location: "Palco Opala",
-    event: "FERRUGEM",
-    image: quintaImg3,
-    accent: "#ED4D93",
-  },
-
+const images = [
+  quintaImg4,
+  quintaImg2,
+  quintaImg,
+  quintaImg3,
 ];
+
+const accents = [
+  "#EDE53A",
+  "#22c7aa",
+  "#4E4EFE",
+  "#ED4D93",
+];
+
+const times = [
+  "19:30",
+  "21:00",
+  "22:30",
+  "00:30",
+];
+
+const events = computed(() => {
+  const translatedEvents = tm("thursdayEvents.events");
+
+  return translatedEvents.map((event, index) => ({
+    id: index + 1,
+    ...event,
+    image: images[index],
+    accent: accents[index],
+    time: times[index],
+  }));
+});
 </script>
 
 <style scoped>

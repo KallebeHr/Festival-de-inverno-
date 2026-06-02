@@ -4,11 +4,11 @@
         <Home/>
        <destaques />
         <ConfirmedGuests />
-        <!-- <LocalMVisitado />
+        <LocalMVisitado />
         <AtracoesP />
         <BlogP /> 
         <MapaP2 /> 
-        <ScrollP /> -->
+        <ScrollP />
         
     </div>
 </template>
