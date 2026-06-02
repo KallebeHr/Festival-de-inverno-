@@ -3,8 +3,8 @@
 
         <Home/>
        <destaques />
-        <!-- <ConfirmedGuests />
-        <LocalMVisitado />
+        <ConfirmedGuests />
+        <!-- <LocalMVisitado />
         <AtracoesP />
         <BlogP /> 
         <MapaP2 /> 

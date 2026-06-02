@@ -1,5 +1,8 @@
 <template>
-  <section class="confirmed" aria-label="Presença confirmada">
+  <section
+  class="confirmed"
+  :aria-label="t('confirmedGuests.sectionLabel')"
+>
 
     <!-- Decoração de fundo -->
     <div class="confirmed__bg" aria-hidden="true">
@@ -13,16 +16,16 @@
 <header class="confirmed__head">
   <p class="confirmed__eyebrow">
     <span class="confirmed__eyebrow-line" aria-hidden="true"></span>
-    {{ t.confirmedEyebrow }}
+   {{ t('confirmedGuests.confirmedEyebrow') }}
     <span class="confirmed__eyebrow-line" aria-hidden="true"></span>
   </p>
 
   <h2 class="confirmed__title">
-    {{ t.confirmedTitle }}
+  {{ t('confirmedGuests.confirmedTitle') }}
   </h2>
 
   <p class="confirmed__subtitle">
-    {{ t.confirmedSubtitle }}
+    {{ t('confirmedGuests.confirmedSubtitle') }}
   </p>
 </header>
 
@@ -32,7 +35,7 @@
           ref="prevEl"
           class="confirmed-nav confirmed-nav--prev"
           type="button"
-         :aria-label="t.previous"
+         :aria-label="t('confirmedGuests.previous')"
         >
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M13 15L8 10L13 5" stroke="currentColor" stroke-width="2"
@@ -82,7 +85,7 @@
               <div class="guest-card__content">
                 <span class="guest-card__tag">
                   <span class="guest-card__tag-dot" aria-hidden="true"></span>
-                {{ t.confirmedArtist }}
+               {{ t('confirmedGuests.confirmedArtist') }}
                 </span>
 
                 <h3 class="guest-card__name">{{ person.name }}</h3>
@@ -100,7 +103,7 @@
           ref="nextEl"
           class="confirmed-nav confirmed-nav--next"
           type="button"
-:aria-label="t.next"
+:aria-label="t('confirmedGuests.next')"
         >
           <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path d="M7 5L12 10L7 15" stroke="currentColor" stroke-width="2"
@@ -115,7 +118,7 @@
           <path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"
             stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-     {{ t.dragToExplore }}
+    {{ t('confirmedGuests.dragToExplore') }}
       </p>
 
     </div>
@@ -126,18 +129,15 @@
 import { ref, nextTick } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, A11y } from "swiper/modules";
-import { useI18n } from "@/composables/useI18n";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+const lang = computed(() => locale.value);
 import "swiper/css";
 import "swiper/css/navigation";
 
-defineProps({
-  t: {
-    type: Object,
-    required: true,
-  },
-});
+
 const modules = [Navigation, A11y];
 
 const prevEl = ref(null);
