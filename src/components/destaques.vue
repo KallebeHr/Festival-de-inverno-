@@ -1,16 +1,25 @@
 <template>
-  <section ref="root" class="featured" aria-label="Ações do festival">
+ <section
+  ref="root"
+  class="featured"
+  :aria-label="t('destaques.sectionLabel')"
+>
     <header class="head">
       <div class="head__title-wrap">
-        <span class="head__eyebrow">{{ t.featuredEyebrow }}</span>
-        <h2 class="head__title">{{ t.featuredTitle }}</h2>
+ <span class="head__eyebrow">
+  {{ t('destaques.featuredEyebrow') }}
+</span>
+
+<h2 class="head__title">
+  {{ t('destaques.featuredTitle') }}
+</h2>
       </div>
 
       <div class="head__actions">
-        <button class="nav nav--prev" type="button" :aria-label="t.featuredPrev" @click="slidePrev">
+        <button class="nav nav--prev" type="button" :aria-label="t('destaques.featuredPrev')" @click="slidePrev">
           <span aria-hidden="true">‹</span>
         </button>
-        <button class="nav nav--next" type="button" :aria-label="t.featuredNext" @click="slideNext">
+        <button class="nav nav--next" type="button" :aria-label="t('destaques.featuredNext')" @click="slideNext">
           <span aria-hidden="true">›</span>
         </button>
       </div>
@@ -49,11 +58,16 @@
 
                 <span v-if="item.badge" class="badge">{{ item.badge }}</span>
 
-                <div v-if="item.ageRating" class="age-rating" :data-rating="item.ageRating" :aria-label="`${t.featuredAgeLabel}: ${item.ageRating}`">
-                  {{ item.ageRating }}
-                </div>
+<div
+  v-if="item.ageRating"
+  class="age-rating"
+  :data-rating="item.ageRating"
+  :aria-label="`${t('destaques.ageL')}: ${item.ageRating}`"
+>
+  {{ item.ageRating }}
+</div>
 
-                <button class="share" type="button" :aria-label="t.featuredShare" @click.stop.prevent="share(item)">
+                <button class="share" type="button" :aria-label="t('destaques.share')" @click.stop.prevent="share(item)">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true">
                     <path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -86,7 +100,7 @@
                 </div>
 
                 <div class="card__cta">
-                  <span class="cta-text">{{ t.featuredSeeDetails }}</span>
+                  <span class="cta-text">{{ t('destaques.viewDetails') }}</span>
                   <svg viewBox="0 0 24 24" class="cta-icon" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
               </div>
@@ -120,7 +134,7 @@
               />
               <div class="modal__hero-overlay"></div>
 
-              <button class="modal__close" type="button" :aria-label="t.featuredClose" @click="closeModal">
+              <button class="modal__close" type="button" :aria-label="t('destaques.featuredClose')" @click="closeModal">
                 <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               </button>
 
@@ -152,7 +166,9 @@
                 </div>
                 <div class="chip" v-if="activeItem.price !== undefined">
                   <svg viewBox="0 0 24 24" class="chip__ic i" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  <span>{{ activeItem.price === 0 ? t.featuredFree : `R$ ${activeItem.price}` }}</span>
+{{ activeItem.price === 0
+  ? t('destaques.featuredFree')
+  : `R$ ${activeItem.price}` }}
                 </div>
               </div>
 
@@ -160,7 +176,7 @@
                 <div class="info-block">
                   <div class="info-block__label">
                     <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M7 2v3M17 2v3M3 9h18M5 6h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    {{ t.featuredDateLabel }}
+                    {{ t('destaques.featuredDateLabel') }}
                   </div>
                   <div class="info-block__value">{{ activeItem.date }}</div>
                   <div v-if="activeItem.time" class="info-block__sub">{{ activeItem.time }}</div>
@@ -169,7 +185,7 @@
                 <div class="info-block">
                   <div class="info-block__label">
                     <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 22s7-4.4 7-12a7 7 0 1 0-14 0c0 7.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 10.5a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                    {{ t.featuredPlaceLabel }}
+                   {{ t('destaques.featuredPlaceLabel') }}
                   </div>
                   <div class="info-block__value">{{ activeItem.place }}</div>
                   <div v-if="activeItem.address" class="info-block__sub">{{ activeItem.address }}</div>
@@ -179,12 +195,12 @@
               <div v-if="activeItem.mapUrl || activeItem.mapEmbed" class="modal__map-wrap">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="M3 7l6-4 6 4 6-4v14l-6 4-6-4-6 4V7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 3v14M15 7v14" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                  {{ t.featuredMapLabel }}
+                 {{ t('destaques.featuredMapLabel') }}
                 </div>
                 <div v-if="activeItem.mapEmbed" class="modal__map" v-html="activeItem.mapEmbed"></div>
                 <a v-else-if="activeItem.mapUrl" :href="activeItem.mapUrl" target="_blank" rel="noopener noreferrer" class="map-link">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M12 22s7-4.4 7-12a7 7 0 1 0-14 0c0 7.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 10.5a2.2 2.2 0 1 0 0-4.4 2.2 2.2 0 0 0 0 4.4Z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-                  {{ t.featuredSeeOnMap }}
+                 {{ t('destaques.featuredSeeOnMap') }}
                   <svg viewBox="0 0 24 24" class="i ext-ic" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
               </div>
@@ -192,7 +208,7 @@
               <div v-if="activeItem.description" class="modal__desc">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  {{ t.featuredDescLabel }}
+                 {{ t('destaques.descLabel') }}
                 </div>
                 <p class="desc-text">{{ activeItem.description }}</p>
               </div>
@@ -200,7 +216,7 @@
               <div v-if="activeItem.gallery?.length" class="modal__gallery">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="m21 15-5-5L5 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  {{ t.featuredGalleryLabel }}
+                {{ t('destaques.featuredDescLabel') }}
                 </div>
                 <div class="gallery-grid">
                   <img
@@ -218,7 +234,7 @@
               <div v-if="activeItem.lineup?.length" class="modal__lineup">
                 <div class="info-block__label" style="margin-bottom: 10px;">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true" style="width:14px;height:14px;"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 18 9 12 3 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  {{ t.featuredLineupLabel }}
+                  {{ t('destaques.lineupLabel') }}
                 </div>
                 <ul class="lineup-list">
                   <li v-for="(act, i) in activeItem.lineup" :key="i" class="lineup-item">
@@ -234,7 +250,7 @@
               <div class="modal__footer">
                 <button class="btn-share" type="button" @click="share(activeItem)">
                   <svg viewBox="0 0 24 24" class="i" aria-hidden="true"><path d="M15 8a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Zm-6 5.2 6.2-3.1M9 10.9 15.2 14M9 10a3 3 0 1 0-2.83-4H6a3 3 0 0 0 3 3Zm6 14a3 3 0 1 0-2.83-4H12a3 3 0 0 0 3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  {{ t.featuredShare }}
+                  {{ t('destaques.share') }}
                 </button>
                 <a
                   v-if="activeItem.ticketUrl"
@@ -272,12 +288,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
+
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue"
+import { useI18n } from "vue-i18n"
+
+const { t, locale } = useI18n()
+const lang = computed(() => locale.value)
+
 import { Swiper, SwiperSlide } from "swiper/vue"
 import { A11y } from "swiper/modules"
 import "swiper/css"
 
-const { t, lang } = inject('i18n') as any
 
 // ── Tipos ────────────────────────────────────────────
 type LineupAct = { name: string; time?: string }
@@ -414,23 +435,37 @@ const rawItems: FeaturedItemRaw[] = [
     id: 2,
     badge: { pt: "Destaque", en: "Featured" },
     image: IMG.vilaEmpreendedora_capa,
-    org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
-    title: { pt: "VILA EMPREENDEDORA", en: "Sem Informações" },
+    org: { pt: "Coordenada pelo SEBRAE", en: "Organized by SEBRAE" },
+    title: {
+  pt: "VILA EMPREENDEDORA",
+  en: "ENTREPRENEURSHIP VILLAGE",
+},
     subtitle: {
-      pt: "Reafirmando sua importância para a economia local e regional.",
-      en: "Sem Informações",
-    },
-    date: { pt: "04 a 07/06/2026", en: "Sem informações" },
+  pt: "Reafirmando sua importância para a economia local e regional.",
+  en: "Reinforcing its importance to the local and regional economy.",
+},
+
+  date: {
+  pt: "04 a 07/06/2026",
+  en: "June 4–7, 2026",
+},
     time: "08h00 às 22h00",
-    place: { pt: "Praça Domingos Mourão Filho (Matriz)", en: "Sem Informações" },
+   place: {
+  pt: "Praça Domingos Mourão Filho (Matriz)",
+  en: "Domingos Mourão Filho Square (Main Square)",
+},
+
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
-    description: {
-      pt: "Alimentação",
-      en: "Sem Informações",
-    },
+   description: {
+  pt: "Negócios, inovação, empreendedorismo, networking e desenvolvimento econômico local.",
+  en: "Business, innovation, entrepreneurship, networking and local economic development.",
+},
     ageRating: "L",
-    category: { pt: "Empreendedorismo", en: "Music Show" },
-    duration: "Dia todo.",
+  category: {
+  pt: "Empreendedorismo",
+  en: "Entrepreneurship",
+},
+duration: "4 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
@@ -494,25 +529,45 @@ const rawItems: FeaturedItemRaw[] = [
   // ── VILA GASTRONÔMICA ────────────────────────────────
   {
     id: 1,
-    badge: { pt: "Alimentação", en: "Alimentação" },
+badge: {
+  pt: "Alimentação",
+  en: "Food",
+},
     image: IMG.vilaGastronomica_capa,
-    org: { pt: "Coordenada pelo SEBRAE", en: "Sem Informações" },
-    title: { pt: "VILA GASTRONÔMICA", en: "Sem Informações" },
-    subtitle: {
-      pt: "Varios Estandes, Infinitos sabores!!",
-      en: "Sem Informações",
-    },
-    date: { pt: "04 a 07/06/2026", en: "Sem informações" },
+org: {
+  pt: "Coordenada pelo SEBRAE",
+  en: "Organized by SEBRAE",
+},
+    title: {
+  pt: "VILA GASTRONÔMICA",
+  en: "GASTRONOMIC VILLAGE",
+},
+   subtitle: {
+  pt: "Varios Estandes, Infinitos sabores!!",
+  en: "Many stands, endless flavors!",
+},
+   date: {
+  pt: "04 a 07/06/2026",
+  en: "June 4–7, 2026",
+},
     time: "18h00 às 03h00",
-    place: { pt: "Praça Manoel Nogueira Lima (Praça da Bonelle)", en: "Sem Informações" },
+    place: {
+  pt: "Praça Manoel Nogueira Lima (Praça da Bonelle)",
+  en: "Manoel Nogueira Lima Square (Bonelle Square)",
+},
+
     address: { pt: "Praça da Matriz, s/n, Pedro II – PI", en: "Main Square, s/n, Pedro II – PI" },
     description: {
-      pt: "A Vila Gastronômica não apenas sacia a fome dos visitantes, mas conta a história de Pedro II através do paladar, fortalecendo a economia criativa e o orgulho do produtor local. Distribuídos em 10(dez) estandes, a Vila Gastronômica transformou o festival em uma experiência completa, provando que a gastronomia é ativo cultural tão potente quantos as joias de opala e o artesanato local.",
-      en: "Sem Informações",
-    },
+  pt: "A Vila Gastronômica não apenas sacia a fome dos visitantes, mas conta a história de Pedro II através do paladar, fortalecendo a economia criativa e o orgulho do produtor local. Distribuídos em 10(dez) estandes, a Vila Gastronômica transformou o festival em uma experiência completa, provando que a gastronomia é ativo cultural tão potente quantos as joias de opala e o artesanato local.",
+  en: "The Gastronomic Village offers visitors a complete culinary experience, showcasing local cuisine and regional flavors. Through its food stands, it strengthens the creative economy and highlights the cultural richness of Pedro II.",
+},
+
     ageRating: "L",
-    category: { pt: "Alimentação", en: "Sem informação" },
-    duration: "10h00",
+    category: {
+  pt: "Alimentação",
+  en: "Food & Gastronomy",
+},
+duration: "4 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
@@ -525,24 +580,39 @@ const rawItems: FeaturedItemRaw[] = [
   // ── REDUTO DAS ARTES ─────────────────────────────────
   {
     id: 4,
-    badge: { pt: "Artesanato", en: "Family" },
+    badge: {
+  pt: "Artesanato",
+  en: "Arts & Crafts",
+},
     image: IMG.redutoDasArtes_capa,
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "REDUTO DAS ARTES – Exposição & Comercealização", en: "Forró Night" },
+    title: {
+  pt: "REDUTO DAS ARTES – Exposição & Comercealização",
+  en: "ARTS HUB – Exhibition & Marketplace",
+},
     subtitle: {
-      pt: "Criatividade que transforma: conheça nossos artistas.",
-      en: "Big names in traditional forró music",
-    },
-    date: { pt: "04 a 07/06/2026", en: "June 7th, 2026" },
+  pt: "Criatividade que transforma: conheça nossos artistas.",
+  en: "Creativity that transforms: discover our artists.",
+},
+   date: {
+  pt: "04 a 07/06/2026",
+  en: "June 4–7, 2026",
+},
     time: "9h às 19h",
-    place: { pt: "Club 11 de Agosto – Centro Histórico", en: "Festival Arena" },
+    place: {
+  pt: "Club 11 de Agosto – Centro Histórico",
+  en: "11 de Agosto Club – Historic Center",
+},
     description: {
       pt: "Se você busca entender a alma da 'Suiça Piauiense' , o REDUTO DAS ARTES é um lugar onde a inspiração encontra a oportunidade. Muita conexão e network! O ambiente favorece uma intensa troca de ideias, onde o dialogo entre diferentes gerações de artistas cria uma rede de apoio e aprendizado mútuo. A nova geração da arte pedrossegundense espera por você!",
-      en: "The most anticipated night of the festival! Big names in forró in an unmissable show featuring accordion, bass drum and triangle.",
+      en: "If you want to experience the soul of the 'Swiss Alps of Piauí', Arts Hub is where inspiration meets opportunity. It is a space for networking, creativity and collaboration among artists from different generations.",
     },
     ageRating: "L",
-    category: { pt: "Show Musical", en: "Music Show" },
-    duration: "10h",
+    category: {
+  pt: "Show Musical",
+  en: "Arts & Crafts",
+},
+duration: "4 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     gallery: [
@@ -556,22 +626,33 @@ const rawItems: FeaturedItemRaw[] = [
     badge: { pt: "Destaque", en: "Featured" },
     image: IMG.palcoMirante_capa,
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "PALCO MIRANTE", en: "Food Festival" },
-    subtitle: {
-      pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
-      en: "Typical flavors of the highland winter",
-    },
+    title: {
+  pt: "PALCO MIRANTE",
+  en: "VIEWPOINT STAGE",
+},
+   subtitle: {
+  pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
+  en: "Live music at the iconic Gritador Viewpoint.",
+},
     date: { pt: "05 e 07 de Junho de 2026", en: "June 5 & 7, 2026" },
     time: "11h00 – 22h00",
-    place: { pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM", en: "Municipal Park" },
+    place: {
+  pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
+  en: "Gritador Viewpoint – Serra dos Matões (12 km from Pedro II)",
+},
     address: { pt: "Av. do Parque, s/n, Pedro II – PI", en: "Park Ave., s/n, Pedro II – PI" },
     description: {
-      pt: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
-      en: "PONTO TURISTICO MIRANTE DO GRITADOR - SERRA DOS MATÕES 12KM",
+      pt: "Uma experiência musical única em meio à natureza no famoso Mirante de Gritador, uma das paisagens mais deslumbrantes da região.",
+      en: "A unique musical experience surrounded by nature at the famous Gritador Viewpoint, one of the most breathtaking landscapes in the region.",
+
     },
     ageRating: "L",
-    category: { pt: "SHOW", en: "Gastronomy" },
-    duration: "3 dias",
+ category: {
+  pt: "SHOW",
+  en: "Live Music",
+},
+
+    duration: "3 days",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
     lineup: [
@@ -913,11 +994,14 @@ lineup: [
     badge: { pt: "Show", en: "Show" },
     image: IMG.palcoMercadoArtesao_capa,
     org: { pt: "Festival de Inverno", en: "Winter Festival" },
-    title: { pt: "PALCO DO FORRÓ - MERCADO DO ARTESÃO", en: "Artisan Market Stage" },
-    subtitle: {
-      pt: "Arte, cultura e música no coração do mercado artesanal.",
-      en: "Art, culture and music at the heart of the artisan market.",
-    },
+    title: {
+  pt: "PALCO DO FORRÓ - MERCADO DO ARTESÃO",
+  en: "FORRÓ STAGE – ARTISAN MARKET",
+},
+subtitle: {
+  pt: "Arte, cultura e música no coração do mercado artesanal.",
+  en: "Traditional forró music in the heart of the artisan market.",
+},
     date: { pt: "04 a 07/06/2026", en: "June 4–7, 2026" },
     time: "10h00 – 22h00",
     place: { pt: "Mercado do Artesão – Pedro II – PI", en: "Artisan Market – Pedro II – PI" },
@@ -927,7 +1011,10 @@ lineup: [
       en: "The Artisan Market Stage combines the tradition of Piauí craftsmanship with live musical performances. A space where you can admire and purchase unique handmade pieces by local artists while enjoying regional music.",
     },
     ageRating: "L",
-    category: { pt: "Artesanato & Música", en: "Crafts & Music" },
+    category: {
+  pt: "Artesanato & Música",
+  en: "Forró & Regional Music",
+},
     duration: "4 dias",
     price: 0,
     mapUrl: "https://maps.google.com/?q=Pedro+II,+Piauí",
@@ -1106,9 +1193,9 @@ async function share(item: FeaturedItem) {
   }
   try {
     await navigator.clipboard.writeText(url)
-    showToast(t.value.featuredLinkCopied)
+    showToast(t("featured.linkCopied"))
   } catch {
-    showToast(t.value.featuredCopyFail)
+    showToast(t("featured.copyFail"))
   }
 }
 
@@ -1120,14 +1207,14 @@ function showToast(msg: string) {
 
 // ── Age rating ───────────────────────────────────────
 function ageLabel(r: string) {
-  const map: Record<string, string> = {
-    L:    t.value.ageL,
-    "10": t.value.age10,
-    "12": t.value.age12,
-    "14": t.value.age14,
-    "16": t.value.age16,
-    "18": t.value.age18,
-  }
+const map: Record<string, string> = {
+  L: t("destaques.ageL"),
+  "10": t("destaques.age10"),
+  "12": t("destaques.age12"),
+  "14": t("destaques.age14"),
+  "16": t("destaques.age16"),
+  "18": t("destaques.age18"),
+}
   return map[r] ?? `${r} anos`
 }
 

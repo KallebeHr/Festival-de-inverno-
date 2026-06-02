@@ -9,7 +9,10 @@
 
       <main class="main-content">
         <router-view v-slot="{ Component }">
-          <Transition name="page-fade" mode="out-in">
+          <Transition
+            name="page-fade"
+            mode="out-in"
+          >
             <component :is="Component" />
           </Transition>
         </router-view>
@@ -32,22 +35,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import NavHeader from './components/NavHeader.vue'
 import NavFooter from './components/NavFooter.vue'
 import Preloader from './components/Preloader.vue'
 
-import { useI18n } from '@/composables/useI18n'
-
-provide('i18n', useI18n())
-
 const showPreloader = ref(true)
 
 onMounted(() => {
-  // Permite browser iniciar render/layout primeiro
   requestAnimationFrame(() => {
-    // Preloader curto apenas para UX visual
     setTimeout(() => {
       showPreloader.value = false
     }, 2050)

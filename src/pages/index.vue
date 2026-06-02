@@ -2,13 +2,13 @@
     <div class="body">
 
         <Home/>
-        <destaques />
-        <ConfirmedGuests />
+       <destaques />
+        <!-- <ConfirmedGuests />
         <LocalMVisitado />
         <AtracoesP />
         <BlogP /> 
         <MapaP2 /> 
-        <ScrollP />
+        <ScrollP /> -->
         
     </div>
 </template>

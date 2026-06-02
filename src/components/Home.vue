@@ -43,7 +43,7 @@
       <div class="hero__badge-wrap">
         <span class="hero__badge">
           <span class="hero__badge-dot" aria-hidden="true"></span>
-          {{ t.heroExtr }}
+          {{ t('home.tagline')}}
           <span class="hero__badge-dot" aria-hidden="true"></span>
         </span>
       </div>
@@ -54,7 +54,7 @@
             <rect x="2" y="4" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
             <path d="M6 2v4M14 2v4M2 9h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-          <time datetime="2026-06-04/2026-06-07">04 — 07 de Junho, 2026</time>
+          <time datetime="2026-06-04/2026-06-07">{{ t('home.date') }}</time>
         </div>
         <span class="hero__meta-sep" aria-hidden="true">◆</span>
         <div class="hero__meta-item">
@@ -68,10 +68,10 @@
 
       <div class="hero__actions">
         <button class="btn btn--primary" type="button" @click="onPrimary">
-          {{ t.heroPrimary }}
+          {{ t('home.ctaSchedule') }}
         </button>
         <button class="btn btn--ghost" type="button" @click="onSecondary">
-          {{ t.heroSecondary }}
+          {{ t('home.ctaDirections') }}
         </button>
       </div>
 
@@ -80,9 +80,9 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { useI18n } from 'vue-i18n'
 
-const { t } = inject("i18n") as any;
+const { t } = useI18n()
 
 const onPrimary   = () => document.querySelector("#atracoesP")?.scrollIntoView({ behavior: "smooth", block: "start" });
 const onSecondary = () => document.querySelector("#como-chegar")?.scrollIntoView({ behavior: "smooth", block: "start" });

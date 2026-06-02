@@ -264,13 +264,13 @@ function slideNext() {
 }
 
 function chooseGuide(place: Place) {
-  const phone = "558695355952";
+  const phone = "558694613849"; 
   const text = `Olá! Tenho interesse em visitar "${place.title}" durante o Festival de Inverno e gostaria de escolher um guia.`;
   window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
 }
 
 function seeDetails(place: Place) {
-  const phone = "558695355952";
+  const phone = "558694613849";
 
   const text = `Olá! Quero mais detalhes sobre "${place.title}" durante o Festival de Inverno. Poderia me enviar mais informações?`;
 

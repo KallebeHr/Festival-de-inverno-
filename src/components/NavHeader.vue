@@ -410,10 +410,12 @@
 </template>
 
 <script setup>
-import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
-const { t, lang, toggleLanguage } = inject("i18n");
+const { t, locale } = useI18n();
+const lang = computed(() => locale.value);
 
 const router = useRouter();
 const route = useRoute();
@@ -684,8 +686,15 @@ function hideToast() {
 // ─── Handlers ────────────────────────────────────────────────────────────────
 
 function onToggleLanguage() {
-  toggleLanguage();
-  const message = lang.value === "pt" ? t.value.langPt : t.value.langEn;
+  locale.value = locale.value === "pt" ? "en" : "pt";
+
+  localStorage.setItem("language", locale.value);
+
+  const message =
+    locale.value === "pt"
+      ? "Idioma alterado para Português"
+      : "Language changed to English";
+
   showToast(message, 1400);
 }
 

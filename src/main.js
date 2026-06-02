@@ -4,27 +4,34 @@
  * Bootstraps Vuetify and other plugins then mounts the App
  */
 
-// Plugins
-import { registerPlugins } from '@/plugins'
+// Vue
+import { createApp } from 'vue'
 
-// Components
+// App
 import App from './App.vue'
 
-// Composables
-import { createApp } from 'vue'
+// Plugins
+import { registerPlugins } from '@/plugins'
 
 // Styles
 import 'unfonts.css'
 
-// Import VLibras
+// VLibras
 import VLibras from '@vue-a11y/vlibras'
+
+// i18n
+import i18n from '@/i18n'
 
 const app = createApp(App)
 
-// Registrar outros plugins (como Vuetify)
+// Vuetify e demais plugins
 registerPlugins(app)
 
-// Registrar VLibras
+// Internacionalização
+app.use(i18n)
+
+// VLibras
 app.use(VLibras)
 
+// Mount
 app.mount('#app')
