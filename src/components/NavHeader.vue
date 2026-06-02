@@ -271,13 +271,13 @@
             <div class="fs__leftHead">
               <p class="fs__kicker">
                 <span class="kicker-line" aria-hidden="true"></span>
-                {{ t.quickNavigation }}
+                {{ t.quickNavigation }}Festival de Inverno
               </p>
 
               <h2 class="fs__title">{{ t.whereToGo }}</h2>
 
               <p class="fs__subtitle">
-                {{ t.menuSubtitle }}
+                {{ t.menuSubtitle }}2026
               </p>
             </div>
 
@@ -321,7 +321,7 @@
               </p>
 
               <button class="fs__ctaBtn" type="button" @click="jump('/programacao')">
-                {{ t.seeProgramming }}
+                {{ t.seeProgramming }}Programação
                 <v-icon icon="mdi-arrow-top-right" size="16" />
               </button>
             </div>

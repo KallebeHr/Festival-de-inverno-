@@ -4,6 +4,7 @@ import confirmedGuests from './confirmedGuests'
 import places from './places'
 import thursdayEvents  from './thursdayEvents'
 import arrival  from './arrival'
+import navheader  from './navheader'
 
 export default {
   home,
@@ -11,5 +12,6 @@ export default {
   confirmedGuests,
   places,
   thursdayEvents,
-  arrival
+  arrival,
+  navheader
 }
