@@ -5,6 +5,7 @@
        <destaques />
         <ConfirmedGuests />
         <LocalMVisitado />
+        <avalieEvento />
         <AtracoesP />
         <BlogP /> 
         <MapaP2 /> 

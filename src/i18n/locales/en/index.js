@@ -5,6 +5,7 @@ import places from './places'
 import thursdayEvents  from './thursdayEvents'
 import arrival  from './arrival'
 import navheader  from './navheader'
+import avalie  from './avalie'
 
 export default {
   home,
@@ -13,5 +14,6 @@ export default {
   places,
   thursdayEvents,
   arrival,
-  navheader
+  navheader,
+  avalie
 }

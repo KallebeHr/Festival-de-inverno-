@@ -13,6 +13,7 @@ declare module 'vue' {
     AtracoesAtivas: typeof import('./src/components/atracoesAtivas.vue')['default']
     AtracoesP: typeof import('./src/components/atracoesP.vue')['default']
     Autoscroll: typeof import('./src/components/autoscroll.vue')['default']
+    AvalieEvento: typeof import('./src/components/avalieEvento.vue')['default']
     BannerFip: typeof import('./src/components/bannerFip.vue')['default']
     BlogG: typeof import('./src/components/blogG.vue')['default']
     BlogP: typeof import('./src/components/BlogP.vue')['default']
