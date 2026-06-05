@@ -163,10 +163,10 @@ const { t, tm, locale } = useI18n();
 
 const lang = computed(() => locale.value);
 
-const quintaImg = "/cardDiario/quinta1.webp";
-const quintaImg2 = "/cardDiario/quinta2.webp";
-const quintaImg3 = "/cardDiario/quinta3.webp";
-const quintaImg4 = "/cardDiario/quinta4.webp";
+const quintaImg = "/cardDiario/sexta1.webp";
+const quintaImg2 = "/cardDiario/sexta2.webp";
+const quintaImg3 = "/cardDiario/sexta3.webp";
+const quintaImg4 = "/cardDiario/sexta4.webp";
 
 const modules = [Navigation, A11y];
 
@@ -225,8 +225,8 @@ const accents = [
 
 const times = [
   "19:30",
-  "21:00",
-  "22:30",
+  "20:30",
+  "23:00",
   "00:30",
 ];
 

@@ -1,14 +1,14 @@
 export default {
   eyebrow: "Schedule",
 
-  title: "06/04 Thursday",
+  title: "06/05 Friday",
 
   subtitle:
     "Check out the main events of the day. Hover or tap a card to view details.",
 
   viewDetails: "View details for",
   eventImage: "Event image for",
-
+ 
   festivalName: "Winter Festival 2026",
 
   eventInfo: "Event Information",
@@ -19,32 +19,32 @@ export default {
 
   events: [
     {
-      day: "Thursday",
-      shortDate: "Jun 04",
-      date: "June 04, 2026",
+      day: "Friday",
+      shortDate: "Jun 05",
+      date: "June 05, 2026",
       location: "Palco Opala",
-      event: "DE HERMETO PARA DOMINGUINHOS",
+      event: "TORI",
     },
     {
-      day: "Thursday",
-      shortDate: "Jun 04",
-      date: "June 04, 2026",
+      day: "Friday",
+      shortDate: "Jun 05",
+      date: "June 05, 2026",
       location: "Palco Opala",
-      event: "PURO SAMBA COM SORAYA CASTELO BRANCO E BANDA",
+      event: "MARINA SENA",
     },
     {
-      day: "Thursday",
-      shortDate: "Jun 04",
-      date: "June 04, 2026",
+      day: "Friday",
+      shortDate: "Jun 05",
+      date: "June 05, 2026",
       location: "Palco Opala",
-      event: "TONI GARRIDO",
+      event: "RAISSA RAABE",
     },
     {
-      day: "Thursday",
-      shortDate: "Jun 04",
-      date: "June 04, 2026",
+      day: "Friday",
+      shortDate: "Jun 05",
+      date: "June 05, 2026",
       location: "Palco Opala",
-      event: "FERRUGEM",
+      event: "OS ORIGINAIS DO SAMBA",
     },
   ],
 };

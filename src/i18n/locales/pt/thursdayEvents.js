@@ -1,7 +1,7 @@
 export default {
   eyebrow: "Programação",
 
-  title: "04/06 Quinta-Feira",
+  title: "05/06 Sexta-Feira",
 
   subtitle:
     "Confira os eventos principais deste dia. Passe o mouse ou toque no card para visualizar os detalhes.",
@@ -20,29 +20,29 @@ export default {
   events: [
     {
       day: "Quinta-feira",
-      shortDate: "04 Jun",
-      date: "04 de Junho de 2026",
+      shortDate: "05 Jun",
+      date: "05 de Junho de 2026",
       location: "Palco Opala",
       event: "DE HERMETO PARA DOMINGUINHOS",
     },
     {
       day: "Quinta-feira",
-      shortDate: "04 Jun",
-      date: "04 de Junho de 2026",
+      shortDate: "05 Jun",
+      date: "05 de Junho de 2026",
       location: "Palco Opala",
       event: "PURO SAMBA COM SORAYA CASTELO BRANCO E BANDA",
     },
     {
       day: "Quinta-feira",
-      shortDate: "04 Jun",
-      date: "04 de Junho de 2026",
+      shortDate: "05 Jun",
+      date: "05 de Junho de 2026",
       location: "Palco Opala",
       event: "TONI GARRIDO",
     },
     {
       day: "Quinta-feira",
-      shortDate: "04 Jun",
-      date: "04 de Junho de 2026",
+      shortDate: "05 Jun",
+      date: "05 de Junho de 2026",
       location: "Palco Opala",
       event: "FERRUGEM",
     },
