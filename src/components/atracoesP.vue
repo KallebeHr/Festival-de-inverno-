@@ -163,7 +163,7 @@ const { t, tm, locale } = useI18n();
 
 const lang = computed(() => locale.value);
 
-const quintaImg = "/cardDiario/sexta1.webp";
+const quintaImg1 = "/cardDiario/sexta1.webp";
 const quintaImg2 = "/cardDiario/sexta2.webp";
 const quintaImg3 = "/cardDiario/sexta3.webp";
 const quintaImg4 = "/cardDiario/sexta4.webp";
@@ -210,10 +210,10 @@ const clearActive = (index) => {
 };
 
 const images = [
-  quintaImg4,
+  quintaImg1,
   quintaImg2,
-  quintaImg,
   quintaImg3,
+  quintaImg4,
 ];
 
 const accents = [
