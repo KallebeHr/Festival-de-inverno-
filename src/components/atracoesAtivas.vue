@@ -1092,7 +1092,7 @@ const attractions = ref<Attraction[]>([
   {
     id: "at17",
     dayId: "2026-06-04",
-    time: "01:00",
+    time: "00:30",
     title: "Ferrugem",
     artist: "Ferrugem",
     description:
@@ -1116,7 +1116,7 @@ const attractions = ref<Attraction[]>([
   {
     id: "at18",
     dayId: "2026-06-04",
-    time: "03:00",
+    time: "21:00",
     title: "Puro Samba",
     artist: "Soraya Castelo Branco e Banda",
     description:
