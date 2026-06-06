@@ -272,10 +272,11 @@
 
               <div class="modal-text">
                 <p class="modal-lead">{{ selectedPost.excerpt }}</p>
-                <p>Nesta época do ano, a cidade ganha um charme diferente. As ruas se enchem de visitantes, o cheiro de comida típica toma conta das praças e a música regional embala cada esquina. Esse é o momento perfeito para vivenciar a cultura em sua forma mais pura.</p>
+                <!-- <p>Nesta época do ano, a cidade ganha um charme diferente. As ruas se enchem de visitantes, o cheiro de comida típica toma conta das praças e a música regional embala cada esquina. Esse é o momento perfeito para vivenciar a cultura em sua forma mais pura.</p>
                 <p>Os preparativos começam meses antes. A comunidade local se envolve na montagem da infraestrutura e no acolhimento dos turistas, demonstrando uma hospitalidade ímpar que se tornou marca registrada do evento.</p>
                 <p>O festival não é apenas sobre o frio, mas sobre o calor humano que aquece as noites na Serra dos Ventos. Seja você um visitante de primeira viagem ou um veterano do festival, sempre há uma nova história para contar, um novo sabor para experimentar e uma nova amizade para celebrar.</p>
-              </div>
+              -->
+              </div> 
             </div>
           </div>
           
@@ -341,8 +342,24 @@ const allPosts: BlogPost[] = [
       "Natureza que encanta, memórias que permanecem! Com esse lema, a Prefeitura de Pedro II convida turistas e moradores a participarem de uma experiência única de ecoturismo durante o Festival de Inverno 2025. Entre os dias 19 e 22 de junho, sempre das 7h às 10h, será realizada a ação “Trilhas, Cachoeiras e Bosque do Turista”, na Serra dos Matões, com ponto de partida na entrada da trilha para a Cachoeira do Salto Liso. A iniciativa é coordenada pelas Secretarias Municipais de Meio Ambiente e Turismo, em parceria com a Secretaria Estadual de Meio Ambiente e Recursos Hídricos (SEMARH), e propõe uma vivência que une contemplação da natureza, atividade física e educação ambiental. Durante o percurso ecológico, guiado por profissionais capacitados, os participantes irão explorar cenários naturais de tirar o fôlego até chegar à cachoeira do Salto Liso, uma das mais belas da região. Além disso, o projeto inclui uma ação simbólica e sustentável: cada visitante será convidado a plantar uma muda de árvore nativa no Bosque do Turista, espaço que representa o vínculo entre quem visita Pedro II e o compromisso com a preservação ambiental. “A proposta é proporcionar uma experiência inesquecível de contato com a natureza, valorizando o nosso patrimônio ambiental e incentivando práticas de sustentabilidade entre os participantes”, destaca a prefeita Betinha Brandão. A atividade é gratuita e faz parte da programação oficial do Festival de Inverno, um dos eventos culturais e turísticos mais importantes do Piauí. Para participar, recomenda-se o uso de roupas leves, calçados adequados para trilha e levar água para hidratação. SERVIÇO ECOTURISMO – TRILHAS, CACHOEIRAS E BOSQUE DO TURISTA Dias: 19 a 22/06/2025, de 7h às 10h Local: Serra dos Matões - Entrada da trilha para a Cachoeira do Salto Liso Coordenado pelas Secretarias Municipal de Meio Ambiente, Secretaria de Turismo e Secretaria Estadual de Meio Ambiente e Recursos Hídricos - SEMARH Durante o Festival de Inverno, o projeto Bosque do Turista convida para uma trilha ecológica guiada por profissionais experientes, passando por paisagens deslumbrantes até a Cachoeira do Salto Liso. Ao longo do percurso, os participantes terão a oportunidade de plantar uma árvore nativa em um bosque criado para simbolizar a conexão entre o visitante e a natureza.",
     href: "#",
   },
+
   {
     id: 3,
+    category: "Atrações",
+    image:
+      "https://ecrie.com.br/sistema/conteudos/imagem/m_274_3_6_05062026102240.png",
+    author: "Carlos Nogueira",
+    date: "05/06/2026 às 10h20",
+    dateIso: "2026-06-05",
+    readTime: "4 min",
+    readTimeMinutes: 4,
+    title: "Abertura do Festival de Inverno de Pedro II reúne multidão e celebra a música brasileira",
+    excerpt:
+      "A 20ª edição do Festival de Inverno de Pedro II começou em grande estilo na noite desta quinta-feira (4), reunindo milhares de pessoas no Palco Opala, instalado na Praça da Bonelle, para uma abertura marcada pela diversidade musical, pela valorização da cultura brasileira e pela forte conexão entre artistas e público. Em uma atmosfera de celebração, moradores e visitantes lotaram o espaço para acompanhar uma programação que passeou por diferentes ritmos e gerações, confirmando mais uma vez a força do evento como um dos maiores festivais culturais do Nordeste. Durante a cerimônia de abertura do Festival, que aconteceu no início da noite no Palco Gritador, na Praça Somingos Mourão Filho, a prefeita Betinha Brandão prestou uma homenagem especial a pessoas que contribuíram significativamente para o crescimento e fortalecimento do Festival de Inverno ao longo dessas duas décadas. Os homenageados receberam um bóton comemorativo exclusivo, produzido com joia de opala, símbolo da riqueza mineral e da identidade de Pedro II. A peça foi desenvolvida especialmente para marcar os 20 anos do festival. O número 20, confeccionado em prata, representa a trajetória de sucesso do evento e o reconhecimento àqueles que ajudaram a transformar o Festival de Inverno no que ele é hoje. A abertura da programação no Palco Opala foi marcada pelo espetáculo “De Hermeto para Dominguinhos - Homenagem aos Mestres”, que emocionou o público ao reverenciar grandes nomes da música brasileira. Com arranjos sofisticados e interpretações cheias de sensibilidade, a apresentação destacou a riqueza da cultura nordestina e arrancou aplausos calorosos do público. Na sequência, a cantora Soraya Castello Branco levou ao palco toda a energia e a tradição do samba. Com carisma e repertório envolvente, a artista transformou a praça em uma grande roda de samba a céu aberto, fazendo o público cantar e celebrar a música brasileira. Um dos momentos mais aguardados da noite aconteceu com a entrada de Toni Garrido. Dono de uma trajetória consolidada na música nacional e reconhecido pela presença marcante nos palcos, o cantor embalou o público com sucessos que atravessam gerações. A apresentação foi acompanhada em coro por uma multidão que demonstrou entusiasmo do início ao fim, em um dos pontos altos da primeira noite do festival. Fechando a programação, Ferrugem assumiu o comando da festa e manteve a energia em alta até a madrugada. Com um repertório repleto de sucessos, o artista levou romantismo, emoção e muita animação ao público, que permaneceu no espaço cantando e acompanhando cada música. A apresentação encerrou a noite e confirmou o sucesso da abertura do festival. O Festival de Inverno de Pedro II é uma realização da Prefeitura de Pedro II, do Governo do Estado do Piauí e do Sebrae, com patrocínio do Governo Federal, da Caixa Econômica Federal, dos Cartões Elo, do Banco do Nordeste e da Equatorial Energia. Conta ainda com o apoio da Online Telecom e da Águas do Piauí. Confira a programação desta sexta-feira (5): PALCO OPALA Praça da Bonelle 19h30 - Tori 20h30 - Marina Sena 23h - Raissa Raabe 00h30 - Os Originais do Samba PRAÇA DO JAZZ Praça Dep. Milton Brandão - Praça do Recanto 18h30 - Luizinho Calixto e Anderson Nóbrega Participação: Inácio Botelho, Marcel Régis e Gilson Fernandes 20h30 - Adelson Viana e Jazz no Fole Participação: Sandro Haick, Jota P., Myriam Eduardo e Beto Moreno 22h - Jam com os convidados PALCO CARLOS CORDEIRO Praça Domingos Mourão Filho 9h – Companhia de Dança Flowers 09h30 – Aristides Benício 10h30 – P2P Records 11h30 – Adelaide Vieira 12h30 – DJ Alquimista 13h30 – Geranildo dos Teclados 14h30 – Vibe Tekylla 15h30 – Associação Ana Maria 16h – Coral de Vaqueiros – União (PI) PALCO GRITADOR Praça Domingos Mourão Filho 17h – Banda Back Times 18h – Raiza & Cris 19h – Sonayra 20h – Banda Lostalgia PALCO MIRANTE Mirante do Gritador - Serra dos Matões 16h - Zé Roraima 17h30 - DJ Bossa PALCO DO FORRÓ Mercado do Artesão 11h - Júnior Pegada",
+    href: "https://pedroii.pi.gov.br/abertura-do-festival-de-inverno-de-pedro-ii-reune-multidao-e-celebra-a-musica-brasileira",
+  },
+  {
+    id: 4,
     category: "Atrações",
     image:
       "https://ecrie.com.br/sistema/conteudos/imagem/m_274_0_1_07052026195648.png",
@@ -356,7 +373,7 @@ const allPosts: BlogPost[] = [
       "A Prefeitura de Pedro II divulgou o resultado final do Edital nº 003/2026, referente à seleção de bandas que irão compor a programação do Palco Mirante durante a 20ª edição do Festival de Inverno de Pedro II que acontecerá de 4 a 7 de junho. Ao todo, foram recebidas 42 propostas de bandas interessadas em participar do processo seletivo. Após a análise documental e avaliação técnica, 6 propostas foram aprovadas para integrar a programação oficial do festival. A seleção foi conduzida conforme os critérios estabelecidos no edital, assegurando lisura, transparência e reconhecimento aos artistas que farão parte da programação de um dos mais importantes eventos culturais do estado..",
     href: "#",
   },
-    { id: 4,
+    { id: 5,
     category: "Cultura Empreendedora",
     image:
       "https://pi.agenciasebrae.com.br/wp-content/uploads/sites/18/2026/05/DSC_8628_p6760_cover_image_resized.jpg",
@@ -370,7 +387,7 @@ const allPosts: BlogPost[] = [
     href: "/blog"},
 
   {
-    id: 5,
+    id: 6,
     category: "Festival de inverno",
     image:
       "https://ecrie.com.br/sistema/conteudos/imagem/m_274_0_1_03062026133850.png",
@@ -385,7 +402,7 @@ const allPosts: BlogPost[] = [
     href: "#",
   },
   {
-    id: 6,
+    id: 7,
     category: "Turismo",
     image:
       "https://pedroii.pi.gov.br/imagens/conteudo/326-0_27012025081106.jpeg",

@@ -1,7 +1,7 @@
 export default {
   eyebrow: "Schedule",
 
-  title: "06/05 Friday",
+  title: "06/06 Saturday ",
 
   subtitle:
     "Check out the main events of the day. Hover or tap a card to view details.",
@@ -19,32 +19,32 @@ export default {
 
   events: [
     {
-      day: "Friday",
-      shortDate: "Jun 05",
-      date: "June 05, 2026",
+      day: "Saturday",
+      shortDate: "Jun 06",
+      date: "June 06, 2026",
       location: "Palco Opala",
-      event: "TORI",
+      event: "ALQUIMIA",
     },
     {
-      day: "Friday",
-      shortDate: "Jun 05",
-      date: "June 05, 2026",
+      day: "Saturday",
+      shortDate: "Jun 06",
+      date: "June 06, 2026",
       location: "Palco Opala",
-      event: "MARINA SENA",
+      event: "CHICO CHICO",
     },
     {
-      day: "Friday",
-      shortDate: "Jun 05",
-      date: "June 05, 2026",
+      day: "Saturday",
+      shortDate: "Jun 06",
+      date: "June 06, 2026",
       location: "Palco Opala",
-      event: "RAISSA RAABE",
+      event: "TITÃS",
     },
     {
-      day: "Friday",
-      shortDate: "Jun 05",
-      date: "June 05, 2026",
+      day: "Saturday",
+      shortDate: "Jun 06",
+      date: "June 06, 2026",
       location: "Palco Opala",
-      event: "OS ORIGINAIS DO SAMBA",
+      event: "BANDA DUBLIN",
     },
   ],
 };

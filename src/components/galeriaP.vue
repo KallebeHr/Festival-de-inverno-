@@ -279,33 +279,56 @@
             <button
               v-for="photo in portraitPhotos"
               :key="photo.id"
+              :ref="(el) => registerCard(el, photo.id)"
               class="gallery-card gallery-card--portrait"
               type="button"
               :aria-label="`Abrir foto ${photo.title}`"
               @click="openPhoto(photo)"
             >
+              <!-- SKELETON -->
+              <div
+                v-if="imgState(photo.id) === 'loading'"
+                class="gallery-card__skeleton"
+                aria-hidden="true"
+              ></div>
+
+              <!-- ERRO -->
+              <div
+                v-else-if="imgState(photo.id) === 'error'"
+                class="gallery-card__error"
+                aria-hidden="true"
+              >
+                <v-icon size="28">mdi-image-broken-variant</v-icon>
+                <span>Não foi possível carregar</span>
+              </div>
+
+              <!-- IMAGEM -->
               <img
+                v-show="imgState(photo.id) === 'loaded'"
                 class="gallery-card__img"
-                :src="photo.src"
+                :src="visibleSrcs.has(photo.id) ? photo.src : undefined"
                 :alt="photo.alt"
-                loading="lazy"
                 decoding="async"
+                @load="setImgState(photo.id, 'loaded')"
+                @error="setImgState(photo.id, 'error')"
               />
 
-              <div class="gallery-card__overlay"></div>
+              <template v-if="imgState(photo.id) !== 'error'">
+                <div class="gallery-card__overlay"></div>
 
-              <div class="gallery-card__top">
-                <span class="gallery-card__badge">
-                  <v-icon size="14">{{ getCategoryIcon(photo.category) }}</v-icon>
-                  {{ photo.category }}
-                </span>
-              </div>
+                <div class="gallery-card__top">
+                  <span class="gallery-card__badge">
+                    <v-icon size="14">{{ getCategoryIcon(photo.category) }}</v-icon>
+                    {{ photo.category }}
+                  </span>
+                </div>
 
-              <div class="gallery-card__bottom">
-                <span class="gallery-card__meta">
-                  {{ photo.edition }} • {{ photo.year }}
-                </span>
-              </div>
+                <div class="gallery-card__bottom">
+                  <span class="gallery-card__meta">
+                    {{ photo.edition }} • {{ photo.year }}
+                  </span>
+                </div>
+              </template>
             </button>
           </div>
         </section>
@@ -331,33 +354,56 @@
             <button
               v-for="photo in landscapePhotos"
               :key="photo.id"
+              :ref="(el) => registerCard(el, photo.id)"
               class="gallery-card gallery-card--landscape"
               type="button"
               :aria-label="`Abrir foto ${photo.title}`"
               @click="openPhoto(photo)"
             >
+              <!-- SKELETON -->
+              <div
+                v-if="imgState(photo.id) === 'loading'"
+                class="gallery-card__skeleton"
+                aria-hidden="true"
+              ></div>
+
+              <!-- ERRO -->
+              <div
+                v-else-if="imgState(photo.id) === 'error'"
+                class="gallery-card__error"
+                aria-hidden="true"
+              >
+                <v-icon size="28">mdi-image-broken-variant</v-icon>
+                <span>Não foi possível carregar</span>
+              </div>
+
+              <!-- IMAGEM -->
               <img
+                v-show="imgState(photo.id) === 'loaded'"
                 class="gallery-card__img"
-                :src="photo.src"
+                :src="visibleSrcs.has(photo.id) ? photo.src : undefined"
                 :alt="photo.alt"
-                loading="lazy"
                 decoding="async"
+                @load="setImgState(photo.id, 'loaded')"
+                @error="setImgState(photo.id, 'error')"
               />
 
-              <div class="gallery-card__overlay"></div>
+              <template v-if="imgState(photo.id) !== 'error'">
+                <div class="gallery-card__overlay"></div>
 
-              <div class="gallery-card__top">
-                <span class="gallery-card__badge">
-                  <v-icon size="14">{{ getCategoryIcon(photo.category) }}</v-icon>
-                  {{ photo.category }}
-                </span>
-              </div>
+                <div class="gallery-card__top">
+                  <span class="gallery-card__badge">
+                    <v-icon size="14">{{ getCategoryIcon(photo.category) }}</v-icon>
+                    {{ photo.category }}
+                  </span>
+                </div>
 
-              <div class="gallery-card__bottom">
-                <span class="gallery-card__meta">
-                  {{ photo.edition }} • {{ photo.year }}
-                </span>
-              </div>
+                <div class="gallery-card__bottom">
+                  <span class="gallery-card__meta">
+                    {{ photo.edition }} • {{ photo.year }}
+                  </span>
+                </div>
+              </template>
             </button>
           </div>
         </section>
@@ -367,144 +413,260 @@
     <!-- MODAL -->
     <v-dialog v-model="dialogOpen" max-width="1280">
       <div v-if="selectedPhoto" class="gallery-dialog">
-        <div class="gallery-dialog__media">
+        <!-- Botão fechar flutuante, fora do scroll -->
+        <button class="gallery-dialog__close" type="button" @click="dialogOpen = false">
+          <v-icon size="22">mdi-close</v-icon>
+        </button>
+
+        <!-- Todo o conteúdo em scroll único -->
+        <div class="gallery-dialog__scroll">
+
+          <!-- BLOCO DA IMAGEM -->
+          <div class="gallery-dialog__media">
+            <!-- SKELETON DO MODAL -->
+            <div
+              v-if="modalImgState === 'loading'"
+              class="gallery-dialog__skeleton"
+              aria-hidden="true"
+            ></div>
+
+            <!-- ERRO NO MODAL -->
+            <div
+              v-else-if="modalImgState === 'error'"
+              class="gallery-dialog__img-error"
+              aria-hidden="true"
+            >
+              <v-icon size="40">mdi-image-broken-variant</v-icon>
+              <span>Imagem indisponível</span>
+            </div>
+
+            <img
+              v-show="modalImgState === 'loaded'"
+              :src="selectedPhoto.src"
+              :alt="selectedPhoto.alt"
+              class="gallery-dialog__img"
+              :class="{ 'gallery-dialog__img--clickable': modalImgState === 'loaded' }"
+              @load="modalImgState = 'loaded'"
+              @error="modalImgState = 'error'"
+              @click="openFullscreen"
+            />
+
+            <!-- Badge categoria sobre a imagem -->
+            <div class="gallery-dialog__img-meta">
+              <span class="gallery-dialog__badge">
+                <v-icon size="16">{{ getCategoryIcon(selectedPhoto.category) }}</v-icon>
+                {{ selectedPhoto.category }}
+              </span>
+
+              <!-- Navegação prev/next dentro do bloco de imagem -->
+              <div class="gallery-dialog__nav-group">
+                <button
+                  class="gallery-dialog__nav"
+                  type="button"
+                  :disabled="currentIndex <= 0"
+                  aria-label="Foto anterior"
+                  @click="goPrev"
+                >
+                  <v-icon size="20">mdi-chevron-left</v-icon>
+                </button>
+
+                <span class="gallery-dialog__nav-count">
+                  {{ currentIndex + 1 }} / {{ filteredPhotos.length }}
+                </span>
+
+                <button
+                  class="gallery-dialog__nav"
+                  type="button"
+                  :disabled="currentIndex >= filteredPhotos.length - 1"
+                  aria-label="Próxima foto"
+                  @click="goNext"
+                >
+                  <v-icon size="20">mdi-chevron-right</v-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOCO DE INFORMAÇÕES -->
+          <div class="gallery-dialog__body">
+            <div class="gallery-dialog__header">
+              <div>
+                <p class="gallery-dialog__kicker">Registro oficial</p>
+                <h3 class="gallery-dialog__title">{{ selectedPhoto.title }}</h3>
+              </div>
+            </div>
+
+            <p class="gallery-dialog__desc">
+              {{ selectedPhoto.description }}
+            </p>
+
+            <div class="gallery-dialog__grid">
+              <div class="info-box">
+                <v-icon size="20">mdi-calendar-blank-outline</v-icon>
+                <div>
+                  <strong>Ano</strong>
+                  <span>{{ selectedPhoto.year }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-counter</v-icon>
+                <div>
+                  <strong>Edição</strong>
+                  <span>{{ selectedPhoto.edition }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-calendar-clock-outline</v-icon>
+                <div>
+                  <strong>Dia</strong>
+                  <span>{{ getDayLabel(selectedPhoto.dayId) }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-clock-outline</v-icon>
+                <div>
+                  <strong>Horário</strong>
+                  <span>{{ selectedPhoto.time }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-map-marker-outline</v-icon>
+                <div>
+                  <strong>Local</strong>
+                  <span>{{ selectedPhoto.location }}</span>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <v-icon size="20">mdi-camera-outline</v-icon>
+                <div>
+                  <strong>Crédito</strong>
+                  <span>{{ selectedPhoto.author }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="gallery-dialog__tags">
+              <span class="feature-chip">
+                <v-icon size="14">mdi-shape-outline</v-icon>
+                {{ getOrientationLabel(selectedPhoto.orientation) }}
+              </span>
+
+              <span class="feature-chip">
+                <v-icon size="14">{{ getCategoryIcon(selectedPhoto.category) }}</v-icon>
+                {{ selectedPhoto.category }}
+              </span>
+            </div>
+
+            <div class="gallery-dialog__actions">
+              <a
+                class="dialog-btn dialog-btn--primary"
+                :href="selectedPhoto.src"
+                :download="getDownloadName(selectedPhoto)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <v-icon size="18">mdi-download</v-icon>
+                Baixar foto
+              </a>
+
+              <button class="dialog-btn" type="button" @click="copyPhotoInfo(selectedPhoto)">
+                <v-icon size="18">mdi-content-copy</v-icon>
+                Copiar informações
+              </button>
+
+              <button class="dialog-btn" type="button" @click="dialogOpen = false">
+                <v-icon size="18">mdi-close-circle-outline</v-icon>
+                Fechar
+              </button>
+            </div>
+          </div><!-- /gallery-dialog__body -->
+        </div><!-- /gallery-dialog__scroll -->
+      </div><!-- /gallery-dialog -->
+    </v-dialog>
+
+    <!-- ── FULLSCREEN IMERSIVO ──────────────────────────────────────────── -->
+    <Teleport to="body">
+      <Transition name="fs">
+        <div
+          v-if="fullscreenOpen && selectedPhoto"
+          class="fs-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Visualização em tela cheia"
+          @click.self="closeFullscreen"
+        >
+          <!-- Hint de rotação (só landscape) -->
+          <div
+            v-if="selectedPhoto.orientation === 'landscape'"
+            class="fs-rotate-hint"
+            aria-hidden="true"
+          >
+            <v-icon size="22">mdi-phone-rotate-landscape</v-icon>
+            <span>Gire o celular para melhor visualização</span>
+          </div>
+
+          <!-- Imagem -->
           <img
             :src="selectedPhoto.src"
             :alt="selectedPhoto.alt"
-            class="gallery-dialog__img"
+            class="fs-img"
+            :class="`fs-img--${selectedPhoto.orientation}`"
           />
 
-          <div class="gallery-dialog__top">
-            <span class="gallery-dialog__badge">
-              <v-icon size="16">{{ getCategoryIcon(selectedPhoto.category) }}</v-icon>
-              {{ selectedPhoto.category }}
-            </span>
+          <!-- Barra inferior: título + navegação -->
+          <div class="fs-bar">
+            <div class="fs-bar__info">
+              <span class="fs-bar__category">
+                <v-icon size="14">{{ getCategoryIcon(selectedPhoto.category) }}</v-icon>
+                {{ selectedPhoto.category }}
+              </span>
+              <span class="fs-bar__title">{{ selectedPhoto.title }}</span>
+            </div>
 
-            <button class="gallery-dialog__close" type="button" @click="dialogOpen = false">
-              <v-icon size="22">mdi-close</v-icon>
-            </button>
+            <div class="fs-bar__nav">
+              <button
+                class="fs-nav-btn"
+                type="button"
+                :disabled="currentIndex <= 0"
+                aria-label="Foto anterior"
+                @click="goPrev"
+              >
+                <v-icon size="20">mdi-chevron-left</v-icon>
+              </button>
+
+              <span class="fs-bar__count">
+                {{ currentIndex + 1 }}&thinsp;/&thinsp;{{ filteredPhotos.length }}
+              </span>
+
+              <button
+                class="fs-nav-btn"
+                type="button"
+                :disabled="currentIndex >= filteredPhotos.length - 1"
+                aria-label="Próxima foto"
+                @click="goNext"
+              >
+                <v-icon size="20">mdi-chevron-right</v-icon>
+              </button>
+            </div>
           </div>
 
+          <!-- Botão fechar -->
           <button
-            v-if="currentIndex > 0"
-            class="gallery-dialog__nav gallery-dialog__nav--prev"
+            class="fs-close"
             type="button"
-            aria-label="Foto anterior"
-            @click="goPrev"
+            aria-label="Fechar tela cheia"
+            @click="closeFullscreen"
           >
-            <v-icon size="24">mdi-chevron-left</v-icon>
-          </button>
-
-          <button
-            v-if="currentIndex < filteredPhotos.length - 1"
-            class="gallery-dialog__nav gallery-dialog__nav--next"
-            type="button"
-            aria-label="Próxima foto"
-            @click="goNext"
-          >
-            <v-icon size="24">mdi-chevron-right</v-icon>
+            <v-icon size="24">mdi-close</v-icon>
           </button>
         </div>
-
-        <div class="gallery-dialog__body">
-          <div class="gallery-dialog__header">
-            <div>
-              <p class="gallery-dialog__kicker">Registro oficial</p>
-              <h3 class="gallery-dialog__title">{{ selectedPhoto.title }}</h3>
-            </div>
-          </div>
-
-          <p class="gallery-dialog__desc">
-            {{ selectedPhoto.description }}
-          </p>
-
-          <div class="gallery-dialog__grid">
-            <div class="info-box">
-              <v-icon size="20">mdi-calendar-blank-outline</v-icon>
-              <div>
-                <strong>Ano</strong>
-                <span>{{ selectedPhoto.year }}</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              <v-icon size="20">mdi-counter</v-icon>
-              <div>
-                <strong>Edição</strong>
-                <span>{{ selectedPhoto.edition }}</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              <v-icon size="20">mdi-calendar-clock-outline</v-icon>
-              <div>
-                <strong>Dia</strong>
-                <span>{{ getDayLabel(selectedPhoto.dayId) }}</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              <v-icon size="20">mdi-clock-outline</v-icon>
-              <div>
-                <strong>Horário</strong>
-                <span>{{ selectedPhoto.time }}</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              <v-icon size="20">mdi-map-marker-outline</v-icon>
-              <div>
-                <strong>Local</strong>
-                <span>{{ selectedPhoto.location }}</span>
-              </div>
-            </div>
-
-            <div class="info-box">
-              <v-icon size="20">mdi-camera-outline</v-icon>
-              <div>
-                <strong>Crédito</strong>
-                <span>{{ selectedPhoto.author }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="gallery-dialog__tags">
-            <span class="feature-chip">
-              <v-icon size="14">mdi-shape-outline</v-icon>
-              {{ getOrientationLabel(selectedPhoto.orientation) }}
-            </span>
-
-            <span class="feature-chip">
-              <v-icon size="14">{{ getCategoryIcon(selectedPhoto.category) }}</v-icon>
-              {{ selectedPhoto.category }}
-            </span>
-          </div>
-
-          <div class="gallery-dialog__actions">
-            <a
-              class="dialog-btn dialog-btn--primary"
-              :href="selectedPhoto.src"
-              :download="getDownloadName(selectedPhoto)"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <v-icon size="18">mdi-download</v-icon>
-              Baixar foto
-            </a>
-
-            <button class="dialog-btn" type="button" @click="copyPhotoInfo(selectedPhoto)">
-              <v-icon size="18">mdi-content-copy</v-icon>
-              Copiar informações
-            </button>
-
-            <button class="dialog-btn" type="button" @click="dialogOpen = false">
-              <v-icon size="18">mdi-close-circle-outline</v-icon>
-              Fechar
-            </button>
-          </div>
-        </div>
-      </div>
-    </v-dialog>
+      </Transition>
+    </Teleport>
   </section>
 </template>
 
@@ -518,6 +680,9 @@ type Day = {
 };
 
 type Orientation = "portrait" | "landscape";
+
+// Estado de carregamento por foto
+type ImgLoadState = "loading" | "loaded" | "error";
 
 type GalleryPhoto = {
   id: string;
@@ -552,6 +717,95 @@ const selectedDay = ref("all");
 const selectedCategory = ref("all");
 const selectedOrientation = ref<Orientation | "all">("all");
 
+// ── Controle de estado das imagens ─────────────────────────────────────────
+// Map de id → estado de carregamento
+const imgStates = ref<Map<string, ImgLoadState>>(new Map());
+// Set de ids cujo src já foi entregue ao <img> (lazy reveal)
+const visibleSrcs = ref<Set<string>>(new Set());
+// Estado da imagem dentro do modal
+const modalImgState = ref<ImgLoadState>("loading");
+
+// ── Fullscreen imersivo ao clicar na imagem ────────────────────────────────
+const fullscreenOpen = ref(false);
+
+function openFullscreen() {
+  if (modalImgState.value !== "loaded") return;
+  fullscreenOpen.value = true;
+}
+
+function closeFullscreen() {
+  fullscreenOpen.value = false;
+}
+
+// Retorna o estado atual de uma imagem (default: "loading")
+function imgState(id: string): ImgLoadState {
+  return imgStates.value.get(id) ?? "loading";
+}
+
+function setImgState(id: string, state: ImgLoadState) {
+  imgStates.value.set(id, state);
+  // Força reatividade — Map não é reactive por mutation no Vue 3 sem isso
+  imgStates.value = new Map(imgStates.value);
+}
+
+// ── IntersectionObserver para lazy loading por card ────────────────────────
+let cardObserver: IntersectionObserver | null = null;
+// Mapa de elemento → id da foto
+const cardEls = new Map<Element, string>();
+
+function initCardObserver() {
+  if (typeof IntersectionObserver === "undefined") {
+    // Fallback SSR / navegadores antigos: revela todos de imediato
+    photos.value.forEach((p) => visibleSrcs.value.add(p.id));
+    visibleSrcs.value = new Set(visibleSrcs.value);
+    return;
+  }
+
+  cardObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = cardEls.get(entry.target);
+        if (!id) return;
+
+        // Entrega o src: o <img> vai começar o download agora
+        visibleSrcs.value = new Set([...visibleSrcs.value, id]);
+
+        // Deixa de observar — já foi revelado
+        cardObserver?.unobserve(entry.target);
+        cardEls.delete(entry.target);
+      });
+    },
+    {
+      // Começa a carregar 300px antes de entrar na tela
+      rootMargin: "300px 0px",
+      threshold: 0
+    }
+  );
+}
+
+/**
+ * Chamada via :ref="(el) => registerCard(el, photo.id)" em cada card.
+ * Registra o elemento no observer assim que o Vue o monta.
+ */
+function registerCard(el: unknown, id: string) {
+  if (!el || !(el instanceof Element)) return;
+
+  // Se o src já foi revelado (ex: após filtro), não observa de novo
+  if (visibleSrcs.value.has(id)) return;
+
+  // Se o estado ainda não existe, inicializa como loading
+  if (!imgStates.value.has(id)) {
+    imgStates.value.set(id, "loading");
+  }
+
+  cardEls.set(el, id);
+  cardObserver?.observe(el);
+}
+
+// ── Quando os filtros mudam, cards re-montados precisam ser observados ──────
+// O :ref já faz isso automaticamente ao re-renderizar
+
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
 let onMqChange: ((event: MediaQueryListEvent) => void) | null = null;
@@ -571,289 +825,67 @@ const days: Day[] = [
  * src: "/images/galeria/foto-01.webp"
  */
 const photos = ref<GalleryPhoto[]>([
-  // {
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },
-  // {
-  //   id: "gal-02",
-  //   title: "Mirante ao entardecer",
-  //   description: "Vista panorâmica com visitantes contemplando a paisagem da serra.",
-  //   category: "Paisagem",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Mirante do Gritador",
-  //   time: "17:40",
-  //   author: "Acervo Festival",
-  //   src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Mirante com pôr do sol e paisagem",
-  //   orientation: "landscape"
-  // },
-  // {
-  //   id: "gal-03",
-  //   title: "Oficina criativa",
-  //   description: "Participantes reunidos em atividade prática durante a programação cultural.",
-  //   category: "Oficinas",
-  //   dayId: "2026-06-05",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Polo de Oficinas",
-  //   time: "10:20",
-  //   author: "Comunicação FIP",
-  //   src: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Pessoas em oficina durante o festival",
-  //   orientation: "landscape"
-  // },
-  // {
-  //   id: "gal-04",
-  //   title: "Feira e circulação",
-  //   description: "Visitantes circulando na feira com produtos artesanais e peças autorais.",
-  //   category: "Feira",
-  //   dayId: "2026-06-05",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Feira da Opala",
-  //   time: "11:50",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Feira com visitantes e expositores",
-  //   orientation: "portrait"
-  // },
-  // {
-  //   id: "gal-05",
-  //   title: "Bastidores de palco",
-  //   description: "Equipe preparando iluminação e estrutura antes da programação noturna.",
-  //   category: "Bastidores",
-  //   dayId: "2026-06-05",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "16:10",
-  //   author: "Cobertura Técnica",
-  //   src: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Bastidores com equipe técnica",
-  //   orientation: "landscape"
-  // },
-  // ,
-  // {
-  //   id: "gal-06",
-  //   title: "Mirante ao entardecer",
-  //   description: "Vista panorâmica com visitantes contemplando a paisagem da serra.",
-  //   category: "Paisagem",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Mirante do Gritador",
-  //   time: "17:40",
-  //   author: "Acervo Festival",
-  //   src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Mirante com pôr do sol e paisagem",
-  //   orientation: "landscape"
-  // },
-  // {
-  //   id: "gal-07",
-  //   title: "Público na noite principal",
-  //   description: "Grande concentração de público acompanhando o show principal da noite.",
-  //   category: "Público",
-  //   dayId: "2026-06-06",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "21:20",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Público durante show noturno",
-  //   orientation: "landscape"
-  // },
-  // {
-  //   id: "gal-08",
-  //   title: "Exposição cultural",
-  //   description: "Ambiente expositivo com obras, visitantes e iluminação suave.",
-  //   category: "Exposição",
-  //   dayId: "2026-06-06",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Galeria de Artes",
-  //   time: "15:00",
-  //   author: "Acervo Festival",
-  //   src: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Galeria com exposição e visitantes",
-  //   orientation: "portrait"
-  // },
-  // {
-  //   id: "gal-09",
-  //   title: "Gastronomia e convivência",
-  //   description: "Registro da área gastronômica com sabores regionais e convivência.",
-  //   category: "Gastronomia",
-  //   dayId: "2026-06-06",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Vila Gastronômica",
-  //   time: "18:15",
-  //   author: "Comunicação FIP",
-  //   src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Área gastronômica do festival",
-  //   orientation: "landscape"
-  // },
-  // {
-  //   id: "gal-10",
-  //   title: "Centro histórico em destaque",
-  //   description: "Visitantes circulando entre os espaços históricos integrados ao festival.",
-  //   category: "Cidade",
-  //   dayId: "2026-06-07",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Centro Histórico",
-  //   time: "09:40",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Área histórica com circulação de visitantes",
-  //   orientation: "portrait"
-  // },
-  // {
-  //   id: "gal-11",
-  //   title: "Registro do encerramento",
-  //   description: "Imagem do encerramento com luzes, palco e emoção do público.",
-  //   category: "Encerramento",
-  //   dayId: "2026-06-07",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "18:40",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Encerramento do festival",
-  //   orientation: "landscape"
-  // }  ,
-  
-  // {
-  //   id: "gal-11",
-  //   title: "Registro do encerramento",
-  //   description: "Imagem do encerramento com luzes, palco e emoção do público.",
-  //   category: "Encerramento",
-  //   dayId: "2026-06-07",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "18:40",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Encerramento do festival",
-  //   orientation: "landscape"
-  // }  
-  // ,
-  // {
-  //   id: "gal-11",
-  //   title: "Registro do encerramento",
-  //   description: "Imagem do encerramento com luzes, palco e emoção do público.",
-  //   category: "Encerramento",
-  //   dayId: "2026-06-07",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "18:40",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1400&auto=format&fit=crop",
-  //   alt: "Encerramento do festival",
-  //   orientation: "landscape"
-  // }  ,
-  // ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },  ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },  ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },  ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },  ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },  ,{
-  //   id: "gal-01",
-  //   title: "Abertura na Praça de Eventos",
-  //   description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
-  //   category: "Shows",
-  //   dayId: "2026-06-04",
-  //   year: "2026",
-  //   edition: "Edição 2026",
-  //   location: "Praça de Eventos",
-  //   time: "20:10",
-  //   author: "Equipe Oficial",
-  //   src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
-  //   alt: "Abertura do festival com show e público",
-  //   orientation: "portrait"
-  // },
+  {
+    id: "gal-01",
+    title: "Abertura na Praça de Eventos",
+    description: "Registro da abertura oficial com palco iluminado e grande presença de público.",
+    category: "Shows",
+    dayId: "2026-06-04",
+    year: "2026",
+    edition: "Edição 2026",
+    location: "Praça de Eventos",
+    time: "20:10",
+    author: "Equipe Oficial",
+    src: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop",
+    alt: "Abertura do festival com show e público",
+    orientation: "portrait"
+  },
+  {
+    id: "gal-02",
+    title: "Mirante ao entardecer",
+    description: "Vista panorâmica com visitantes contemplando a paisagem da serra.",
+    category: "Paisagem",
+    dayId: "2026-06-04",
+    year: "2026",
+    edition: "Edição 2026",
+    location: "Mirante do Gritador",
+    time: "17:40",
+    author: "Acervo Festival",
+    src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop",
+    alt: "Mirante com pôr do sol e paisagem",
+    orientation: "landscape"
+  },
+  {
+    id: "gal-03",
+    title: "Público na noite principal",
+    description: "Grande concentração de público acompanhando o show principal da noite.",
+    category: "Público",
+    dayId: "2026-06-06",
+    year: "2026",
+    edition: "Edição 2026",
+    location: "Praça de Eventos",
+    time: "21:20",
+    author: "Equipe Oficial",
+    src: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=1400&auto=format&fit=crop",
+    alt: "Público durante show noturno",
+    orientation: "landscape"
+  },
+  {
+    id: "gal-04",
+    title: "Exposição cultural",
+    description: "Ambiente expositivo com obras, visitantes e iluminação suave.",
+    category: "Exposição",
+    dayId: "2026-06-06",
+    year: "2026",
+    edition: "Edição 2026",
+    location: "Galeria de Artes",
+    time: "15:00",
+    author: "Acervo Festival",
+    src: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1200&auto=format&fit=crop",
+    alt: "Galeria com exposição e visitantes",
+    orientation: "portrait"
+  },
+  // Adicione mais fotos aqui seguindo o mesmo padrão
 ]);
 
 const normalizedSearch = computed(() => search.value.trim().toLowerCase());
@@ -1020,17 +1052,20 @@ function getCategoryIcon(category: string) {
 
 function openPhoto(photo: GalleryPhoto) {
   selectedPhoto.value = photo;
+  modalImgState.value = "loading";
   dialogOpen.value = true;
 }
 
 function goPrev() {
   if (currentIndex.value <= 0) return;
   selectedPhoto.value = filteredPhotos.value[currentIndex.value - 1] || null;
+  modalImgState.value = "loading";
 }
 
 function goNext() {
   if (currentIndex.value < 0 || currentIndex.value >= filteredPhotos.value.length - 1) return;
   selectedPhoto.value = filteredPhotos.value[currentIndex.value + 1] || null;
+  modalImgState.value = "loading";
 }
 
 function resetFilters() {
@@ -1089,6 +1124,12 @@ async function copyPhotoInfo(photo: GalleryPhoto) {
 }
 
 function onKeydown(event: KeyboardEvent) {
+  if (fullscreenOpen.value) {
+    if (event.key === "Escape") { closeFullscreen(); return; }
+    if (event.key === "ArrowLeft") { goPrev(); return; }
+    if (event.key === "ArrowRight") { goNext(); return; }
+    return;
+  }
   if (!dialogOpen.value) return;
 
   if (event.key === "ArrowLeft") goPrev();
@@ -1107,7 +1148,10 @@ watch(filteredPhotos, (list) => {
 });
 
 watch(dialogOpen, (value) => {
-  if (!value) selectedPhoto.value = null;
+  if (!value) {
+    selectedPhoto.value = null;
+    fullscreenOpen.value = false;
+  }
 });
 
 onMounted(() => {
@@ -1122,6 +1166,7 @@ onMounted(() => {
 
   mq.addEventListener?.("change", onMqChange);
 
+  // Observer de visibilidade da seção inteira
   io = new IntersectionObserver(
     ([entry]) => {
       isVisible.value = !!entry?.isIntersecting;
@@ -1131,6 +1176,9 @@ onMounted(() => {
 
   if (root.value) io.observe(root.value);
 
+  // Observer de lazy loading por card
+  initCardObserver();
+
   window.addEventListener("keydown", onKeydown);
 });
 
@@ -1138,6 +1186,11 @@ onBeforeUnmount(() => {
   if (io && root.value) io.unobserve(root.value);
   io?.disconnect();
   io = null;
+
+  // Limpa observer de cards
+  cardObserver?.disconnect();
+  cardObserver = null;
+  cardEls.clear();
 
   if (mq && onMqChange) {
     mq.removeEventListener?.("change", onMqChange);
@@ -1179,10 +1232,15 @@ onBeforeUnmount(() => {
   --shadow-md: 0 18px 42px rgba(12, 14, 18, 0.10);
   --shadow-modal: 0 32px 84px rgba(12, 14, 18, 0.25);
 
+  /* ── Skeleton / Shimmer ── */
+  --skeleton-base: #e4e8ef;
+  --skeleton-shine: #f0f3f8;
+  --skeleton-radius: 16px;
+
   position: relative;
   overflow: clip;
   padding: 40px 0 130px;
-  background: var(--paper-soft); /* Fundo geral cinza suave */
+  background: var(--paper-soft);
   font-family: var(--sans);
   color: var(--ink);
   min-height: 100vh;
@@ -1217,14 +1275,13 @@ onBeforeUnmount(() => {
   padding: 0 20px;
 }
 
-/* ── HEADER / HERO (O DNA Azul Marinho) ─────────────────────────────────── */
+/* ── HEADER / HERO ─────────────────────────────────────────────────────── */
 .gallery__head {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 24px;
   align-items: center;
   margin-bottom: 32px;
-  
   background: var(--accent);
   padding: 48px;
   border-radius: 24px;
@@ -1234,7 +1291,6 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-/* Textura sutil no fundo do hero */
 .gallery__head::before {
   content: "";
   position: absolute;
@@ -1271,8 +1327,8 @@ onBeforeUnmount(() => {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { transform: scale(1);    opacity: 1; }
-  50%      { transform: scale(1.4);  opacity: 0.7; }
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.7; }
 }
 
 .gallery__title {
@@ -1300,7 +1356,6 @@ onBeforeUnmount(() => {
   line-height: 1.65;
 }
 
-/* Glassmorphism Stats */
 .gallery__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1344,7 +1399,7 @@ onBeforeUnmount(() => {
   display: none;
 }
 
-/* ── FILTROS GERAIS ─────────────────────────────────────────────────────── */
+/* ── FILTROS ─────────────────────────────────────────────────────────────── */
 .gallery__filters {
   margin-bottom: 32px;
   padding: 24px;
@@ -1401,7 +1456,6 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
 }
-
 .gallery__accordion-btn:hover, .gallery__clear-btn:hover {
   background: rgba(49, 110, 185, 0.12);
   transform: translateY(-1px);
@@ -1430,7 +1484,6 @@ onBeforeUnmount(() => {
 .field__control--search:focus-within, .field__control--select:focus-within {
   border-color: var(--accent); background: var(--paper); box-shadow: 0 0 0 3px rgba(1, 25, 90, 0.08);
 }
-
 .field__control--search { display: flex; align-items: center; padding: 0 14px; }
 .field__icon { margin-right: 10px; color: var(--muted); }
 .field__input, .field__select {
@@ -1441,7 +1494,7 @@ onBeforeUnmount(() => {
 .field__select { appearance: none; padding: 0 42px 0 14px; cursor: pointer; }
 .field__arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
 
-/* ── EMPTY STATE ────────────────────────────────────────────────────────── */
+/* ── EMPTY STATE ─────────────────────────────────────────────────────────── */
 .gallery__empty {
   padding: 60px 20px;
   border-radius: 24px;
@@ -1454,10 +1507,8 @@ onBeforeUnmount(() => {
 .gallery__empty h3 { margin: 16px 0 0; color: var(--ink); font-family: var(--serif); font-size: 24px; font-weight: 800; }
 .gallery__empty p { margin: 8px 0 0; font-family: var(--sans); font-size: 15px; }
 
-/* ── GRUPO DE FOTOS E CARDS ─────────────────────────────────────────────── */
-.gallery-group {
-  margin-bottom: 32px;
-}
+/* ── GRUPO E CARDS ────────────────────────────────────────────────────────── */
+.gallery-group { margin-bottom: 32px; }
 
 .gallery-group__head {
   display: flex;
@@ -1466,19 +1517,14 @@ onBeforeUnmount(() => {
   margin-bottom: 20px;
 }
 
-.gallery-group__title {
-  margin: 0; color: var(--ink); font-family: var(--serif); font-size: 28px; font-weight: 800;
-}
-
-.gallery-group__count {
-  color: var(--muted); font-family: var(--sans); font-size: 14px; font-weight: 700;
-}
+.gallery-group__title { margin: 0; color: var(--ink); font-family: var(--serif); font-size: 28px; font-weight: 800; }
+.gallery-group__count { color: var(--muted); font-family: var(--sans); font-size: 14px; font-weight: 700; }
 
 .gallery-grid { display: grid; gap: 16px; margin-top: 16px; }
-.gallery-grid--portrait { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.gallery-grid--portrait  { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .gallery-grid--landscape { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
-/* O CARD COM DNA (Efeito Float) */
+/* Card base */
 .gallery-card {
   position: relative;
   overflow: hidden;
@@ -1503,17 +1549,98 @@ onBeforeUnmount(() => {
   }
 }
 
-.gallery-card--portrait { aspect-ratio: 4 / 5.6; }
+.gallery-card--portrait  { aspect-ratio: 4 / 5.6; }
 .gallery-card--landscape { aspect-ratio: 16 / 10; }
 
+/* ── IMAGEM: fade-in ao carregar ──────────────────────────────────────────── */
 .gallery-card__img {
-  width: 100%; height: 100%; display: block; object-fit: cover;
-  transition: transform 500ms ease;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 500ms ease, opacity 380ms ease;
+  /* Garante que v-show=false (loading) não empurre layout */
+  position: absolute;
+  inset: 0;
 }
 
+/* Quando o v-show liga (loaded), a opacidade vai de 0 → 1 via transition */
+.gallery-card__img[style*="display: none"] { opacity: 0; }
+.gallery-card__img:not([style*="display: none"]) { opacity: 1; }
+
+/* ── SKELETON (shimmer) ──────────────────────────────────────────────────── */
+.gallery-card__skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Skeleton do modal */
+.gallery-dialog__skeleton {
+  position: absolute;
+  inset: 0;
+  min-height: 320px;
+  background: linear-gradient(
+    90deg,
+    #1a2a4a 25%,
+    #223566 50%,
+    #1a2a4a 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── ESTADO DE ERRO ──────────────────────────────────────────────────────── */
+.gallery-card__error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--paper-soft);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 12px;
+}
+
+.gallery-dialog__img-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #0d1e3a;
+  color: rgba(255, 255, 255, 0.45);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ── OVERLAY E BADGES DOS CARDS ──────────────────────────────────────────── */
 .gallery-card__overlay {
   position: absolute; inset: 0; pointer-events: none;
-  background: 
+  background:
     linear-gradient(to top, rgba(12, 14, 18, 0.7) 0%, transparent 40%),
     linear-gradient(to bottom, rgba(12, 14, 18, 0.4) 0%, transparent 25%);
 }
@@ -1521,12 +1648,12 @@ onBeforeUnmount(() => {
 .gallery-card__top, .gallery-card__bottom {
   position: absolute; left: 12px; right: 12px; z-index: 2; display: flex; align-items: center;
 }
-.gallery-card__top { top: 12px; justify-content: flex-start; }
+.gallery-card__top    { top: 12px;    justify-content: flex-start; }
 .gallery-card__bottom { bottom: 12px; justify-content: space-between; }
 
 .gallery-card__badge {
   min-height: 28px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(237, 229, 58, 0.9); /* Dourado translúcido */
+  background: rgba(237, 229, 58, 0.9);
   color: #1a1a00; font-family: var(--sans); font-size: 12px; font-weight: 800; text-transform: uppercase;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
@@ -1537,51 +1664,138 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 
-
-/* ── MODAL (Visualizador de Fotos) ──────────────────────────────────────── */
+/* ── MODAL ──────────────────────────────────────────────────────────────── */
 .gallery-dialog {
-  overflow: hidden; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
-  max-height: 90vh; background: var(--paper); border-radius: 24px; box-shadow: var(--shadow-modal);
+  position: relative;
+  background: var(--paper);
+  border-radius: 24px;
+  box-shadow: var(--shadow-modal);
   border: 1px solid var(--line);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+/* Botão fechar: flutuante sobre o scroll, fixo no canto do modal */
+.gallery-dialog__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  transition: 150ms;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+.gallery-dialog__close:hover { transform: scale(1.07); background: #fff; }
+
+/* Área de scroll único — tudo dentro rola junto */
+.gallery-dialog__scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  overscroll-behavior: contain;
+}
+
+/* Bloco da imagem: ocupa largura total, altura proporcional */
 .gallery-dialog__media {
-  position: relative; min-height: 620px; background: #090e14; /* Fundo bem escuro pra destacar a foto */
-  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  width: 100%;
+  background: #090e14;
+  /* Altura mínima garante que o skeleton seja visível */
+  min-height: 340px;
+  /* A imagem define a altura real via aspect-ratio abaixo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gallery-dialog__img {
-  width: 100%; height: 100%; display: block; object-fit: contain; /* Contain para ver a foto inteira */
+  width: 100%;
+  display: block;
+  /* object-fit: contain + max-height limitam imagens muito altas */
+  object-fit: contain;
+  max-height: 72vh;
+  transition: opacity 320ms ease;
 }
 
-.gallery-dialog__top {
-  position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2; display: flex; justify-content: space-between; align-items: start; gap: 12px;
+/* Barra inferior sobre a imagem: badge + navegação */
+.gallery-dialog__img-meta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(to top, rgba(9, 14, 20, 0.82) 0%, transparent 100%);
 }
 
 .gallery-dialog__badge {
-  min-height: 32px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px;
-  background: var(--accent); color: #fff; font-family: var(--sans); font-size: 13px; font-weight: 800; text-transform: uppercase;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
-.gallery-dialog__close {
-  width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.9); color: var(--accent);
-  display: grid; place-items: center; border: none; cursor: pointer; transition: 150ms; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+/* Grupo prev / contador / next */
+.gallery-dialog__nav-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.gallery-dialog__close:hover { transform: scale(1.05); background: #fff; }
 
-/* Setas de navegação */
+.gallery-dialog__nav-count {
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 44px;
+  text-align: center;
+}
+
 .gallery-dialog__nav {
-  position: absolute; top: 50%; transform: translateY(-50%); width: 46px; height: 46px;
-  border-radius: 50%; background: rgba(255,255,255,.9); color: var(--accent); z-index: 2;
-  display: grid; place-items: center; border: none; cursor: pointer; transition: 150ms; box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  transition: 150ms;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
-.gallery-dialog__nav:hover { transform: translateY(-50%) scale(1.05); background: #fff; }
-.gallery-dialog__nav--prev { left: 16px; }
-.gallery-dialog__nav--next { right: 16px; }
+.gallery-dialog__nav:hover:not(:disabled) { transform: scale(1.07); background: #fff; }
+.gallery-dialog__nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
 
+/* Bloco de informações: fundo azul, padding generoso */
 .gallery-dialog__body {
-  padding: 32px; overflow-y: auto; background: #01195A;
-
+  padding: 32px;
+  background: #01195A;
 }
 
 .gallery-dialog__header { display: flex; justify-content: space-between; gap: 14px; }
@@ -1593,14 +1807,16 @@ onBeforeUnmount(() => {
 
 .gallery-dialog__desc { margin: 16px 0 0; color: var(--muted); font-family: var(--sans); font-size: 16px; line-height: 1.7; }
 
-.gallery-dialog__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+.gallery-dialog__grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px;
+}
 
 .info-box {
   min-height: 86px; padding: 14px; border-radius: 16px; border: 1px solid var(--line);
   background: var(--paper-soft); display: grid; grid-template-columns: 20px 1fr; gap: 12px; color: var(--ink);
 }
 .info-box strong { display: block; font-size: 14px; font-weight: 800; font-family: var(--sans); }
-.info-box span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; line-height: 1.5; font-family: var(--sans); }
+.info-box span   { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; line-height: 1.5; font-family: var(--sans); }
 
 .gallery-dialog__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
 .feature-chip {
@@ -1608,7 +1824,9 @@ onBeforeUnmount(() => {
   background: var(--accent-soft); color: var(--accent); font-family: var(--sans); font-size: 13px; font-weight: 700;
 }
 
-.gallery-dialog__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+.gallery-dialog__actions {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line);
+}
 
 .dialog-btn {
   min-height: 42px; padding: 0 16px; border-radius: 999px; background: var(--paper-soft); border: 1px solid var(--line);
@@ -1620,74 +1838,289 @@ onBeforeUnmount(() => {
 .dialog-btn--primary { background: var(--accent); color: #fff; border-color: var(--accent); }
 .dialog-btn--primary:hover { background: #022480; }
 
-
 /* ── RESPONSIVO ─────────────────────────────────────────────────────────── */
 @media (max-width: 1180px) {
-  .gallery-grid--portrait { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .gallery-grid--portrait  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .gallery-grid--landscape { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gallery__filters-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gallery__filters-grid   { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .field--search { grid-column: span 3; }
 }
 
 @media (max-width: 1080px) {
   .gallery__head { grid-template-columns: 1fr; padding: 32px; }
   .gallery__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .gallery-dialog { grid-template-columns: 1fr; }
-  .gallery-dialog__media { min-height: 420px; }
 }
 
 @media (max-width: 900px) {
   .gallery { padding: 24px 0 140px; }
-  
+
   .gallery__mobile-bar {
     position: sticky; top: 74px; z-index: 30; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
     margin-bottom: 16px; padding: 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.95);
     border: 1px solid var(--line); box-shadow: var(--shadow-sm); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   }
-  
+
   .mobile-action {
     min-height: 46px; border-radius: 12px; background: var(--accent-soft); color: var(--accent);
     font-size: 12px; font-family: var(--sans); font-weight: 800; flex-direction: column; padding: 6px; gap: 4px;
     border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .mobile-action.is-active { background: var(--accent); color: #fff; }
-  
+
   .gallery__filters { padding: 16px; border-radius: 20px; }
   .gallery__filters-head, .gallery-group__head { flex-direction: column; align-items: stretch; }
   .gallery__filters-actions { width: 100%; }
   .gallery__accordion-btn, .gallery__clear-btn { flex: 1; }
-  
+
   .gallery__filters-panel { display: none; margin-top: 12px; }
   .mobile-filters-open .gallery__filters-panel { display: block; }
   .gallery__filters-grid { grid-template-columns: 1fr 1fr; }
   .field--search { grid-column: span 2; }
-  
-  .gallery-grid--portrait { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .gallery-grid--portrait  { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .gallery-grid--landscape { grid-template-columns: 1fr; }
-  
+
   .gallery-dialog { border-radius: 20px; }
-  .gallery-dialog__body { padding: 20px; }
+  .gallery-dialog__body { padding: 20px 16px; }
   .gallery-dialog__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-  .gallery__title { font-size: clamp(28px, 8vw, 36px); }
-  .gallery__stats { grid-template-columns: 1fr; }
+  .gallery__title  { font-size: clamp(28px, 8vw, 36px); }
+  .gallery__stats  { grid-template-columns: 1fr; }
   .gallery__mobile-bar { grid-template-columns: repeat(2, 1fr); }
-  
+
   .gallery__filters-grid { grid-template-columns: 1fr; }
   .field--search { grid-column: auto; }
-  
+
   .gallery-grid--portrait { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gallery-card--portrait { aspect-ratio: 4 / 5.4; }
+  .gallery-card--portrait  { aspect-ratio: 4 / 5.4; }
   .gallery-card--landscape { aspect-ratio: 16 / 10.2; }
-  
-  .gallery-dialog__media { min-height: 300px; }
+
   .gallery-dialog__actions { flex-direction: column; }
   .dialog-btn { width: 100%; }
 }
 
-.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
-  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+/* ── FULLSCREEN IMERSIVO ────────────────────────────────────────────────── */
+
+/* O overlay cobre 100dvh × 100dvw, colocado via Teleport no body */
+.fs-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Cursor de "fechar" ao clicar fora da imagem */
+  cursor: zoom-out;
+}
+
+/* ── Transição de entrada / saída ── */
+.fs-enter-active {
+  animation: fs-in 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.fs-leave-active {
+  animation: fs-out 240ms ease-in forwards;
+}
+
+@keyframes fs-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes fs-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
+/* ── Imagem fullscreen ── */
+.fs-img {
+  display: block;
+  /* Cursor normal sobre a imagem (clicar nela não fecha) */
+  cursor: default;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms ease;
+}
+
+/* Vertical: ocupa toda a altura disponível */
+.fs-img--portrait {
+  height: 100dvh;
+  width: auto;
+  max-width: 100dvw;
+  object-fit: contain;
+}
+
+/* Horizontal: rotaciona 90° em mobile (viewport estreito) e expande */
+.fs-img--landscape {
+  width: 100dvw;
+  height: auto;
+  max-height: 100dvh;
+  object-fit: contain;
+}
+
+/* Em telas estreitas (mobile), rotaciona landscape para preencher a altura */
+@media (max-width: 768px) and (orientation: portrait) {
+  .fs-img--landscape {
+    width: 100dvh;
+    height: 100dvw;
+    max-width: unset;
+    max-height: unset;
+    object-fit: contain;
+    transform: rotate(90deg);
+    /* Compensa o deslocamento causado pela rotação */
+    transform-origin: center center;
+  }
+}
+
+/* ── Hint de rotação (mobile landscape) ── */
+.fs-rotate-hint {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: hint-fade 3.5s ease forwards;
+}
+
+@keyframes hint-fade {
+  0%, 60% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+/* Esconde o hint em desktop ou quando já está em landscape */
+@media (min-width: 769px), (orientation: landscape) {
+  .fs-rotate-hint { display: none; }
+}
+
+/* ── Barra inferior: título + navegação ── */
+.fs-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 32px 24px 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.fs-bar__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.fs-bar__category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fs-bar__title {
+  color: #fff;
+  font-family: var(--serif);
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.fs-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  pointer-events: all;
+}
+
+.fs-bar__count {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+}
+
+.fs-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 150ms;
+}
+.fs-nav-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.08);
+}
+.fs-nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+/* ── Botão fechar ── */
+.fs-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 4;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: 150ms;
+}
+.fs-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.08);
+}
+
+/* Cursor indicativo na imagem do modal (antes de abrir fullscreen) */
+.gallery-dialog__img--clickable {
+  cursor: zoom-in;
+}
+
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }
 </style>
