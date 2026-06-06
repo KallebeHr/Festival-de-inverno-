@@ -247,6 +247,23 @@
               </div>
             </div>
           </div>
+
+          <!-- FOTOS POR PÁGINA -->
+          <div class="gallery__per-page">
+            <span class="gallery__per-page-label">Fotos por página:</span>
+            <div class="gallery__per-page-options">
+              <button
+                v-for="opt in perPageOptions"
+                :key="opt"
+                class="gallery__per-page-btn"
+                :class="{ 'is-active': perPage === opt }"
+                type="button"
+                @click="setPerPage(opt)"
+              >
+                {{ opt }}
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -260,7 +277,7 @@
       <template v-else>
         <!-- VERTICAIS -->
         <section
-          v-if="portraitPhotos.length"
+          v-if="pagedPortraitPhotos.length"
           class="gallery-group"
           aria-label="Fotos verticais"
         >
@@ -277,7 +294,7 @@
 
           <div class="gallery-grid gallery-grid--portrait">
             <button
-              v-for="photo in portraitPhotos"
+              v-for="photo in pagedPortraitPhotos"
               :key="photo.id"
               :ref="(el) => registerCard(el, photo.id)"
               class="gallery-card gallery-card--portrait"
@@ -335,7 +352,7 @@
 
         <!-- HORIZONTAIS -->
         <section
-          v-if="landscapePhotos.length"
+          v-if="pagedLandscapePhotos.length"
           class="gallery-group"
           aria-label="Fotos horizontais"
         >
@@ -352,7 +369,7 @@
 
           <div class="gallery-grid gallery-grid--landscape">
             <button
-              v-for="photo in landscapePhotos"
+              v-for="photo in pagedLandscapePhotos"
               :key="photo.id"
               :ref="(el) => registerCard(el, photo.id)"
               class="gallery-card gallery-card--landscape"
@@ -407,6 +424,61 @@
             </button>
           </div>
         </section>
+
+        <!-- ── PAGINAÇÃO ──────────────────────────────────────────────────── -->
+        <nav
+          v-if="totalPages > 1"
+          class="gallery__pagination"
+          aria-label="Navegação de páginas"
+        >
+          <div class="gallery__pagination-info">
+            Exibindo
+            <strong>{{ pageStart }}–{{ pageEnd }}</strong>
+            de
+            <strong>{{ filteredPhotos.length }}</strong>
+            fotos
+          </div>
+
+          <div class="gallery__pagination-controls">
+            <!-- Anterior -->
+            <button
+              class="gallery__page-btn gallery__page-btn--arrow"
+              type="button"
+              :disabled="currentPage === 1"
+              aria-label="Página anterior"
+              @click="goToPage(currentPage - 1)"
+            >
+              <v-icon size="18">mdi-chevron-left</v-icon>
+            </button>
+
+            <!-- Páginas numeradas -->
+            <template v-for="item in paginationRange" :key="item">
+              <span v-if="item === '...'" class="gallery__page-ellipsis">…</span>
+              <button
+                v-else
+                class="gallery__page-btn"
+                :class="{ 'is-active': item === currentPage }"
+                type="button"
+                :aria-label="`Página ${item}`"
+                :aria-current="item === currentPage ? 'page' : undefined"
+                @click="goToPage(item as number)"
+              >
+                {{ item }}
+              </button>
+            </template>
+
+            <!-- Próxima -->
+            <button
+              class="gallery__page-btn gallery__page-btn--arrow"
+              type="button"
+              :disabled="currentPage === totalPages"
+              aria-label="Próxima página"
+              @click="goToPage(currentPage + 1)"
+            >
+              <v-icon size="18">mdi-chevron-right</v-icon>
+            </button>
+          </div>
+        </nav>
       </template>
     </div>
 
@@ -717,12 +789,97 @@ const selectedDay = ref("all");
 const selectedCategory = ref("all");
 const selectedOrientation = ref<Orientation | "all">("all");
 
+// ── Paginação ──────────────────────────────────────────────────────────────
+const currentPage = ref(1);
+const perPage = ref(20);
+const perPageOptions = [12, 20, 40, 60] as const;
+
+function setPerPage(value: number) {
+  perPage.value = value;
+  currentPage.value = 1;
+  scrollToGallery();
+}
+
+function goToPage(page: number) {
+  if (page < 1 || page > totalPages.value) return;
+  currentPage.value = page;
+  scrollToGallery();
+}
+
+function scrollToGallery() {
+  nextTick(() => {
+    root.value?.scrollIntoView({
+      behavior: reduceMotion.value ? "auto" : "smooth",
+      block: "start"
+    });
+  });
+}
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredPhotos.value.length / perPage.value))
+);
+
+const pageStart = computed(() =>
+  filteredPhotos.value.length === 0 ? 0 : (currentPage.value - 1) * perPage.value + 1
+);
+
+const pageEnd = computed(() =>
+  Math.min(currentPage.value * perPage.value, filteredPhotos.value.length)
+);
+
+/** Fatia da página atual — todas as fotos filtradas (portrait + landscape juntas) */
+const pagedPhotos = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value;
+  return filteredPhotos.value.slice(start, start + perPage.value);
+});
+
+const pagedPortraitPhotos = computed(() =>
+  pagedPhotos.value.filter((p) => p.orientation === "portrait")
+);
+
+const pagedLandscapePhotos = computed(() =>
+  pagedPhotos.value.filter((p) => p.orientation === "landscape")
+);
+
+/**
+ * Gera o range de botões de página com elipses.
+ * Ex: [1, '...', 4, 5, 6, '...', 12]
+ */
+const paginationRange = computed<(number | "...")[]>(() => {
+  const total = totalPages.value;
+  const current = currentPage.value;
+  const delta = 2; // páginas ao redor da atual
+
+  const range: (number | "...")[] = [];
+  const rangeWithDots: (number | "...")[] = [];
+
+  const left = Math.max(2, current - delta);
+  const right = Math.min(total - 1, current + delta);
+
+  // Sempre inclui 1 e total
+  range.push(1);
+  for (let i = left; i <= right; i++) range.push(i);
+  if (total > 1) range.push(total);
+
+  let prev: number | null = null;
+  for (const page of range) {
+    if (prev !== null) {
+      if ((page as number) - prev === 2) {
+        rangeWithDots.push(prev + 1);
+      } else if ((page as number) - prev > 2) {
+        rangeWithDots.push("...");
+      }
+    }
+    rangeWithDots.push(page);
+    prev = page as number;
+  }
+
+  return rangeWithDots;
+});
+
 // ── Controle de estado das imagens ─────────────────────────────────────────
-// Map de id → estado de carregamento
 const imgStates = ref<Map<string, ImgLoadState>>(new Map());
-// Set de ids cujo src já foi entregue ao <img> (lazy reveal)
 const visibleSrcs = ref<Set<string>>(new Set());
-// Estado da imagem dentro do modal
 const modalImgState = ref<ImgLoadState>("loading");
 
 // ── Fullscreen imersivo ao clicar na imagem ────────────────────────────────
@@ -737,25 +894,21 @@ function closeFullscreen() {
   fullscreenOpen.value = false;
 }
 
-// Retorna o estado atual de uma imagem (default: "loading")
 function imgState(id: string): ImgLoadState {
   return imgStates.value.get(id) ?? "loading";
 }
 
 function setImgState(id: string, state: ImgLoadState) {
   imgStates.value.set(id, state);
-  // Força reatividade — Map não é reactive por mutation no Vue 3 sem isso
   imgStates.value = new Map(imgStates.value);
 }
 
 // ── IntersectionObserver para lazy loading por card ────────────────────────
 let cardObserver: IntersectionObserver | null = null;
-// Mapa de elemento → id da foto
 const cardEls = new Map<Element, string>();
 
 function initCardObserver() {
   if (typeof IntersectionObserver === "undefined") {
-    // Fallback SSR / navegadores antigos: revela todos de imediato
     photos.value.forEach((p) => visibleSrcs.value.add(p.id));
     visibleSrcs.value = new Set(visibleSrcs.value);
     return;
@@ -768,43 +921,24 @@ function initCardObserver() {
         const id = cardEls.get(entry.target);
         if (!id) return;
 
-        // Entrega o src: o <img> vai começar o download agora
         visibleSrcs.value = new Set([...visibleSrcs.value, id]);
-
-        // Deixa de observar — já foi revelado
         cardObserver?.unobserve(entry.target);
         cardEls.delete(entry.target);
       });
     },
-    {
-      // Começa a carregar 300px antes de entrar na tela
-      rootMargin: "300px 0px",
-      threshold: 0
-    }
+    { rootMargin: "300px 0px", threshold: 0 }
   );
 }
 
-/**
- * Chamada via :ref="(el) => registerCard(el, photo.id)" em cada card.
- * Registra o elemento no observer assim que o Vue o monta.
- */
 function registerCard(el: unknown, id: string) {
   if (!el || !(el instanceof Element)) return;
-
-  // Se o src já foi revelado (ex: após filtro), não observa de novo
   if (visibleSrcs.value.has(id)) return;
-
-  // Se o estado ainda não existe, inicializa como loading
   if (!imgStates.value.has(id)) {
     imgStates.value.set(id, "loading");
   }
-
   cardEls.set(el, id);
   cardObserver?.observe(el);
 }
-
-// ── Quando os filtros mudam, cards re-montados precisam ser observados ──────
-// O :ref já faz isso automaticamente ao re-renderizar
 
 let io: IntersectionObserver | null = null;
 let mq: MediaQueryList | null = null;
@@ -817,13 +951,6 @@ const days: Day[] = [
   { id: "2026-06-07", label: "07 de Junho • Domingo", short: "DOM" }
 ];
 
-/**
- * Troque os src pelas suas imagens reais.
- * Pode usar:
- * src: new URL("@/assets/galeria/foto-01.webp", import.meta.url).href
- * ou
- * src: "/images/galeria/foto-01.webp"
- */
 const photos = ref<GalleryPhoto[]>([
   {
     id: "gal-01",
@@ -833,7 +960,7 @@ const photos = ref<GalleryPhoto[]>([
     dayId: "2026-06-05",
     year: "2026",
     edition: "Edição 2026",
-    location: "Praça de Eventos",
+    location: "Espaço Criança",
     time: "10:30",
     author: "Equipe Oficial",
     src: "./galeria/espC1.webp",
@@ -848,7 +975,7 @@ const photos = ref<GalleryPhoto[]>([
     dayId: "2026-06-05",
     year: "2026",
     edition: "Edição 2026",
-    location: "Praça de Eventos",
+    location: "Espaço Criança",
     time: "10:30",
     author: "Equipe Oficial",
     src: "./galeria/espC2.webp",
@@ -923,6 +1050,7 @@ const filteredPhotos = computed(() => {
   });
 });
 
+// Fotos totais de cada orientação (para o contador no cabeçalho do grupo)
 const portraitPhotos = computed(() =>
   filteredPhotos.value.filter((photo) => photo.orientation === "portrait")
 );
@@ -985,6 +1113,8 @@ const activeFilterLabels = computed(() => {
   return items;
 });
 
+// currentIndex navega sobre filteredPhotos inteiro (não paginado),
+// para que prev/next no modal atravessem páginas naturalmente.
 const currentIndex = computed(() => {
   if (!selectedPhoto.value) return -1;
   return filteredPhotos.value.findIndex((photo) => photo.id === selectedPhoto.value?.id);
@@ -1030,12 +1160,26 @@ function goPrev() {
   if (currentIndex.value <= 0) return;
   selectedPhoto.value = filteredPhotos.value[currentIndex.value - 1] || null;
   modalImgState.value = "loading";
+  // Se a foto anterior está em outra página, navega automaticamente
+  syncPageToSelected();
 }
 
 function goNext() {
   if (currentIndex.value < 0 || currentIndex.value >= filteredPhotos.value.length - 1) return;
   selectedPhoto.value = filteredPhotos.value[currentIndex.value + 1] || null;
   modalImgState.value = "loading";
+  syncPageToSelected();
+}
+
+/** Garante que currentPage exibe a foto selecionada no modal */
+function syncPageToSelected() {
+  if (!selectedPhoto.value) return;
+  const idx = filteredPhotos.value.findIndex((p) => p.id === selectedPhoto.value?.id);
+  if (idx === -1) return;
+  const targetPage = Math.floor(idx / perPage.value) + 1;
+  if (targetPage !== currentPage.value) {
+    currentPage.value = targetPage;
+  }
 }
 
 function resetFilters() {
@@ -1046,6 +1190,7 @@ function resetFilters() {
   selectedCategory.value = "all";
   selectedOrientation.value = "all";
   mobileFiltersOpen.value = false;
+  currentPage.value = 1;
 }
 
 function togglePortraitFilter() {
@@ -1107,6 +1252,12 @@ function onKeydown(event: KeyboardEvent) {
   if (event.key === "Escape") dialogOpen.value = false;
 }
 
+// Reseta página quando filtros mudam
+watch(
+  [search, selectedYear, selectedEdition, selectedDay, selectedCategory, selectedOrientation],
+  () => { currentPage.value = 1; }
+);
+
 watch(filteredPhotos, (list) => {
   if (!selectedPhoto.value) return;
 
@@ -1136,7 +1287,6 @@ onMounted(() => {
 
   mq.addEventListener?.("change", onMqChange);
 
-  // Observer de visibilidade da seção inteira
   io = new IntersectionObserver(
     ([entry]) => {
       isVisible.value = !!entry?.isIntersecting;
@@ -1146,7 +1296,6 @@ onMounted(() => {
 
   if (root.value) io.observe(root.value);
 
-  // Observer de lazy loading por card
   initCardObserver();
 
   window.addEventListener("keydown", onKeydown);
@@ -1157,7 +1306,6 @@ onBeforeUnmount(() => {
   io?.disconnect();
   io = null;
 
-  // Limpa observer de cards
   cardObserver?.disconnect();
   cardObserver = null;
   cardEls.clear();
@@ -1464,6 +1612,59 @@ onBeforeUnmount(() => {
 .field__select { appearance: none; padding: 0 42px 0 14px; cursor: pointer; }
 .field__arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
 
+/* ── FOTOS POR PÁGINA ───────────────────────────────────────────────────── */
+.gallery__per-page {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.gallery__per-page-label {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.gallery__per-page-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.gallery__per-page-btn {
+  min-width: 44px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 160ms ease;
+}
+
+.gallery__per-page-btn:hover {
+  background: var(--accent-soft);
+  border-color: rgba(49, 110, 185, 0.2);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.gallery__per-page-btn.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ── EMPTY STATE ─────────────────────────────────────────────────────────── */
 .gallery__empty {
   padding: 60px 20px;
@@ -1529,12 +1730,10 @@ onBeforeUnmount(() => {
   display: block;
   object-fit: cover;
   transition: transform 500ms ease, opacity 380ms ease;
-  /* Garante que v-show=false (loading) não empurre layout */
   position: absolute;
   inset: 0;
 }
 
-/* Quando o v-show liga (loaded), a opacidade vai de 0 → 1 via transition */
 .gallery-card__img[style*="display: none"] { opacity: 0; }
 .gallery-card__img:not([style*="display: none"]) { opacity: 1; }
 
@@ -1553,7 +1752,6 @@ onBeforeUnmount(() => {
   animation: shimmer 1.6s ease-in-out infinite;
 }
 
-/* Skeleton do modal */
 .gallery-dialog__skeleton {
   position: absolute;
   inset: 0;
@@ -1634,6 +1832,92 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 
+/* ── PAGINAÇÃO ──────────────────────────────────────────────────────────── */
+.gallery__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px 24px;
+  border-radius: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.gallery__pagination-info {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gallery__pagination-info strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.gallery__pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.gallery__page-btn {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 160ms ease;
+  line-height: 1;
+}
+
+.gallery__page-btn:hover:not(:disabled):not(.is-active) {
+  background: var(--accent-soft);
+  border-color: rgba(49, 110, 185, 0.2);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.gallery__page-btn.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(1, 25, 90, 0.28);
+}
+
+.gallery__page-btn--arrow {
+  color: var(--accent);
+}
+
+.gallery__page-btn--arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.gallery__page-ellipsis {
+  min-width: 32px;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  user-select: none;
+}
+
 /* ── MODAL ──────────────────────────────────────────────────────────────── */
 .gallery-dialog {
   position: relative;
@@ -1647,7 +1931,6 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-/* Botão fechar: flutuante sobre o scroll, fixo no canto do modal */
 .gallery-dialog__close {
   position: absolute;
   top: 16px;
@@ -1667,7 +1950,6 @@ onBeforeUnmount(() => {
 }
 .gallery-dialog__close:hover { transform: scale(1.07); background: #fff; }
 
-/* Área de scroll único — tudo dentro rola junto */
 .gallery-dialog__scroll {
   overflow-y: auto;
   overflow-x: hidden;
@@ -1675,14 +1957,11 @@ onBeforeUnmount(() => {
   overscroll-behavior: contain;
 }
 
-/* Bloco da imagem: ocupa largura total, altura proporcional */
 .gallery-dialog__media {
   position: relative;
   width: 100%;
   background: #090e14;
-  /* Altura mínima garante que o skeleton seja visível */
   min-height: 340px;
-  /* A imagem define a altura real via aspect-ratio abaixo */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1691,13 +1970,11 @@ onBeforeUnmount(() => {
 .gallery-dialog__img {
   width: 100%;
   display: block;
-  /* object-fit: contain + max-height limitam imagens muito altas */
   object-fit: contain;
   max-height: 72vh;
   transition: opacity 320ms ease;
 }
 
-/* Barra inferior sobre a imagem: badge + navegação */
 .gallery-dialog__img-meta {
   position: absolute;
   bottom: 0;
@@ -1727,7 +2004,6 @@ onBeforeUnmount(() => {
   text-transform: uppercase;
 }
 
-/* Grupo prev / contador / next */
 .gallery-dialog__nav-group {
   display: flex;
   align-items: center;
@@ -1762,7 +2038,6 @@ onBeforeUnmount(() => {
   cursor: default;
 }
 
-/* Bloco de informações: fundo azul, padding generoso */
 .gallery-dialog__body {
   padding: 32px;
   background: #01195A;
@@ -1853,6 +2128,12 @@ onBeforeUnmount(() => {
   .gallery-dialog { border-radius: 20px; }
   .gallery-dialog__body { padding: 20px 16px; }
   .gallery-dialog__grid { grid-template-columns: 1fr; }
+
+  .gallery__pagination {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1869,11 +2150,12 @@ onBeforeUnmount(() => {
 
   .gallery-dialog__actions { flex-direction: column; }
   .dialog-btn { width: 100%; }
+
+  .gallery__page-btn { min-width: 36px; min-height: 36px; font-size: 13px; }
 }
 
 /* ── FULLSCREEN IMERSIVO ────────────────────────────────────────────────── */
 
-/* O overlay cobre 100dvh × 100dvw, colocado via Teleport no body */
 .fs-overlay {
   position: fixed;
   inset: 0;
@@ -1883,11 +2165,9 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* Cursor de "fechar" ao clicar fora da imagem */
   cursor: zoom-out;
 }
 
-/* ── Transição de entrada / saída ── */
 .fs-enter-active {
   animation: fs-in 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -1904,15 +2184,12 @@ onBeforeUnmount(() => {
   to   { opacity: 0; transform: scale(0.96); }
 }
 
-/* ── Imagem fullscreen ── */
 .fs-img {
   display: block;
-  /* Cursor normal sobre a imagem (clicar nela não fecha) */
   cursor: default;
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms ease;
 }
 
-/* Vertical: ocupa toda a altura disponível */
 .fs-img--portrait {
   height: 100dvh;
   width: auto;
@@ -1920,7 +2197,6 @@ onBeforeUnmount(() => {
   object-fit: contain;
 }
 
-/* Horizontal: rotaciona 90° em mobile (viewport estreito) e expande */
 .fs-img--landscape {
   width: 100dvw;
   height: auto;
@@ -1928,7 +2204,6 @@ onBeforeUnmount(() => {
   object-fit: contain;
 }
 
-/* Em telas estreitas (mobile), rotaciona landscape para preencher a altura */
 @media (max-width: 768px) and (orientation: portrait) {
   .fs-img--landscape {
     width: 100dvh;
@@ -1937,12 +2212,10 @@ onBeforeUnmount(() => {
     max-height: unset;
     object-fit: contain;
     transform: rotate(90deg);
-    /* Compensa o deslocamento causado pela rotação */
     transform-origin: center center;
   }
 }
 
-/* ── Hint de rotação (mobile landscape) ── */
 .fs-rotate-hint {
   position: absolute;
   top: 16px;
@@ -1971,12 +2244,10 @@ onBeforeUnmount(() => {
   100%     { opacity: 0; }
 }
 
-/* Esconde o hint em desktop ou quando já está em landscape */
 @media (min-width: 769px), (orientation: landscape) {
   .fs-rotate-hint { display: none; }
 }
 
-/* ── Barra inferior: título + navegação ── */
 .fs-bar {
   position: absolute;
   bottom: 0;
@@ -2057,7 +2328,6 @@ onBeforeUnmount(() => {
 }
 .fs-nav-btn:disabled { opacity: 0.25; cursor: default; }
 
-/* ── Botão fechar ── */
 .fs-close {
   position: absolute;
   top: 20px;
@@ -2081,7 +2351,6 @@ onBeforeUnmount(() => {
   transform: scale(1.08);
 }
 
-/* Cursor indicativo na imagem do modal (antes de abrir fullscreen) */
 .gallery-dialog__img--clickable {
   cursor: zoom-in;
 }
