@@ -733,7 +733,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h",
     entry: "Gratuita",
     locationId: "praca-matriz",
-    featured: true,
+    featured: false,
     icon: mdiMusicNoteOutline,
     highlights: [
       "abertura cultural",
@@ -756,7 +756,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h",
     entry: "Gratuita",
     locationId: "praca-matriz",
-    featured: true,
+    featured: false,
     icon: mdiMicrophoneVariant,
     highlights: [
       "abertura oficial",
@@ -779,7 +779,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h30",
     entry: "Gratuita",
     locationId: "praca-matriz",
-    featured: true,
+    featured: false,
     icon: mdiGuitarElectric,
     highlights: [
       "show noturno",
@@ -802,7 +802,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h30",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiMicrophone,
     highlights: [
       "atração nacional",
@@ -871,7 +871,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h30",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiMicrophoneVariant,
     highlights: [
       "atração nacional",
@@ -894,7 +894,7 @@ const attractions = ref<Attraction[]>([
     duration: "2h",
     entry: "Gratuita",
     locationId: "centro-historico",
-    featured: true,
+    featured: false,
     icon: mdiSaxophone,
     highlights: [
       "jazz nordestino",
@@ -963,7 +963,7 @@ const attractions = ref<Attraction[]>([
     duration: "2h",
     entry: "Gratuita",
     locationId: "centro-historico",
-    featured: true,
+    featured: false,
     icon: mdiMusicCircle,
     highlights: [
       "concerto instrumental",
@@ -986,7 +986,7 @@ const attractions = ref<Attraction[]>([
     duration: "2h",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiGuitarAcoustic,
     highlights: [
       "rock nacional",
@@ -1032,7 +1032,7 @@ const attractions = ref<Attraction[]>([
     duration: "2h",
     entry: "Gratuita",
     locationId: "mirante-gritador",
-    featured: true,
+    featured: false,
     icon: mdiMusicBoxMultiple,
     highlights: [
       "encerramento",
@@ -1055,7 +1055,7 @@ const attractions = ref<Attraction[]>([
     duration: "2h",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiMicrophoneVariant,
     highlights: [
       "encerramento oficial",
@@ -1079,7 +1079,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h30",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiMusicCircle,
     highlights: [
       "homenagem a Hermeto e Dominguinhos",
@@ -1103,7 +1103,7 @@ const attractions = ref<Attraction[]>([
     duration: "1h30",
     entry: "Gratuita",
     locationId: "praca-bonelle",
-    featured: true,
+    featured: false,
     icon: mdiMicrophone,
     highlights: [
       "pagode ao vivo",

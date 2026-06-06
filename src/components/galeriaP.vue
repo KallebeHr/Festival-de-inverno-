@@ -955,7 +955,7 @@ const photos = ref<GalleryPhoto[]>([
   {
     id: "gal-01",
     title: "Abertura no Espaço Criança",
-    description: "Registro da abertura Espaço Criança Platenario e grande presença de público.",
+    description: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
     category: "Shows",
     dayId: "2026-06-05",
     year: "2026",
@@ -964,13 +964,13 @@ const photos = ref<GalleryPhoto[]>([
     time: "10:30",
     author: "Equipe Oficial",
     src: "./galeria/espC1.webp",
-    alt: "Registro da abertura Espaço Criança Platenario e grande presença de público.",
+    alt: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
     orientation: "portrait"
   },
   {
     id: "gal-02",
     title: "Abertura no Espaço Criança",
-    description: "Registro da abertura Espaço Criança Platenario e grande presença de público.",
+    description: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
     category: "Shows",
     dayId: "2026-06-05",
     year: "2026",
@@ -979,7 +979,7 @@ const photos = ref<GalleryPhoto[]>([
     time: "10:30",
     author: "Equipe Oficial",
     src: "./galeria/espC2.webp",
-    alt: "Registro da abertura Espaço Criança Platenario e grande presença de público.",
+    alt: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
     orientation: "landscape",
   },
   // Adicione mais fotos aqui seguindo o mesmo padrão
