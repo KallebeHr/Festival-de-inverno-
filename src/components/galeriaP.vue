@@ -791,7 +791,7 @@ const selectedOrientation = ref<Orientation | "all">("all");
 
 // ── Paginação ──────────────────────────────────────────────────────────────
 const currentPage = ref(1);
-const perPage = ref(20);
+const perPage = ref(12);
 const perPageOptions = [12, 20, 40, 60] as const;
 
 function setPerPage(value: number) {
@@ -956,7 +956,7 @@ const photos = ref<GalleryPhoto[]>([
     id: "gal-01",
     title: "Abertura no Espaço Criança",
     description: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
-    category: "Shows",
+    category: "Esposição",
     dayId: "2026-06-05",
     year: "2026",
     edition: "Edição 2026",
@@ -971,7 +971,7 @@ const photos = ref<GalleryPhoto[]>([
     id: "gal-02",
     title: "Abertura no Espaço Criança",
     description: "Registro da abertura Espaço Criança Planetário e grande presença de público.",
-    category: "Shows",
+    category: "Esposição",
     dayId: "2026-06-05",
     year: "2026",
     edition: "Edição 2026",
