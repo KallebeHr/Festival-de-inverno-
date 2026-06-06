@@ -981,7 +981,7 @@ const photos = ref<GalleryPhoto[]>([
     src: "./galeria/espC2.webp",
     alt: "Registro da abertura Espaço Criança Platenario e grande presença de público.",
     orientation: "landscape",
-  }
+  },
   // Adicione mais fotos aqui seguindo o mesmo padrão
 ]);
 
