@@ -1,7 +1,7 @@
 export default {
   eyebrow: "Programação",
 
-  title: "06/06 Sábado",
+  title: "06/07 Domingo",
 
   subtitle:
     "Confira os eventos principais deste dia. Passe o mouse ou toque no card para visualizar os detalhes.",
@@ -19,32 +19,25 @@ export default {
 
   events: [
     {
-      day: "Quinta-feira",
-      shortDate: "06 Jun",
-      date: "06 de Junho de 2026",
+      day: "Domingo", 
+      shortDate: "07 Jun",
+      date: "07 de Junho de 2026",
       location: "Palco Opala",
-      event: "ALQUIMIA",
+      event: "VAVÁ RIBEIRO & ZÉ QUARESMA",
     },
     {
-      day: "Quinta-feira",
-      shortDate: "06 Jun",
-      date: "06 de Junho de 2026",
+      day: "Domingo",
+      shortDate: "07 Jun",
+      date: "07 de Junho de 2026",
       location: "Palco Opala",
-      event: "CHICO CHICO",
+      event: "ROUPA NOVA",
     },
     {
-      day: "Quinta-feira",
-      shortDate: "06 Jun",
-      date: "06 de Junho de 2026",
+      day: "Domingo",
+      shortDate: "07 Jun",
+      date: "07 de Junho de 2026",
       location: "Palco Opala",
-      event: "TITÃS",
-    },
-    {
-      day: "Quinta-feira",
-      shortDate: "06 Jun",
-      date: "06 de Junho de 2026",
-      location: "Palco Opala",
-      event: "BANDA DUBLIN",
+      event: "BRIGITTE BARDOT",
     },
   ],
 };

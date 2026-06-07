@@ -1,7 +1,7 @@
 export default {
   eyebrow: "Schedule",
 
-  title: "06/06 Saturday ",
+  title: "07/06 Sunday ",
 
   subtitle:
     "Check out the main events of the day. Hover or tap a card to view details.",
@@ -19,32 +19,25 @@ export default {
 
   events: [
     {
-      day: "Saturday",
-      shortDate: "Jun 06",
-      date: "June 06, 2026",
+      day: "Sunday",
+      shortDate: "Jun 07",
+      date: "June 07, 2026", 
       location: "Palco Opala",
-      event: "ALQUIMIA",
+      event: "VAVÁ RIBEIRO & ZÉ QUARESMA",
     },
     {
-      day: "Saturday",
-      shortDate: "Jun 06",
-      date: "June 06, 2026",
+      day: "Sunday",
+      shortDate: "Jun 07",
+      date: "June 07, 2026",
       location: "Palco Opala",
-      event: "CHICO CHICO",
+      event: "ROUPA NOVA",
     },
     {
-      day: "Saturday",
-      shortDate: "Jun 06",
-      date: "June 06, 2026",
+      day: "Sunday",
+      shortDate: "Jun 07",
+      date: "June 07, 2026",
       location: "Palco Opala",
-      event: "TITÃS",
-    },
-    {
-      day: "Saturday",
-      shortDate: "Jun 06",
-      date: "June 06, 2026",
-      location: "Palco Opala",
-      event: "BANDA DUBLIN",
+      event: "BRIGITTE BARDOT",
     },
   ],
 };
